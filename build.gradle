@@ -126,6 +126,14 @@ repositories {
     // flatDir {
     //     dir 'libs'
     // }
+    maven {
+        name = 'GeckoLib'
+        url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+        content {
+            includeGroupByRegex("software\\.bernie.*")
+            includeGroup("com.eliotlash.mclib")
+        }
+    }
 }
 
 dependencies {
@@ -140,6 +148,9 @@ dependencies {
     implementation fg.deobf("com.lowdragmc.ldlib:ldlib-forge-1.20.1:1.0.21.a") { transitive = false }
     testImplementation(platform('org.junit:junit-bom:5.10.3'))
     testImplementation('org.junit.jupiter:junit-jupiter')
+    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${minecraft_version}:${geckolib_version}")
+    implementation("com.eliotlash.mclib:mclib:20")
+
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
