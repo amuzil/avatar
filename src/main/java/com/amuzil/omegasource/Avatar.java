@@ -16,15 +16,15 @@ import org.apache.logging.log4j.Logger;
 // The value here should match an entry in the META-INF/mods.toml file
 
 /**
- * Note! This is a separate repository for a feature of Magus. As such,
- * this file will be condensed into Magus', the modid will be changed, e.t.c.
- * This is so Mahtaran and I can work on features of Magus separately.
+ * Note! This is a separate repository for a feature of Avatar. As such,
+ * this file will be condensed into Avatar', the modid will be changed, e.t.c.
+ * This is so Mahtaran and I can work on features of Avatar separately.
  */
 
 @Mod(Avatar.MOD_ID)
 public class Avatar {
     // MOD ID reference
-    public static final String MOD_ID = "magus";
+    public static final String MOD_ID = "av3";
     // Directly reference a log4j logger.
     public static final Logger LOGGER = LogManager.getLogger();
 
