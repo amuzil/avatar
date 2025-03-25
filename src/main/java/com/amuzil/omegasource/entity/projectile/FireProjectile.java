@@ -3,7 +3,7 @@ package com.amuzil.omegasource.entity.projectile;
 import com.amuzil.omegasource.entity.AvatarEntities;
 import com.amuzil.omegasource.entity.ElementProjectile;
 import com.amuzil.omegasource.entity.collision.ElementCollision;
-import com.amuzil.omegasource.event.FormActivatedEvent;
+import com.amuzil.omegasource.events.FormActivatedEvent;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;

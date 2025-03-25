@@ -3,7 +3,7 @@ package com.amuzil.omegasource.network.packets.client;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.form.Form;
 import com.amuzil.omegasource.entity.ElementProjectile;
-import com.amuzil.omegasource.event.FormActivatedEvent;
+import com.amuzil.omegasource.events.FormActivatedEvent;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.api.AvatarPacket;
 import com.amuzil.omegasource.registry.Registries;

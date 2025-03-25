@@ -41,7 +41,7 @@ public class CapabilityHandler {
     }
 
     public static void init() {
-        //Prevents class loading exceptions
+        // Prevents class loading exceptions
         LivingDataCapability.LivingDataProvider.init();
     }
 }

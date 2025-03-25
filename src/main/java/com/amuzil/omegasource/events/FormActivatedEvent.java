@@ -1,4 +1,4 @@
-package com.amuzil.omegasource.event;
+package com.amuzil.omegasource.events;
 
 import com.amuzil.omegasource.bending.form.Form;
 import net.minecraft.world.entity.LivingEntity;

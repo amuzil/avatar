@@ -5,6 +5,7 @@ import com.amuzil.omegasource.api.magus.skill.SkillCategory;
 import com.amuzil.omegasource.api.magus.condition.Condition;
 import com.amuzil.omegasource.api.magus.skill.Skill;
 import com.amuzil.omegasource.api.magus.skill.utils.traits.DataTrait;
+import com.amuzil.omegasource.api.magus.skill.utils.traits.SkillTrait;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.form.Form;
@@ -102,6 +103,11 @@ public class Registries {
         formRegistryBuilder.setName(new ResourceLocation(Avatar.MOD_ID, "forms"));
         FORMS = event.create(formRegistryBuilder);
 
+        // Skills
+        RegistryBuilder<Skill> skills = new RegistryBuilder<>();
+        skills.setName(new ResourceLocation(Avatar.MOD_ID, "skills"));
+        SKILLS = event.create(skills);
+
         // Skill Categories
         RegistryBuilder<SkillCategory> categories = new RegistryBuilder<>();
         categories.setName(new ResourceLocation(Avatar.MOD_ID, "skill_categories"));
@@ -129,6 +135,16 @@ public class Registries {
             });
         }
 
+        // Skills
+        if (event.getRegistryKey().equals(SKILLS.get().getRegistryKey())) {
+            IForgeRegistry<Skill> registry = SKILLS.get();
+            ResourceKey<Registry<Skill>> resKey = registry.getRegistryKey();
+
+//            event.register(resKey, helper -> {
+//                registry.register(FIREBALL.getId(), FIREBALL);
+//            });
+        }
+
         // Skill Categories
         if (event.getRegistryKey().equals(SKILL_CATEGORIES.get().getRegistryKey())) {
             IForgeRegistry<SkillCategory> registry = SKILL_CATEGORIES.get();
@@ -145,7 +161,47 @@ public class Registries {
         if (event.getRegistryKey().equals(DATA_TRAITS.get().getRegistryKey())) {
             IForgeRegistry<DataTrait> registry = DATA_TRAITS.get();
             ResourceKey<Registry<DataTrait>> resKey = registry.getRegistryKey();
+
+            //Registers every Data Trait for every skill included within Magus.
+            //Register other traits manually.
+            registerTraitsFromSkills(SKILLS.get().getValues().stream().toList(), event);
+            event.register(resKey, helper -> {
+                for (DataTrait trait : traits)
+                    registry.register(trait.getName(), trait);
+            });
         }
+    }
+
+    /**
+     * Use this method to register the data traits of all registered skills.
+     *
+     * @param skills List of skills.
+     * @param event  Registry event.
+     * @param modID  ModID.
+     */
+    public static void registerTraitsFromSkills(List<Skill> skills, RegisterEvent event, String modID) {
+        ResourceKey<Registry<DataTrait>> key = DATA_TRAITS.get().getRegistryKey();
+        IForgeRegistry<DataTrait> registry = DATA_TRAITS.get();
+        for (Skill skill : skills)
+            for (SkillTrait trait : skill.getTraits())
+                event.register(key, helper -> registry.register(new ResourceLocation(modID) + trait.getName(), trait));
+
+    }
+
+    /**
+     * Same as the above method, but if you standardise your modID in your data,
+     * then use this.
+     *
+     * @param skills Skills to register.
+     * @param event  The registry event.
+     */
+    public static void registerTraitsFromSkills(List<Skill> skills, RegisterEvent event) {
+        ResourceKey<Registry<DataTrait>> key = DATA_TRAITS.get().getRegistryKey();
+        IForgeRegistry<DataTrait> registry = DATA_TRAITS.get();
+        for (Skill skill : skills)
+            for (SkillTrait trait : skill.getTraits())
+                event.register(key, helper -> registry.register(trait.getName(), trait));
+
     }
 
     @Mod.EventBusSubscriber(modid = Avatar.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
