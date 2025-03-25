@@ -1,0 +1,343 @@
+package com.amuzil.omegasource.entity.projectile;
+
+import com.amuzil.omegasource.entity.AvatarEntities;
+import com.amuzil.omegasource.entity.ElementProjectile;
+import com.amuzil.omegasource.entity.collision.ElementCollision;
+import com.amuzil.omegasource.event.FormActivatedEvent;
+import com.amuzil.omegasource.network.AvatarNetwork;
+import com.amuzil.omegasource.bending.element.Element;
+import com.amuzil.omegasource.bending.element.Elements;
+import com.amuzil.omegasource.bending.form.Forms;
+import com.amuzil.omegasource.network.packets.client.FormActivatedPacket;
+import com.lowdragmc.photon.client.fx.EntityEffect;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Blaze;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.Fireball;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.*;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+
+import static com.amuzil.omegasource.Avatar.orb_bloom;
+import static com.amuzil.omegasource.Avatar.steam;
+
+
+public class FireProjectile extends ElementProjectile {
+    private static final EntityDataAccessor<Byte> ID_FLAGS = SynchedEntityData.defineId(FireProjectile.class, EntityDataSerializers.BYTE);
+    private static final EntityDataAccessor<Byte> PIERCE_LEVEL = SynchedEntityData.defineId(FireProjectile.class, EntityDataSerializers.BYTE);
+
+    public FireProjectile(EntityType<FireProjectile> type, Level level) {
+        super(type, level);
+        MinecraftForge.EVENT_BUS.register(this);
+    }
+
+    public FireProjectile(double x, double y, double z, Level level) {
+        this(AvatarEntities.FIRE_PROJECTILE_ENTITY_TYPE.get(), level);
+        this.setPos(x, y, z);
+    }
+
+    public FireProjectile(LivingEntity livingEntity, Level level) {
+        this(livingEntity.getX(), livingEntity.getEyeY(), livingEntity.getZ(), level);
+        this.setOwner(livingEntity);
+        this.setNoGravity(true);
+    }
+
+    @Override
+    public Element getElement() {
+        return Elements.FIRE;
+    }
+
+    @Override
+    public void remove(RemovalReason reason) {
+        super.remove(reason);
+
+        // Unregister from the event bus
+        MinecraftForge.EVENT_BUS.unregister(this);
+    }
+
+    public void tick() {
+        super.tick();
+        boolean flag = this.isNoPhysics();
+        Vec3 deltaMovement = this.getDeltaMovement();
+        if (this.xRotO == 0.0F && this.yRotO == 0.0F) {
+            double distance = deltaMovement.horizontalDistance();
+            this.setYRot((float)(Mth.atan2(deltaMovement.x, deltaMovement.z) * (double)(180F / (float)Math.PI)));
+            this.setXRot((float)(Mth.atan2(deltaMovement.y, distance) * (double)(180F / (float)Math.PI)));
+            this.yRotO = this.getYRot();
+            this.xRotO = this.getXRot();
+        }
+
+        BlockPos blockpos = this.blockPosition();
+        BlockState blockstate = this.level().getBlockState(blockpos);
+        if (!blockstate.isAir() && !flag) {
+            VoxelShape voxelshape = blockstate.getCollisionShape(this.level(), blockpos);
+            if (!voxelshape.isEmpty()) {
+                Vec3 vec31 = this.position();
+
+                for(AABB aabb : voxelshape.toAabbs()) {
+                    if (aabb.move(blockpos).contains(vec31)) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (this.isInWaterOrRain() || blockstate.is(Blocks.POWDER_SNOW) || this.isInFluidType((fluidType, height) -> this.canFluidExtinguish(fluidType))) {
+            this.clearFire();
+        }
+
+        Vec3 pos = this.position();
+        Vec3 delta = pos.add(deltaMovement);
+        HitResult hitresult = this.level().clip(new ClipContext(pos, delta, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
+        if (hitresult.getType() != HitResult.Type.MISS) {
+            delta = hitresult.getLocation();
+        }
+
+        while(!this.isRemoved()) {
+            if (!this.level().isClientSide) {
+                this.tickDespawn();
+            }
+            EntityHitResult entityhitresult = this.findHitEntity(pos, delta);
+            if (entityhitresult != null) {
+                hitresult = entityhitresult;
+            }
+
+            if (hitresult != null && hitresult.getType() == HitResult.Type.ENTITY) {
+                assert hitresult instanceof EntityHitResult;
+                Entity entity = ((EntityHitResult)hitresult).getEntity();
+                Entity owner = this.getOwner();
+                if (entity instanceof Player && owner instanceof Player && !((Player)owner).canHarmPlayer((Player)entity)) {
+                    hitresult = null;
+                    entityhitresult = null;
+                }
+            }
+
+            if (hitresult != null && hitresult.getType() != HitResult.Type.MISS && !flag) {
+                if (net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult))
+                    break;
+                this.onHit(hitresult);
+                this.hasImpulse = true;
+                break;
+            }
+
+            if (entityhitresult == null) {
+                break;
+            }
+
+            hitresult = null;
+        }
+        deltaMovement = this.getDeltaMovement();
+        double x = deltaMovement.x;
+        double y = deltaMovement.y;
+        double z = deltaMovement.z;
+
+        double finalX = this.getX() + x;
+        double finalY = this.getY() + y;
+        double finalZ = this.getZ() + z;
+        double d4 = deltaMovement.horizontalDistance();
+        if (flag) {
+            this.setYRot((float)(Mth.atan2(-x, -z) * (double)(180F / (float)Math.PI)));
+        } else {
+            this.setYRot((float)(Mth.atan2(x, z) * (double)(180F / (float)Math.PI)));
+        }
+
+        this.setXRot((float)(Mth.atan2(y, d4) * (double)(180F / (float)Math.PI)));
+        this.setXRot(lerpRotation(this.xRotO, this.getXRot()));
+        this.setYRot(lerpRotation(this.yRotO, this.getYRot()));
+
+        float f = 0.49F; // Scale speed
+        this.setDeltaMovement(deltaMovement.scale(f));
+        if (!this.isNoGravity() && !flag) { // Apply gravity
+            Vec3 vec34 = this.getDeltaMovement();
+            this.setDeltaMovement(vec34.x, vec34.y - (double)0.05F, vec34.z);
+        }
+
+        Entity owner = this.getOwner();
+        if (arcActive) {
+            if (owner != null) {
+                Vec3[] pose = new Vec3[]{owner.position(), this.getOwner().getLookAngle()};
+                pose[1] = pose[1].scale((1.5)).add((0), (this.getOwner().getEyeHeight()), (0));
+                Vec3 newPos = pose[1].add(pose[0]);
+                this.setPos(newPos.x, newPos.y, newPos.z);
+            }
+        } else {
+            if (owner != null) {
+                Vec3 vec34 = this.getDeltaMovement();
+                double rateOfControl = 0.4; // Control/curve the shot projectile
+                Vec3 aim = this.getOwner().getLookAngle().multiply(rateOfControl, rateOfControl, rateOfControl);
+                this.setDeltaMovement(vec34.add(aim));
+            }
+            this.setPos(finalX, finalY, finalZ);
+        }
+
+        this.checkInsideBlocks();
+    }
+
+    @SubscribeEvent
+    public void onFormEvent(FormActivatedEvent event) {
+        Entity owner = this.getOwner();
+        if (owner != null && event.getEntity().getId() == owner.getId()) {
+            if (event.getForm().equals(Forms.STRIKE) && this.arcActive && this.hasElement) {
+                this.arcActive = false;
+                this.setTimeToKill(100);
+                if (!this.level().isClientSide()) {
+                    this.shoot(owner.getViewVector(1).x, owner.getViewVector(1).y, owner.getViewVector(1).z, 0.75F, 1);
+                    this.discard();
+                }
+            }
+        }
+    }
+
+//    @Nullable
+//    protected EntityHitResult findHitEntity(Vec3 pos, Vec3 delta) {
+//        return getEntityHitResult(this.level(), this, pos, delta,
+//                this.getBoundingBox().expandTowards(this.getDeltaMovement()).inflate(2.0D),
+//                this::canHitEntity, 0.3F);
+//    }
+
+//    @Nullable
+//    public static EntityHitResult getEntityHitResult(Level level, Entity thisEntity, Vec3 pos, Vec3 delta, AABB thisAABB, Predicate<Entity> canBeHit, float scale) {
+//        double maxDist = Double.MAX_VALUE;
+//        Entity entity = null;
+//
+//        for(Entity otherEntity : level.getEntities(thisEntity, thisAABB, canBeHit)) {
+////            System.out.println("ENTITY NEARBY: " + otherEntity);
+//            AABB aabb = otherEntity.getBoundingBox().inflate(scale);
+//            Optional<Vec3> optional = aabb.clip(pos, delta);
+//            if (optional.isPresent()) {
+//                double dist = pos.distanceToSqr(optional.get());
+//                if (dist < maxDist) {
+//                    entity = otherEntity;
+//                    maxDist = dist;
+//                }
+//            }
+//        }
+//
+//        return entity == null ? null : new EntityHitResult(entity);
+//    }
+
+//    public boolean canHitEntity(Entity otherEntity) {
+//        if (!otherEntity.canBeHitByProjectile()) {
+//            return false;
+//        } else {
+//            Entity entity = this.getOwner();
+////            if (entity != null) {
+////                if (otherEntity instanceof TestProjectileEntity other) {
+////                    System.out.println("THIS OWNER: " + entity + " | " + !entity.isPassengerOfSameVehicle(otherEntity));
+////                    System.out.println("THAT OWNER: " + other.getOwner());
+////                }
+////            }
+//            return entity == null || this.leftOwner || !entity.isPassengerOfSameVehicle(otherEntity);
+//        }
+//    }
+
+    @Override
+    public boolean isPickable() {
+        return true;
+    }
+
+    @Override
+    protected void defineSynchedData() {
+        this.entityData.define(ID_FLAGS, (byte)0);
+        this.entityData.define(PIERCE_LEVEL, (byte)0);
+    }
+
+    public boolean isNoPhysics() {
+        if (!this.level().isClientSide) {
+            return this.noPhysics;
+        } else {
+            return (this.entityData.get(ID_FLAGS) & 2) != 0;
+        }
+    }
+
+//    public void handleEntityEvent(byte data) {
+//        if (data == 3) {
+//            System.out.println("HANDLE ENTITY EVENT");
+//            for(int i = 0; i < 8; ++i) {
+//                this.level().addParticle(this.getParticle(), this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
+//            }
+//        }
+//    }
+
+    protected void onHitEntity(EntityHitResult entityHitResult) {
+        Entity entity = entityHitResult.getEntity();
+        if (entity instanceof Blaze) {
+            if (this.getOwner() != null) {
+//                this.setNoGravity(false);
+                this.setOwner(entity);
+                this.shoot(entity.getViewVector(1).x, entity.getViewVector(1).y, entity.getViewVector(1).z, 0.75F, 1);
+                this.leftOwner = true;
+            }
+        } else if (entity instanceof FireProjectile fireProjectile) {
+            if (this.getOwner() != null && this.level().isClientSide) {
+                if (fireProjectile.arcActive && !fireProjectile.hasElement && this.checkLeftOwner()) {
+//                    this.setOwner(elementProjectile.getOwner()); // Give control to receiver
+//                    this.setDeltaMovement(0,0,0); // Full stop
+//                    this.arcActive = true; // Enable control of this shot projectile
+                    this.discard();
+                    fireProjectile.hasElement = true;
+
+                    AvatarNetwork.sendToServer(new FormActivatedPacket(Forms.NULL, Elements.FIRE, fireProjectile.getId()));
+                } else {
+                    if (!this.getOwner().equals(fireProjectile.getOwner())) {
+                        ElementCollision collisionEntity = new ElementCollision(this.getX(), this.getY(), this.getZ(), this.level());
+                        collisionEntity.setTimeToKill(5);
+                        this.level().addFreshEntity(collisionEntity);
+                        EntityEffect entityEffect = new EntityEffect(orb_bloom, this.level(), collisionEntity);
+                        entityEffect.start();
+                        this.discard();
+                        fireProjectile.discard();
+                    }
+                }
+            }
+        } else if (entity instanceof WaterProjectile waterProjectile) {
+            if (this.getOwner() != null && this.level().isClientSide) {
+                if (!this.getOwner().equals(waterProjectile.getOwner())) {
+                    ElementCollision collisionEntity = new ElementCollision(this.getX(), this.getY(), this.getZ(), this.level());
+                    collisionEntity.setTimeToKill(5);
+                    this.level().addFreshEntity(collisionEntity);
+                    EntityEffect entityEffect = new EntityEffect(steam, this.level(), collisionEntity);
+                    entityEffect.start();
+                    this.discard();
+                    waterProjectile.discard();
+                }
+            }
+        } else if (entity instanceof Fireball fireBall) {
+            if (!this.getOwner().equals(fireBall.getOwner())) {
+                fireBall.discard();
+            }
+        } else if (entity instanceof AbstractArrow arrow) {
+            if (!this.getOwner().equals(arrow.getOwner())) {
+                arrow.discard();
+            }
+        } else {
+            float i = 10; // Deal 10 damage
+            entity.hurt(this.damageSources().thrown(this, this.getOwner()), i);
+//            this.discard();
+        }
+    }
+
+    protected void onHitBlock(BlockHitResult blockHitResult) {
+//        super.onHitBlock(blockHitResult);
+        this.discard();
+    }
+
+    protected void onHit(HitResult hitResult) {
+        super.onHit(hitResult);
+        if (!this.level().isClientSide)
+            this.level().broadcastEntityEvent(this, (byte)3);
+    }
+}
