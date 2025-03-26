@@ -33,16 +33,15 @@ public class Avatar {
     public static final String MOD_ID = "av3";
     // Directly reference a log4j logger.
     public static final Logger LOGGER = LogManager.getLogger();
-
     public static InputModule inputModule;
 
-    public static FX fire_bloom = FXHelper.getFX(new ResourceLocation(Avatar.MOD_ID, "fire_bloom"));
-    public static FX fire_bloom_perma = FXHelper.getFX(new ResourceLocation(Avatar.MOD_ID, "fire_bloom_perma"));
-    public static FX blue_fire = FXHelper.getFX(new ResourceLocation(Avatar.MOD_ID, "blue_fire"));
-    public static FX blue_fire_perma = FXHelper.getFX(new ResourceLocation(Avatar.MOD_ID, "blue_fire_perma"));
-    public static FX orb_bloom = FXHelper.getFX(new ResourceLocation(Avatar.MOD_ID, "orb_bloom"));
-    public static FX water = FXHelper.getFX(new ResourceLocation(Avatar.MOD_ID, "water"));
-    public static FX steam = FXHelper.getFX(new ResourceLocation(Avatar.MOD_ID, "steam"));
+    public static FX fire_bloom;
+    public static FX fire_bloom_perma;
+    public static FX blue_fire;
+    public static FX blue_fire_perma;
+    public static FX orb_bloom;
+    public static FX water;
+    public static FX steam;
 
     public Avatar() {
         // Register capabilities

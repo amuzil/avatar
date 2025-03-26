@@ -3,9 +3,9 @@ package com.amuzil.omegasource.server;
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.condition.conditions.FormCondition;
 import com.amuzil.omegasource.bending.form.ActiveForm;
+import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
 import com.amuzil.omegasource.api.magus.skill.utils.capability.entity.Magi;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
@@ -23,15 +23,14 @@ public class ServerEvents {
 
     @SubscribeEvent
     public static void onEntityJoinLevel(EntityJoinLevelEvent event) {
+        if (!(event.getEntity() instanceof Player)) {
+            return; // Ignore non-player entities
+        }
 
-        if (!event.getLevel().isClientSide() && event.getEntity() instanceof LivingEntity) {
-            // TODO: Add a wrapper class for getting capabilities and data. Maybe SkillUser? MagusEntity?
-            Magi magi = Magi.get((LivingEntity) event.getEntity());
-            if (magi != null && event.getEntity() instanceof Player) {}
-        } else {
-            if (event.getEntity() instanceof Player) {
-                // TODO - Fix so that this doesn't run for every player on server
-                Magi magi = Magi.get((LivingEntity) event.getEntity());
+        if (event.getLevel().isClientSide() && event.getEntity() instanceof Player player) {
+            assert Minecraft.getInstance().player != null;
+            if (Minecraft.getInstance().player.equals(player)) {
+                Magi magi = Magi.get(player);
                 if (magi != null) {
                     formCondition.register("formCondition", () -> {
                         ActiveForm activeForm = new ActiveForm(formCondition.form(), formCondition.active());
@@ -42,11 +41,11 @@ public class ServerEvents {
                         }
                         Avatar.LOGGER.info("activeForms: {}", magi.activeForms);
                     }, () -> {});
-                }
 
-                Avatar.inputModule.registerListeners();
-                Avatar.reloadFX();
-                System.out.println("InputModule Initiated!");
+                    Avatar.inputModule.registerListeners();
+                    Avatar.reloadFX();
+                    System.out.println("InputModule Initiated!");
+                }
             }
         }
     }
