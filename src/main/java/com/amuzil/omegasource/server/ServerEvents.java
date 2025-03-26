@@ -35,11 +35,11 @@ public class ServerEvents {
                     formCondition.register("formCondition", () -> {
                         ActiveForm activeForm = new ActiveForm(formCondition.form(), formCondition.active());
                         if (formCondition.active()) {
-                            magi.coomplexForms.add(activeForm);
+                            magi.complexForms.add(activeForm);
                         } else {
-                            magi.coomplexForms.remove(activeForm);
+                            magi.complexForms.remove(activeForm);
                         }
-                        Avatar.LOGGER.info("activeForms: {}", magi.coomplexForms);
+                        Avatar.LOGGER.info("activeForms: {}", magi.complexForms);
                     }, () -> {});
 
                     Avatar.inputModule.registerListeners();

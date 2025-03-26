@@ -1,10 +1,12 @@
 package com.amuzil.omegasource.api.magus.skill;
 
+import com.amuzil.omegasource.api.magus.skill.utils.capability.entity.Magi;
 import com.amuzil.omegasource.api.magus.skill.utils.data.SkillPathBuilder;
 import com.amuzil.omegasource.bending.form.ActiveForm;
+import com.amuzil.omegasource.bending.form.Forms;
 import net.minecraft.world.entity.LivingEntity;
 
-public class SkillActive extends Skill{
+public class SkillActive extends Skill {
 
     public SkillActive(String modID, String name, SkillCategory category) {
         super(modID, name, category);
@@ -12,7 +14,7 @@ public class SkillActive extends Skill{
 
     @Override
     public FormPath getStartPaths() {
-        return SkillPathBuilder.getInstance().complexForm(new ActiveForm());
+        return null;
     }
 
     @Override
@@ -27,7 +29,9 @@ public class SkillActive extends Skill{
 
     @Override
     public boolean shouldStart(LivingEntity entity, FormPath formPath) {
-        return false;
+        Magi magi = Magi.get(entity);
+        return SkillPathBuilder.checkForms(formPath.complex(), getStartPaths().complex()) ||
+                SkillPathBuilder.checkForms(formPath.simple(), getStartPaths().simple()) && magi.currentlySelected().equals(this);
     }
 
     @Override

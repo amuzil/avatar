@@ -47,4 +47,19 @@ public class SkillPathBuilder extends PathBuilder {
         this.complexForms.clear();
     }
 
+
+    public static boolean checkForms(List<ActiveForm> formsFirst, List<ActiveForm> formsSecond) {
+        if (formsSecond.size() != formsFirst.size())
+            return false;
+        for (int i = 0; i < formsFirst.size(); i++) {
+            if (!formsFirst.get(i).equals(formsSecond.get(i)))
+                return false;
+        }
+        return true;
+    }
+
+    public static boolean checkAllForms(FormPath first, FormPath second) {
+        return checkForms(first.complex(), second.complex()) && checkForms(first.simple(), second
+                .simple());
+    }
 }

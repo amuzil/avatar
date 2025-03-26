@@ -172,7 +172,7 @@ public class InputModule {
         glfwKeysDown.clear();
         Magi magi = Magi.get(Minecraft.getInstance().player);
         if (magi != null)
-            magi.coomplexForms.clear();
+            magi.complexForms.clear();
     }
 
     public void toggleListeners() {

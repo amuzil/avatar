@@ -33,9 +33,10 @@ public class Magi {
     // These are magi specific traits.
     private List<SkillData> skillData;
     private List<SkillCategoryData> skillCategoryData;
-    public LinkedList<ActiveForm> coomplexForms;
+    public LinkedList<ActiveForm> complexForms;
     public LinkedList<ActiveForm> simpleForms;
     public FormPath formPath;
+    private Skill currentlySelected;
 
     // Change this to use an int - 0 for should start, 1 for should run, 2 for should stop,
     // -1 for default/idle. If I need multiple states, then use bits; 000 for idle, and then
@@ -45,7 +46,7 @@ public class Magi {
     public Magi(Data capabilityData, LivingEntity entity) {
         this.capabilityData = capabilityData;
         this.magi = entity;
-        this.coomplexForms = new LinkedList<>();
+        this.complexForms = new LinkedList<>();
 
         // Initialise skilldata.
         this.skillData = new ArrayList<>();
@@ -55,6 +56,7 @@ public class Magi {
         // Testing...
         skillData.forEach(skillData1 -> skillData1.setCanUse(true));
         this.formPath = new FormPath();
+        this.currentlySelected = null;
     }
 
     @Nullable
@@ -73,6 +75,10 @@ public class Magi {
 
     public LivingDataCapability.LivingDataCapabilityImp getMagusData() {
         return (LivingDataCapability.LivingDataCapabilityImp) capabilityData;
+    }
+
+    public Skill currentlySelected() {
+        return this.currentlySelected;
     }
 
     // Need to sync this with given skills, traits, e.t.c
@@ -107,7 +113,7 @@ public class Magi {
 
     // Called per tick
     public void onUpdate() {
-        formPath.complex(coomplexForms);
+        formPath.complex(complexForms);
         formPath.simple(simpleForms);
         if (getMagi() instanceof Player) {
             List<Skill> skills = Registries.getSkills();
@@ -133,7 +139,7 @@ public class Magi {
         CompoundTag tag = new CompoundTag();
         if (isDirty()) {
             // TODO: Figure out if I need to use the returned tags from each of these values....
-            coomplexForms.forEach(activeForm -> tag.put(activeForm.form().name(), activeForm.serializeNBT()));
+            complexForms.forEach(activeForm -> tag.put(activeForm.form().name(), activeForm.serializeNBT()));
             skillCategoryData.forEach(catData -> tag.put(catData.getName(), catData.serializeNBT()));
             skillData.forEach(sData -> tag.put(sData.getName(), sData.serializeNBT()));
         }
@@ -141,7 +147,7 @@ public class Magi {
     }
 
     public void deserialiseNBT(CompoundTag tag) {
-        coomplexForms.forEach(activeForm -> activeForm.deserializeNBT(tag.getCompound(activeForm.form().name())));
+        complexForms.forEach(activeForm -> activeForm.deserializeNBT(tag.getCompound(activeForm.form().name())));
         skillCategoryData.forEach(catData -> catData.deserializeNBT(tag.getCompound(catData.getName())));
         skillData.forEach(sData -> sData.deserializeNBT(tag.getCompound(sData.getName())));
     }
