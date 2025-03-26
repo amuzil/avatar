@@ -191,6 +191,7 @@ public class FireProjectile extends ElementProjectile {
         Entity owner = this.getOwner();
         if (owner != null && event.getEntity().getId() == owner.getId()) {
             if (event.getForm().equals(Forms.STRIKE) && this.arcActive && this.hasElement) {
+                // If LivingEntity owns this entity and has activated strike form, shoot held element
                 this.arcActive = false;
                 this.setTimeToKill(100);
                 if (!this.level().isClientSide()) {

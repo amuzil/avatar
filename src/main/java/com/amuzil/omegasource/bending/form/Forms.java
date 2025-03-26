@@ -1,9 +1,10 @@
 package com.amuzil.omegasource.bending.form;
 
+
 public class Forms {
-    // FORMS
-    // blank form
-    public static final Form NULL = new Form("null");
+    // Basic Bending Forms
+
+    public static final Form NULL = new Form("null"); // Blank Form
     public static final Form PUSH = new Form("push");
     public static final Form PULL = new Form("pull");
     public static final Form RAISE = new Form("raise");
@@ -17,6 +18,7 @@ public class Forms {
     public static final Form COMBINE = new Form("combine");
     public static final Form STRIKE = new Form("strike");
     public static final Form BLOCK = new Form("block");
+    public static final Form ARC = new Form("arc");
 
     public static void init() {}
 }

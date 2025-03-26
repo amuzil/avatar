@@ -3,7 +3,7 @@ package com.amuzil.omegasource;
 import com.amuzil.omegasource.api.magus.skill.Skills;
 import com.amuzil.omegasource.api.magus.skill.utils.capability.CapabilityHandler;
 import com.amuzil.omegasource.entity.AvatarEntities;
-import com.amuzil.omegasource.input.DefaultInputModule;
+import com.amuzil.omegasource.input.InputModule;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.registry.Registries;
 import com.amuzil.omegasource.utils.AvatarCommand;
@@ -33,16 +33,15 @@ public class Avatar {
     public static final String MOD_ID = "av3";
     // Directly reference a log4j logger.
     public static final Logger LOGGER = LogManager.getLogger();
+    public static InputModule inputModule;
 
-    public static DefaultInputModule inputModule;
-
-    public static FX fire_bloom = FXHelper.getFX(new ResourceLocation(Avatar.MOD_ID, "fire_bloom"));
-    public static FX fire_bloom_perma = FXHelper.getFX(new ResourceLocation(Avatar.MOD_ID, "fire_bloom_perma"));
-    public static FX blue_fire = FXHelper.getFX(new ResourceLocation(Avatar.MOD_ID, "blue_fire"));
-    public static FX blue_fire_perma = FXHelper.getFX(new ResourceLocation(Avatar.MOD_ID, "blue_fire_perma"));
-    public static FX orb_bloom = FXHelper.getFX(new ResourceLocation(Avatar.MOD_ID, "orb_bloom"));
-    public static FX water = FXHelper.getFX(new ResourceLocation(Avatar.MOD_ID, "water"));
-    public static FX steam = FXHelper.getFX(new ResourceLocation(Avatar.MOD_ID, "steam"));
+    public static FX fire_bloom;
+    public static FX fire_bloom_perma;
+    public static FX blue_fire;
+    public static FX blue_fire_perma;
+    public static FX orb_bloom;
+    public static FX water;
+    public static FX steam;
 
     public Avatar() {
         // Register capabilities
@@ -61,8 +60,7 @@ public class Avatar {
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
 
-        // Register Testing Entities
-        // NOTE: This is strictly for testing and to be deleted later
+        // Register Entities
         AvatarEntities.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
@@ -77,7 +75,7 @@ public class Avatar {
     private void doClientStuff(final FMLClientSetupEvent event) {
         // do something that can only be done on the client
         // Register the input modules
-        inputModule = new DefaultInputModule();
+        inputModule = new InputModule();
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {}

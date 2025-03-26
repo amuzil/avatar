@@ -227,7 +227,7 @@ public abstract class ElementProjectile extends Projectile implements ItemSuppli
         if (getElement().equals(Elements.FIRE)) {
             if (form.name().equals("strike"))
                 fx = fire_bloom_perma;
-            if (form.name().equals("force"))
+            if (form.name().equals("block"))
                 fx = blue_fire_perma;
             if (form.name().equals("arc")) {
                 fx = null;
@@ -244,7 +244,7 @@ public abstract class ElementProjectile extends Projectile implements ItemSuppli
         } else if (getElement().equals(Elements.WATER)) {
             if (form.name().equals("strike"))
                 fx = water;
-            if (form.name().equals("force"))
+            if (form.name().equals("block"))
                 fx = water;
             if (form.name().equals("arc")) {
                 fx = water;

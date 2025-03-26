@@ -244,7 +244,7 @@ public class AirProjectile extends ElementProjectile {
                 elementProjectile.discard();
             }
         }  else {
-                        int i = 10; // Deal 10 damage
+            int i = 10; // Deal 10 damage
             entity.hurt(this.damageSources().thrown(this, this.getOwner()), (float)i);
             this.discard();
         }
