@@ -8,7 +8,7 @@ import net.minecraftforge.eventbus.api.Event;
 public class FormActivatedEvent extends Event {
     private final Form form;
     private final LivingEntity entity;
-    private boolean released;
+    private final boolean released;
 
     public FormActivatedEvent(Form form, LivingEntity entity) {
         this.form = form;

@@ -45,6 +45,7 @@ public class ServerEvents {
                 }
 
                 Avatar.inputModule.registerListeners();
+                Avatar.reloadFX();
                 System.out.println("InputModule Initiated!");
             }
         }

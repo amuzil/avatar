@@ -23,4 +23,15 @@ public class Form {
     public String toString() {
         return "Form[ " + name().toUpperCase() + " ]";
     }
+
+    @Override
+    public boolean equals (Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (!(obj instanceof Form other)) {
+            return false;
+        } else {
+            return name.equals(other.name);
+        }
+    }
 }

@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 
-public class DefaultInputModule {
+public class InputModule {
     private final Consumer<InputEvent.Key> keyboardListener;
     private final Consumer<InputEvent.MouseButton> mouseListener;
     private final Consumer<TickEvent.ClientTickEvent> tickEventConsumer;
@@ -35,7 +35,7 @@ public class DefaultInputModule {
     protected final List<Form> activeForms = Collections.synchronizedList(new LinkedList<>());
     private final HashMap<Integer, Integer> glfwKeysDown = new HashMap<>();
 
-    public DefaultInputModule() {
+    public InputModule() {
         this.keyboardListener = keyboardEvent -> {
             int key = keyboardEvent.getKey();
             // NOTE: Minecraft's InputEvent.Key can only listen to the action InputConstants.REPEAT of one key at a time
