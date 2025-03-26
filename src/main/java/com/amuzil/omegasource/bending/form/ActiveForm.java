@@ -49,7 +49,7 @@ public class ActiveForm {
         } else if (!(obj instanceof ActiveForm other)) {
             return false;
         } else {
-            return form.name().equals(other.form.name());
+            return form.name().equals(other.form.name()) && active == other.active;
         }
     }
 

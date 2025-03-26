@@ -1,5 +1,6 @@
 package com.amuzil.omegasource.api.magus.skill.event;
 
+import com.amuzil.omegasource.api.magus.skill.FormPath;
 import com.amuzil.omegasource.api.magus.skill.Skill;
 import com.amuzil.omegasource.bending.form.ActiveForm;
 import net.minecraft.world.entity.LivingEntity;
@@ -11,9 +12,9 @@ import java.util.List;
 public class SkillEvent extends LivingEvent {
 
     private Skill skill;
-    private List<ActiveForm> formPath;
+    private FormPath formPath;
 
-    public SkillEvent(LivingEntity entity, List<ActiveForm> formPath, Skill skill) {
+    public SkillEvent(LivingEntity entity, FormPath formPath, Skill skill) {
         super(entity);
         this.skill = skill;
         this.formPath = formPath;
@@ -28,7 +29,7 @@ public class SkillEvent extends LivingEvent {
         return skill;
     }
 
-    public List<ActiveForm>  getFormPath() {
+    public FormPath  getFormPath() {
         return formPath;
     }
 }

@@ -6,7 +6,6 @@ import com.amuzil.omegasource.api.magus.radix.RadixTree;
 import com.amuzil.omegasource.api.magus.skill.event.SkillTickEvent;
 import com.amuzil.omegasource.api.magus.skill.utils.traits.SkillTrait;
 import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.UseTrait;
-import com.amuzil.omegasource.bending.form.ActiveForm;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.MinecraftForge;
@@ -83,7 +82,7 @@ public abstract class Skill {
     }
 
     // Fix this because this will not work lmao
-    public void tick(LivingEntity entity, LinkedList<ActiveForm> formPath) {
+    public void tick(LivingEntity entity, FormPath formPath) {
         //Run this asynchronously
 
         // Remember, for some reason post only returns true upon the event being cancelled. Blame Forge.
@@ -106,17 +105,17 @@ public abstract class Skill {
     }
 
 
-    public abstract List<ConditionPath> getStartPaths();
+    public abstract FormPath getStartPaths();
 
-    public abstract List<ConditionPath> getRunPaths();
+    public abstract FormPath getRunPaths();
 
-    public abstract List<ConditionPath> getStopPaths();
+    public abstract FormPath getStopPaths();
 
-    public abstract boolean shouldStart(LivingEntity entity, List<ActiveForm> formPath);
+    public abstract boolean shouldStart(LivingEntity entity, FormPath formPath);
 
-    public abstract boolean shouldRun(LivingEntity entity, List<ActiveForm> formPath);
+    public abstract boolean shouldRun(LivingEntity entity, FormPath formPath);
 
-    public abstract boolean shouldStop(LivingEntity entity, List<ActiveForm> formPath);
+    public abstract boolean shouldStop(LivingEntity entity, FormPath formPath);
 
     public abstract void start(LivingEntity entity);
 
@@ -125,7 +124,7 @@ public abstract class Skill {
     public abstract void stop(LivingEntity entity);
 
     // Resets the skill and any necessary skill data; should be called upon stopping execution.
-    public abstract void reset(LivingEntity entity, List<ActiveForm> formPath);
+    public abstract void reset(LivingEntity entity, FormPath formPath);
 
 
     public enum SkillState {

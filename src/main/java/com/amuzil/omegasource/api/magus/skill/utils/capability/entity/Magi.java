@@ -1,6 +1,7 @@
 package com.amuzil.omegasource.api.magus.skill.utils.capability.entity;
 
 import com.amuzil.omegasource.api.magus.radix.RadixTree;
+import com.amuzil.omegasource.api.magus.skill.FormPath;
 import com.amuzil.omegasource.api.magus.skill.Skill;
 import com.amuzil.omegasource.api.magus.skill.utils.capability.CapabilityHandler;
 import com.amuzil.omegasource.api.magus.skill.utils.data.SkillCategoryData;
@@ -32,7 +33,9 @@ public class Magi {
     // These are magi specific traits.
     private List<SkillData> skillData;
     private List<SkillCategoryData> skillCategoryData;
-    public LinkedList<ActiveForm> activeForms;
+    public LinkedList<ActiveForm> coomplexForms;
+    public LinkedList<ActiveForm> simpleForms;
+    public FormPath formPath;
 
     // Change this to use an int - 0 for should start, 1 for should run, 2 for should stop,
     // -1 for default/idle. If I need multiple states, then use bits; 000 for idle, and then
@@ -42,7 +45,7 @@ public class Magi {
     public Magi(Data capabilityData, LivingEntity entity) {
         this.capabilityData = capabilityData;
         this.magi = entity;
-        this.activeForms = new LinkedList<>();
+        this.coomplexForms = new LinkedList<>();
 
         // Initialise skilldata.
         this.skillData = new ArrayList<>();
@@ -51,6 +54,7 @@ public class Magi {
 
         // Testing...
         skillData.forEach(skillData1 -> skillData1.setCanUse(true));
+        this.formPath = new FormPath();
     }
 
     @Nullable
@@ -103,13 +107,15 @@ public class Magi {
 
     // Called per tick
     public void onUpdate() {
+        formPath.complex(coomplexForms);
+        formPath.simple(simpleForms);
         if (getMagi() instanceof Player) {
             List<Skill> skills = Registries.getSkills();
             for (Skill skill : skills) {
                 if (getSkillData(skill).canUse()) {
                     // TODO: Make sure this works; blame Aidan if something needs to be client-side
                     if (!getMagi().level().isClientSide)
-                        skill.tick(getMagi(), activeForms);
+                        skill.tick(getMagi(), formPath);
                 }
             }
         }
@@ -127,7 +133,7 @@ public class Magi {
         CompoundTag tag = new CompoundTag();
         if (isDirty()) {
             // TODO: Figure out if I need to use the returned tags from each of these values....
-            activeForms.forEach(activeForm -> tag.put(activeForm.form().name(), activeForm.serializeNBT()));
+            coomplexForms.forEach(activeForm -> tag.put(activeForm.form().name(), activeForm.serializeNBT()));
             skillCategoryData.forEach(catData -> tag.put(catData.getName(), catData.serializeNBT()));
             skillData.forEach(sData -> tag.put(sData.getName(), sData.serializeNBT()));
         }
@@ -135,7 +141,7 @@ public class Magi {
     }
 
     public void deserialiseNBT(CompoundTag tag) {
-        activeForms.forEach(activeForm -> activeForm.deserializeNBT(tag.getCompound(activeForm.form().name())));
+        coomplexForms.forEach(activeForm -> activeForm.deserializeNBT(tag.getCompound(activeForm.form().name())));
         skillCategoryData.forEach(catData -> catData.deserializeNBT(tag.getCompound(catData.getName())));
         skillData.forEach(sData -> sData.deserializeNBT(tag.getCompound(sData.getName())));
     }
