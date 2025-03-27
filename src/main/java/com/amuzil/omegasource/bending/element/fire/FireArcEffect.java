@@ -14,6 +14,9 @@ import com.amuzil.omegasource.entity.ElementProjectile;
 import com.amuzil.omegasource.registry.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 
 import static com.amuzil.omegasource.bending.form.Forms.*;
@@ -29,7 +32,7 @@ public class FireArcEffect extends SkillActive {
     @Override
     public FormPath getStartPaths() {
         return SkillPathBuilder.getInstance()
-                .addForm(new ActiveForm(Forms.STRIKE, true))
+                .addForm(new ActiveForm(LOWER, false))
                 .build();
     }
 
@@ -42,30 +45,20 @@ public class FireArcEffect extends SkillActive {
                     shouldStart = ((StringTrait) trait).getInfo().equals("start");
             }
         }
-        return super.shouldStart(entity, formPath) && shouldStart;
+        return super.shouldStart(entity, formPath);// && shouldStart;
     }
 
     @Override
     public void start(LivingEntity entity) {
         super.start(entity);
-        ElementProjectile projectile;
-        if (!entity.level().isClientSide && entity instanceof ServerPlayer) {
-                projectile = ElementProjectile.createElementEntity(STRIKE, Elements.FIRE, (ServerPlayer) entity, (ServerLevel) entity.level());
-                int entityId = 0;
-                assert projectile != null;
+        entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED));
 
-                projectile.shoot(entity.getViewVector(1).x, entity.getViewVector(1).y, entity.getViewVector(1).z, 1, 1);
-        } else {
-            entity.discard();
-            return; // Unhandled Form - Discard and print no effects
-        }
-        entity.level().addFreshEntity(projectile);
-        for (SkillTrait trait : getTraits()) {
-            if (trait instanceof StringTrait) {
-                if (trait.getName().equals("skill_state"))
-                    ((StringTrait) trait).setInfo("stop");
-            }
-        }
+//        for (SkillTrait trait : getTraits()) {
+//            if (trait instanceof StringTrait) {
+//                if (trait.getName().equals("skill_state"))
+//                    ((StringTrait) trait).setInfo("stop");
+//            }
+//        }
 
     }
 

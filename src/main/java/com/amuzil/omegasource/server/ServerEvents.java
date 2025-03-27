@@ -33,8 +33,6 @@ public class ServerEvents {
             return; // Ignore non-player entities
         }
 
-        if (!event.getLevel().isClientSide())
-            RadixTree.getLogger().info("Server Side Join.");
         if (event.getEntity() instanceof Player player) {
             Magi magi = Magi.get(player);
             if (magi != null) {

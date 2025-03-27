@@ -111,6 +111,7 @@ public class InputModule {
                     case InputConstants.KEY_Q -> ExecuteForm(Forms.LOWER);
                     case InputConstants.KEY_E -> ExecuteForm(Forms.RAISE);
                     case InputConstants.KEY_R -> ExecuteForm(Forms.ROTATE);
+                    case InputConstants.KEY_LALT -> ExecuteForm(Forms.ARC);
                 }
             }
         }
@@ -127,6 +128,7 @@ public class InputModule {
             case InputConstants.KEY_Q -> ReleaseForm(Forms.LOWER);
             case InputConstants.KEY_E -> ReleaseForm(Forms.RAISE);
             case InputConstants.KEY_R -> ReleaseForm(Forms.ROTATE);
+            case InputConstants.KEY_LALT -> ReleaseForm(Forms.ARC);
         }
     }
 
