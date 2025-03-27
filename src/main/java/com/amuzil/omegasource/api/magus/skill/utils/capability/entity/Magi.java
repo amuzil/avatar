@@ -1,5 +1,6 @@
 package com.amuzil.omegasource.api.magus.skill.utils.capability.entity;
 
+import com.amuzil.omegasource.api.magus.condition.conditions.FormCondition;
 import com.amuzil.omegasource.api.magus.radix.RadixTree;
 import com.amuzil.omegasource.api.magus.skill.FormPath;
 import com.amuzil.omegasource.api.magus.skill.Skill;
@@ -33,10 +34,10 @@ public class Magi {
     // These are magi specific traits.
     private List<SkillData> skillData;
     private List<SkillCategoryData> skillCategoryData;
-    public LinkedList<ActiveForm> complexForms;
-    public LinkedList<ActiveForm> simpleForms;
+    public LinkedList<ActiveForm> activeForms;
     public FormPath formPath;
     private Skill currentlySelected;
+    private FormCondition activeConditionHandler;
 
     // Change this to use an int - 0 for should start, 1 for should run, 2 for should stop,
     // -1 for default/idle. If I need multiple states, then use bits; 000 for idle, and then
@@ -46,8 +47,7 @@ public class Magi {
     public Magi(Data capabilityData, LivingEntity entity) {
         this.capabilityData = capabilityData;
         this.magi = entity;
-        this.complexForms = new LinkedList<>();
-        this.simpleForms = new LinkedList<>();
+        this.activeForms = new LinkedList<>();
 
         // Initialise skilldata.
         this.skillData = new ArrayList<>();
@@ -58,6 +58,23 @@ public class Magi {
         skillData.forEach(skillData1 -> skillData1.setCanUse(true));
         this.formPath = new FormPath();
         this.currentlySelected = null;
+        this.activeConditionHandler = new FormCondition();
+    }
+
+    public void initialiseFormCondition() {
+        activeConditionHandler.register("formCondition", () -> {
+            ActiveForm activeForm = new ActiveForm(activeConditionHandler.form(), activeConditionHandler.active());
+            if (!activeForms.contains(activeForm)) {
+                formPath.add(List.of(activeForm));
+            } else {
+                formPath.add(List.of(activeForm));
+            }
+        },  () -> {
+        });
+    }
+
+    public void deregisterFormCondition() {
+        activeConditionHandler.unregister();
     }
 
     @Nullable
@@ -114,20 +131,20 @@ public class Magi {
 
     // Called per tick
     public void onUpdate() {
-        formPath.complex(complexForms);
-        formPath.simple(simpleForms);
+        formPath.add(activeForms);
 
-        if (magi.tickCount % 20 == 0)
-            formPath.clear();
+
+        if (!activeForms.isEmpty())
+            RadixTree.getLogger().info("Magi OnUpdate: " + activeForms);
 
         if (getMagi() instanceof Player) {
             List<Skill> skills = Registries.getSkills();
 //            RadixTree.getLogger().debug("Skill Registry Size: " + skills.size());
             for (Skill skill : skills) {
-                RadixTree.getLogger().debug("Skill: " + skill);
+//                RadixTree.getLogger().debug("Skill: " + skill);
                 if (getSkillData(skill).canUse()) {
                     // TODO: Make sure this works; blame Aidan if something needs to be client-side
-                    if (!getMagi().level().isClientSide)
+//                    if (!getMagi().level().isClientSide)
                         skill.tick(getMagi(), formPath);
                 }
             }

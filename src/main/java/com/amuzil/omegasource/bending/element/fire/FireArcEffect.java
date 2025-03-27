@@ -18,8 +18,7 @@ public class FireArcEffect extends SkillActive {
     @Override
     public FormPath getStartPaths() {
         return SkillPathBuilder.getInstance()
-                .complexForm(new ActiveForm(Forms.STRIKE, true))
-                .simpleForm(new ActiveForm(Forms.STRIKE, true))
+                .addForm(new ActiveForm(Forms.STRIKE, true))
                 .build();
     }
 

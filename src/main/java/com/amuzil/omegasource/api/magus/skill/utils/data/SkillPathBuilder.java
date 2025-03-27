@@ -1,8 +1,6 @@
 package com.amuzil.omegasource.api.magus.skill.utils.data;
 
 import com.amuzil.omegasource.api.magus.skill.FormPath;
-import com.amuzil.omegasource.api.magus.skill.Skill;
-import com.amuzil.omegasource.api.magus.skill.SkillActive;
 import com.amuzil.omegasource.bending.form.ActiveForm;
 
 import java.util.LinkedList;
@@ -10,8 +8,7 @@ import java.util.List;
 
 public class SkillPathBuilder extends PathBuilder {
 
-    private List<ActiveForm> simpleForms;
-    private List<ActiveForm> complexForms;
+    private List<ActiveForm> activeForms;
     public static SkillPathBuilder instance;
 
     public static SkillPathBuilder getInstance() {
@@ -21,47 +18,34 @@ public class SkillPathBuilder extends PathBuilder {
         return instance;
     }
 
-    public SkillPathBuilder simpleForm(ActiveForm form) {
-        this.simpleForms.add(form);
-        return this;
-    }
-
-    public SkillPathBuilder complexForm(ActiveForm form) {
-        this.complexForms.add(form);
+    public SkillPathBuilder addForm(ActiveForm form) {
+        this.activeForms.add(form);
         return this;
     }
 
     public FormPath build() {
-        FormPath path = new FormPath(new LinkedList<>(simpleForms), new LinkedList<>(complexForms));
+        FormPath path = new FormPath(new LinkedList<>(activeForms));
         this.reset();
         return path;
     }
 
     public void reset() {
-        if (simpleForms == null)
-            simpleForms = new LinkedList<>();
-        if (complexForms == null)
-            complexForms = new LinkedList<>();
+        if (activeForms == null)
+            activeForms = new LinkedList<>();
 
-        this.simpleForms.clear();
-        this.complexForms.clear();
+        this.activeForms.clear();
     }
 
 
     public static boolean checkForms(List<ActiveForm> formsFirst, List<ActiveForm> formsSecond) {
         if (formsSecond.size() != formsFirst.size())
             return false;
-        if (formsFirst.isEmpty() || formsSecond.isEmpty())
+        if (formsFirst.isEmpty())
             return false;
         for (int i = 0; i < formsFirst.size(); i++) {
             if (!formsFirst.get(i).equals(formsSecond.get(i)))
                 return false;
         }
         return true;
-    }
-
-    public static boolean checkAllForms(FormPath first, FormPath second) {
-        return checkForms(first.complex(), second.complex()) && checkForms(first.simple(), second
-                .simple());
     }
 }

@@ -89,7 +89,6 @@ public abstract class Skill {
         if (shouldStart(entity, formPath)) {
             if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Start(entity, formPath, this))) return;
             start(entity);
-            formPath.clear();
         } else return;
 
         if (shouldRun(entity, formPath)) {

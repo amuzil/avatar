@@ -32,10 +32,9 @@ public class SkillActive extends Skill {
     @Override
     public boolean shouldStart(LivingEntity entity, FormPath formPath) {
         Magi magi = Magi.get(entity);
-        boolean selected = magi.currentlySelected() != null && magi.currentlySelected().equals(this);
-        RadixTree.getLogger().debug("Form Path: " + formPath.complex() + ", Start Path: " + getStartPaths().complex());
-        return SkillPathBuilder.checkForms(formPath.complex(), getStartPaths().complex()) ||
-                SkillPathBuilder.checkForms(formPath.simple(), getStartPaths().simple()) && selected;
+        if (!formPath.active().isEmpty())
+            RadixTree.getLogger().debug("Form Path: " + formPath.active() + ", Start Path: " + getStartPaths().active());
+        return SkillPathBuilder.checkForms(formPath.active(), getStartPaths().active());
     }
 
     @Override
@@ -50,8 +49,10 @@ public class SkillActive extends Skill {
 
     @Override
     public void start(LivingEntity entity) {
-        System.out.println("Success!");
-        Magi.get(entity).formPath.clear();
+        if (!entity.level().isClientSide)
+            RadixTree.getLogger().info("Server Success! ");
+        else RadixTree.getLogger().info("Client Success! ");
+//        Magi.get(entity).formPath.clear();
     }
 
     @Override
