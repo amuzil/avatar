@@ -33,6 +33,7 @@ public class SkillActive extends Skill {
     public boolean shouldStart(LivingEntity entity, FormPath formPath) {
         Magi magi = Magi.get(entity);
         boolean selected = magi.currentlySelected() != null && magi.currentlySelected().equals(this);
+        RadixTree.getLogger().debug("Form Path: " + formPath.complex() + ", Start Path: " + getStartPaths().complex());
         return SkillPathBuilder.checkForms(formPath.complex(), getStartPaths().complex()) ||
                 SkillPathBuilder.checkForms(formPath.simple(), getStartPaths().simple()) && selected;
     }

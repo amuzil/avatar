@@ -117,12 +117,14 @@ public class Magi {
         formPath.complex(complexForms);
         formPath.simple(simpleForms);
 
+        if (magi.tickCount % 20 == 0)
+            formPath.clear();
 
         if (getMagi() instanceof Player) {
             List<Skill> skills = Registries.getSkills();
 //            RadixTree.getLogger().debug("Skill Registry Size: " + skills.size());
             for (Skill skill : skills) {
-//                RadixTree.getLogger().debug("Skill: " + skill);
+                RadixTree.getLogger().debug("Skill: " + skill);
                 if (getSkillData(skill).canUse()) {
                     // TODO: Make sure this works; blame Aidan if something needs to be client-side
                     if (!getMagi().level().isClientSide)
