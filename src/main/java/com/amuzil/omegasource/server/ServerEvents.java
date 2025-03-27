@@ -7,8 +7,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
 import com.amuzil.omegasource.api.magus.skill.utils.capability.entity.Magi;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -19,7 +21,8 @@ public class ServerEvents {
     static FormCondition formCondition = new FormCondition();
 
     @SubscribeEvent
-    public static void worldStart(LevelEvent event) {}
+    public static void worldStart(LevelEvent event) {
+    }
 
     @SubscribeEvent
     public static void onEntityJoinLevel(EntityJoinLevelEvent event) {
@@ -40,7 +43,8 @@ public class ServerEvents {
                             magi.complexForms.remove(activeForm);
                         }
                         Avatar.LOGGER.info("activeForms: {}", magi.complexForms);
-                    }, () -> {});
+                    }, () -> {
+                    });
 
                     Avatar.inputModule.registerListeners();
                     Avatar.reloadFX();
@@ -59,6 +63,16 @@ public class ServerEvents {
             if (Avatar.inputModule != null) { // Temporary fix until we decide which side to make InputModules
                 Avatar.inputModule.terminate();
                 formCondition.unregister();
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void worldTick(LivingEvent.LivingTickEvent event) {
+        if (event.getEntity() != null) {
+            if (Magi.get(event.getEntity()) != null) {
+                Magi magi = Magi.get(event.getEntity());
+                magi.onUpdate();
             }
         }
     }

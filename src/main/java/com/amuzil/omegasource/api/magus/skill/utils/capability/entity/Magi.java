@@ -47,6 +47,7 @@ public class Magi {
         this.capabilityData = capabilityData;
         this.magi = entity;
         this.complexForms = new LinkedList<>();
+        this.simpleForms = new LinkedList<>();
 
         // Initialise skilldata.
         this.skillData = new ArrayList<>();
@@ -115,9 +116,13 @@ public class Magi {
     public void onUpdate() {
         formPath.complex(complexForms);
         formPath.simple(simpleForms);
+
+
         if (getMagi() instanceof Player) {
             List<Skill> skills = Registries.getSkills();
+//            RadixTree.getLogger().debug("Skill Registry Size: " + skills.size());
             for (Skill skill : skills) {
+//                RadixTree.getLogger().debug("Skill: " + skill);
                 if (getSkillData(skill).canUse()) {
                     // TODO: Make sure this works; blame Aidan if something needs to be client-side
                     if (!getMagi().level().isClientSide)
@@ -139,16 +144,18 @@ public class Magi {
         CompoundTag tag = new CompoundTag();
         if (isDirty()) {
             // TODO: Figure out if I need to use the returned tags from each of these values....
-            complexForms.forEach(activeForm -> tag.put(activeForm.form().name(), activeForm.serializeNBT()));
+//            complexForms.forEach(activeForm -> tag.put(activeForm.form().name(), activeForm.serializeNBT()));
             skillCategoryData.forEach(catData -> tag.put(catData.getName(), catData.serializeNBT()));
             skillData.forEach(sData -> tag.put(sData.getName(), sData.serializeNBT()));
+            formPath.serializeNBT();
         }
         return tag;
     }
 
     public void deserialiseNBT(CompoundTag tag) {
-        complexForms.forEach(activeForm -> activeForm.deserializeNBT(tag.getCompound(activeForm.form().name())));
+//        complexForms.forEach(activeForm -> activeForm.deserializeNBT(tag.getCompound(activeForm.form().name())));
         skillCategoryData.forEach(catData -> catData.deserializeNBT(tag.getCompound(catData.getName())));
         skillData.forEach(sData -> sData.deserializeNBT(tag.getCompound(sData.getName())));
+        formPath.deserializeNBT(tag);
     }
 }

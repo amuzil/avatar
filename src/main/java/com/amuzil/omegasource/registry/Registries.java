@@ -8,6 +8,7 @@ import com.amuzil.omegasource.api.magus.skill.utils.traits.DataTrait;
 import com.amuzil.omegasource.api.magus.skill.utils.traits.SkillTrait;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
+import com.amuzil.omegasource.bending.element.fire.FireArcEffect;
 import com.amuzil.omegasource.bending.form.Form;
 import com.amuzil.omegasource.bending.form.Forms;
 import net.minecraft.core.Registry;
@@ -39,8 +40,10 @@ public class Registries {
     public static List<Form> forms = new ArrayList<>();
 
     public static void init() {
+        registerSkill(ARC_SKILl);
     }
 
+    public static final FireArcEffect ARC_SKILl = new FireArcEffect();
     /**
      * Registry methods.
      */
@@ -140,9 +143,9 @@ public class Registries {
             IForgeRegistry<Skill> registry = SKILLS.get();
             ResourceKey<Registry<Skill>> resKey = registry.getRegistryKey();
 
-//            event.register(resKey, helper -> {
-//                registry.register(FIREBALL.getId(), FIREBALL);
-//            });
+            event.register(resKey, helper -> {
+                registry.register(ARC_SKILl.getId(), ARC_SKILl);
+            });
         }
 
         // Skill Categories

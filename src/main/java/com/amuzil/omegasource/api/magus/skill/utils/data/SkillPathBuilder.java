@@ -32,7 +32,7 @@ public class SkillPathBuilder extends PathBuilder {
     }
 
     public FormPath build() {
-        FormPath path = new FormPath(simpleForms, complexForms);
+        FormPath path = new FormPath(new LinkedList<>(simpleForms), new LinkedList<>(complexForms));
         this.reset();
         return path;
     }
@@ -50,6 +50,8 @@ public class SkillPathBuilder extends PathBuilder {
 
     public static boolean checkForms(List<ActiveForm> formsFirst, List<ActiveForm> formsSecond) {
         if (formsSecond.size() != formsFirst.size())
+            return false;
+        if (formsFirst.isEmpty() || formsSecond.isEmpty())
             return false;
         for (int i = 0; i < formsFirst.size(); i++) {
             if (!formsFirst.get(i).equals(formsSecond.get(i)))

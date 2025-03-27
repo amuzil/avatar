@@ -1,9 +1,11 @@
 package com.amuzil.omegasource.api.magus.skill;
 
+import com.amuzil.omegasource.api.magus.radix.RadixTree;
 import com.amuzil.omegasource.api.magus.skill.utils.capability.entity.Magi;
 import com.amuzil.omegasource.api.magus.skill.utils.data.SkillPathBuilder;
 import com.amuzil.omegasource.bending.form.ActiveForm;
 import com.amuzil.omegasource.bending.form.Forms;
+import net.minecraft.world.RandomSequence;
 import net.minecraft.world.entity.LivingEntity;
 
 public class SkillActive extends Skill {
@@ -30,8 +32,9 @@ public class SkillActive extends Skill {
     @Override
     public boolean shouldStart(LivingEntity entity, FormPath formPath) {
         Magi magi = Magi.get(entity);
+        boolean selected = magi.currentlySelected() != null && magi.currentlySelected().equals(this);
         return SkillPathBuilder.checkForms(formPath.complex(), getStartPaths().complex()) ||
-                SkillPathBuilder.checkForms(formPath.simple(), getStartPaths().simple()) && magi.currentlySelected().equals(this);
+                SkillPathBuilder.checkForms(formPath.simple(), getStartPaths().simple()) && selected;
     }
 
     @Override
@@ -46,7 +49,8 @@ public class SkillActive extends Skill {
 
     @Override
     public void start(LivingEntity entity) {
-
+        System.out.println("Success!");
+        Magi.get(entity).formPath.clear();
     }
 
     @Override
