@@ -69,6 +69,7 @@ public class Magi {
             } else {
                 formPath.add(List.of(activeForm));
             }
+            RadixTree.getLogger().debug("Active Forms: " + formPath.active());
         },  () -> {
         });
     }
@@ -131,11 +132,8 @@ public class Magi {
 
     // Called per tick
     public void onUpdate() {
-        formPath.add(activeForms);
-
-
-        if (!activeForms.isEmpty())
-            RadixTree.getLogger().info("Magi OnUpdate: " + activeForms);
+//        if (!activeForms.isEmpty())
+//            RadixTree.getLogger().info("Magi OnUpdate: " + activeForms);
 
         if (getMagi() instanceof Player) {
             List<Skill> skills = Registries.getSkills();
@@ -167,6 +165,7 @@ public class Magi {
             skillCategoryData.forEach(catData -> tag.put(catData.getName(), catData.serializeNBT()));
             skillData.forEach(sData -> tag.put(sData.getName(), sData.serializeNBT()));
             formPath.serializeNBT();
+            System.out.println("Serialise: " + formPath.active());
         }
         return tag;
     }
@@ -176,5 +175,6 @@ public class Magi {
         skillCategoryData.forEach(catData -> catData.deserializeNBT(tag.getCompound(catData.getName())));
         skillData.forEach(sData -> sData.deserializeNBT(tag.getCompound(sData.getName())));
         formPath.deserializeNBT(tag);
+        System.out.println("Deserialise: " + formPath.active());
     }
 }

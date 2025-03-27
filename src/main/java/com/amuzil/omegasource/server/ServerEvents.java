@@ -56,7 +56,9 @@ public class ServerEvents {
             //      java.lang.NullPointerException: Cannot invoke "com.amuzil.omegasource.magus.input.InputModule.getFormsTree()"
             //      because "com.amuzil.omegasource.magus.Magus.keyboardMouseInputModule" is null
 
-            Magi.get((LivingEntity) event.getEntity()).deregisterFormCondition();
+            Magi magi = Magi.get((LivingEntity) event.getEntity());
+            if (magi != null)
+                magi.deregisterFormCondition();
 
         } else if (event.getEntity() instanceof Player && event.getLevel().isClientSide) {
             if (Avatar.inputModule != null) { // Temporary fix until we decide which side to make InputModules
