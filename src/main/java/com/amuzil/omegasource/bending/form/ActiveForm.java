@@ -1,6 +1,5 @@
 package com.amuzil.omegasource.bending.form;
 
-
 import com.amuzil.omegasource.registry.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -49,7 +48,7 @@ public class ActiveForm {
         } else if (!(obj instanceof ActiveForm other)) {
             return false;
         } else {
-            return form.name().equals(other.form.name()) && active == other.active;
+            return form.name().equals(other.form.name());
         }
     }
 

@@ -86,7 +86,7 @@ public class InputModule {
         this.tickEventConsumer = tickEvent -> {
             if (tickEvent.phase == TickEvent.ClientTickEvent.Phase.START && Minecraft.getInstance().getOverlay() == null) {
                 glfwKeysDown.forEach((key, ticks) -> {
-                    if (ticks == 0) {
+                    if (ticks == 0 && Minecraft.getInstance().getConnection() != null) {
                         CheckFormsExecute(key);
                     }
                     glfwKeysDown.put(key, ticks+1);

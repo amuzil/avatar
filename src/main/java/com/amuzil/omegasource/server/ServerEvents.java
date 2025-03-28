@@ -1,10 +1,6 @@
 package com.amuzil.omegasource.server;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.api.magus.condition.conditions.FormCondition;
-import com.amuzil.omegasource.api.magus.radix.RadixTree;
-import com.amuzil.omegasource.bending.form.ActiveForm;
-import com.amuzil.omegasource.events.FormActivatedEvent;
 import net.minecraft.server.level.ServerPlayer;
 import com.amuzil.omegasource.api.magus.skill.utils.capability.entity.Magi;
 import net.minecraft.world.entity.LivingEntity;
@@ -16,15 +12,12 @@ import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.List;
-
 
 @Mod.EventBusSubscriber
 public class ServerEvents {
 
     @SubscribeEvent
-    public static void worldStart(LevelEvent event) {
-    }
+    public static void worldStart(LevelEvent event) {}
 
 
     @SubscribeEvent
@@ -36,7 +29,7 @@ public class ServerEvents {
         if (event.getEntity() instanceof Player player) {
             Magi magi = Magi.get(player);
             if (magi != null) {
-                magi.initialiseFormCondition();
+                magi.registerFormCondition();
 
                 if (event.getLevel().isClientSide) {
                     Avatar.inputModule.registerListeners();
@@ -56,7 +49,7 @@ public class ServerEvents {
 
             Magi magi = Magi.get((LivingEntity) event.getEntity());
             if (magi != null)
-                magi.deregisterFormCondition();
+                magi.unregisterFormCondition();
 
         } else if (event.getEntity() instanceof Player && event.getLevel().isClientSide) {
             if (Avatar.inputModule != null) { // Temporary fix until we decide which side to make InputModules

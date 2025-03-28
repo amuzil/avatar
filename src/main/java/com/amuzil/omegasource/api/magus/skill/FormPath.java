@@ -8,33 +8,46 @@ import java.util.List;
 
 public class FormPath {
 
-    private List<ActiveForm> active;
-    public void clear() {
-        if (active == null)
-            active = new LinkedList<>();
-        active.clear();
-    }
+    private List<ActiveForm> simpleForms;
+    private List<ActiveForm> complexForms;
 
     public FormPath() {
-        this.active = new LinkedList<>();
+        this.simpleForms = new LinkedList<>();
+        this.complexForms = new LinkedList<>();
     }
 
     public FormPath(List<ActiveForm> complexForms) {
-        this.active = complexForms;
-    }
-    public void add(List<ActiveForm> complex) {
-        this.active = complex;
+        this.simpleForms = new LinkedList<>();
+        this.complexForms = complexForms;
     }
 
-    public List<ActiveForm> active() {
-        return this.active;
+    public void clear() {
+        if (simpleForms == null)
+            simpleForms = new LinkedList<>();
+        simpleForms.clear();
+        complexForms.clear();
     }
 
+    public void update(ActiveForm activeForm) {
+        if (activeForm.active()) {
+            simpleForms.add(activeForm);
+        } else {
+            simpleForms.remove(activeForm);
+        }
+    }
+
+    public List<ActiveForm> simple() {
+        return this.simpleForms;
+    }
+
+    public List<ActiveForm> complex() {
+        return this.complexForms;
+    }
 
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
         int i = 0;
-        for (ActiveForm form : active) {
+        for (ActiveForm form : simpleForms) {
             tag.put("Active " + i, form.serializeNBT());
             i++;
         }
@@ -45,7 +58,7 @@ public class FormPath {
     public void deserializeNBT(CompoundTag compoundTag) {
         int size = compoundTag.getInt("Active Size");
         for (int i = 0; i < size; i++) {
-            active.get(i).deserializeNBT((CompoundTag) compoundTag.get("Active " + i));
+            simpleForms.get(i).deserializeNBT((CompoundTag) compoundTag.get("Active " + i));
         }
     }
 }

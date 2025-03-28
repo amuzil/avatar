@@ -61,20 +61,16 @@ public class Magi {
         this.activeConditionHandler = new FormCondition();
     }
 
-    public void initialiseFormCondition() {
+    public void registerFormCondition() {
         activeConditionHandler.register("formCondition", () -> {
             ActiveForm activeForm = new ActiveForm(activeConditionHandler.form(), activeConditionHandler.active());
-            if (!activeForms.contains(activeForm)) {
-                formPath.add(List.of(activeForm));
-            } else {
-                formPath.add(List.of(activeForm));
-            }
-            RadixTree.getLogger().debug("Active Forms: " + formPath.active());
+            formPath.update(activeForm);
+            RadixTree.getLogger().debug("Active Forms: {} | CLIENT-SIDE: {}", formPath.simple(), magi.level().isClientSide());
         },  () -> {
         });
     }
 
-    public void deregisterFormCondition() {
+    public void unregisterFormCondition() {
         activeConditionHandler.unregister();
     }
 
@@ -165,7 +161,7 @@ public class Magi {
             skillCategoryData.forEach(catData -> tag.put(catData.getName(), catData.serializeNBT()));
             skillData.forEach(sData -> tag.put(sData.getName(), sData.serializeNBT()));
             formPath.serializeNBT();
-            System.out.println("Serialise: " + formPath.active());
+            System.out.println("Serialise: " + formPath.complex());
         }
         return tag;
     }
@@ -175,6 +171,6 @@ public class Magi {
         skillCategoryData.forEach(catData -> catData.deserializeNBT(tag.getCompound(catData.getName())));
         skillData.forEach(sData -> sData.deserializeNBT(tag.getCompound(sData.getName())));
         formPath.deserializeNBT(tag);
-        System.out.println("Deserialise: " + formPath.active());
+        System.out.println("Deserialise: " + formPath.complex());
     }
 }

@@ -3,9 +3,6 @@ package com.amuzil.omegasource.api.magus.skill;
 import com.amuzil.omegasource.api.magus.radix.RadixTree;
 import com.amuzil.omegasource.api.magus.skill.utils.capability.entity.Magi;
 import com.amuzil.omegasource.api.magus.skill.utils.data.SkillPathBuilder;
-import com.amuzil.omegasource.bending.form.ActiveForm;
-import com.amuzil.omegasource.bending.form.Forms;
-import net.minecraft.world.RandomSequence;
 import net.minecraft.world.entity.LivingEntity;
 
 public class SkillActive extends Skill {
@@ -33,7 +30,7 @@ public class SkillActive extends Skill {
     public boolean shouldStart(LivingEntity entity, FormPath formPath) {
         Magi magi = Magi.get(entity);
        
-        return SkillPathBuilder.checkForms(formPath.active(), getStartPaths().active());
+        return SkillPathBuilder.checkForms(formPath.complex(), getStartPaths().complex());
     }
 
     @Override
