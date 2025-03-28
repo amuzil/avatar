@@ -15,7 +15,8 @@ public class FormCondition extends Condition {
     private final Consumer<TickEvent> tickListener;
     private Form form;
     private boolean active;
-    private int timeout = 0;
+    private final int timeout = 300; // Adjust timeout time here
+    private int tick = timeout;
 
     public FormCondition() {
         listener = event -> {
@@ -27,11 +28,12 @@ public class FormCondition extends Condition {
         tickListener = event -> {
             // Ticking for both server & client ~40 ticks == 1 second
             if (!active) {
-                if (timeout == 350) {
+                if (tick == 0) {
                     onFailure.run();
-                    timeout = 0;
+                    tick = timeout;
+                    active = true;
                 }
-                timeout++;
+                tick--;
             }
         };
     }
