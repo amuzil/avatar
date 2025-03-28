@@ -4,6 +4,7 @@ import com.amuzil.omegasource.api.magus.condition.Condition;
 import com.amuzil.omegasource.bending.form.Form;
 import com.amuzil.omegasource.events.FormActivatedEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 import java.util.function.Consumer;
@@ -11,14 +12,27 @@ import java.util.function.Consumer;
 
 public class FormCondition extends Condition {
     private final Consumer<FormActivatedEvent> listener;
+    private final Consumer<TickEvent> tickListener;
     private Form form;
     private boolean active;
+    private int timeout = 0;
 
     public FormCondition() {
         listener = event -> {
             form = event.getForm();
             active = !event.released();
             onSuccess.run();
+        };
+
+        tickListener = event -> {
+            // Ticking for both server & client ~40 ticks == 1 second
+            if (!active) {
+                if (timeout == 350) {
+                    onFailure.run();
+                    timeout = 0;
+                }
+                timeout++;
+            }
         };
     }
 
@@ -41,12 +55,14 @@ public class FormCondition extends Condition {
         super.register();
         //This is required because a class type check isn't built-in, for some reason.
         MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, listener);
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, tickListener);
     }
 
     @Override
     public void unregister() {
         super.unregister();
         MinecraftForge.EVENT_BUS.unregister(listener);
+        MinecraftForge.EVENT_BUS.unregister(tickListener);
     }
 
     @Override

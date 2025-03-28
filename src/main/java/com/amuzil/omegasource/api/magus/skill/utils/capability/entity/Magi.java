@@ -37,7 +37,7 @@ public class Magi {
     public LinkedList<ActiveForm> activeForms;
     public FormPath formPath;
     private Skill currentlySelected;
-    private FormCondition activeConditionHandler;
+    private FormCondition formConditionHandler;
 
     // Change this to use an int - 0 for should start, 1 for should run, 2 for should stop,
     // -1 for default/idle. If I need multiple states, then use bits; 000 for idle, and then
@@ -58,20 +58,29 @@ public class Magi {
         skillData.forEach(skillData1 -> skillData1.setCanUse(true));
         this.formPath = new FormPath();
         this.currentlySelected = null;
-        this.activeConditionHandler = new FormCondition();
+        this.formConditionHandler = new FormCondition();
     }
 
     public void registerFormCondition() {
-        activeConditionHandler.register("formCondition", () -> {
-            ActiveForm activeForm = new ActiveForm(activeConditionHandler.form(), activeConditionHandler.active());
+        formConditionHandler.register("formCondition", () -> {
+            ActiveForm activeForm = new ActiveForm(formConditionHandler.form(), formConditionHandler.active());
             formPath.update(activeForm);
-            RadixTree.getLogger().debug("Active Forms: {} | CLIENT-SIDE: {}", formPath.simple(), magi.level().isClientSide());
+            if (magi.level().isClientSide()) {
+                RadixTree.getLogger().debug("Simple Forms: {}", formPath.simple());
+                RadixTree.getLogger().debug("Complex Forms: {}", formPath.complex());
+            }
         },  () -> {
+            if (!formPath.isActive())
+                formPath.clear();
+            if (magi.level().isClientSide()) {
+                RadixTree.getLogger().debug("Simple Forms: {}", formPath.simple());
+                RadixTree.getLogger().debug("Complex Forms Timed Out: {}", formPath.complex());
+            }
         });
     }
 
     public void unregisterFormCondition() {
-        activeConditionHandler.unregister();
+        formConditionHandler.unregister();
     }
 
     @Nullable

@@ -10,10 +10,12 @@ public class FormPath {
 
     private List<ActiveForm> simpleForms;
     private List<ActiveForm> complexForms;
+    private boolean active;
 
     public FormPath() {
         this.simpleForms = new LinkedList<>();
         this.complexForms = new LinkedList<>();
+        this.active = false;
     }
 
     public FormPath(List<ActiveForm> complexForms) {
@@ -22,18 +24,21 @@ public class FormPath {
     }
 
     public void clear() {
-        if (simpleForms == null)
-            simpleForms = new LinkedList<>();
-        simpleForms.clear();
         complexForms.clear();
     }
 
     public void update(ActiveForm activeForm) {
         if (activeForm.active()) {
             simpleForms.add(activeForm);
+            complexForms.add(activeForm);
         } else {
             simpleForms.remove(activeForm);
         }
+        active = !simpleForms.isEmpty();
+    }
+
+    public boolean isActive() {
+        return this.active;
     }
 
     public List<ActiveForm> simple() {
