@@ -3,24 +3,16 @@ package com.amuzil.omegasource.bending.element.fire;
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.skill.FormPath;
 import com.amuzil.omegasource.api.magus.skill.SkillActive;
-import com.amuzil.omegasource.api.magus.skill.utils.capability.entity.Magi;
 import com.amuzil.omegasource.api.magus.skill.utils.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.utils.traits.SkillTrait;
 import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.StringTrait;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.form.ActiveForm;
-import com.amuzil.omegasource.bending.form.Forms;
-import com.amuzil.omegasource.entity.ElementProjectile;
-import com.amuzil.omegasource.registry.Registries;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 
-import static com.amuzil.omegasource.bending.form.Forms.*;
-import static com.amuzil.omegasource.bending.form.Forms.BLOCK;
+import static com.amuzil.omegasource.bending.form.Forms.LOWER;
 
 public class FireArcEffect extends SkillActive {
 

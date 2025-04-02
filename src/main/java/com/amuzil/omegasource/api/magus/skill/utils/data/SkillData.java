@@ -100,6 +100,7 @@ public class SkillData implements DataTrait {
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
         tag.putString("Skill ID", skillId.toString());
+        tag.putString("Skill State: ", state.name());
         skillTraits.forEach(skillTrait -> {
             if (skillTrait.isDirty()) tag.put(skillTrait.getName() + "Trait", skillTrait.serializeNBT());
         });
@@ -111,6 +112,7 @@ public class SkillData implements DataTrait {
         markClean();
         try {
             skillId = ResourceLocation.tryParse(nbt.getString("Skill ID"));
+            state = Skill.SkillState.valueOf(nbt.getString("Skill State"));
             skillTraits.forEach(skillTrait -> skillTrait.deserializeNBT((CompoundTag) Objects.requireNonNull(nbt.get(skillTrait.getName() + "Trait"))));
         } catch (NullPointerException e) {
             RadixTree.getLogger().error("Something has gone seriously wrong:" + "A skill trait hasn't been carried over from the registry.");

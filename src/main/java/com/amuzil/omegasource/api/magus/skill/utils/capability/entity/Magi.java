@@ -51,8 +51,10 @@ public class Magi {
 
         // Initialise skilldata.
         this.skillData = new ArrayList<>();
-        for (Skill skill : Registries.skills)
+        for (Skill skill : Registries.skills) {
             skillData.add(new SkillData(skill));
+
+        }
 
         // Testing...
         skillData.forEach(skillData1 -> skillData1.setCanUse(true));
@@ -128,6 +130,10 @@ public class Magi {
 
     public SkillData getSkillData(ResourceLocation id) {
         return skillData.stream().filter(skillData1 -> skillData1.getSkillId().equals(id)).toList().get(0);
+    }
+
+    public Skill.SkillState getSkillState(Skill skill) {
+        return getSkillData(skill.getId()).getState();
     }
 
     public SkillData getSkillData(String id) {
