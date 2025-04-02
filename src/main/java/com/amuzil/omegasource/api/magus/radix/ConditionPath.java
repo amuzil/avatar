@@ -1,10 +1,6 @@
 package com.amuzil.omegasource.api.magus.radix;
 
 import com.amuzil.omegasource.api.magus.condition.Condition;
-import com.ibm.icu.impl.Pair;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.*;
 

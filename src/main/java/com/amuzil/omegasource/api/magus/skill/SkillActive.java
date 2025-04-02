@@ -1,7 +1,7 @@
 package com.amuzil.omegasource.api.magus.skill;
 
-import com.amuzil.omegasource.api.magus.radix.RadixTree;
-import com.amuzil.omegasource.api.magus.skill.utils.capability.entity.Magi;
+import com.amuzil.omegasource.api.magus.form.FormPath;
+import com.amuzil.omegasource.api.magus.capability.entity.Magi;
 import com.amuzil.omegasource.api.magus.skill.utils.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.utils.data.SkillPathBuilder;
 import net.minecraft.world.entity.LivingEntity;

@@ -1,7 +1,7 @@
-package com.amuzil.omegasource.api.magus.skill.utils.capability;
+package com.amuzil.omegasource.api.magus.capability;
 
-import com.amuzil.omegasource.api.magus.skill.utils.capability.entity.Data;
-import com.amuzil.omegasource.api.magus.skill.utils.capability.entity.LivingDataCapability;
+import com.amuzil.omegasource.api.magus.capability.entity.Data;
+import com.amuzil.omegasource.api.magus.capability.entity.LivingDataCapability;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;

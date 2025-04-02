@@ -1,7 +1,7 @@
 package com.amuzil.omegasource.bending;
 
-import com.amuzil.omegasource.api.magus.skill.utils.capability.entity.Data;
-import com.amuzil.omegasource.api.magus.skill.utils.capability.entity.Magi;
+import com.amuzil.omegasource.api.magus.capability.entity.Data;
+import com.amuzil.omegasource.api.magus.capability.entity.Magi;
 import net.minecraft.world.entity.LivingEntity;
 
 

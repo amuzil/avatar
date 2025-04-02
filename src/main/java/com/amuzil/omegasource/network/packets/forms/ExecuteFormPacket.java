@@ -2,7 +2,7 @@ package com.amuzil.omegasource.network.packets.forms;
 
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.bending.element.Elements;
-import com.amuzil.omegasource.bending.form.Form;
+import com.amuzil.omegasource.api.magus.form.Form;
 import com.amuzil.omegasource.entity.ElementProjectile;
 import com.amuzil.omegasource.events.FormActivatedEvent;
 import com.amuzil.omegasource.network.AvatarNetwork;
@@ -17,7 +17,7 @@ import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
-import static com.amuzil.omegasource.bending.form.Forms.*;
+import static com.amuzil.omegasource.bending.BendingForms.*;
 
 
 public class ExecuteFormPacket implements AvatarPacket {

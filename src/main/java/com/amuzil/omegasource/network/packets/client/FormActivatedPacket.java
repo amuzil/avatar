@@ -1,7 +1,7 @@
 package com.amuzil.omegasource.network.packets.client;
 
 import com.amuzil.omegasource.bending.element.Element;
-import com.amuzil.omegasource.bending.form.Form;
+import com.amuzil.omegasource.api.magus.form.Form;
 import com.amuzil.omegasource.entity.ElementProjectile;
 import com.amuzil.omegasource.events.FormActivatedEvent;
 import com.amuzil.omegasource.network.AvatarNetwork;
@@ -26,7 +26,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 import static com.amuzil.omegasource.Avatar.MOD_ID;
-import static com.amuzil.omegasource.bending.form.Forms.*;
+import static com.amuzil.omegasource.bending.BendingForms.*;
 
 
 public class FormActivatedPacket implements AvatarPacket {

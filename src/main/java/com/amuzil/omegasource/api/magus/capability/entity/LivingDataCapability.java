@@ -1,9 +1,9 @@
-package com.amuzil.omegasource.api.magus.skill.utils.capability.entity;
+package com.amuzil.omegasource.api.magus.capability.entity;
 
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.skill.Skill;
 import com.amuzil.omegasource.api.magus.skill.SkillCategory;
-import com.amuzil.omegasource.api.magus.skill.utils.capability.CapabilityHandler;
+import com.amuzil.omegasource.api.magus.capability.CapabilityHandler;
 import com.amuzil.omegasource.api.magus.skill.utils.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.utils.traits.DataTrait;
 import com.amuzil.omegasource.registry.Registries;
