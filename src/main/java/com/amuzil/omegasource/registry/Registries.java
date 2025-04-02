@@ -8,7 +8,7 @@ import com.amuzil.omegasource.api.magus.skill.utils.traits.DataTrait;
 import com.amuzil.omegasource.api.magus.skill.utils.traits.SkillTrait;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
-import com.amuzil.omegasource.bending.element.fire.FireArcEffect;
+import com.amuzil.omegasource.bending.element.fire.FireStrikeEffect;
 import com.amuzil.omegasource.bending.form.Form;
 import com.amuzil.omegasource.bending.form.Forms;
 import net.minecraft.core.Registry;
@@ -43,7 +43,7 @@ public class Registries {
 //        registerSkill(ARC_SKILl);
     }
 
-    public static final FireArcEffect ARC_SKILl = new FireArcEffect();
+    public static final FireStrikeEffect ARC_SKILl = new FireStrikeEffect();
     /**
      * Registry methods.
      */

@@ -147,6 +147,18 @@ public class SkillData implements DataTrait {
         return null;
     }
 
+    @Nullable
+    public <T extends SkillTrait> T getTrait(String name, Class<T> type) {
+        for (SkillTrait trait : getSkillTraits()) {
+            if (trait.getName().equals(name) && type.isInstance(trait)) {
+                return type.cast(trait);
+            }
+        }
+        return null;
+    }
+
+
+
     public void reset() {
         for (SkillTrait trait : getSkillTraits())
             trait.reset();

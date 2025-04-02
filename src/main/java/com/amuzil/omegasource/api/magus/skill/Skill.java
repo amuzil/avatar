@@ -95,7 +95,6 @@ public abstract class Skill {
         if (shouldStart(entity, formPath)) {
             if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Start(entity, formPath, this))) return;
 
-
             if (magi != null) {
                 SkillData skillData = magi.getSkillData(this);
                 skillData.setState(SkillState.START);
@@ -105,6 +104,7 @@ public abstract class Skill {
 
         if (shouldRun(entity, formPath)) {
             if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Run(entity, formPath, this))) return;
+
             if (magi != null) {
                 SkillData skillData = magi.getSkillData(this);
                 if (!skillData.getState().equals(SkillState.RUN))
@@ -116,6 +116,7 @@ public abstract class Skill {
 
         if (shouldStop(entity, formPath)) {
             if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Stop(entity, formPath, this))) return;
+
             if (magi != null) {
                 SkillData skillData = magi.getSkillData(this);
                 skillData.setState(SkillState.STOP);

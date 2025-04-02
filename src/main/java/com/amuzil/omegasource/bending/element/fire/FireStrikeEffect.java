@@ -4,37 +4,39 @@ import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.radix.RadixTree;
 import com.amuzil.omegasource.api.magus.skill.FormPath;
 import com.amuzil.omegasource.api.magus.skill.SkillActive;
+import com.amuzil.omegasource.api.magus.skill.SkillCategory;
 import com.amuzil.omegasource.api.magus.skill.utils.capability.entity.Magi;
 import com.amuzil.omegasource.api.magus.skill.utils.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.utils.data.SkillPathBuilder;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.SkillTrait;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.StringTrait;
-import com.amuzil.omegasource.bending.element.Element;
+import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.*;
+import com.amuzil.omegasource.bending.BendingSkill;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.form.ActiveForm;
-import com.amuzil.omegasource.bending.form.Forms;
 import com.amuzil.omegasource.entity.ElementProjectile;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
+import org.checkerframework.checker.units.qual.C;
 
-import static com.amuzil.omegasource.bending.form.Forms.*;
+import static com.amuzil.omegasource.bending.form.Forms.PUSH;
+import static com.amuzil.omegasource.bending.form.Forms.STRIKE;
 
-public class FireArcEffect extends SkillActive {
+public class FireStrikeEffect extends BendingSkill {
 
-    public FireArcEffect() {
-        super(Avatar.MOD_ID, "fire_arc_effect", Elements.FIRE);
-        addTrait(new StringTrait("skill_state", "start"));
+    public FireStrikeEffect() {
+        super(Avatar.MOD_ID, "fire_strike_effect", Elements.FIRE);
+        addTrait(new DamageTrait(3.0f, "damage"));
+        addTrait(new SizeTrait(1.0f, "size"));
+        addTrait(new KnockbackTrait(1.5f, "knockback"));
+        addTrait(new SpeedTrait(3.0f, "speed"));
+        addTrait(new ColourTrait(0, 0, 0, "fire_colour"));
+
     }
 
     @Override
     public FormPath getStartPaths() {
         return SkillPathBuilder.getInstance()
-                .addForm(new ActiveForm(LOWER, true))
+                .addForm(new ActiveForm(PUSH, true))
                 .build();
     }
 
@@ -47,9 +49,17 @@ public class FireArcEffect extends SkillActive {
             if (data.getState().equals(SkillState.START)) {
                 shouldStart = true;
             }
+            else if (data.getState().equals(SkillState.IDLE)) {
+               shouldStart = checkCooldown(data);
+            }
         }
 
-        return super.shouldStart(entity, formPath);// && shouldStart;
+        return super.shouldStart(entity, formPath) && shouldStart;
+    }
+
+    @Override
+    public SkillCategory getCategory() {
+        return Elements.FIRE;
     }
 
     @Override
@@ -64,6 +74,14 @@ public class FireArcEffect extends SkillActive {
             proj.shoot(entity.getViewVector(1).x, entity.getViewVector(1).y, entity.getViewVector(1).z, 1, 1);
             entity.level().addFreshEntity(proj);
             RadixTree.getLogger().debug("Attempting projectile spawn.");
+        }
+
+        Magi magi = Magi.get(entity);
+        if (magi != null) {
+            SkillData data = magi.getSkillData(this);
+            data.setState(SkillState.IDLE);
+
+            resetCooldown(data);
         }
 
 //        for (SkillTrait trait : getTraits()) {
