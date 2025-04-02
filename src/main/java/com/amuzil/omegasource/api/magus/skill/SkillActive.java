@@ -46,27 +46,12 @@ public class SkillActive extends Skill {
 
     @Override
     public void start(LivingEntity entity) {
-        Magi magi = Magi.get(entity);
-        if (magi != null) {
-            SkillData data = magi.getSkillData(this);
-            data.setState(SkillState.START);
-        }
-
-        if (!entity.level().isClientSide)
-            RadixTree.getLogger().info("Server Success! ");
-        else RadixTree.getLogger().info("Client Success! ");
-
 
 //        Magi.get(entity).formPath.clear();
     }
 
     @Override
     public void run(LivingEntity entity) {
-        Magi magi = Magi.get(entity);
-        if (magi != null) {
-            SkillData data = magi.getSkillData(this);
-            data.setState(SkillState.RUN);
-        }
     }
 
     @Override
@@ -74,7 +59,7 @@ public class SkillActive extends Skill {
         Magi magi = Magi.get(entity);
         if (magi != null) {
             SkillData data = magi.getSkillData(this);
-            data.setState(SkillState.STOP);
+            data.setState(SkillState.IDLE);
         }
     }
 

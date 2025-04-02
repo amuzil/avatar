@@ -4,8 +4,11 @@ import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.radix.ConditionPath;
 import com.amuzil.omegasource.api.magus.radix.RadixTree;
 import com.amuzil.omegasource.api.magus.skill.event.SkillTickEvent;
+import com.amuzil.omegasource.api.magus.skill.utils.capability.entity.Magi;
+import com.amuzil.omegasource.api.magus.skill.utils.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.utils.traits.SkillTrait;
 import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.UseTrait;
+import com.amuzil.omegasource.registry.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.MinecraftForge;
@@ -47,6 +50,8 @@ public abstract class Skill {
 
         // Maybe static instances of traits rather then new instances per Skill? Unsure
         addTrait(new UseTrait("use_skill", false));
+
+        Registries.registerSkill(this);
     }
 
     public void addTrait(SkillTrait trait) {
@@ -85,20 +90,36 @@ public abstract class Skill {
     public void tick(LivingEntity entity, FormPath formPath) {
         //Run this asynchronously
 
+        Magi magi = Magi.get(entity);
         // Remember, for some reason post only returns true upon the event being cancelled. Blame Forge.
         if (shouldStart(entity, formPath)) {
             if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Start(entity, formPath, this))) return;
+
+
+            if (magi != null) {
+                SkillData skillData = magi.getSkillData(this);
+                skillData.setState(SkillState.START);
+            }
             start(entity);
         } else return;
 
         if (shouldRun(entity, formPath)) {
             if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Run(entity, formPath, this))) return;
+            if (magi != null) {
+                SkillData skillData = magi.getSkillData(this);
+                if (!skillData.getState().equals(SkillState.RUN))
+                    skillData.setState(SkillState.RUN);
+            }
             run(entity);
 
         }
 
         if (shouldStop(entity, formPath)) {
             if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Stop(entity, formPath, this))) return;
+            if (magi != null) {
+                SkillData skillData = magi.getSkillData(this);
+                skillData.setState(SkillState.STOP);
+            }
             stop(entity);
         }
     }
@@ -127,7 +148,19 @@ public abstract class Skill {
 
 
     public enum SkillState {
-        START, RUN, STOP
+        IDLE("idle"),
+        START("start"),
+        RUN("run"),
+        STOP("stop");
+
+        String name;
+        SkillState(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return this.name;
+        }
     }
 
     /**

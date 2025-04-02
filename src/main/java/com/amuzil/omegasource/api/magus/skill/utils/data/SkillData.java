@@ -100,7 +100,7 @@ public class SkillData implements DataTrait {
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
         tag.putString("Skill ID", skillId.toString());
-        tag.putString("Skill State: ", state.name());
+        tag.putString("Skill State", state.name());
         skillTraits.forEach(skillTrait -> {
             if (skillTrait.isDirty()) tag.put(skillTrait.getName() + "Trait", skillTrait.serializeNBT());
         });

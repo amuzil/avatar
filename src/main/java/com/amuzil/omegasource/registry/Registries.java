@@ -40,7 +40,7 @@ public class Registries {
     public static List<Form> forms = new ArrayList<>();
 
     public static void init() {
-        registerSkill(ARC_SKILl);
+//        registerSkill(ARC_SKILl);
     }
 
     public static final FireArcEffect ARC_SKILl = new FireArcEffect();
