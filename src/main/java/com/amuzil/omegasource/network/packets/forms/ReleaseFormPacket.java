@@ -1,7 +1,7 @@
 package com.amuzil.omegasource.network.packets.forms;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.bending.form.Form;
+import com.amuzil.omegasource.api.magus.form.Form;
 import com.amuzil.omegasource.events.FormActivatedEvent;
 import com.amuzil.omegasource.network.packets.api.AvatarPacket;
 import net.minecraft.network.FriendlyByteBuf;

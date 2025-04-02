@@ -1,4 +1,4 @@
-package com.amuzil.omegasource.api.magus.skill.utils.capability.entity;
+package com.amuzil.omegasource.api.magus.capability.entity;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.util.INBTSerializable;

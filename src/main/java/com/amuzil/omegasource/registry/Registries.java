@@ -1,16 +1,16 @@
 package com.amuzil.omegasource.registry;
 
 import com.amuzil.omegasource.Avatar;
+import com.amuzil.omegasource.api.magus.form.Form;
 import com.amuzil.omegasource.api.magus.skill.SkillCategory;
 import com.amuzil.omegasource.api.magus.condition.Condition;
 import com.amuzil.omegasource.api.magus.skill.Skill;
 import com.amuzil.omegasource.api.magus.skill.utils.traits.DataTrait;
 import com.amuzil.omegasource.api.magus.skill.utils.traits.SkillTrait;
+import com.amuzil.omegasource.bending.BendingForms;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.element.fire.FireStrikeEffect;
-import com.amuzil.omegasource.bending.form.Form;
-import com.amuzil.omegasource.bending.form.Forms;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -125,7 +125,7 @@ public class Registries {
     @SubscribeEvent
     public static void gameRegistry(RegisterEvent event) {
         Elements.init();
-        Forms.init(); // Ensure Forms registry gets populated
+        BendingForms.init(); // Ensure Forms registry gets populated
         // Forms
         if (event.getRegistryKey().equals(FORMS.get().getRegistryKey())) {
             IForgeRegistry<Form> registry = FORMS.get();

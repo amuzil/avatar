@@ -1,4 +1,4 @@
-package com.amuzil.omegasource.bending.form;
+package com.amuzil.omegasource.api.magus.form;
 
 import com.amuzil.omegasource.registry.Registries;
 

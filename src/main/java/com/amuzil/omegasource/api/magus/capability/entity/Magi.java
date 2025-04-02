@@ -1,15 +1,15 @@
-package com.amuzil.omegasource.api.magus.skill.utils.capability.entity;
+package com.amuzil.omegasource.api.magus.capability.entity;
 
 import com.amuzil.omegasource.api.magus.condition.conditions.FormCondition;
 import com.amuzil.omegasource.api.magus.radix.RadixTree;
-import com.amuzil.omegasource.api.magus.skill.FormPath;
+import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.skill.Skill;
-import com.amuzil.omegasource.api.magus.skill.utils.capability.CapabilityHandler;
+import com.amuzil.omegasource.api.magus.capability.CapabilityHandler;
 import com.amuzil.omegasource.api.magus.skill.utils.data.SkillCategoryData;
 import com.amuzil.omegasource.api.magus.skill.utils.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.utils.traits.DataTrait;
 import com.amuzil.omegasource.api.magus.skill.utils.traits.SkillTrait;
-import com.amuzil.omegasource.bending.form.ActiveForm;
+import com.amuzil.omegasource.api.magus.form.ActiveForm;
 import com.amuzil.omegasource.registry.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -20,7 +20,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 
 
@@ -34,7 +33,6 @@ public class Magi {
     // These are magi specific traits.
     private List<SkillData> skillData;
     private List<SkillCategoryData> skillCategoryData;
-    public LinkedList<ActiveForm> activeForms;
     public FormPath formPath;
     private Skill currentlySelected;
     private FormCondition formConditionHandler;
@@ -47,7 +45,6 @@ public class Magi {
     public Magi(Data capabilityData, LivingEntity entity) {
         this.capabilityData = capabilityData;
         this.magi = entity;
-        this.activeForms = new LinkedList<>();
 
         // Initialise skilldata.
         this.skillData = new ArrayList<>();
@@ -64,7 +61,7 @@ public class Magi {
     }
 
     public void registerFormCondition() {
-        formConditionHandler.register("formCondition", () -> {
+        formConditionHandler.register("FormCondition", () -> {
             ActiveForm activeForm = new ActiveForm(formConditionHandler.form(), formConditionHandler.active());
             formPath.update(activeForm);
             if (magi.level().isClientSide()) {
@@ -72,11 +69,10 @@ public class Magi {
                 RadixTree.getLogger().debug("Complex Forms: {}", formPath.complex());
             }
         },  () -> {
-            if (!formPath.isActive())
+            if (!formPath.isActive()) {
                 formPath.clear();
-            if (magi.level().isClientSide()) {
-                RadixTree.getLogger().debug("Simple Forms: {}", formPath.simple());
-                RadixTree.getLogger().debug("Complex Forms Timed Out: {}", formPath.complex());
+                if (magi.level().isClientSide())
+                    RadixTree.getLogger().debug("Complex Forms Timed Out");
             }
         });
     }
@@ -143,9 +139,6 @@ public class Magi {
 
     // Called per tick
     public void onUpdate() {
-//        if (!activeForms.isEmpty())
-//            RadixTree.getLogger().info("Magi OnUpdate: " + activeForms);
-
         if (getMagi() instanceof Player) {
             List<Skill> skills = Registries.getSkills();
 //            RadixTree.getLogger().debug("Skill Registry Size: " + skills.size());

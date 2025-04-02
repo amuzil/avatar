@@ -1,11 +1,10 @@
 package com.amuzil.omegasource.input;
 
-import com.amuzil.omegasource.bending.form.Form;
-import com.amuzil.omegasource.bending.form.Forms;
+import com.amuzil.omegasource.api.magus.form.Form;
+import com.amuzil.omegasource.bending.BendingForms;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.forms.ExecuteFormPacket;
 import com.amuzil.omegasource.network.packets.forms.ReleaseFormPacket;
-import com.amuzil.omegasource.api.magus.skill.utils.capability.entity.Magi;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -15,10 +14,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.function.Consumer;
 
 
@@ -30,9 +26,8 @@ public class InputModule {
     private boolean isHoldingShift = false;
     private boolean isHoldingControl = false;
     private boolean isHoldingAlt = false;
-    private Form currentForm = Forms.NULL;
+    private Form currentForm = BendingForms.NULL;
     private boolean isBending = true;
-    protected final List<Form> activeForms = Collections.synchronizedList(new LinkedList<>());
     private final HashMap<Integer, Integer> glfwKeysDown = new HashMap<>();
 
     public InputModule() {
@@ -99,19 +94,19 @@ public class InputModule {
         if (isBending) {
             if (!(isHoldingShift || isHoldingAlt || isHoldingControl)) {
                 switch (key) {
-                    case InputConstants.MOUSE_BUTTON_LEFT -> ExecuteForm(Forms.STRIKE);
-                    case InputConstants.MOUSE_BUTTON_RIGHT -> ExecuteForm(Forms.BLOCK);
+                    case InputConstants.MOUSE_BUTTON_LEFT -> ExecuteForm(BendingForms.STRIKE);
+                    case InputConstants.MOUSE_BUTTON_RIGHT -> ExecuteForm(BendingForms.BLOCK);
                 }
             } else if (isHoldingShift) {
                 switch (key) {
-                    case InputConstants.KEY_W -> ExecuteForm(Forms.PUSH);
-                    case InputConstants.KEY_S -> ExecuteForm(Forms.PULL);
-                    case InputConstants.KEY_A -> ExecuteForm(Forms.LEFT);
-                    case InputConstants.KEY_D -> ExecuteForm(Forms.RIGHT);
-                    case InputConstants.KEY_Q -> ExecuteForm(Forms.LOWER);
-                    case InputConstants.KEY_E -> ExecuteForm(Forms.RAISE);
-                    case InputConstants.KEY_R -> ExecuteForm(Forms.ROTATE);
-                    case InputConstants.KEY_LALT -> ExecuteForm(Forms.ARC);
+                    case InputConstants.KEY_W -> ExecuteForm(BendingForms.PUSH);
+                    case InputConstants.KEY_S -> ExecuteForm(BendingForms.PULL);
+                    case InputConstants.KEY_A -> ExecuteForm(BendingForms.LEFT);
+                    case InputConstants.KEY_D -> ExecuteForm(BendingForms.RIGHT);
+                    case InputConstants.KEY_Q -> ExecuteForm(BendingForms.LOWER);
+                    case InputConstants.KEY_E -> ExecuteForm(BendingForms.RAISE);
+                    case InputConstants.KEY_R -> ExecuteForm(BendingForms.ROTATE);
+                    case InputConstants.KEY_LALT -> ExecuteForm(BendingForms.ARC);
                 }
             }
         }
@@ -119,33 +114,29 @@ public class InputModule {
 
     private void CheckFormsRelease(int key) {
         switch (key) {
-            case InputConstants.MOUSE_BUTTON_LEFT -> ReleaseForm(Forms.STRIKE);
-            case InputConstants.MOUSE_BUTTON_RIGHT -> ReleaseForm(Forms.BLOCK);
-            case InputConstants.KEY_W -> ReleaseForm(Forms.PUSH);
-            case InputConstants.KEY_S -> ReleaseForm(Forms.PULL);
-            case InputConstants.KEY_A -> ReleaseForm(Forms.LEFT);
-            case InputConstants.KEY_D -> ReleaseForm(Forms.RIGHT);
-            case InputConstants.KEY_Q -> ReleaseForm(Forms.LOWER);
-            case InputConstants.KEY_E -> ReleaseForm(Forms.RAISE);
-            case InputConstants.KEY_R -> ReleaseForm(Forms.ROTATE);
-            case InputConstants.KEY_LALT -> ReleaseForm(Forms.ARC);
+            case InputConstants.MOUSE_BUTTON_LEFT -> ReleaseForm(BendingForms.STRIKE);
+            case InputConstants.MOUSE_BUTTON_RIGHT -> ReleaseForm(BendingForms.BLOCK);
+            case InputConstants.KEY_W -> ReleaseForm(BendingForms.PUSH);
+            case InputConstants.KEY_S -> ReleaseForm(BendingForms.PULL);
+            case InputConstants.KEY_A -> ReleaseForm(BendingForms.LEFT);
+            case InputConstants.KEY_D -> ReleaseForm(BendingForms.RIGHT);
+            case InputConstants.KEY_Q -> ReleaseForm(BendingForms.LOWER);
+            case InputConstants.KEY_E -> ReleaseForm(BendingForms.RAISE);
+            case InputConstants.KEY_R -> ReleaseForm(BendingForms.ROTATE);
+            case InputConstants.KEY_LALT -> ReleaseForm(BendingForms.ARC);
         }
     }
 
     private void ExecuteForm(Form form) {
-        // send form execute packet
+        // send Form execute packet
         AvatarNetwork.sendToServer(new ExecuteFormPacket(form));
-        activeForms.add(form);
-        // track current form executing
         currentForm = form;
     }
 
     private void ReleaseForm(Form form) {
-        // send form release packet
+        // send Form release packet
         AvatarNetwork.sendToServer(new ReleaseFormPacket(form));
-        activeForms.remove(form);
-        // reset current form executing
-        currentForm = Forms.NULL;
+        currentForm = BendingForms.NULL;
     }
 
     public boolean keyPressed(int key) {
@@ -170,11 +161,7 @@ public class InputModule {
 
     public void terminate() {
         unRegisterListeners();
-        activeForms.clear();
         glfwKeysDown.clear();
-//        Magi magi = Magi.get(Minecraft.getInstance().player);
-//        if (magi != null)
-//            magi.complexForms.clear();
     }
 
     public void toggleListeners() {

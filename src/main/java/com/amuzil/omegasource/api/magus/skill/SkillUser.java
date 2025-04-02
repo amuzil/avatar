@@ -1,7 +1,7 @@
 package com.amuzil.omegasource.api.magus.skill;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.api.magus.skill.utils.capability.entity.Data;
+import com.amuzil.omegasource.api.magus.capability.entity.Data;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

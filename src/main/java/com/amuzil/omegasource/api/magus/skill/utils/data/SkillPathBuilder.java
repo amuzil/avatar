@@ -1,7 +1,7 @@
 package com.amuzil.omegasource.api.magus.skill.utils.data;
 
-import com.amuzil.omegasource.api.magus.skill.FormPath;
-import com.amuzil.omegasource.bending.form.ActiveForm;
+import com.amuzil.omegasource.api.magus.form.FormPath;
+import com.amuzil.omegasource.api.magus.form.ActiveForm;
 
 import java.util.LinkedList;
 import java.util.List;

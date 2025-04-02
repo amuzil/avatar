@@ -7,7 +7,7 @@ import com.amuzil.omegasource.events.FormActivatedEvent;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
-import com.amuzil.omegasource.bending.form.Forms;
+import com.amuzil.omegasource.bending.BendingForms;
 import com.amuzil.omegasource.network.packets.client.FormActivatedPacket;
 import com.lowdragmc.photon.client.fx.EntityEffect;
 import net.minecraft.core.BlockPos;
@@ -190,7 +190,7 @@ public class FireProjectile extends ElementProjectile {
     public void onFormEvent(FormActivatedEvent event) {
         Entity owner = this.getOwner();
         if (owner != null && event.getEntity().getId() == owner.getId()) {
-            if (event.getForm().equals(Forms.STRIKE) && this.arcActive && this.hasElement) {
+            if (event.getForm().equals(BendingForms.STRIKE) && this.arcActive && this.hasElement) {
                 // If LivingEntity owns this entity and has activated strike form, shoot held element
                 this.arcActive = false;
                 this.setTimeToKill(100);
@@ -291,7 +291,7 @@ public class FireProjectile extends ElementProjectile {
                     this.discard();
                     fireProjectile.hasElement = true;
 
-                    AvatarNetwork.sendToServer(new FormActivatedPacket(Forms.NULL, Elements.FIRE, fireProjectile.getId()));
+                    AvatarNetwork.sendToServer(new FormActivatedPacket(BendingForms.NULL, Elements.FIRE, fireProjectile.getId()));
                 } else {
                     if (!this.getOwner().equals(fireProjectile.getOwner())) {
                         ElementCollision collisionEntity = new ElementCollision(this.getX(), this.getY(), this.getZ(), this.level());

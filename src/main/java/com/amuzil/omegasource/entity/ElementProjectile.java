@@ -6,8 +6,8 @@ import com.amuzil.omegasource.entity.projectile.FireProjectile;
 import com.amuzil.omegasource.entity.projectile.WaterProjectile;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
-import com.amuzil.omegasource.bending.form.Form;
-import com.amuzil.omegasource.bending.form.Forms;
+import com.amuzil.omegasource.api.magus.form.Form;
+import com.amuzil.omegasource.bending.BendingForms;
 import com.lowdragmc.photon.client.fx.EntityEffect;
 import com.lowdragmc.photon.client.fx.FX;
 import net.minecraft.client.Minecraft;
@@ -194,7 +194,7 @@ public abstract class ElementProjectile extends Projectile implements ItemSuppli
 
     public void control(float scale, Form form) {
         this.arcActive = true;
-        if (form == Forms.NULL) {
+        if (form == BendingForms.NULL) {
             this.hasElement = true;
             this.setTimeToKill(2400);
         }

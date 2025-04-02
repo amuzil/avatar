@@ -1,7 +1,8 @@
-package com.amuzil.omegasource.bending.form;
+package com.amuzil.omegasource.bending;
 
+import com.amuzil.omegasource.api.magus.form.Form;
 
-public class Forms {
+public class BendingForms {
     // Basic Bending Forms
 
     public static final Form NULL = new Form("null"); // Blank Form

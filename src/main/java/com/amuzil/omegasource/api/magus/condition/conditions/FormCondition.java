@@ -1,7 +1,7 @@
 package com.amuzil.omegasource.api.magus.condition.conditions;
 
 import com.amuzil.omegasource.api.magus.condition.Condition;
-import com.amuzil.omegasource.bending.form.Form;
+import com.amuzil.omegasource.api.magus.form.Form;
 import com.amuzil.omegasource.events.FormActivatedEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;

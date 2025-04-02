@@ -1,10 +1,10 @@
 package com.amuzil.omegasource.api.magus.skill;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.api.magus.radix.ConditionPath;
+import com.amuzil.omegasource.api.magus.capability.entity.Magi;
+import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.radix.RadixTree;
 import com.amuzil.omegasource.api.magus.skill.event.SkillTickEvent;
-import com.amuzil.omegasource.api.magus.skill.utils.capability.entity.Magi;
 import com.amuzil.omegasource.api.magus.skill.utils.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.utils.traits.SkillTrait;
 import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.UseTrait;

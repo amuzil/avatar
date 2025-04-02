@@ -1,7 +1,7 @@
 package com.amuzil.omegasource;
 
 import com.amuzil.omegasource.api.magus.skill.Skills;
-import com.amuzil.omegasource.api.magus.skill.utils.capability.CapabilityHandler;
+import com.amuzil.omegasource.api.magus.capability.CapabilityHandler;
 import com.amuzil.omegasource.entity.AvatarEntities;
 import com.amuzil.omegasource.input.InputModule;
 import com.amuzil.omegasource.network.AvatarNetwork;

@@ -1,15 +1,15 @@
-package com.amuzil.omegasource.api.magus.skill;
+package com.amuzil.omegasource.api.magus.form;
 
-import com.amuzil.omegasource.bending.form.ActiveForm;
 import net.minecraft.nbt.CompoundTag;
 
 import java.util.LinkedList;
 import java.util.List;
 
+
 public class FormPath {
 
-    private List<ActiveForm> simpleForms;
-    private List<ActiveForm> complexForms;
+    private final List<ActiveForm> simpleForms; // Only populated with currently active Forms (removed on key release)
+    private final List<ActiveForm> complexForms; // Only populated with recent active Forms (removed on timeout)
     private boolean active;
 
     public FormPath() {

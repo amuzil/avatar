@@ -1,25 +1,22 @@
 package com.amuzil.omegasource.bending.element.fire;
 
 import com.amuzil.omegasource.Avatar;
+import com.amuzil.omegasource.api.magus.capability.entity.Magi;
+import com.amuzil.omegasource.api.magus.form.ActiveForm;
+import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.radix.RadixTree;
-import com.amuzil.omegasource.api.magus.skill.FormPath;
-import com.amuzil.omegasource.api.magus.skill.SkillActive;
 import com.amuzil.omegasource.api.magus.skill.SkillCategory;
-import com.amuzil.omegasource.api.magus.skill.utils.capability.entity.Magi;
 import com.amuzil.omegasource.api.magus.skill.utils.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.utils.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.*;
 import com.amuzil.omegasource.bending.BendingSkill;
 import com.amuzil.omegasource.bending.element.Elements;
-import com.amuzil.omegasource.bending.form.ActiveForm;
+
 import com.amuzil.omegasource.entity.ElementProjectile;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
-import org.checkerframework.checker.units.qual.C;
-
-import static com.amuzil.omegasource.bending.form.Forms.PUSH;
-import static com.amuzil.omegasource.bending.form.Forms.STRIKE;
+import static com.amuzil.omegasource.bending.BendingForms.*;
 
 public class FireStrikeEffect extends BendingSkill {
 
