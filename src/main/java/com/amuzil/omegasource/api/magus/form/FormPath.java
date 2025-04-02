@@ -8,8 +8,8 @@ import java.util.List;
 
 public class FormPath {
 
-    private final List<ActiveForm> simpleForms;
-    private final List<ActiveForm> complexForms;
+    private final List<ActiveForm> simpleForms; // Only populated with currently active Forms (removed on key release)
+    private final List<ActiveForm> complexForms; // Only populated with recent active Forms (removed on timeout)
     private boolean active;
 
     public FormPath() {
