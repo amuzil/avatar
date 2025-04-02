@@ -9,6 +9,7 @@ import com.amuzil.omegasource.api.magus.skill.SkillCategory;
 import com.amuzil.omegasource.api.magus.skill.utils.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.utils.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.*;
+import com.amuzil.omegasource.bending.BendingEffect;
 import com.amuzil.omegasource.bending.BendingSkill;
 import com.amuzil.omegasource.bending.element.Elements;
 
@@ -18,7 +19,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import static com.amuzil.omegasource.bending.BendingForms.*;
 
-public class FireStrikeEffect extends BendingSkill {
+public class FireStrikeEffect extends BendingEffect {
 
     public FireStrikeEffect() {
         super(Avatar.MOD_ID, "fire_strike_effect", Elements.FIRE);
@@ -33,7 +34,7 @@ public class FireStrikeEffect extends BendingSkill {
     @Override
     public FormPath getStartPaths() {
         return SkillPathBuilder.getInstance()
-                .addForm(new ActiveForm(PUSH, true))
+                .simple(new ActiveForm(PUSH, true))
                 .build();
     }
 

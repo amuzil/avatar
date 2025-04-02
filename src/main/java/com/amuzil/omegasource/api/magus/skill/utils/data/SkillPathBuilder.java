@@ -8,7 +8,8 @@ import java.util.List;
 
 public class SkillPathBuilder extends PathBuilder {
 
-    private List<ActiveForm> activeForms;
+    private List<ActiveForm> complexForms;
+    private List<ActiveForm> simpleForms;
     public static SkillPathBuilder instance;
 
     public static SkillPathBuilder getInstance() {
@@ -18,22 +19,31 @@ public class SkillPathBuilder extends PathBuilder {
         return instance;
     }
 
-    public SkillPathBuilder addForm(ActiveForm form) {
-        this.activeForms.add(form);
+    public SkillPathBuilder complex(ActiveForm form) {
+        this.complexForms.add(form);
+        return this;
+    }
+
+    public SkillPathBuilder simple(ActiveForm form) {
+        this.simpleForms.add(form);
         return this;
     }
 
     public FormPath build() {
-        FormPath path = new FormPath(new LinkedList<>(activeForms));
+        // Need to copy the list
+        FormPath path = new FormPath(new LinkedList<>(simpleForms), new LinkedList<>(complexForms));
         this.reset();
         return path;
     }
 
     public void reset() {
-        if (activeForms == null)
-            activeForms = new LinkedList<>();
+        if (simpleForms == null)
+            simpleForms = new LinkedList<>();
+        if (complexForms == null)
+            complexForms = new LinkedList<>();
 
-        this.activeForms.clear();
+        this.simpleForms.clear();
+        this.complexForms.clear();
     }
 
 
@@ -47,5 +57,9 @@ public class SkillPathBuilder extends PathBuilder {
                 return false;
         }
         return true;
+    }
+
+    public static boolean checkAllForms(FormPath first, FormPath second) {
+        return checkForms(first.complex(), second.complex()) || checkForms(first.simple(), second.simple());
     }
 }

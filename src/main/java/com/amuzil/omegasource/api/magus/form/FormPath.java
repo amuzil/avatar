@@ -23,6 +23,11 @@ public class FormPath {
         this.complexForms = complexForms;
     }
 
+    public FormPath(List<ActiveForm> simpleForms, List<ActiveForm> complexForms) {
+        this.simpleForms = simpleForms;
+        this.complexForms = complexForms;
+    }
+
     public void clear() {
         complexForms.clear();
     }
