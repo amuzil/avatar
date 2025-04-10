@@ -37,7 +37,7 @@ public class InputModule {
             int key = keyboardEvent.getKey();
             // NOTE: Minecraft's InputEvent.Key can only listen to the action InputConstants.REPEAT of one key at a time
             // tldr: it only fires the repeat event for the last key
-            if (FORM_KEYS.containsKey(key)) {
+            if (FORM_KEYS.containsKey(key) && Minecraft.getInstance().screen == null) {
                 switch (keyboardEvent.getAction()) {
                     case InputConstants.PRESS -> {
                         if (!keyPressed(key)) {

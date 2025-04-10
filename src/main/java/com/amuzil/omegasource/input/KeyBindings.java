@@ -5,6 +5,7 @@ import com.amuzil.omegasource.api.magus.form.Form;
 import com.amuzil.omegasource.bending.BendingForms;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
@@ -51,7 +52,7 @@ public class KeyBindings {
     }
 
     public static KeyMapping getKeyMapping(Form form) {
-        return FORM_KEY_MAPPINGS.getOrDefault(form, FORM_KEY_MAPPINGS.get(BendingForms.NULL));
+        return FORM_KEY_MAPPINGS.getOrDefault(form, null);
     }
 
     public static Form getFormFromKey(int key) {
@@ -65,18 +66,17 @@ public class KeyBindings {
         FORM_KEY_MAPPINGS.values().forEach(event::register);
     }
 
-    @Mod.EventBusSubscriber(modid = "mymod", value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
+    @Mod.EventBusSubscriber(modid = Avatar.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
     public static class ModKeyInputHandler {
         @SubscribeEvent
         public static void keyPress(InputEvent.Key key) {
-            System.out.println("HERE 1??!?!?!?!");
+            if (Minecraft.getInstance().screen != null) return; // Ignore input when in GUI
             if (key.getKey() == toggleBendingKey.getKey().getValue()) {
-                System.out.println("HERE 2??!?!?!?!");
                 if (key.getAction() == InputConstants.RELEASE) {
                     Avatar.inputModule.toggleListeners();
                     Avatar.reloadFX();
                 }
             }
-            }
+        }
     }
 }
