@@ -73,7 +73,6 @@ public class Avatar {
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
-        // do something that can only be done on the client
         // Register the input modules
         inputModule = new InputModule();
     }

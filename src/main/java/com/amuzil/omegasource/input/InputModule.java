@@ -17,6 +17,8 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
+import static com.amuzil.omegasource.input.KeyBindings.*;
+
 
 public class InputModule {
     private final Consumer<InputEvent.Key> keyboardListener;
@@ -35,26 +37,26 @@ public class InputModule {
             int key = keyboardEvent.getKey();
             // NOTE: Minecraft's InputEvent.Key can only listen to the action InputConstants.REPEAT of one key at a time
             // tldr: it only fires the repeat event for the last key
-
-            switch (keyboardEvent.getAction()) {
-                case InputConstants.PRESS -> {
-                    if (!keyPressed(key)) {
-                        glfwKeysDown.put(key, 0);
-                    }
-                    switch (key) {
-                        case InputConstants.KEY_LSHIFT -> isHoldingShift = true;
-                        case InputConstants.KEY_LCONTROL -> isHoldingControl = true;
-                        case InputConstants.KEY_LALT -> isHoldingAlt = true;
-                    }
-                }
-                case InputConstants.RELEASE -> {
-                    if (keyPressed(key)) {
-                        glfwKeysDown.remove(key);
+            if (FORM_KEYS.containsKey(key)) {
+                switch (keyboardEvent.getAction()) {
+                    case InputConstants.PRESS -> {
+                        if (!keyPressed(key)) {
+                            glfwKeysDown.put(key, 0);
+                        }
                         switch (key) {
-                            case InputConstants.KEY_LSHIFT -> isHoldingShift = false;
-                            case InputConstants.KEY_LCONTROL -> isHoldingControl = false;
-                            case InputConstants.KEY_LALT -> isHoldingAlt = false;
-                            default -> CheckFormsRelease(key);
+                            case InputConstants.KEY_LSHIFT -> isHoldingShift = true;
+                            case InputConstants.KEY_LCONTROL -> isHoldingControl = true;
+                            case InputConstants.KEY_LALT -> isHoldingAlt = true;
+                        }
+                    }
+                    case InputConstants.RELEASE -> {
+                        if (keyPressed(key)) {
+                            switch (key) {
+                                case InputConstants.KEY_LSHIFT -> isHoldingShift = false;
+                                case InputConstants.KEY_LCONTROL -> isHoldingControl = false;
+                                case InputConstants.KEY_LALT -> isHoldingAlt = false;
+                                default -> formRelease(key);
+                            }
                         }
                     }
                 }
@@ -62,27 +64,30 @@ public class InputModule {
         };
 
         this.mouseListener = mouseEvent -> {
-            int key = mouseEvent.getButton();
-            switch (mouseEvent.getAction()) {
-                case InputConstants.PRESS -> {
-                    if (!keyPressed(key)) {
-                        glfwKeysDown.put(key, 0);
+            if (Minecraft.getInstance().screen == null)  {
+                int key = mouseEvent.getButton();
+                switch (mouseEvent.getAction()) {
+                    case InputConstants.PRESS -> {
+                        if (!keyPressed(key)) {
+                            glfwKeysDown.put(key, 0);
+                        }
                     }
-                }
-                case InputConstants.RELEASE -> {
-                    if (keyPressed(key)) {
-                        glfwKeysDown.remove(key);
-                        CheckFormsRelease(key);
+                    case InputConstants.RELEASE -> {
+                        if (keyPressed(key)) {
+                            formRelease(key);
+                        }
                     }
                 }
             }
         };
 
         this.tickEventConsumer = tickEvent -> {
-            if (tickEvent.phase == TickEvent.ClientTickEvent.Phase.START && Minecraft.getInstance().getOverlay() == null) {
+            if (tickEvent.phase == TickEvent.ClientTickEvent.Phase.START &&
+                    Minecraft.getInstance().getOverlay() == null &&
+                    Minecraft.getInstance().screen == null) {
                 glfwKeysDown.forEach((key, ticks) -> {
                     if (ticks == 0 && Minecraft.getInstance().getConnection() != null) {
-                        CheckFormsExecute(key);
+                        checkForm(key);
                     }
                     glfwKeysDown.put(key, ticks+1);
                 });
@@ -90,53 +95,35 @@ public class InputModule {
         };
     }
 
-    private void CheckFormsExecute(int key) {
+    private void checkForm(int key) {
+        Form form = getFormFromKey(key);
         if (isBending) {
             if (!(isHoldingShift || isHoldingAlt || isHoldingControl)) {
-                switch (key) {
-                    case InputConstants.MOUSE_BUTTON_LEFT -> ExecuteForm(BendingForms.STRIKE);
-                    case InputConstants.MOUSE_BUTTON_RIGHT -> ExecuteForm(BendingForms.BLOCK);
-                }
+                if (form.type().equals(Form.Type.DEFAULT))
+                    sendFormPacket(form, false);
             } else if (isHoldingShift) {
-                switch (key) {
-                    case InputConstants.KEY_W -> ExecuteForm(BendingForms.PUSH);
-                    case InputConstants.KEY_S -> ExecuteForm(BendingForms.PULL);
-                    case InputConstants.KEY_A -> ExecuteForm(BendingForms.LEFT);
-                    case InputConstants.KEY_D -> ExecuteForm(BendingForms.RIGHT);
-                    case InputConstants.KEY_Q -> ExecuteForm(BendingForms.LOWER);
-                    case InputConstants.KEY_E -> ExecuteForm(BendingForms.RAISE);
-                    case InputConstants.KEY_R -> ExecuteForm(BendingForms.ROTATE);
-                    case InputConstants.KEY_LALT -> ExecuteForm(BendingForms.ARC);
-                }
+                if (form.type().equals(Form.Type.MOTION))
+                    sendFormPacket(form, false);
             }
         }
     }
 
-    private void CheckFormsRelease(int key) {
-        switch (key) {
-            case InputConstants.MOUSE_BUTTON_LEFT -> ReleaseForm(BendingForms.STRIKE);
-            case InputConstants.MOUSE_BUTTON_RIGHT -> ReleaseForm(BendingForms.BLOCK);
-            case InputConstants.KEY_W -> ReleaseForm(BendingForms.PUSH);
-            case InputConstants.KEY_S -> ReleaseForm(BendingForms.PULL);
-            case InputConstants.KEY_A -> ReleaseForm(BendingForms.LEFT);
-            case InputConstants.KEY_D -> ReleaseForm(BendingForms.RIGHT);
-            case InputConstants.KEY_Q -> ReleaseForm(BendingForms.LOWER);
-            case InputConstants.KEY_E -> ReleaseForm(BendingForms.RAISE);
-            case InputConstants.KEY_R -> ReleaseForm(BendingForms.ROTATE);
-            case InputConstants.KEY_LALT -> ReleaseForm(BendingForms.ARC);
+    private void formRelease(int key) {
+        glfwKeysDown.remove(key);
+        Form form = getFormFromKey(key);
+        sendFormPacket(form, true);
+    }
+
+    private void sendFormPacket(Form form, boolean released) {
+        if (!released) {
+            // send Form execute packet
+            AvatarNetwork.sendToServer(new ExecuteFormPacket(form));
+            currentForm = form;
+        } else {
+            // send Form release packet
+            AvatarNetwork.sendToServer(new ReleaseFormPacket(form));
+            currentForm = BendingForms.NULL;
         }
-    }
-
-    private void ExecuteForm(Form form) {
-        // send Form execute packet
-        AvatarNetwork.sendToServer(new ExecuteFormPacket(form));
-        currentForm = form;
-    }
-
-    private void ReleaseForm(Form form) {
-        // send Form release packet
-        AvatarNetwork.sendToServer(new ReleaseFormPacket(form));
-        currentForm = BendingForms.NULL;
     }
 
     public boolean keyPressed(int key) {
@@ -176,7 +163,7 @@ public class InputModule {
         }
     }
 
-    // Send a message to in-game chat
+    // Send message to in-game chat
     public static void sendDebugMsg(String msg) {
         Minecraft minecraft = Minecraft.getInstance();
         minecraft.execute(() -> {

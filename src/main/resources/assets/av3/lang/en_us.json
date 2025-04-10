@@ -1,0 +1,19 @@
+{
+  "key.categories.av3": "Avatar Mod 3",
+  "key.av3.bending_toggle": "Toggle Bending",
+  "key.av3.form.null": "Null",
+  "key.av3.form.push": "Push",
+  "key.av3.form.pull": "Pull",
+  "key.av3.form.raise": "Raise",
+  "key.av3.form.lower": "Lower",
+  "key.av3.form.left": "Left",
+  "key.av3.form.right": "Right",
+  "key.av3.form.rotate": "Rotate",
+  "key.av3.form.expand": "Expand",
+  "key.av3.form.compress": "Compress",
+  "key.av3.form.split": "Split",
+  "key.av3.form.combine": "Combine",
+  "key.av3.form.strike": "Strike",
+  "key.av3.form.block": "Block",
+  "key.av3.form.arc": "Arc"
+}

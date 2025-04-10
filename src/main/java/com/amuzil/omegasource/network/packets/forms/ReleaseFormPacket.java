@@ -23,7 +23,7 @@ public class ReleaseFormPacket implements AvatarPacket {
         ctx.get().enqueueWork(() -> {
             // Work that needs to be thread-safe (most work)
             ServerPlayer sender = ctx.get().getSender(); // the client that sent this packet
-            Avatar.LOGGER.debug("Form releasing: {}", msg.form.name());
+            Avatar.LOGGER.debug("Form Released: {}", msg.form.name());
             // Do stuff
             MinecraftForge.EVENT_BUS.post(new FormActivatedEvent(msg.form, sender, true));
         });
