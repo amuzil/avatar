@@ -16,7 +16,7 @@ public class AvatarNetwork {
     private static final String PROTOCOL_VERSION = "1.0.0";
     private static int packetId = 0;
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
-            new ResourceLocation(Avatar.MOD_ID, "main"),
+            ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "main"),
             () -> PROTOCOL_VERSION,
             PROTOCOL_VERSION::equals,
             PROTOCOL_VERSION::equals

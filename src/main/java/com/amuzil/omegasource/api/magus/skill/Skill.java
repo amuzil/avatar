@@ -32,7 +32,7 @@ public abstract class Skill {
     private boolean shouldStart, shouldRun, shouldStop;
 
     public Skill(String modID, String name, SkillCategory category) {
-        this(new ResourceLocation(modID, name), category);
+        this(ResourceLocation.fromNamespaceAndPath(modID, name), category);
     }
 
     public Skill(String name, SkillCategory category) {

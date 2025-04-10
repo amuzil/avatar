@@ -133,7 +133,7 @@ public class Magi {
     }
 
     public SkillData getSkillData(String id) {
-        ResourceLocation loc = new ResourceLocation(id);
+        ResourceLocation loc = ResourceLocation.parse(id);
         return getSkillData(loc);
     }
 

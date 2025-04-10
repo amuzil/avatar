@@ -68,7 +68,6 @@ public class FireStrikeEffect extends BendingEffect {
         if (!entity.level().isClientSide) {
             ElementProjectile proj;
             proj = ElementProjectile.createElementEntity(STRIKE, Elements.FIRE, (ServerPlayer) entity, (ServerLevel) entity.level());
-            assert proj != null;
             proj.shoot(entity.getViewVector(1).x, entity.getViewVector(1).y, entity.getViewVector(1).z, 1, 1);
             entity.level().addFreshEntity(proj);
             RadixTree.getLogger().debug("Attempting projectile spawn.");

@@ -106,12 +106,12 @@ public class Avatar {
     }
 
     public static void reloadFX() {
-        fire_bloom = FXHelper.getFX(new ResourceLocation(Avatar.MOD_ID, "fire_bloom"));
-        fire_bloom_perma = FXHelper.getFX(new ResourceLocation(Avatar.MOD_ID, "fire_bloom_perma"));
-        blue_fire = FXHelper.getFX(new ResourceLocation(Avatar.MOD_ID, "blue_fire"));
-        blue_fire_perma = FXHelper.getFX(new ResourceLocation(Avatar.MOD_ID, "blue_fire_perma"));
-        orb_bloom = FXHelper.getFX(new ResourceLocation(Avatar.MOD_ID, "orb_bloom"));
-        water = FXHelper.getFX(new ResourceLocation(Avatar.MOD_ID, "water"));
-        steam = FXHelper.getFX(new ResourceLocation(Avatar.MOD_ID, "steam"));
+        fire_bloom = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "fire_bloom"));
+        fire_bloom_perma = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "fire_bloom_perma"));
+        blue_fire = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "blue_fire"));
+        blue_fire_perma = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "blue_fire_perma"));
+        orb_bloom = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "orb_bloom"));
+        water = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "water"));
+        steam = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "steam"));
     }
 }

@@ -103,22 +103,22 @@ public class Registries {
     public static void onRegistryRegister(NewRegistryEvent event) {
         // Forms
         RegistryBuilder<Form> formRegistryBuilder = new RegistryBuilder<>();
-        formRegistryBuilder.setName(new ResourceLocation(Avatar.MOD_ID, "forms"));
+        formRegistryBuilder.setName(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "forms"));
         FORMS = event.create(formRegistryBuilder);
 
         // Skills
         RegistryBuilder<Skill> skills = new RegistryBuilder<>();
-        skills.setName(new ResourceLocation(Avatar.MOD_ID, "skills"));
+        skills.setName(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "skills"));
         SKILLS = event.create(skills);
 
         // Skill Categories
         RegistryBuilder<SkillCategory> categories = new RegistryBuilder<>();
-        categories.setName(new ResourceLocation(Avatar.MOD_ID, "skill_categories"));
+        categories.setName(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "skill_categories"));
         SKILL_CATEGORIES = event.create(categories);
 
         // Data Traits
         RegistryBuilder<DataTrait> traits = new RegistryBuilder<>();
-        traits.setName(new ResourceLocation(Avatar.MOD_ID, "data_traits"));
+        traits.setName(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "data_traits"));
         DATA_TRAITS = event.create(traits);
     }
 
@@ -187,7 +187,7 @@ public class Registries {
         IForgeRegistry<DataTrait> registry = DATA_TRAITS.get();
         for (Skill skill : skills)
             for (SkillTrait trait : skill.getTraits())
-                event.register(key, helper -> registry.register(new ResourceLocation(modID) + trait.getName(), trait));
+                event.register(key, helper -> registry.register(ResourceLocation.parse(modID) + trait.getName(), trait));
 
     }
 

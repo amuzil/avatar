@@ -53,8 +53,8 @@ public class FormActivatedPacket implements AvatarPacket {
         String formName = buf.readUtf();
         String elementName = buf.readUtf();
         int entityId = buf.readInt();
-        Form form = Registries.FORMS.get().getValue(new ResourceLocation(MOD_ID, formName));
-        Element element = (Element) Registries.SKILL_CATEGORIES.get().getValue(new ResourceLocation(MOD_ID, elementName));
+        Form form = Registries.FORMS.get().getValue(ResourceLocation.fromNamespaceAndPath(MOD_ID, formName));
+        Element element = (Element) Registries.SKILL_CATEGORIES.get().getValue(ResourceLocation.fromNamespaceAndPath(MOD_ID, elementName));
         return new FormActivatedPacket(form, element, entityId);
     }
 

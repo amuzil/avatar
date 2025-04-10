@@ -23,7 +23,7 @@ import java.util.List;
 
 
 public class LivingDataCapability {
-    public static ResourceLocation IDENTIFIER = new ResourceLocation(Avatar.MOD_ID, "living_data");
+    public static ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "living_data");
 
     /**
      * TODO: Figure out how to save this data when MC wants to save but nothing has changed/.
