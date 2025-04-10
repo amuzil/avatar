@@ -44,11 +44,13 @@ public class KeyBindings {
 
     private static void createKeyMapping(Form form, int defaultKey) {
         FORM_KEYS.put(defaultKey, form);
-        FORM_KEY_MAPPINGS.put(form, new KeyMapping(
-                String.format("key.av3.form.%s", form.name().toLowerCase()),
-                defaultKey,
-                "key.categories.av3"
-        ));
+        if (defaultKey > 2) {
+            FORM_KEY_MAPPINGS.put(form, new KeyMapping(
+                    String.format("key.av3.form.%s", form.name().toLowerCase()),
+                    defaultKey,
+                    "key.categories.av3"
+            ));
+        }
     }
 
     public static KeyMapping getKeyMapping(Form form) {
