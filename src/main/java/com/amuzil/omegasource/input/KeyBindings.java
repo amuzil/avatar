@@ -34,9 +34,10 @@ public class KeyBindings {
         createKeyMapping(BendingForms.COMPRESS, InputConstants.KEY_C);
         createKeyMapping(BendingForms.SPLIT, InputConstants.KEY_V);
         createKeyMapping(BendingForms.COMBINE, InputConstants.KEY_B);
+        createKeyMapping(BendingForms.PHASE, InputConstants.KEY_LSHIFT);
+        createKeyMapping(BendingForms.SHAPE, InputConstants.KEY_LALT);
         createKeyMapping(BendingForms.ARC, InputConstants.KEY_LCONTROL);
-        createKeyMapping(BendingForms.SHAPE, InputConstants.KEY_LSHIFT);
-        createKeyMapping(BendingForms.PHASE, InputConstants.KEY_LALT);
+        createKeyMapping(BendingForms.TARGET, InputConstants.KEY_TAB);
         createKeyMapping(BendingForms.STRIKE, InputConstants.MOUSE_BUTTON_LEFT);
         createKeyMapping(BendingForms.BLOCK, InputConstants.MOUSE_BUTTON_RIGHT);
         // Add more mappings as needed

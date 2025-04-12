@@ -18,8 +18,10 @@ public class BendingForms {
     public static final Form SPLIT = new Form("split", Form.Type.SHAPE);
     public static final Form COMBINE = new Form("combine", Form.Type.SHAPE);
     public static final Form PHASE = new Form("phase", Form.Type.INITIALIZER);
-    public static final Form SHAPE = new Form("shape", Form.Type.INITIALIZER);
-    public static final Form ARC = new Form("arc", Form.Type.INITIALIZER);
+    public static final Form SHAPE = new Form("shape", Form.Type.INITIALIZER); // Trigger & charge shape Forms
+    public static final Form ARC = new Form("arc", Form.Type.INITIALIZER); // Trigger & charge motion Forms
+    public static final Form TARGET = new Form("target", Form.Type.INITIALIZER);
+    public static final Form FOCUS = new Form("focus", Form.Type.INITIALIZER);
     public static final Form STRIKE = new Form("strike", Form.Type.DEFAULT);
     public static final Form BLOCK = new Form("block", Form.Type.DEFAULT);
 

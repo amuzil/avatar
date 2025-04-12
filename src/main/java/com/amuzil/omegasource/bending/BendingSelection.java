@@ -3,6 +3,7 @@ package com.amuzil.omegasource.bending;
 import net.minecraft.core.BlockPos;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -102,8 +103,10 @@ public class BendingSelection {
     public enum SelectionType {
         None,
         Self,
-        Technique,
-        Block,
         Entity,
+        Technique,
+        Block;
+
+        public static final SelectionType[] selectionTypes = Arrays.copyOfRange(SelectionType.values(), 0, 3);
     }
 }

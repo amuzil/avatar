@@ -38,22 +38,22 @@ public class ExecuteFormPacket implements AvatarPacket {
             ElementProjectile entity;
             entity = ElementProjectile.createElementEntity(msg.form, Elements.FIRE, player, level);
             int entityId = 0;
-//            assert entity != null;
-//            if (msg.form.equals(ARC) || msg.form.equals(NULL)) {
-//                entity.control(1.5f, msg.form);
-//            } else if (msg.form.equals(STRIKE) || msg.form.equals(BLOCK)) {
-//                entity.shoot(player.getViewVector(1).x, player.getViewVector(1).y, player.getViewVector(1).z, 1, 1);
-//            } else {
-//                entity.discard();
-//                return; // Unhandled Form - Discard and print no effects
-//            }
-//            level.addFreshEntity(entity);
-//            FormActivatedPacket packet = new FormActivatedPacket(msg.form, Elements.FIRE, entity.getId());
+            assert entity != null;
+            if (msg.form.equals(ARC) || msg.form.equals(NULL)) {
+                entity.control(1.5f, msg.form);
+            } else if (msg.form.equals(STRIKE) || msg.form.equals(BLOCK)) {
+                entity.shoot(player.getViewVector(1).x, player.getViewVector(1).y, player.getViewVector(1).z, 1, 1);
+            } else {
+                entity.discard();
+                return; // Unhandled Form - Discard and print no effects
+            }
+            level.addFreshEntity(entity);
+            FormActivatedPacket packet = new FormActivatedPacket(msg.form, Elements.FIRE, entity.getId());
 
             /* Distribute packet to clients within 500 blocks | CLIENT */
-//            AvatarNetwork.CHANNEL.send(PacketDistributor.NEAR.with(
-//                    () -> new PacketDistributor.TargetPoint(player.getX(), player.getY(), player.getZ(),
-//                            500, level.dimension())), packet);
+            AvatarNetwork.CHANNEL.send(PacketDistributor.NEAR.with(
+                    () -> new PacketDistributor.TargetPoint(player.getX(), player.getY(), player.getZ(),
+                            500, level.dimension())), packet);
         });
 
         ctx.get().setPacketHandled(true);

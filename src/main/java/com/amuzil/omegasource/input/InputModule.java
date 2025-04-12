@@ -1,7 +1,9 @@
 package com.amuzil.omegasource.input;
 
+import com.amuzil.omegasource.api.magus.capability.entity.Magi;
 import com.amuzil.omegasource.api.magus.form.Form;
 import com.amuzil.omegasource.bending.BendingForms;
+import com.amuzil.omegasource.bending.BendingSelection;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.forms.ExecuteFormPacket;
 import com.amuzil.omegasource.network.packets.forms.ReleaseFormPacket;
@@ -17,6 +19,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
+import static com.amuzil.omegasource.bending.BendingSelection.SelectionType.selectionTypes;
 import static com.amuzil.omegasource.input.KeyBindings.*;
 
 
@@ -26,11 +29,13 @@ public class InputModule {
     private final Consumer<TickEvent.ClientTickEvent> tickEventConsumer;
 
     private boolean isHoldingShift = false;
-    private boolean isHoldingControl = false;
+    private boolean isHoldingCtrl = false;
     private boolean isHoldingAlt = false;
     private Form currentForm = BendingForms.NULL;
     private boolean isBending = true;
     private final HashMap<Integer, Integer> glfwKeysDown = new HashMap<>();
+    private Magi magi;
+    private BendingSelection.SelectionType selection = BendingSelection.SelectionType.None;
 
     public InputModule() {
         this.keyboardListener = keyboardEvent -> {
@@ -40,22 +45,21 @@ public class InputModule {
             if (FORM_KEYS.containsKey(key) && Minecraft.getInstance().screen == null) {
                 switch (keyboardEvent.getAction()) {
                     case InputConstants.PRESS -> {
-                        if (!keyPressed(key)) {
+                        if (!keyPressed(key))
                             glfwKeysDown.put(key, 0);
-                        }
                         switch (key) {
                             case InputConstants.KEY_LSHIFT -> isHoldingShift = true;
-                            case InputConstants.KEY_LCONTROL -> isHoldingControl = true;
+                            case InputConstants.KEY_LCONTROL -> isHoldingCtrl = true;
                             case InputConstants.KEY_LALT -> isHoldingAlt = true;
                         }
                     }
                     case InputConstants.RELEASE -> {
                         if (keyPressed(key)) {
+                            formRelease(key);
                             switch (key) {
                                 case InputConstants.KEY_LSHIFT -> isHoldingShift = false;
-                                case InputConstants.KEY_LCONTROL -> isHoldingControl = false;
+                                case InputConstants.KEY_LCONTROL -> isHoldingCtrl = false;
                                 case InputConstants.KEY_LALT -> isHoldingAlt = false;
-                                default -> formRelease(key);
                             }
                         }
                     }
@@ -98,12 +102,22 @@ public class InputModule {
     private void checkForm(int key) {
         Form form = getFormFromKey(key);
         if (isBending) {
-            if (!(isHoldingShift || isHoldingAlt || isHoldingControl)) {
-                if (form.type().equals(Form.Type.DEFAULT))
+            if (!(isHoldingShift || isHoldingAlt || isHoldingCtrl)) {
+                if (form.type().equals(Form.Type.DEFAULT)) {
                     sendFormPacket(form, false);
-            } else if (isHoldingShift) {
-                if (form.type().equals(Form.Type.MOTION))
-                    sendFormPacket(form, false);
+                } else if (form.equals(BendingForms.TARGET)) {
+                    int index = selection.ordinal() + 1;
+                    if (index >= selectionTypes.length)
+                        index = 0;
+                    selection = selectionTypes[index];
+                    System.out.println("Current Selection: " + selection);
+                }
+            } else if (isHoldingCtrl && form.type().equals(Form.Type.MOTION)) {
+                sendFormPacket(form, false);
+            } else if (isHoldingAlt && form.type().equals(Form.Type.SHAPE)) {
+                sendFormPacket(form, false);
+            } else if (form.type().equals(Form.Type.INITIALIZER)) {
+                sendFormPacket(form, false);
             }
         }
     }
@@ -130,11 +144,12 @@ public class InputModule {
         return glfwKeysDown.containsKey(key);
     }
 
-    public Integer keyPressedTicks(int key) {
+    public int keyPressedTicks(int key) {
         return glfwKeysDown.getOrDefault(key, 0);
     }
 
     public void registerListeners() {
+        magi = Magi.get(Minecraft.getInstance().player);
         MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, InputEvent.Key.class, keyboardListener);
         MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, InputEvent.MouseButton.class, mouseListener);
         MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, TickEvent.ClientTickEvent.class, tickEventConsumer);
@@ -149,6 +164,10 @@ public class InputModule {
     public void terminate() {
         unRegisterListeners();
         glfwKeysDown.clear();
+        magi = Magi.get(Minecraft.getInstance().player);
+        if (magi != null) {
+            magi.formPath.clearAll();
+        }
     }
 
     public void toggleListeners() {

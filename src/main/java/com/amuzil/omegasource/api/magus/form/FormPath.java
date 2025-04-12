@@ -32,6 +32,11 @@ public class FormPath {
         complexForms.clear();
     }
 
+    public void clearAll() {
+        simpleForms.clear();
+        complexForms.clear();
+    }
+
     public void update(ActiveForm activeForm) {
         if (activeForm.active()) {
             simpleForms.add(activeForm);
