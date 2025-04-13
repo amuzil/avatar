@@ -98,7 +98,7 @@ public class InputModule {
             if (key.isDown()) {
                 int heldTicks = glfwKeysDown.getOrDefault(key.getKey().getValue(), 0);
                 glfwKeysDown.put(key.getKey().getValue(), heldTicks + 1);
-                if (heldTicks == 1)
+                if (heldTicks == 0)
                     checkForm(form);
             } else {
                 if (glfwKeysDown.containsKey(key.getKey().getValue())) {
@@ -107,11 +107,11 @@ public class InputModule {
             }
         });
 
-        MOUSE_FORM_MAPPINGS.forEach((button, form) -> {
-            if (glfwKeysDown.containsKey(button)) {
-                int heldTicks = glfwKeysDown.getOrDefault(button, 0);
-                glfwKeysDown.put(button, heldTicks + 1);
-                if (heldTicks == 1)
+        MOUSE_FORM_MAPPINGS.forEach((key, form) -> {
+            if (glfwKeysDown.containsKey(key)) {
+                int heldTicks = glfwKeysDown.getOrDefault(key, 0);
+                glfwKeysDown.put(key, heldTicks + 1);
+                if (heldTicks == 0)
                     checkForm(form);
             }
         });
