@@ -118,6 +118,8 @@ public class InputModule {
     }
 
     private void checkForm(Form form) { // Check if the form met the conditions before sending the packet
+        // TODO - Implement double tap Step capability for directional Forms w/o Initializer
+        //      - Implement BendingForm class and link it to the Form class
         if (isBending) {
             if (!(isHoldingShift || isHoldingAlt || isHoldingCtrl)) {
                 if (form.equals(BendingForms.TARGET)) { // Don't send target Form packet
