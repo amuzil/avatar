@@ -28,7 +28,6 @@ public class FormCondition extends Condition {
         };
 
         tickListener = event -> {
-            // Ticking for both server & client ~40 ticks == 1 second
             if (event.phase == TickEvent.Phase.START
                     && event.type == TickEvent.Type.SERVER) {
                 if (!active) {
