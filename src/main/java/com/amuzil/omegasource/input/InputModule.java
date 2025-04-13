@@ -11,6 +11,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -19,7 +20,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
-import static com.amuzil.omegasource.bending.BendingSelection.SelectionType.selectionTypes;
+import static com.amuzil.omegasource.bending.BendingSelection.Type.selectionTypes;
 import static com.amuzil.omegasource.input.KeyBindings.*;
 
 
@@ -35,18 +36,16 @@ public class InputModule {
     private boolean isBending = true;
     private final HashMap<Integer, Integer> glfwKeysDown = new HashMap<>();
     private Magi magi;
-    private BendingSelection.SelectionType selection = BendingSelection.SelectionType.None;
+    private BendingSelection.Type selection = BendingSelection.Type.NONE;
 
     public InputModule() {
         this.keyboardListener = keyboardEvent -> {
             int key = keyboardEvent.getKey();
             // NOTE: Minecraft's InputEvent.Key can only listen to the action InputConstants.REPEAT of one key at a time
             // tldr: it only fires the repeat event for the last key
-            if (FORM_KEYS.containsKey(key) && Minecraft.getInstance().screen == null) {
+            if (Minecraft.getInstance().screen == null) {
                 switch (keyboardEvent.getAction()) {
                     case InputConstants.PRESS -> {
-                        if (!keyPressed(key))
-                            glfwKeysDown.put(key, 0);
                         switch (key) {
                             case InputConstants.KEY_LSHIFT -> isHoldingShift = true;
                             case InputConstants.KEY_LCONTROL -> isHoldingCtrl = true;
@@ -55,7 +54,6 @@ public class InputModule {
                     }
                     case InputConstants.RELEASE -> {
                         if (keyPressed(key)) {
-                            formRelease(key);
                             switch (key) {
                                 case InputConstants.KEY_LSHIFT -> isHoldingShift = false;
                                 case InputConstants.KEY_LCONTROL -> isHoldingCtrl = false;
@@ -78,7 +76,7 @@ public class InputModule {
                     }
                     case InputConstants.RELEASE -> {
                         if (keyPressed(key)) {
-                            formRelease(key);
+                            releaseForm(MOUSE_FORM_MAPPINGS.get(key), key);
                         }
                     }
                 }
@@ -87,33 +85,60 @@ public class InputModule {
 
         this.tickEventConsumer = tickEvent -> {
             if (tickEvent.phase == TickEvent.ClientTickEvent.Phase.START &&
+                    Minecraft.getInstance().getConnection() != null &&
                     Minecraft.getInstance().getOverlay() == null &&
                     Minecraft.getInstance().screen == null) {
-                glfwKeysDown.forEach((key, ticks) -> {
-                    if (ticks == 0 && Minecraft.getInstance().getConnection() != null) {
-                        checkForm(key);
-                    }
-                    glfwKeysDown.put(key, ticks+1);
-                });
+                checkInputs();
             }
         };
     }
 
-    private void checkForm(int key) {
-        Form form = getFormFromKey(key);
+    private void checkInputs() {
+        FORM_KEY_MAPPINGS.forEach((form, key) -> {
+            if (key.isDown()) {
+                int heldTicks = glfwKeysDown.getOrDefault(key.getKey().getValue(), 0);
+                glfwKeysDown.put(key.getKey().getValue(), heldTicks + 1);
+                if (heldTicks == 1)
+                    checkForm(form);
+            } else {
+                if (glfwKeysDown.containsKey(key.getKey().getValue())) {
+                    releaseForm(form, key.getKey().getValue());
+                }
+            }
+        });
+
+        MOUSE_FORM_MAPPINGS.forEach((button, form) -> {
+            if (glfwKeysDown.containsKey(button)) {
+                int heldTicks = glfwKeysDown.getOrDefault(button, 0);
+                glfwKeysDown.put(button, heldTicks + 1);
+                if (heldTicks == 1)
+                    checkForm(form);
+            }
+        });
+    }
+
+    private void checkForm(Form form) { // Check if the form met the conditions before sending the packet
         if (isBending) {
             if (!(isHoldingShift || isHoldingAlt || isHoldingCtrl)) {
-                if (form.type().equals(Form.Type.DEFAULT)) {
-                    sendFormPacket(form, false);
-                } else if (form.equals(BendingForms.TARGET)) {
+                if (form.equals(BendingForms.TARGET)) { // Don't send target Form packet
                     int index = selection.ordinal() + 1;
                     if (index >= selectionTypes.length)
                         index = 0;
                     selection = selectionTypes[index];
-                    System.out.println("Current Selection: " + selection);
+                    sendDebugMsg("Current Selection: " + selection);
+                } else if (form.equals(BendingForms.STRIKE) || form.equals(BendingForms.BLOCK)) {
+                    sendFormPacket(form, false);
                 }
             } else if (isHoldingCtrl && form.type().equals(Form.Type.MOTION)) {
                 sendFormPacket(form, false);
+                Player player = Minecraft.getInstance().player;
+                assert player != null;
+                if (form.equals(BendingForms.RAISE) && player.onGround()) {
+                    player.jumpFromGround();
+                    player.setDeltaMovement(player.getDeltaMovement().x, 1.5D, player.getDeltaMovement().z);
+                    player.hurtMarked = true; // Mark the player for velocity sync
+                    System.out.println("Player velocity set to: " + player.getDeltaMovement());
+                }
             } else if (isHoldingAlt && form.type().equals(Form.Type.SHAPE)) {
                 sendFormPacket(form, false);
             } else if (form.type().equals(Form.Type.INITIALIZER)) {
@@ -122,9 +147,8 @@ public class InputModule {
         }
     }
 
-    private void formRelease(int key) {
+    private void releaseForm(Form form, int key) {
         glfwKeysDown.remove(key);
-        Form form = getFormFromKey(key);
         sendFormPacket(form, true);
     }
 
@@ -162,6 +186,9 @@ public class InputModule {
     }
 
     public void terminate() {
+        isHoldingShift = false;
+        isHoldingCtrl = false;
+        isHoldingAlt = false;
         unRegisterListeners();
         glfwKeysDown.clear();
         magi = Magi.get(Minecraft.getInstance().player);

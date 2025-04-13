@@ -8,6 +8,7 @@ import java.util.Objects;
 
 
 public class ActiveForm {
+    // TODO - Create way to save elapsedTime data server-side
     private Form form;
     private boolean active;
 

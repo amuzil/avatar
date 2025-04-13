@@ -17,49 +17,48 @@ import java.util.HashMap;
 
 @Mod.EventBusSubscriber(modid = Avatar.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class KeyBindings {
-    private static final HashMap<Form, KeyMapping> FORM_KEY_MAPPINGS = new HashMap<>();
-    public static final HashMap<Integer, Form> FORM_KEYS = new HashMap<>();
-    public static final KeyMapping toggleBendingKey = new KeyMapping("key.av3.bending_toggle", InputConstants.KEY_GRAVE, "key.categories.av3");
+    static final HashMap<Integer, Form> MOUSE_FORM_MAPPINGS = new HashMap<>();
+    static final HashMap<Form, KeyMapping> FORM_KEY_MAPPINGS = new HashMap<>();
+    private static final KeyMapping toggleBendingKey = new KeyMapping(
+            "key.av3.bending_toggle",
+            InputConstants.KEY_GRAVE,
+            "key.categories.av3");
 
     static {
         // Initialize KeyMappings for each Form
+        createKeyMapping(BendingForms.STRIKE, InputConstants.MOUSE_BUTTON_LEFT);
+        createKeyMapping(BendingForms.BLOCK, InputConstants.MOUSE_BUTTON_RIGHT);
         createKeyMapping(BendingForms.PUSH, InputConstants.KEY_W);
         createKeyMapping(BendingForms.PULL, InputConstants.KEY_S);
-        createKeyMapping(BendingForms.RAISE, InputConstants.KEY_E);
-        createKeyMapping(BendingForms.LOWER, InputConstants.KEY_Q);
         createKeyMapping(BendingForms.LEFT, InputConstants.KEY_A);
         createKeyMapping(BendingForms.RIGHT, InputConstants.KEY_D);
+        createKeyMapping(BendingForms.RAISE, InputConstants.KEY_F);
+        createKeyMapping(BendingForms.LOWER, InputConstants.KEY_G);
         createKeyMapping(BendingForms.ROTATE, InputConstants.KEY_R);
         createKeyMapping(BendingForms.EXPAND, InputConstants.KEY_X);
         createKeyMapping(BendingForms.COMPRESS, InputConstants.KEY_C);
         createKeyMapping(BendingForms.SPLIT, InputConstants.KEY_V);
         createKeyMapping(BendingForms.COMBINE, InputConstants.KEY_B);
-        createKeyMapping(BendingForms.PHASE, InputConstants.KEY_LSHIFT);
-        createKeyMapping(BendingForms.SHAPE, InputConstants.KEY_LALT);
         createKeyMapping(BendingForms.ARC, InputConstants.KEY_LCONTROL);
+        createKeyMapping(BendingForms.SHAPE, InputConstants.KEY_LALT);
         createKeyMapping(BendingForms.TARGET, InputConstants.KEY_TAB);
-        createKeyMapping(BendingForms.STRIKE, InputConstants.MOUSE_BUTTON_LEFT);
-        createKeyMapping(BendingForms.BLOCK, InputConstants.MOUSE_BUTTON_RIGHT);
         // Add more mappings as needed
     }
 
     private static void createKeyMapping(Form form, int defaultKey) {
-        FORM_KEYS.put(defaultKey, form);
-        if (defaultKey > 2) {
-            FORM_KEY_MAPPINGS.put(form, new KeyMapping(
+        if (defaultKey > 2) { // Exclude mouse buttons to avoid error
+            KeyMapping keyMapping = new KeyMapping(
                     String.format("key.av3.form.%s", form.name().toLowerCase()),
                     defaultKey,
-                    "key.categories.av3"
-            ));
+                    "key.categories.av3");
+            FORM_KEY_MAPPINGS.put(form, keyMapping);
+        } else {
+            MOUSE_FORM_MAPPINGS.put(defaultKey, form);
         }
     }
 
     public static KeyMapping getKeyMapping(Form form) {
         return FORM_KEY_MAPPINGS.getOrDefault(form, null);
-    }
-
-    public static Form getFormFromKey(int key) {
-        return FORM_KEYS.getOrDefault(key, BendingForms.NULL);
     }
 
     @SubscribeEvent

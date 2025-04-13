@@ -15,12 +15,12 @@ public class Form {
 
     public Form() { // Create null Form to fix random NullPointerException
         this.name = null;
-        this.type = Type.DEFAULT;
+        this.type = Type.NONE;
     }
 
     public Form(String name) {
         this.name = name;
-        this.type = Type.DEFAULT;
+        this.type = Type.NONE;
     }
 
     public String name() {
@@ -48,6 +48,9 @@ public class Form {
     }
 
     public enum Type {
-        MOTION, SHAPE, PHASE, DEFAULT, INITIALIZER
+        NONE,
+        MOTION,
+        SHAPE,
+        INITIALIZER
     }
 }
