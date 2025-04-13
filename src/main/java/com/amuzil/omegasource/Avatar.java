@@ -91,7 +91,6 @@ public class Avatar {
         AvatarCommand.register(event.getServer().getCommands().getDispatcher());
     }
 
-    //Copied for 1.19
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class ClientModEvents {
         @SubscribeEvent
