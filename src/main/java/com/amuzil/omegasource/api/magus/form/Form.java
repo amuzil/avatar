@@ -2,6 +2,8 @@ package com.amuzil.omegasource.api.magus.form;
 
 import com.amuzil.omegasource.registry.Registries;
 
+import java.util.Objects;
+
 
 public class Form {
     private final String name;
@@ -33,5 +35,10 @@ public class Form {
         } else {
             return name.equals(other.name);
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return name().hashCode();
     }
 }

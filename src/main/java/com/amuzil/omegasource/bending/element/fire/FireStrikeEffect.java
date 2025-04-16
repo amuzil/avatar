@@ -34,7 +34,7 @@ public class FireStrikeEffect extends BendingEffect {
     @Override
     public FormPath getStartPaths() {
         return SkillPathBuilder.getInstance()
-                .simple(new ActiveForm(PUSH, true))
+                .simple(new ActiveForm(STRIKE, true))
                 .build();
     }
 
@@ -65,13 +65,8 @@ public class FireStrikeEffect extends BendingEffect {
         super.start(entity);
 //        entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED));
 //        entity.level().addFreshEntity(new LightningBolt(EntityType.LIGHTNING_BOLT, entity.level()));
-        if (!entity.level().isClientSide) {
-            ElementProjectile proj;
-            proj = ElementProjectile.createElementEntity(STRIKE, Elements.FIRE, (ServerPlayer) entity, (ServerLevel) entity.level());
-            proj.shoot(entity.getViewVector(1).x, entity.getViewVector(1).y, entity.getViewVector(1).z, 1, 1);
-            entity.level().addFreshEntity(proj);
-            RadixTree.getLogger().debug("Attempting projectile spawn.");
-        }
+
+
 
         Magi magi = Magi.get(entity);
         if (magi != null) {
