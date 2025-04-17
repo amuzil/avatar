@@ -42,7 +42,7 @@ public abstract class ElementProjectile extends Projectile implements ItemSuppli
     protected boolean leftOwner;
     protected boolean hasBeenShot;
     private int life;
-    public int ttk = 100;
+    public int ttk = 40;
     public boolean arcActive = false;
     public boolean hasElement = false;
     public BendingForm form;
