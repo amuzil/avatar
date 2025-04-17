@@ -64,10 +64,10 @@ public class Magi {
         formConditionHandler.register("FormCondition", () -> {
             ActiveForm activeForm = new ActiveForm(formConditionHandler.form(), formConditionHandler.active());
             formPath.update(activeForm);
-//            if (magi.level().isClientSide()) {
-//                RadixTree.getLogger().debug("Simple Forms: {}", formPath.simple());
-//                RadixTree.getLogger().debug("Complex Forms: {}", formPath.complex());
-//            }
+            if (magi.level().isClientSide()) {
+                RadixTree.getLogger().debug("Simple Forms: {}", formPath.simple());
+                RadixTree.getLogger().debug("Complex Forms: {}", formPath.complex());
+            }
         },  () -> {
             if (!formPath.isActive()) {
                 formPath.clear();
