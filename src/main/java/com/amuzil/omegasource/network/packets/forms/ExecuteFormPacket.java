@@ -35,20 +35,24 @@ public class ExecuteFormPacket implements AvatarPacket {
             Avatar.LOGGER.debug("Form Executed: {}", msg.form.name());
 
             MinecraftForge.EVENT_BUS.post(new FormActivatedEvent(msg.form, player, false));
-            ElementProjectile entity;
-            entity = ElementProjectile.createElementEntity(msg.form, Elements.FIRE, player, level);
-            int entityId = 0;
-            assert entity != null;
-            if (msg.form.equals(ARC) || msg.form.equals(NULL)) {
-                entity.control(1.5f, msg.form);
-            } else if (msg.form.equals(STRIKE) || msg.form.equals(BLOCK)) {
-                entity.shoot(player.getViewVector(1).x, player.getViewVector(1).y, player.getViewVector(1).z, 1, 1);
-            } else {
-                if (msg.form.equals(STEP))
-                    AvatarNetwork.sendToServer(new ReleaseFormPacket(STEP)); // Guarantee safe release to clean Magi's FormPath state
-                entity.discard();
-                return; // Unhandled Form - Discard and print no effects
-            }
+
+            // Extra case for step
+            if (msg.form.equals(STEP))
+                    AvatarNetwork.sendToServer(new ReleaseFormPacket(STEP));
+//            ElementProjectile entity;
+//            entity = ElementProjectile.createElementEntity(msg.form, Elements.FIRE, player, level);
+//            int entityId = 0;
+//            assert entity != null;
+//            if (msg.form.equals(ARC) || msg.form.equals(NULL)) {
+//                entity.control(1.5f, msg.form);
+//            } else if (msg.form.equals(STRIKE) || msg.form.equals(BLOCK)) {
+//                entity.shoot(player.getViewVector(1).x, player.getViewVector(1).y, player.getViewVector(1).z, 1, 1);
+//            } else {
+//                if (msg.form.equals(STEP))
+//                    AvatarNetwork.sendToServer(new ReleaseFormPacket(STEP)); // Guarantee safe release to clean Magi's FormPath state
+//                entity.discard();
+//                return; // Unhandled Form - Discard and print no effects
+//            }
 //            level.addFreshEntity(entity);
 //            FormActivatedPacket packet = new FormActivatedPacket(msg.form, Elements.FIRE, entity.getId());
 //

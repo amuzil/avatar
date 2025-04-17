@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerPlayer;
 import com.amuzil.omegasource.api.magus.capability.entity.Magi;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -17,7 +18,8 @@ import net.minecraftforge.fml.common.Mod;
 public class ServerEvents {
 
     @SubscribeEvent
-    public static void worldStart(LevelEvent event) {}
+    public static void worldStart(LevelEvent event) {
+    }
 
 
     @SubscribeEvent
@@ -62,8 +64,10 @@ public class ServerEvents {
     public static void worldTick(LivingEvent.LivingTickEvent event) {
         if (event.getEntity() != null) {
             if (Magi.get(event.getEntity()) != null) {
-                Magi magi = Magi.get(event.getEntity());
-                magi.onUpdate();
+//                if (event.getPhase().equals(TickEvent.Phase)) {
+                    Magi magi = Magi.get(event.getEntity());
+                    magi.onUpdate();
+//                }
             }
         }
     }

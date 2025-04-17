@@ -18,6 +18,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.Objects;
+
 import static com.amuzil.omegasource.bending.BendingForms.STEP;
 
 public class FlameStepSkill extends BendingEffect {
@@ -37,18 +39,7 @@ public class FlameStepSkill extends BendingEffect {
 
     @Override
     public boolean shouldStart(LivingEntity entity, FormPath formPath) {
-        if (entity.tickCount % 40 == 0) {
-            if (startPaths.simple() != null)
-                RadixTree.getLogger().debug(startPaths.simple());
-            if (startPaths.complex() != null)
-                RadixTree.getLogger().debug(startPaths.complex());
-        }
         return super.shouldStart(entity, formPath);
-    }
-
-    @Override
-    public FormPath getStartPaths() {
-        return startPaths;
     }
 
     @Override
@@ -61,7 +52,8 @@ public class FlameStepSkill extends BendingEffect {
         super.start(entity);
 
         Magi magi = Magi.get(entity);
-        SkillData data = magi.getSkillData(this);
+        if (magi != null) {
+            SkillData data = magi.getSkillData(this);
 
 //        entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED));
 //        entity.level().addFreshEntity(new LightningBolt(EntityType.LIGHTNING_BOLT, entity.level()));
@@ -73,21 +65,21 @@ public class FlameStepSkill extends BendingEffect {
 //            RadixTree.getLogger().info("Attempting projectile spawn.");
 //        }
 
-        float dashSpeed = (float) data.getTrait("dash_speed", SpeedTrait.class).getSpeed();
-        Vec3 dashVec = Vec3.ZERO;
-        if (entity.level().isClientSide) {
-            Minecraft mc = Minecraft.getInstance();
-            if (mc.options.keyUp.isDown()) {
-                dashVec = entity.getLookAngle().multiply(1, 0, 1).normalize().scale(dashSpeed); // W
-            } else if (mc.options.keyDown.isDown()) {
-                dashVec = entity.getLookAngle().multiply(1, 0, 1).normalize().scale(-dashSpeed); // S
-            } else if (mc.options.keyLeft.isDown()) {
-                dashVec = entity.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(-dashSpeed); // A
-            } else if (mc.options.keyRight.isDown()) {
-                dashVec = entity.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(dashSpeed); // D
+            float dashSpeed = (float) Objects.requireNonNull(data.getTrait("dash_speed", SpeedTrait.class)).getSpeed();
+            Vec3 dashVec = Vec3.ZERO;
+            if (entity.level().isClientSide) {
+                Minecraft mc = Minecraft.getInstance();
+                if (mc.options.keyUp.isDown()) {
+                    dashVec = entity.getLookAngle().multiply(1, 0, 1).normalize().scale(dashSpeed); // W
+                } else if (mc.options.keyDown.isDown()) {
+                    dashVec = entity.getLookAngle().multiply(1, 0, 1).normalize().scale(-dashSpeed); // S
+                } else if (mc.options.keyLeft.isDown()) {
+                    dashVec = entity.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(-dashSpeed); // A
+                } else if (mc.options.keyRight.isDown()) {
+                    dashVec = entity.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(dashSpeed); // D
+                }
             }
-        }
-        entity.setDeltaMovement(dashVec.x, entity.getDeltaMovement().y + 0.3D, dashVec.z);
+            entity.setDeltaMovement(dashVec.x, entity.getDeltaMovement().y + 0.3D, dashVec.z);
 
 //        ((Player) entity).jumpFromGround();
 //        System.out.println("Delta: " + entity.getDeltaMovement());
@@ -95,7 +87,7 @@ public class FlameStepSkill extends BendingEffect {
 //        entity.hurtMarked = true; // Mark the entity for velocity sync
 //        System.out.println("New Delta: " + entity.getDeltaMovement());
 
-        if (magi != null) {
+
             magi.formPath.clear();
             data.setState(SkillState.IDLE);
 

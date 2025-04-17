@@ -2,6 +2,7 @@ package com.amuzil.omegasource.api.magus.skill.utils.data;
 
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
+import com.amuzil.omegasource.api.magus.radix.RadixTree;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -58,7 +59,10 @@ public class SkillPathBuilder extends PathBuilder {
                 return false;
         }
         return true;
+
     }
+
+
 
     public static boolean checkAllForms(FormPath first, FormPath second) {
         return checkForms(first.complex(), second.complex()) || checkForms(first.simple(), second.simple());

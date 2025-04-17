@@ -1,6 +1,7 @@
 package com.amuzil.omegasource.api.magus.capability.entity;
 
 import com.amuzil.omegasource.Avatar;
+import com.amuzil.omegasource.api.magus.radix.RadixTree;
 import com.amuzil.omegasource.api.magus.skill.Skill;
 import com.amuzil.omegasource.api.magus.skill.SkillCategory;
 import com.amuzil.omegasource.api.magus.capability.CapabilityHandler;
@@ -11,6 +12,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
@@ -59,15 +61,22 @@ public class LivingDataCapability {
 
         public Magi getMagi(LivingEntity entity) {
             if (magi == null) {
+                if (entity instanceof Player) {
+                    Avatar.LOGGER.debug("Client Side: "  + entity.level().isClientSide);
+                    Avatar.LOGGER.warn("Magi instance is null.");
+//                    Thread.dumpStack();
+                }
                 fillTraits();
                 magi = new Magi(this, entity);
             }
+            // Right now we need a "load default".
             return this.magi;
         }
 
         @Override
         public CompoundTag serializeNBT() {
             CompoundTag tag;
+//            Thread.dumpStack();
             if (magi != null && magi.isDirty()) {
                 tag = magi.serialiseNBT();
             } else tag = new CompoundTag();
@@ -84,8 +93,10 @@ public class LivingDataCapability {
         public void deserializeNBT(CompoundTag nbt) {
             markClean();
             traits.forEach(trait -> trait.deserializeNBT((CompoundTag) nbt.get(trait.getName())));
-            if (magi != null)
+            if (magi != null) {
                 magi.deserialiseNBT(nbt);
+                magi.setClean();
+            }
         }
 
         public void fillTraits() {

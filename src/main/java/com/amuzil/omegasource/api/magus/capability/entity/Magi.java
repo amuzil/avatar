@@ -1,17 +1,16 @@
 package com.amuzil.omegasource.api.magus.capability.entity;
 
-import com.amuzil.omegasource.api.magus.condition.conditions.FormCondition;
-import com.amuzil.omegasource.api.magus.radix.RadixTree;
-import com.amuzil.omegasource.api.magus.form.FormPath;
-import com.amuzil.omegasource.api.magus.skill.Skill;
+import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.capability.CapabilityHandler;
+import com.amuzil.omegasource.api.magus.condition.conditions.FormCondition;
+import com.amuzil.omegasource.api.magus.form.ActiveForm;
+import com.amuzil.omegasource.api.magus.form.FormPath;
+import com.amuzil.omegasource.api.magus.radix.RadixTree;
+import com.amuzil.omegasource.api.magus.skill.Skill;
 import com.amuzil.omegasource.api.magus.skill.utils.data.SkillCategoryData;
 import com.amuzil.omegasource.api.magus.skill.utils.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.utils.traits.DataTrait;
 import com.amuzil.omegasource.api.magus.skill.utils.traits.SkillTrait;
-import com.amuzil.omegasource.api.magus.form.ActiveForm;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.SpeedTrait;
-import com.amuzil.omegasource.bending.element.fire.FlameStepSkill;
 import com.amuzil.omegasource.registry.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -24,14 +23,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.amuzil.omegasource.registry.Registries.FLAME_STEP_SKILL;
-
-
 public class Magi {
-    private final Data capabilityData;
     private final LivingEntity magi;
 
-//    @OnlyIn(Dist.DEDICATED_SERVER) // Prevents runClient from RUNNING
+    //    @OnlyIn(Dist.DEDICATED_SERVER) // Prevents runClient from RUNNING
     private RadixTree activationTree;
 
     // These are magi specific traits.
@@ -40,6 +35,7 @@ public class Magi {
     public FormPath formPath;
     private Skill currentlySelected;
     private FormCondition formConditionHandler;
+    private boolean isDirty;
 
     // Change this to use an int - 0 for should start, 1 for should run, 2 for should stop,
     // -1 for default/idle. If I need multiple states, then use bits; 000 for idle, and then
@@ -47,14 +43,12 @@ public class Magi {
     private HashMap<String, Integer> skillStatuses = new HashMap<>();
 
     public Magi(Data capabilityData, LivingEntity entity) {
-        this.capabilityData = capabilityData;
         this.magi = entity;
 
         // Initialise skilldata.
         this.skillData = new ArrayList<>();
         for (Skill skill : Registries.skills) {
             skillData.add(new SkillData(skill));
-
         }
 
         // Testing...
@@ -62,21 +56,24 @@ public class Magi {
         this.formPath = new FormPath();
         this.currentlySelected = null;
         this.formConditionHandler = new FormCondition();
+        markDirty();
     }
 
     public void registerFormCondition() {
         formConditionHandler.register("FormCondition", () -> {
             ActiveForm activeForm = new ActiveForm(formConditionHandler.form(), formConditionHandler.active());
             formPath.update(activeForm);
-            if (magi.level().isClientSide()) {
-                RadixTree.getLogger().debug("Simple Forms: {}", formPath.simple());
-                RadixTree.getLogger().debug("Complex Forms: {}", formPath.complex());
-            }
-        },  () -> {
+            markDirty();
+//            if (magi.level().isClientSide()) {
+//                RadixTree.getLogger().debug("Simple Forms: {}", formPath.simple());
+//                RadixTree.getLogger().debug("Complex Forms: {}", formPath.complex());
+//            }
+        }, () -> {
             if (!formPath.isActive()) {
                 formPath.clear();
-                if (magi.level().isClientSide())
-                    RadixTree.getLogger().debug("Complex Forms Timed Out");
+                markDirty();
+//                if (magi.level().isClientSide())
+//                    RadixTree.getLogger().debug("Complex Forms Timed Out");
             }
         });
     }
@@ -90,6 +87,10 @@ public class Magi {
         LivingDataCapability.LivingDataCapabilityImp cap = ((LivingDataCapability.LivingDataCapabilityImp) (CapabilityHandler.getCapability(entity, CapabilityHandler.LIVING_DATA)));
         if (cap == null) {
             // Capability isn't ready yet.
+            if (entity instanceof Player) {
+                Avatar.LOGGER.warn("Living Data cap is null.");
+                Thread.dumpStack();
+            }
             return null;
         }
         return cap.getMagi(entity);
@@ -99,21 +100,21 @@ public class Magi {
         return entity instanceof LivingEntity;
     }
 
-    public LivingDataCapability.LivingDataCapabilityImp getMagusData() {
-        return (LivingDataCapability.LivingDataCapabilityImp) capabilityData;
-    }
-
     public Skill currentlySelected() {
         return this.currentlySelected;
     }
 
     // Need to sync this with given skills, traits, e.t.c
     public boolean isDirty() {
-        return false;
+        return this.isDirty;
     }
 
-    public List<DataTrait> getTraits() {
-        return getMagusData().getTraits();
+    public void markDirty() {
+        this.isDirty = true;
+    }
+
+    public void setClean() {
+        this.isDirty = false;
     }
 
     public List<SkillTrait> getSkillTraits(Skill skill) {
@@ -151,13 +152,14 @@ public class Magi {
                 if (getSkillData(skill).canUse()) {
                     // TODO: Make sure this works; blame Aidan if something needs to be client-side
 //                    if (!getMagi().level().isClientSide)
-                        skill.tick(getMagi(), formPath);
+                    skill.tick(getMagi(), formPath);
                 }
             }
         }
     }
 
-    public void onDeath() {}
+    public void onDeath() {
+    }
 
     public LivingEntity getMagi() {
         return this.magi;
@@ -170,17 +172,23 @@ public class Magi {
         if (isDirty()) {
             // TODO: Figure out if I need to use the returned tags from each of these values....
 //            complexForms.forEach(activeForm -> tag.put(activeForm.form().name(), activeForm.serializeNBT()));
-            skillCategoryData.forEach(catData -> tag.put(catData.getName(), catData.serializeNBT()));
-            skillData.forEach(sData -> tag.put(sData.getName(), sData.serializeNBT()));
-            formPath.serializeNBT();
+            if (skillCategoryData != null)
+                skillCategoryData.forEach(catData -> tag.put(catData.getName(), catData.serializeNBT()));
+            if (skillData != null)
+                skillData.forEach(sData -> tag.put(sData.getName(), sData.serializeNBT()));
+            if (formPath != null)
+                formPath.serializeNBT();
         }
         return tag;
     }
 
     public void deserialiseNBT(CompoundTag tag) {
 //        complexForms.forEach(activeForm -> activeForm.deserializeNBT(tag.getCompound(activeForm.form().name())));
-        skillCategoryData.forEach(catData -> catData.deserializeNBT(tag.getCompound(catData.getName())));
-        skillData.forEach(sData -> sData.deserializeNBT(tag.getCompound(sData.getName())));
-        formPath.deserializeNBT(tag);
+        if (skillCategoryData != null)
+            skillCategoryData.forEach(catData -> catData.deserializeNBT(tag.getCompound(catData.getName())));
+        if (skillData != null)
+            skillData.forEach(sData -> sData.deserializeNBT(tag.getCompound(sData.getName())));
+        if (formPath != null)
+            formPath.deserializeNBT(tag);
     }
 }
