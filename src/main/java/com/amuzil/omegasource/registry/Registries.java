@@ -11,6 +11,7 @@ import com.amuzil.omegasource.bending.BendingForm;
 import com.amuzil.omegasource.bending.BendingForms;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
+import com.amuzil.omegasource.bending.element.fire.FireStrikeSkill;
 import com.amuzil.omegasource.bending.element.fire.FlameStepSkill;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -43,6 +44,7 @@ public class Registries {
     public static void init() {}
 
     public static final FlameStepSkill FLAME_STEP_SKILL = new FlameStepSkill();
+    public static final FireStrikeSkill FIRE_STRIKE_SKILL = new FireStrikeSkill();
     /**
      * Registry methods.
      */
@@ -144,6 +146,7 @@ public class Registries {
 
             event.register(resKey, helper -> {
                 registry.register(FLAME_STEP_SKILL.getId(), FLAME_STEP_SKILL);
+                registry.register(FIRE_STRIKE_SKILL.getId(), FIRE_STRIKE_SKILL);
             });
         }
 

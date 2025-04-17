@@ -105,7 +105,7 @@ public class FormActivatedPacket implements AvatarPacket {
          Can't change this default constructor because it's needed to register entities. Add/use any extra args to Packet.
          */
         assert elementProjectile != null;
-        elementProjectile.startEffect(form, player);
+//        elementProjectile.startEffect(form, player);
     }
 
     public boolean handle(Supplier<NetworkEvent.Context> ctx) {

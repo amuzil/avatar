@@ -29,8 +29,6 @@ public class SkillActive extends Skill {
 
     @Override
     public boolean shouldStart(LivingEntity entity, FormPath formPath) {
-        Magi magi = Magi.get(entity);
-       
         return formPath.hashCode() == getStartPaths().hashCode();
     }
 

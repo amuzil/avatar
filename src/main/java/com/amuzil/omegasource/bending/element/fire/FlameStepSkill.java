@@ -7,7 +7,10 @@ import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.skill.SkillCategory;
 import com.amuzil.omegasource.api.magus.skill.utils.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.utils.data.SkillPathBuilder;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.*;
+import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.ColourTrait;
+import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.KnockbackTrait;
+import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.SizeTrait;
+import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.SpeedTrait;
 import com.amuzil.omegasource.bending.BendingEffect;
 import com.amuzil.omegasource.bending.element.Elements;
 import net.minecraft.client.Minecraft;
@@ -20,10 +23,9 @@ public class FlameStepSkill extends BendingEffect {
 
     public FlameStepSkill() {
         super(Avatar.MOD_ID, "flame_step", Elements.FIRE);
-        addTrait(new DamageTrait(3.0f, "damage"));
-        addTrait(new SizeTrait(1.0f, "size"));
         addTrait(new KnockbackTrait(1.5f, "knockback"));
         addTrait(new SpeedTrait(3.0f, "speed"));
+        addTrait(new SizeTrait(1.0f, "size"));
         addTrait(new ColourTrait(0, 0, 0, "fire_colour"));
 
     }
@@ -37,19 +39,7 @@ public class FlameStepSkill extends BendingEffect {
 
     @Override
     public boolean shouldStart(LivingEntity entity, FormPath formPath) {
-        boolean shouldStart = false;
-        Magi magi = Magi.get(entity);
-        if (magi != null) {
-            SkillData data = magi.getSkillData(this);
-            if (data.getState().equals(SkillState.START)) {
-                shouldStart = true;
-            }
-            else if (data.getState().equals(SkillState.IDLE)) {
-               shouldStart = checkCooldown(data);
-            }
-        }
-
-        return super.shouldStart(entity, formPath) && shouldStart;
+        return super.shouldStart(entity, formPath);
     }
 
     @Override
@@ -72,17 +62,20 @@ public class FlameStepSkill extends BendingEffect {
 
         float dashSpeed = 5F;
         Vec3 dashVec = Vec3.ZERO;
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.options.keyUp.isDown()) {
-            dashVec = entity.getLookAngle().multiply(1, 0, 1).normalize().scale(dashSpeed); // W
-        } else if (mc.options.keyDown.isDown()) {
-            dashVec = entity.getLookAngle().multiply(1, 0, 1).normalize().scale(-dashSpeed); // S
-        } else if (mc.options.keyLeft.isDown()) {
-            dashVec = entity.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(-dashSpeed); // A
-        } else if (mc.options.keyRight.isDown()) {
-            dashVec = entity.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(dashSpeed); // D
+        if (entity.level().isClientSide) {
+                Minecraft mc = Minecraft.getInstance();
+                if (mc.options.keyUp.isDown()) {
+                    dashVec = entity.getLookAngle().multiply(1, 0, 1).normalize().scale(dashSpeed); // W
+                } else if (mc.options.keyDown.isDown()) {
+                    dashVec = entity.getLookAngle().multiply(1, 0, 1).normalize().scale(-dashSpeed); // S
+                } else if (mc.options.keyLeft.isDown()) {
+                    dashVec = entity.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(-dashSpeed); // A
+                } else if (mc.options.keyRight.isDown()) {
+                    dashVec = entity.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(dashSpeed); // D
+                }
         }
         entity.setDeltaMovement(dashVec.x, entity.getDeltaMovement().y + 0.3D, dashVec.z);
+
 //        ((Player) entity).jumpFromGround();
 //        System.out.println("Delta: " + entity.getDeltaMovement());
 //        entity.setDeltaMovement(entity.getDeltaMovement().multiply(5,1,5).scale(dashSpeed).add(0,0.3D,0));
