@@ -81,6 +81,5 @@ public class FormPath {
     @Override
     public int hashCode() {
         return Objects.hash(simpleForms, complexForms);
-
     }
 }
