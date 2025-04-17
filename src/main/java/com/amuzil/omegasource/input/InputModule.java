@@ -119,7 +119,6 @@ public class InputModule {
     }
 
     private void checkForm(BendingForm form) { // Check if the form met the conditions before sending the packet
-        //      - Implement BendingForm class and link it to the Form class
         if (isBending) {
             if (!(isHoldingCtrl || isHoldingAlt)) {
                 if (form.equals(BendingForms.TARGET)) { // Don't send target Form packet
