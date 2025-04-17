@@ -8,6 +8,7 @@ public class BendingForms {
     public static final Form NULL = new Form("null"); // Blank Form
     public static final Form STRIKE = new Form("strike", Form.Type.MOTION);
     public static final Form BLOCK = new Form("block", Form.Type.MOTION);
+    public static final Form STEP = new Form("step", Form.Type.MOTION);
     public static final Form PUSH = new Form("push", Form.Type.MOTION);
     public static final Form PULL = new Form("pull", Form.Type.MOTION);
     public static final Form LEFT = new Form("left", Form.Type.MOTION);

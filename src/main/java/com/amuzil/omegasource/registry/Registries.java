@@ -10,7 +10,7 @@ import com.amuzil.omegasource.api.magus.skill.utils.traits.SkillTrait;
 import com.amuzil.omegasource.bending.BendingForms;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
-import com.amuzil.omegasource.bending.element.fire.FlameStepEffect;
+import com.amuzil.omegasource.bending.element.fire.FlameStepSkill;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -39,11 +39,9 @@ public class Registries {
     public static List<Skill> skills = new ArrayList<>();
     public static List<Form> forms = new ArrayList<>();
 
-    public static void init() {
-//        registerSkill(ARC_SKILl);
-    }
+    public static void init() {}
 
-    public static final FlameStepEffect ARC_SKILl = new FlameStepEffect();
+    public static final FlameStepSkill FLAME_STEP_SKILL = new FlameStepSkill();
     /**
      * Registry methods.
      */
@@ -144,7 +142,7 @@ public class Registries {
             ResourceKey<Registry<Skill>> resKey = registry.getRegistryKey();
 
             event.register(resKey, helper -> {
-                registry.register(ARC_SKILl.getId(), ARC_SKILl);
+                registry.register(FLAME_STEP_SKILL.getId(), FLAME_STEP_SKILL);
             });
         }
 

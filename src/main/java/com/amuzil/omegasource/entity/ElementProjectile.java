@@ -221,7 +221,7 @@ public abstract class ElementProjectile extends Projectile implements ItemSuppli
     }
 
     // Method to start initial visual effect
-    public void startEffect(Form form, Player player) {
+    public void startEffect(Form form, LivingEntity player) {
         this.form = form; // NOTE: Need this to ensure form is set client-side before onHit event
         FX fx = null;
         if (getElement().equals(Elements.FIRE)) {

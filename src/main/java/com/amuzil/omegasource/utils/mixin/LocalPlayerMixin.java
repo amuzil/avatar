@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+
 @Mixin(LocalPlayer.class)
 public abstract class LocalPlayerMixin extends Player {
 
@@ -22,14 +23,14 @@ public abstract class LocalPlayerMixin extends Player {
     @Inject(method = "aiStep", at = @At("HEAD"))
     private void onAiStep(CallbackInfo ci) {
         // Only apply when on ground and jump key is pressed
-        if (this.onGround() && Minecraft.getInstance().options.keyJump.isDown()) {
+//        if (this.onGround() && Minecraft.getInstance().options.keyJump.isDown()) {
             // Set upward velocity for a "super jump"
 //            Vec3 motion = this.getDeltaMovement();
 //            this.setDeltaMovement(motion.x, 1.2D, motion.z);
 //            this.hurtMarked = true;
 
             // Disable default jump behavior
-            this.setOnGround(false);
-        }
+//            this.setOnGround(false);
+//        }
     }
 }

@@ -35,6 +35,8 @@ public class InputModule {
     private Form currentForm = BendingForms.NULL;
     private boolean isBending = true;
     private final HashMap<Integer, Integer> glfwKeysDown = new HashMap<>();
+    private final long DOUBLE_TAP_THRESHOLD = 250; // milliseconds
+    private final HashMap<Form, Long> lastPressedForm = new HashMap<>();
     private Magi magi;
     private BendingSelection.Type selection = BendingSelection.Type.NONE;
 
@@ -47,17 +49,17 @@ public class InputModule {
                 switch (keyboardEvent.getAction()) {
                     case InputConstants.PRESS -> {
                         switch (key) {
-                            case InputConstants.KEY_LSHIFT -> isHoldingShift = true;
                             case InputConstants.KEY_LCONTROL -> isHoldingCtrl = true;
                             case InputConstants.KEY_LALT -> isHoldingAlt = true;
+//                            case InputConstants.KEY_LSHIFT -> isHoldingShift = true;
                         }
                     }
                     case InputConstants.RELEASE -> {
                         if (keyPressed(key)) {
                             switch (key) {
-                                case InputConstants.KEY_LSHIFT -> isHoldingShift = false;
                                 case InputConstants.KEY_LCONTROL -> isHoldingCtrl = false;
                                 case InputConstants.KEY_LALT -> isHoldingAlt = false;
+//                                case InputConstants.KEY_LSHIFT -> isHoldingShift = false;
                             }
                         }
                     }
@@ -76,7 +78,7 @@ public class InputModule {
                     }
                     case InputConstants.RELEASE -> {
                         if (keyPressed(key)) {
-                            releaseForm(MOUSE_FORM_MAPPINGS.get(key), key);
+                            releaseForm(MOUSE_FORM_MAPPINGS.getOrDefault(key, BendingForms.NULL), key);
                         }
                     }
                 }
@@ -118,10 +120,9 @@ public class InputModule {
     }
 
     private void checkForm(Form form) { // Check if the form met the conditions before sending the packet
-        // TODO - Implement double tap Step capability for directional Forms w/o Initializer
         //      - Implement BendingForm class and link it to the Form class
         if (isBending) {
-            if (!(isHoldingShift || isHoldingAlt || isHoldingCtrl)) {
+            if (!(isHoldingCtrl || isHoldingAlt)) {
                 if (form.equals(BendingForms.TARGET)) { // Don't send target Form packet
                     int index = selection.ordinal() + 1;
                     if (index >= selectionTypes.length)
@@ -130,17 +131,11 @@ public class InputModule {
                     sendDebugMsg("Current Selection: " + selection);
                 } else if (form.equals(BendingForms.STRIKE) || form.equals(BendingForms.BLOCK)) {
                     sendFormPacket(form, false);
+                } else if (isDoubleTap(form)) {
+                    sendFormPacket(BendingForms.STEP, false);
                 }
             } else if (isHoldingCtrl && form.type().equals(Form.Type.MOTION)) {
                 sendFormPacket(form, false);
-                Player player = Minecraft.getInstance().player;
-                assert player != null;
-                if (form.equals(BendingForms.RAISE) && player.onGround()) {
-                    player.jumpFromGround();
-                    player.setDeltaMovement(player.getDeltaMovement().x, 1.5D, player.getDeltaMovement().z);
-                    player.hurtMarked = true; // Mark the player for velocity sync
-                    System.out.println("Player velocity set to: " + player.getDeltaMovement());
-                }
             } else if (isHoldingAlt && form.type().equals(Form.Type.SHAPE)) {
                 sendFormPacket(form, false);
             } else if (form.type().equals(Form.Type.INITIALIZER)) {
@@ -164,6 +159,21 @@ public class InputModule {
             AvatarNetwork.sendToServer(new ReleaseFormPacket(form));
             currentForm = BendingForms.NULL;
         }
+    }
+
+    public boolean isDoubleTap(Form form) {
+        if (form.type().equals(Form.Type.MOTION)) {
+            long currentTime = System.currentTimeMillis();
+            long lastTime = lastPressedForm.getOrDefault(form, 0L);
+
+            if (currentTime - lastTime < DOUBLE_TAP_THRESHOLD) {
+                lastPressedForm.put(form, 0L); // Reset to avoid triple tap
+                return true;
+            }
+
+            lastPressedForm.put(form, currentTime);
+        }
+        return false;
     }
 
     public boolean keyPressed(int key) {

@@ -13,6 +13,6 @@ public class BendingEffect extends BendingSkill {
 
     @Override
     public boolean shouldStart(LivingEntity entity, FormPath formPath) {
-        return SkillPathBuilder.checkForms(formPath.simple(), getStartPaths().simple());
+        return SkillPathBuilder.checkAllForms(formPath, getStartPaths());
     }
 }

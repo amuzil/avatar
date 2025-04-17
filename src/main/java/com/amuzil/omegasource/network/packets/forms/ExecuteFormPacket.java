@@ -44,6 +44,8 @@ public class ExecuteFormPacket implements AvatarPacket {
             } else if (msg.form.equals(STRIKE) || msg.form.equals(BLOCK)) {
                 entity.shoot(player.getViewVector(1).x, player.getViewVector(1).y, player.getViewVector(1).z, 1, 1);
             } else {
+                if (msg.form.equals(STEP))
+                    AvatarNetwork.sendToServer(new ReleaseFormPacket(STEP)); // Guarantee safe release to clean Magi's FormPath state
                 entity.discard();
                 return; // Unhandled Form - Discard and print no effects
             }
