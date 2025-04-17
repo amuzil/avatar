@@ -3,20 +3,21 @@ package com.amuzil.omegasource.bending;
 import net.minecraft.core.BlockPos;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
 public class BendingSelection {
-    public List<BlockPos> BlockPositions;
-    public List<Long> EntityIds;
-    public List<String> TechniqueIds;
-    public SelectionType Type;
+    public List<BlockPos> blockPositions;
+    public List<Long> entityIds;
+    public List<String> skillIds;
+    public BendingSelection.Type type;
 
-    public BendingSelection(List<BlockPos> positions, List<Long> entities, List<String> techniques, SelectionType type) {
-        BlockPositions = positions;
-        EntityIds = entities;
-        TechniqueIds = techniques;
-        Type = type;
+    public BendingSelection(List<BlockPos> positions, List<Long> entities, List<String> skills, BendingSelection.Type type) {
+        blockPositions = positions;
+        entityIds = entities;
+        skillIds = skills;
+        this.type = type;
     }
 
     public BendingSelection()
@@ -25,85 +26,78 @@ public class BendingSelection {
     }
 
     public void Reset() {
-        BlockPositions = new ArrayList<>();
-        EntityIds = new ArrayList<>();
-        TechniqueIds = new ArrayList<>();
-        Type = SelectionType.None;
+        blockPositions = new ArrayList<>();
+        entityIds = new ArrayList<>();
+        skillIds = new ArrayList<>();
+        type = BendingSelection.Type.NONE;
     }
 
     public void AddBlockPositions(List<BlockPos> pos) {
-        BlockPositions.addAll(pos);
-        Type = SelectionType.Block;
+        blockPositions.addAll(pos);
+        type = BendingSelection.Type.BLOCK;
     }
 
     public void AddBlockPosition(BlockPos pos) {
-        BlockPositions.add(pos);
-        Type = SelectionType.Block;
+        blockPositions.add(pos);
+        type = BendingSelection.Type.BLOCK;
     }
 
     @Override
     public String toString() {
-        var suffix = "";
-        switch (Type)
-        {
-            case Self:
-                suffix = "Player";
-                break;
-            case Block:
-                suffix = String.valueOf(BlockPositions.size());
-                break;
-            case Entity:
-                suffix = String.valueOf(EntityIds.size());
-                break;
-            case Technique:
-                suffix = String.valueOf(TechniqueIds.size());
-                break;
-        }
-        return Type + ": " + suffix;
+        var suffix = switch (type) {
+            case SELF -> "Player";
+            case BLOCK -> String.valueOf(blockPositions.size());
+            case ENTITY -> String.valueOf(entityIds.size());
+            case SKILL -> String.valueOf(skillIds.size());
+            default -> "";
+        };
+        return type + ": " + suffix;
     }
 
-    void AddTechniqueId(String techniqueId) {
-        TechniqueIds.add(techniqueId);
-        Type = SelectionType.Technique;
+    void AddSkillId(String skillId) {
+        skillIds.add(skillId);
+        type = BendingSelection.Type.SKILL;
     }
 
     void AddEntityId(long entityId) {
-        EntityIds.add(entityId);
-        Type = SelectionType.Technique;
+        entityIds.add(entityId);
+        type = BendingSelection.Type.SKILL;
     }
 
-    void AddTechniqueIds(List<String> techniqueIds) {
-        TechniqueIds.addAll(techniqueIds);
-        Type = SelectionType.Technique;
+    void AddSkillIds(List<String> skillIds) {
+        this.skillIds.addAll(skillIds);
+        type = BendingSelection.Type.SKILL;
     }
 
     void AddEntityIds(List<Long> entityIds) {
-        EntityIds.addAll(entityIds);
-        Type = SelectionType.Technique;
+        this.entityIds.addAll(entityIds);
+        type = BendingSelection.Type.SKILL;
     }
 
     void RemoveEntity(long entityId) {
-        EntityIds.remove(entityId);
+        entityIds.remove(entityId);
     }
 
     BendingSelection Copy() {
         var positions = new ArrayList<BlockPos>();
-        positions.addAll(BlockPositions);
+        positions.addAll(blockPositions);
 
         var entityIds = new ArrayList<Long>();
-        entityIds.addAll(EntityIds);
+        entityIds.addAll(this.entityIds);
 
-        var techniqueIds = new ArrayList<String>();
-        techniqueIds.addAll(TechniqueIds);
+        var skillIds = new ArrayList<String>();
+        skillIds.addAll(this.skillIds);
 
-        return new BendingSelection(positions, entityIds, techniqueIds, Type);
+        return new BendingSelection(positions, entityIds, skillIds, type);
     }
 
-    public enum SelectionType {
-        None,
-        Self,
-        Technique,
-        Block,
-        Entity,
+    public enum Type {
+        NONE,
+        SELF,
+        ENTITY,
+        SKILL,
+        BLOCK;
+
+        public static final Type[] selectionTypes = Arrays.copyOfRange(Type.values(), 0, 3);
     }
 }

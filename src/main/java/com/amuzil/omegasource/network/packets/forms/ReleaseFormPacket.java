@@ -1,7 +1,7 @@
 package com.amuzil.omegasource.network.packets.forms;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.api.magus.form.Form;
+import com.amuzil.omegasource.bending.BendingForm;
 import com.amuzil.omegasource.events.FormActivatedEvent;
 import com.amuzil.omegasource.network.packets.api.AvatarPacket;
 import net.minecraft.network.FriendlyByteBuf;
@@ -13,9 +13,9 @@ import java.util.function.Supplier;
 
 
 public class ReleaseFormPacket implements AvatarPacket {
-    public Form form;
+    public BendingForm form;
 
-    public ReleaseFormPacket(Form form) {
+    public ReleaseFormPacket(BendingForm form) {
         this.form = form;
     }
 
@@ -23,7 +23,7 @@ public class ReleaseFormPacket implements AvatarPacket {
         ctx.get().enqueueWork(() -> {
             // Work that needs to be thread-safe (most work)
             ServerPlayer sender = ctx.get().getSender(); // the client that sent this packet
-            Avatar.LOGGER.debug("Form releasing: {}", msg.form.name());
+            Avatar.LOGGER.debug("Form Released: {}", msg.form.name());
             // Do stuff
             MinecraftForge.EVENT_BUS.post(new FormActivatedEvent(msg.form, sender, true));
         });
@@ -37,6 +37,6 @@ public class ReleaseFormPacket implements AvatarPacket {
 
     public static ReleaseFormPacket fromBytes(FriendlyByteBuf buffer) {
         String formName = buffer.readUtf();
-        return new ReleaseFormPacket(new Form(formName));
+        return new ReleaseFormPacket(new BendingForm(formName));
     }
 }

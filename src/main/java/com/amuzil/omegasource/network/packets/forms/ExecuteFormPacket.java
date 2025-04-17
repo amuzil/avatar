@@ -2,7 +2,7 @@ package com.amuzil.omegasource.network.packets.forms;
 
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.bending.element.Elements;
-import com.amuzil.omegasource.api.magus.form.Form;
+import com.amuzil.omegasource.bending.BendingForm;
 import com.amuzil.omegasource.entity.ElementProjectile;
 import com.amuzil.omegasource.events.FormActivatedEvent;
 import com.amuzil.omegasource.network.AvatarNetwork;
@@ -21,9 +21,9 @@ import static com.amuzil.omegasource.bending.BendingForms.*;
 
 
 public class ExecuteFormPacket implements AvatarPacket {
-    public Form form;
+    public BendingForm form;
 
-    public ExecuteFormPacket(Form form) {
+    public ExecuteFormPacket(BendingForm form) {
         this.form = form;
     }
 
@@ -32,7 +32,7 @@ public class ExecuteFormPacket implements AvatarPacket {
             // Work that needs to be thread-safe (most work)
             ServerPlayer player = ctx.get().getSender(); // the client that sent this packet
             ServerLevel level = player.serverLevel();
-            Avatar.LOGGER.debug("Form executing: {}", msg.form.name());
+            Avatar.LOGGER.debug("Form Executed: {}", msg.form.name());
 
             MinecraftForge.EVENT_BUS.post(new FormActivatedEvent(msg.form, player, false));
             ElementProjectile entity;
@@ -44,6 +44,8 @@ public class ExecuteFormPacket implements AvatarPacket {
             } else if (msg.form.equals(STRIKE) || msg.form.equals(BLOCK)) {
                 entity.shoot(player.getViewVector(1).x, player.getViewVector(1).y, player.getViewVector(1).z, 1, 1);
             } else {
+                if (msg.form.equals(STEP))
+                    AvatarNetwork.sendToServer(new ReleaseFormPacket(STEP)); // Guarantee safe release to clean Magi's FormPath state
                 entity.discard();
                 return; // Unhandled Form - Discard and print no effects
             }
@@ -66,6 +68,6 @@ public class ExecuteFormPacket implements AvatarPacket {
 
     public static ExecuteFormPacket fromBytes(FriendlyByteBuf buffer) {
         String formName = buffer.readUtf();
-        return new ExecuteFormPacket(new Form(formName));
+        return new ExecuteFormPacket(new BendingForm(formName));
     }
 }

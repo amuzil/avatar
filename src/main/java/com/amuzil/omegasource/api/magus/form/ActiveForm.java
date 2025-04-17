@@ -1,5 +1,6 @@
 package com.amuzil.omegasource.api.magus.form;
 
+import com.amuzil.omegasource.bending.BendingForm;
 import com.amuzil.omegasource.registry.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -8,15 +9,16 @@ import java.util.Objects;
 
 
 public class ActiveForm {
-    private Form form;
+    // TODO - Create way to save elapsedTime data server-side
+    private BendingForm form;
     private boolean active;
 
-    public ActiveForm(Form form, boolean active) {
+    public ActiveForm(BendingForm form, boolean active) {
         this.form = form;
         this.active = active;
     }
 
-    public Form form() {
+    public BendingForm form() {
         return form;
     }
 

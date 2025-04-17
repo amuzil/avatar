@@ -1,10 +1,9 @@
 package com.amuzil.omegasource.network.packets.client;
 
 import com.amuzil.omegasource.bending.element.Element;
-import com.amuzil.omegasource.api.magus.form.Form;
+import com.amuzil.omegasource.bending.BendingForm;
 import com.amuzil.omegasource.entity.ElementProjectile;
 import com.amuzil.omegasource.events.FormActivatedEvent;
-import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.api.AvatarPacket;
 import com.amuzil.omegasource.registry.Registries;
 import net.minecraft.client.Minecraft;
@@ -20,23 +19,21 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.PacketDistributor;
 
 import java.util.Objects;
 import java.util.function.Supplier;
 
 import static com.amuzil.omegasource.Avatar.MOD_ID;
-import static com.amuzil.omegasource.bending.BendingForms.*;
 
 
 public class FormActivatedPacket implements AvatarPacket {
 
-    private final Form form;
+    private final BendingForm form;
     private final Element element;
     private final int entityId; // Entity ID to send back to client for FX
 
-    public FormActivatedPacket(Form form, Element element, int entityId) {
-        this.form = Objects.requireNonNullElseGet(form, Form::new);
+    public FormActivatedPacket(BendingForm form, Element element, int entityId) {
+        this.form = Objects.requireNonNullElseGet(form, BendingForm::new);
         this.element = element;
         this.entityId = entityId;
     }
@@ -53,13 +50,13 @@ public class FormActivatedPacket implements AvatarPacket {
         String formName = buf.readUtf();
         String elementName = buf.readUtf();
         int entityId = buf.readInt();
-        Form form = Registries.FORMS.get().getValue(ResourceLocation.fromNamespaceAndPath(MOD_ID, formName));
+        BendingForm form = Registries.FORMS.get().getValue(ResourceLocation.fromNamespaceAndPath(MOD_ID, formName));
         Element element = (Element) Registries.SKILL_CATEGORIES.get().getValue(ResourceLocation.fromNamespaceAndPath(MOD_ID, elementName));
         return new FormActivatedPacket(form, element, entityId);
     }
 
     // Server-side handler
-    public static void handleServerSide(Form form, Element element, int entityId, ServerPlayer player) {
+    public static void handleServerSide(BendingForm form, Element element, int entityId, ServerPlayer player) {
         // Perform server-side entity spawning and updating logic and fire Form Event here
         MinecraftForge.EVENT_BUS.post(new FormActivatedEvent(form, player));
         ServerLevel level = player.serverLevel();
@@ -97,7 +94,7 @@ public class FormActivatedPacket implements AvatarPacket {
 
     // Client-side handler
     @OnlyIn(Dist.CLIENT)
-    private static void handleClientSide(Form form, int entityId) {
+    private static void handleClientSide(BendingForm form, int entityId) {
         // Perform client-side particle effect or other rendering logic here
         Player player = Minecraft.getInstance().player;
         assert player != null;

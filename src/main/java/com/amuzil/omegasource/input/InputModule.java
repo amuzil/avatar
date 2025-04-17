@@ -1,7 +1,9 @@
 package com.amuzil.omegasource.input;
 
-import com.amuzil.omegasource.api.magus.form.Form;
+import com.amuzil.omegasource.api.magus.capability.entity.Magi;
+import com.amuzil.omegasource.bending.BendingForm;
 import com.amuzil.omegasource.bending.BendingForms;
+import com.amuzil.omegasource.bending.BendingSelection;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.forms.ExecuteFormPacket;
 import com.amuzil.omegasource.network.packets.forms.ReleaseFormPacket;
@@ -17,6 +19,9 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
+import static com.amuzil.omegasource.bending.BendingSelection.Type.selectionTypes;
+import static com.amuzil.omegasource.input.KeyBindings.*;
+
 
 public class InputModule {
     private final Consumer<InputEvent.Key> keyboardListener;
@@ -24,37 +29,37 @@ public class InputModule {
     private final Consumer<TickEvent.ClientTickEvent> tickEventConsumer;
 
     private boolean isHoldingShift = false;
-    private boolean isHoldingControl = false;
+    private boolean isHoldingCtrl = false;
     private boolean isHoldingAlt = false;
-    private Form currentForm = BendingForms.NULL;
+    private BendingForm currentForm = BendingForms.NULL;
     private boolean isBending = true;
     private final HashMap<Integer, Integer> glfwKeysDown = new HashMap<>();
+    private final long DOUBLE_TAP_THRESHOLD = 250; // milliseconds
+    private final HashMap<BendingForm, Long> lastPressedForm = new HashMap<>();
+    private Magi magi;
+    private BendingSelection.Type selection = BendingSelection.Type.NONE;
 
     public InputModule() {
         this.keyboardListener = keyboardEvent -> {
             int key = keyboardEvent.getKey();
             // NOTE: Minecraft's InputEvent.Key can only listen to the action InputConstants.REPEAT of one key at a time
             // tldr: it only fires the repeat event for the last key
-
-            switch (keyboardEvent.getAction()) {
-                case InputConstants.PRESS -> {
-                    if (!keyPressed(key)) {
-                        glfwKeysDown.put(key, 0);
-                    }
-                    switch (key) {
-                        case InputConstants.KEY_LSHIFT -> isHoldingShift = true;
-                        case InputConstants.KEY_LCONTROL -> isHoldingControl = true;
-                        case InputConstants.KEY_LALT -> isHoldingAlt = true;
-                    }
-                }
-                case InputConstants.RELEASE -> {
-                    if (keyPressed(key)) {
-                        glfwKeysDown.remove(key);
+            if (Minecraft.getInstance().screen == null) {
+                switch (keyboardEvent.getAction()) {
+                    case InputConstants.PRESS -> {
                         switch (key) {
-                            case InputConstants.KEY_LSHIFT -> isHoldingShift = false;
-                            case InputConstants.KEY_LCONTROL -> isHoldingControl = false;
-                            case InputConstants.KEY_LALT -> isHoldingAlt = false;
-                            default -> CheckFormsRelease(key);
+                            case InputConstants.KEY_LCONTROL -> isHoldingCtrl = true;
+                            case InputConstants.KEY_LALT -> isHoldingAlt = true;
+//                            case InputConstants.KEY_LSHIFT -> isHoldingShift = true;
+                        }
+                    }
+                    case InputConstants.RELEASE -> {
+                        if (keyPressed(key)) {
+                            switch (key) {
+                                case InputConstants.KEY_LCONTROL -> isHoldingCtrl = false;
+                                case InputConstants.KEY_LALT -> isHoldingAlt = false;
+//                                case InputConstants.KEY_LSHIFT -> isHoldingShift = false;
+                            }
                         }
                     }
                 }
@@ -62,92 +67,124 @@ public class InputModule {
         };
 
         this.mouseListener = mouseEvent -> {
-            int key = mouseEvent.getButton();
-            switch (mouseEvent.getAction()) {
-                case InputConstants.PRESS -> {
-                    if (!keyPressed(key)) {
-                        glfwKeysDown.put(key, 0);
+            if (Minecraft.getInstance().screen == null)  {
+                int key = mouseEvent.getButton();
+                switch (mouseEvent.getAction()) {
+                    case InputConstants.PRESS -> {
+                        if (!keyPressed(key)) {
+                            glfwKeysDown.put(key, 0);
+                        }
                     }
-                }
-                case InputConstants.RELEASE -> {
-                    if (keyPressed(key)) {
-                        glfwKeysDown.remove(key);
-                        CheckFormsRelease(key);
+                    case InputConstants.RELEASE -> {
+                        if (keyPressed(key)) {
+                            releaseForm(MOUSE_FORM_MAPPINGS.getOrDefault(key, BendingForms.NULL), key);
+                        }
                     }
                 }
             }
         };
 
         this.tickEventConsumer = tickEvent -> {
-            if (tickEvent.phase == TickEvent.ClientTickEvent.Phase.START && Minecraft.getInstance().getOverlay() == null) {
-                glfwKeysDown.forEach((key, ticks) -> {
-                    if (ticks == 0 && Minecraft.getInstance().getConnection() != null) {
-                        CheckFormsExecute(key);
-                    }
-                    glfwKeysDown.put(key, ticks+1);
-                });
+            if (tickEvent.phase == TickEvent.ClientTickEvent.Phase.START &&
+                    Minecraft.getInstance().getConnection() != null &&
+                    Minecraft.getInstance().getOverlay() == null &&
+                    Minecraft.getInstance().screen == null) {
+                checkInputs();
             }
         };
     }
 
-    private void CheckFormsExecute(int key) {
+    private void checkInputs() {
+        FORM_KEY_MAPPINGS.forEach((form, key) -> {
+            if (key.isDown()) {
+                int heldTicks = glfwKeysDown.getOrDefault(key.getKey().getValue(), 0);
+                glfwKeysDown.put(key.getKey().getValue(), heldTicks + 1);
+                if (heldTicks == 0)
+                    checkForm(form);
+            } else {
+                if (glfwKeysDown.containsKey(key.getKey().getValue())) {
+                    releaseForm(form, key.getKey().getValue());
+                }
+            }
+        });
+
+        MOUSE_FORM_MAPPINGS.forEach((key, form) -> {
+            if (glfwKeysDown.containsKey(key)) {
+                int heldTicks = glfwKeysDown.getOrDefault(key, 0);
+                glfwKeysDown.put(key, heldTicks + 1);
+                if (heldTicks == 0)
+                    checkForm(form);
+            }
+        });
+    }
+
+    private void checkForm(BendingForm form) { // Check if the form met the conditions before sending the packet
         if (isBending) {
-            if (!(isHoldingShift || isHoldingAlt || isHoldingControl)) {
-                switch (key) {
-                    case InputConstants.MOUSE_BUTTON_LEFT -> ExecuteForm(BendingForms.STRIKE);
-                    case InputConstants.MOUSE_BUTTON_RIGHT -> ExecuteForm(BendingForms.BLOCK);
+            if (!(isHoldingCtrl || isHoldingAlt)) {
+                if (form.equals(BendingForms.TARGET)) { // Don't send target Form packet
+                    int index = selection.ordinal() + 1;
+                    if (index >= selectionTypes.length)
+                        index = 0;
+                    selection = selectionTypes[index];
+                    sendDebugMsg("Bending Selection: " + selection);
+                } else if (form.equals(BendingForms.STRIKE) || form.equals(BendingForms.BLOCK)) {
+                    sendFormPacket(form, false);
+                } else if (isDoubleTap(form)) {
+                    sendFormPacket(BendingForms.STEP, false);
                 }
-            } else if (isHoldingShift) {
-                switch (key) {
-                    case InputConstants.KEY_W -> ExecuteForm(BendingForms.PUSH);
-                    case InputConstants.KEY_S -> ExecuteForm(BendingForms.PULL);
-                    case InputConstants.KEY_A -> ExecuteForm(BendingForms.LEFT);
-                    case InputConstants.KEY_D -> ExecuteForm(BendingForms.RIGHT);
-                    case InputConstants.KEY_Q -> ExecuteForm(BendingForms.LOWER);
-                    case InputConstants.KEY_E -> ExecuteForm(BendingForms.RAISE);
-                    case InputConstants.KEY_R -> ExecuteForm(BendingForms.ROTATE);
-                    case InputConstants.KEY_LALT -> ExecuteForm(BendingForms.ARC);
-                }
+            } else if (isHoldingCtrl && form.type().equals(BendingForm.Type.MOTION)) {
+                sendFormPacket(form, false);
+            } else if (isHoldingAlt && form.type().equals(BendingForm.Type.SHAPE)) {
+                sendFormPacket(form, false);
+            } else if (form.type().equals(BendingForm.Type.INITIALIZER)) {
+                sendFormPacket(form, false);
             }
         }
     }
 
-    private void CheckFormsRelease(int key) {
-        switch (key) {
-            case InputConstants.MOUSE_BUTTON_LEFT -> ReleaseForm(BendingForms.STRIKE);
-            case InputConstants.MOUSE_BUTTON_RIGHT -> ReleaseForm(BendingForms.BLOCK);
-            case InputConstants.KEY_W -> ReleaseForm(BendingForms.PUSH);
-            case InputConstants.KEY_S -> ReleaseForm(BendingForms.PULL);
-            case InputConstants.KEY_A -> ReleaseForm(BendingForms.LEFT);
-            case InputConstants.KEY_D -> ReleaseForm(BendingForms.RIGHT);
-            case InputConstants.KEY_Q -> ReleaseForm(BendingForms.LOWER);
-            case InputConstants.KEY_E -> ReleaseForm(BendingForms.RAISE);
-            case InputConstants.KEY_R -> ReleaseForm(BendingForms.ROTATE);
-            case InputConstants.KEY_LALT -> ReleaseForm(BendingForms.ARC);
+    private void releaseForm(BendingForm form, int key) {
+        glfwKeysDown.remove(key);
+        if (!form.equals(BendingForms.TARGET))
+            sendFormPacket(form, true);
+    }
+
+    private void sendFormPacket(BendingForm form, boolean released) {
+        if (!released) {
+            // send Form execute packet
+            AvatarNetwork.sendToServer(new ExecuteFormPacket(form));
+            currentForm = form;
+        } else {
+            // send Form release packet
+            AvatarNetwork.sendToServer(new ReleaseFormPacket(form));
+            currentForm = BendingForms.NULL;
         }
     }
 
-    private void ExecuteForm(Form form) {
-        // send Form execute packet
-        AvatarNetwork.sendToServer(new ExecuteFormPacket(form));
-        currentForm = form;
-    }
+    public boolean isDoubleTap(BendingForm form) {
+        if (form.type().equals(BendingForm.Type.MOTION)) {
+            long currentTime = System.currentTimeMillis();
+            long lastTime = lastPressedForm.getOrDefault(form, 0L);
 
-    private void ReleaseForm(Form form) {
-        // send Form release packet
-        AvatarNetwork.sendToServer(new ReleaseFormPacket(form));
-        currentForm = BendingForms.NULL;
+            if (currentTime - lastTime < DOUBLE_TAP_THRESHOLD) {
+                lastPressedForm.put(form, 0L); // Reset to avoid triple tap
+                return true;
+            }
+
+            lastPressedForm.put(form, currentTime);
+        }
+        return false;
     }
 
     public boolean keyPressed(int key) {
         return glfwKeysDown.containsKey(key);
     }
 
-    public Integer keyPressedTicks(int key) {
+    public int keyPressedTicks(int key) {
         return glfwKeysDown.getOrDefault(key, 0);
     }
 
     public void registerListeners() {
+        magi = Magi.get(Minecraft.getInstance().player);
         MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, InputEvent.Key.class, keyboardListener);
         MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, InputEvent.MouseButton.class, mouseListener);
         MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, TickEvent.ClientTickEvent.class, tickEventConsumer);
@@ -160,8 +197,15 @@ public class InputModule {
     }
 
     public void terminate() {
+        isHoldingShift = false;
+        isHoldingCtrl = false;
+        isHoldingAlt = false;
         unRegisterListeners();
         glfwKeysDown.clear();
+        magi = Magi.get(Minecraft.getInstance().player);
+        if (magi != null) {
+            magi.formPath.clearAll();
+        }
     }
 
     public void toggleListeners() {
@@ -176,7 +220,7 @@ public class InputModule {
         }
     }
 
-    // Send a message to in-game chat
+    // Send message to in-game chat
     public static void sendDebugMsg(String msg) {
         Minecraft minecraft = Minecraft.getInstance();
         minecraft.execute(() -> {

@@ -1,12 +1,11 @@
 package com.amuzil.omegasource.api.magus.condition.conditions;
 
 import com.amuzil.omegasource.api.magus.condition.Condition;
-import com.amuzil.omegasource.api.magus.form.Form;
+import com.amuzil.omegasource.bending.BendingForm;
 import com.amuzil.omegasource.events.FormActivatedEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.fml.config.ModConfig;
 
 import java.util.function.Consumer;
 
@@ -14,7 +13,7 @@ import java.util.function.Consumer;
 public class FormCondition extends Condition {
     private final Consumer<FormActivatedEvent> listener;
     private final Consumer<TickEvent> tickListener;
-    private Form form;
+    private BendingForm form;
     private boolean active;
     private final int timeout = 20; // Adjust timeout time here
     private int tick = timeout;
@@ -28,7 +27,6 @@ public class FormCondition extends Condition {
         };
 
         tickListener = event -> {
-            // Ticking for both server & client ~40 ticks == 1 second
             if (event.phase == TickEvent.Phase.START
                     && event.type == TickEvent.Type.SERVER) {
                 if (!active) {
@@ -43,7 +41,7 @@ public class FormCondition extends Condition {
         };
     }
 
-    public Form form() {
+    public BendingForm form() {
         return form;
     }
 
