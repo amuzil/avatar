@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class FormPath {
@@ -75,5 +76,11 @@ public class FormPath {
         for (int i = 0; i < size; i++) {
             simpleForms.get(i).deserializeNBT((CompoundTag) compoundTag.get("Active " + i));
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(simpleForms, complexForms);
+
     }
 }
