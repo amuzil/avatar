@@ -41,10 +41,9 @@ public class Registries {
     public static List<Skill> skills = new ArrayList<>();
     public static List<Form> forms = new ArrayList<>();
 
-    public static void init() {}
+    public static void init() {
+    }
 
-    public static final FlameStepSkill FLAME_STEP_SKILL = new FlameStepSkill();
-    public static final FireStrikeSkill FIRE_STRIKE_SKILL = new FireStrikeSkill();
     /**
      * Registry methods.
      */
@@ -145,8 +144,8 @@ public class Registries {
             ResourceKey<Registry<Skill>> resKey = registry.getRegistryKey();
 
             event.register(resKey, helper -> {
-                registry.register(FLAME_STEP_SKILL.getId(), FLAME_STEP_SKILL);
-                registry.register(FIRE_STRIKE_SKILL.getId(), FIRE_STRIKE_SKILL);
+                for (Skill skill : skills)
+                    registry.register(skill.getId(), skill);
             });
         }
 

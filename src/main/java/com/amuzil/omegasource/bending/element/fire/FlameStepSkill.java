@@ -4,6 +4,7 @@ import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.capability.entity.Magi;
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
 import com.amuzil.omegasource.api.magus.form.FormPath;
+import com.amuzil.omegasource.api.magus.radix.RadixTree;
 import com.amuzil.omegasource.api.magus.skill.SkillCategory;
 import com.amuzil.omegasource.api.magus.skill.utils.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.utils.data.SkillPathBuilder;
@@ -28,7 +29,7 @@ public class FlameStepSkill extends BendingEffect {
         addTrait(new SizeTrait(1.0f, "size"));
         addTrait(new ColourTrait(0, 0, 0, "fire_colour"));
 
-        this.startPaths  = SkillPathBuilder.getInstance()
+        this.startPaths = SkillPathBuilder.getInstance()
                 .complex(new ActiveForm(STEP, true))
                 .build();
 
@@ -36,7 +37,18 @@ public class FlameStepSkill extends BendingEffect {
 
     @Override
     public boolean shouldStart(LivingEntity entity, FormPath formPath) {
+        if (entity.tickCount % 40 == 0) {
+            if (startPaths.simple() != null)
+                RadixTree.getLogger().debug(startPaths.simple());
+            if (startPaths.complex() != null)
+                RadixTree.getLogger().debug(startPaths.complex());
+        }
         return super.shouldStart(entity, formPath);
+    }
+
+    @Override
+    public FormPath getStartPaths() {
+        return startPaths;
     }
 
     @Override
@@ -64,16 +76,16 @@ public class FlameStepSkill extends BendingEffect {
         float dashSpeed = (float) data.getTrait("dash_speed", SpeedTrait.class).getSpeed();
         Vec3 dashVec = Vec3.ZERO;
         if (entity.level().isClientSide) {
-                Minecraft mc = Minecraft.getInstance();
-                if (mc.options.keyUp.isDown()) {
-                    dashVec = entity.getLookAngle().multiply(1, 0, 1).normalize().scale(dashSpeed); // W
-                } else if (mc.options.keyDown.isDown()) {
-                    dashVec = entity.getLookAngle().multiply(1, 0, 1).normalize().scale(-dashSpeed); // S
-                } else if (mc.options.keyLeft.isDown()) {
-                    dashVec = entity.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(-dashSpeed); // A
-                } else if (mc.options.keyRight.isDown()) {
-                    dashVec = entity.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(dashSpeed); // D
-                }
+            Minecraft mc = Minecraft.getInstance();
+            if (mc.options.keyUp.isDown()) {
+                dashVec = entity.getLookAngle().multiply(1, 0, 1).normalize().scale(dashSpeed); // W
+            } else if (mc.options.keyDown.isDown()) {
+                dashVec = entity.getLookAngle().multiply(1, 0, 1).normalize().scale(-dashSpeed); // S
+            } else if (mc.options.keyLeft.isDown()) {
+                dashVec = entity.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(-dashSpeed); // A
+            } else if (mc.options.keyRight.isDown()) {
+                dashVec = entity.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(dashSpeed); // D
+            }
         }
         entity.setDeltaMovement(dashVec.x, entity.getDeltaMovement().y + 0.3D, dashVec.z);
 
