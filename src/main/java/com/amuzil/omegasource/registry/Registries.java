@@ -83,7 +83,7 @@ public class Registries {
         conditions.addAll(registryConditions);
     }
 
-    public static void registerForm(Form registryForm) {
+    public static void registerForm(BendingForm registryForm) {
         forms.add(registryForm);
     }
 
