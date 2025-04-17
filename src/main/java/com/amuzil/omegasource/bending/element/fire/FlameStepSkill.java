@@ -10,17 +10,16 @@ import com.amuzil.omegasource.api.magus.skill.utils.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.*;
 import com.amuzil.omegasource.bending.BendingEffect;
 import com.amuzil.omegasource.bending.element.Elements;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
-import static com.amuzil.omegasource.bending.BendingForms.*;
+import static com.amuzil.omegasource.bending.BendingForms.STEP;
 
 public class FlameStepSkill extends BendingEffect {
 
     public FlameStepSkill() {
-        super(Avatar.MOD_ID, "fire_strike_effect", Elements.FIRE);
+        super(Avatar.MOD_ID, "flame_step", Elements.FIRE);
         addTrait(new DamageTrait(3.0f, "damage"));
         addTrait(new SizeTrait(1.0f, "size"));
         addTrait(new KnockbackTrait(1.5f, "knockback"));

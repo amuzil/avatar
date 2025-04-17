@@ -37,4 +37,3 @@ public class Form {
         return name().hashCode();
     }
 }
-
