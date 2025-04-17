@@ -14,17 +14,17 @@ public class SkillActive extends Skill {
 
     @Override
     public FormPath getStartPaths() {
-        return null;
+        return startPaths;
     }
 
     @Override
     public FormPath getRunPaths() {
-        return null;
+        return runPaths;
     }
 
     @Override
     public FormPath getStopPaths() {
-        return null;
+        return stopPaths;
     }
 
     @Override
@@ -65,4 +65,6 @@ public class SkillActive extends Skill {
     public void reset(LivingEntity entity, FormPath formPath) {
 
     }
+
+
 }

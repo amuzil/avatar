@@ -10,6 +10,8 @@ import com.amuzil.omegasource.api.magus.skill.utils.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.utils.traits.DataTrait;
 import com.amuzil.omegasource.api.magus.skill.utils.traits.SkillTrait;
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
+import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.SpeedTrait;
+import com.amuzil.omegasource.bending.element.fire.FlameStepSkill;
 import com.amuzil.omegasource.registry.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -21,6 +23,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import static com.amuzil.omegasource.registry.Registries.FLAME_STEP_SKILL;
 
 
 public class Magi {
@@ -169,7 +173,6 @@ public class Magi {
             skillCategoryData.forEach(catData -> tag.put(catData.getName(), catData.serializeNBT()));
             skillData.forEach(sData -> tag.put(sData.getName(), sData.serializeNBT()));
             formPath.serializeNBT();
-            System.out.println("Serialise: " + formPath.complex());
         }
         return tag;
     }
@@ -179,6 +182,5 @@ public class Magi {
         skillCategoryData.forEach(catData -> catData.deserializeNBT(tag.getCompound(catData.getName())));
         skillData.forEach(sData -> sData.deserializeNBT(tag.getCompound(sData.getName())));
         formPath.deserializeNBT(tag);
-        System.out.println("Deserialise: " + formPath.complex());
     }
 }

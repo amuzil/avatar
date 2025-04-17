@@ -24,17 +24,14 @@ public class FlameStepSkill extends BendingEffect {
     public FlameStepSkill() {
         super(Avatar.MOD_ID, "flame_step", Elements.FIRE);
         addTrait(new KnockbackTrait(1.5f, "knockback"));
-        addTrait(new SpeedTrait(3.0f, "speed"));
+        addTrait(new SpeedTrait(1.5f, "dash_speed"));
         addTrait(new SizeTrait(1.0f, "size"));
         addTrait(new ColourTrait(0, 0, 0, "fire_colour"));
 
-    }
-
-    @Override
-    public FormPath getStartPaths() {
-        return SkillPathBuilder.getInstance()
+        this.startPaths  = SkillPathBuilder.getInstance()
                 .complex(new ActiveForm(STEP, true))
                 .build();
+
     }
 
     @Override
@@ -50,6 +47,10 @@ public class FlameStepSkill extends BendingEffect {
     @Override
     public void start(LivingEntity entity) {
         super.start(entity);
+
+        Magi magi = Magi.get(entity);
+        SkillData data = magi.getSkillData(this);
+
 //        entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED));
 //        entity.level().addFreshEntity(new LightningBolt(EntityType.LIGHTNING_BOLT, entity.level()));
 //        if (!entity.level().isClientSide) {
@@ -60,7 +61,7 @@ public class FlameStepSkill extends BendingEffect {
 //            RadixTree.getLogger().info("Attempting projectile spawn.");
 //        }
 
-        float dashSpeed = 5F;
+        float dashSpeed = (float) data.getTrait("dash_speed", SpeedTrait.class).getSpeed();
         Vec3 dashVec = Vec3.ZERO;
         if (entity.level().isClientSide) {
                 Minecraft mc = Minecraft.getInstance();
@@ -82,10 +83,8 @@ public class FlameStepSkill extends BendingEffect {
 //        entity.hurtMarked = true; // Mark the entity for velocity sync
 //        System.out.println("New Delta: " + entity.getDeltaMovement());
 
-        Magi magi = Magi.get(entity);
         if (magi != null) {
             magi.formPath.clear();
-            SkillData data = magi.getSkillData(this);
             data.setState(SkillState.IDLE);
 
             resetCooldown(data);

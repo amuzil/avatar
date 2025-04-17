@@ -31,8 +31,8 @@ public class SkillPathBuilder extends PathBuilder {
 
     public FormPath build() {
         // Need to copy the list
-        LinkedList<ActiveForm> simple = simpleForms.isEmpty() ? new LinkedList<>() : new LinkedList<>(simpleForms);
-        LinkedList<ActiveForm> complex = complexForms.isEmpty() ? new LinkedList<>() : new LinkedList<>(complexForms);
+        LinkedList<ActiveForm> simple = simpleForms == null || simpleForms.isEmpty() ? new LinkedList<>() : new LinkedList<>(simpleForms);
+        LinkedList<ActiveForm> complex = complexForms == null || complexForms.isEmpty() ? new LinkedList<>() : new LinkedList<>(complexForms);
         FormPath path = new FormPath(simple, complex);
         this.reset();
         return path;

@@ -47,7 +47,7 @@ public class LivingDataCapability {
         private final List<Skill> skills = new ArrayList<>();
         private boolean isDirty;
         // Instance of skill/magus supported entity, essentially.
-        private Magi magi = null;
+        private Magi magi;
 
         public LivingDataCapabilityImp() {
             fillTraits();

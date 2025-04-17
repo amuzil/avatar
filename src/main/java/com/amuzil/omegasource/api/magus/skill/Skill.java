@@ -30,6 +30,7 @@ public abstract class Skill {
     // For complex, game-design move combinations, see ModifierData for how to alter your skills.
     protected RadixTree.ActivationType activatedType;
     private boolean shouldStart, shouldRun, shouldStop;
+    protected FormPath startPaths = null, runPaths = null, stopPaths = null;
 
     public Skill(String modID, String name, SkillCategory category) {
         this(ResourceLocation.fromNamespaceAndPath(modID, name), category);
