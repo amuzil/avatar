@@ -39,7 +39,7 @@ public class FormPath {
     }
 
     public void update(ActiveForm activeForm) {
-        if (activeForm.active()) {
+        if (activeForm.active() && complexForms.size() < 4) { // Limit to 4 active Forms
             simpleForms.add(activeForm);
             complexForms.add(activeForm);
         } else {
