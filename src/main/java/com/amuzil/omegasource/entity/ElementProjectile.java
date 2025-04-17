@@ -1,12 +1,12 @@
 package com.amuzil.omegasource.entity;
 
+import com.amuzil.omegasource.bending.BendingForm;
 import com.amuzil.omegasource.entity.projectile.AirProjectile;
 import com.amuzil.omegasource.entity.projectile.EarthProjectile;
 import com.amuzil.omegasource.entity.projectile.FireProjectile;
 import com.amuzil.omegasource.entity.projectile.WaterProjectile;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
-import com.amuzil.omegasource.api.magus.form.Form;
 import com.amuzil.omegasource.bending.BendingForms;
 import com.lowdragmc.photon.client.fx.EntityEffect;
 import com.lowdragmc.photon.client.fx.FX;
@@ -19,7 +19,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
@@ -46,20 +45,20 @@ public abstract class ElementProjectile extends Projectile implements ItemSuppli
     public int ttk = 100;
     public boolean arcActive = false;
     public boolean hasElement = false;
-    public Form form;
+    public BendingForm form;
 
     public ElementProjectile(EntityType<? extends ElementProjectile> type, Level level) {
         super(type, level);
     }
 
-    public ElementProjectile(EntityType<? extends ElementProjectile> entityType, double x, double y, double z, Level level, Form form) {
+    public ElementProjectile(EntityType<? extends ElementProjectile> entityType, double x, double y, double z, Level level, BendingForm form) {
         this(entityType, level);
         this.setPos(x, y, z);
         this.setNoGravity(true);
         this.form = form;
     }
 
-    public ElementProjectile(EntityType<? extends ElementProjectile> entityType, LivingEntity livingEntity, Level level, Form form) {
+    public ElementProjectile(EntityType<? extends ElementProjectile> entityType, LivingEntity livingEntity, Level level, BendingForm form) {
         this(entityType, livingEntity.getX(), livingEntity.getEyeY(), livingEntity.getZ(), level, form);
         this.setOwner(livingEntity);
     }
@@ -192,7 +191,7 @@ public abstract class ElementProjectile extends Projectile implements ItemSuppli
         }
     }
 
-    public void control(float scale, Form form) {
+    public void control(float scale, BendingForm form) {
         this.arcActive = true;
         if (form == BendingForms.NULL) {
             this.hasElement = true;
@@ -211,7 +210,7 @@ public abstract class ElementProjectile extends Projectile implements ItemSuppli
         return PROJECTILE_ITEM;
     }
 
-    public static ElementProjectile createElementEntity(Form form, Element element, ServerPlayer player, ServerLevel level) {
+    public static ElementProjectile createElementEntity(BendingForm form, Element element, ServerPlayer player, ServerLevel level) {
         return switch (element.type()) {
             case AIR -> new AirProjectile(player, level);
             case WATER -> new WaterProjectile(player, level);
@@ -221,7 +220,7 @@ public abstract class ElementProjectile extends Projectile implements ItemSuppli
     }
 
     // Method to start initial visual effect
-    public void startEffect(Form form, LivingEntity player) {
+    public void startEffect(BendingForm form, LivingEntity player) {
         this.form = form; // NOTE: Need this to ensure form is set client-side before onHit event
         FX fx = null;
         if (getElement().equals(Elements.FIRE)) {

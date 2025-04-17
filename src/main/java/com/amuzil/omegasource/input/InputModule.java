@@ -1,7 +1,7 @@
 package com.amuzil.omegasource.input;
 
 import com.amuzil.omegasource.api.magus.capability.entity.Magi;
-import com.amuzil.omegasource.api.magus.form.Form;
+import com.amuzil.omegasource.bending.BendingForm;
 import com.amuzil.omegasource.bending.BendingForms;
 import com.amuzil.omegasource.bending.BendingSelection;
 import com.amuzil.omegasource.network.AvatarNetwork;
@@ -11,7 +11,6 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -32,11 +31,11 @@ public class InputModule {
     private boolean isHoldingShift = false;
     private boolean isHoldingCtrl = false;
     private boolean isHoldingAlt = false;
-    private Form currentForm = BendingForms.NULL;
+    private BendingForm currentForm = BendingForms.NULL;
     private boolean isBending = true;
     private final HashMap<Integer, Integer> glfwKeysDown = new HashMap<>();
     private final long DOUBLE_TAP_THRESHOLD = 250; // milliseconds
-    private final HashMap<Form, Long> lastPressedForm = new HashMap<>();
+    private final HashMap<BendingForm, Long> lastPressedForm = new HashMap<>();
     private Magi magi;
     private BendingSelection.Type selection = BendingSelection.Type.NONE;
 
@@ -119,7 +118,7 @@ public class InputModule {
         });
     }
 
-    private void checkForm(Form form) { // Check if the form met the conditions before sending the packet
+    private void checkForm(BendingForm form) { // Check if the form met the conditions before sending the packet
         //      - Implement BendingForm class and link it to the Form class
         if (isBending) {
             if (!(isHoldingCtrl || isHoldingAlt)) {
@@ -134,22 +133,22 @@ public class InputModule {
                 } else if (isDoubleTap(form)) {
                     sendFormPacket(BendingForms.STEP, false);
                 }
-            } else if (isHoldingCtrl && form.type().equals(Form.Type.MOTION)) {
+            } else if (isHoldingCtrl && form.type().equals(BendingForm.Type.MOTION)) {
                 sendFormPacket(form, false);
-            } else if (isHoldingAlt && form.type().equals(Form.Type.SHAPE)) {
+            } else if (isHoldingAlt && form.type().equals(BendingForm.Type.SHAPE)) {
                 sendFormPacket(form, false);
-            } else if (form.type().equals(Form.Type.INITIALIZER)) {
+            } else if (form.type().equals(BendingForm.Type.INITIALIZER)) {
                 sendFormPacket(form, false);
             }
         }
     }
 
-    private void releaseForm(Form form, int key) {
+    private void releaseForm(BendingForm form, int key) {
         glfwKeysDown.remove(key);
         sendFormPacket(form, true);
     }
 
-    private void sendFormPacket(Form form, boolean released) {
+    private void sendFormPacket(BendingForm form, boolean released) {
         if (!released) {
             // send Form execute packet
             AvatarNetwork.sendToServer(new ExecuteFormPacket(form));
@@ -161,8 +160,8 @@ public class InputModule {
         }
     }
 
-    public boolean isDoubleTap(Form form) {
-        if (form.type().equals(Form.Type.MOTION)) {
+    public boolean isDoubleTap(BendingForm form) {
+        if (form.type().equals(BendingForm.Type.MOTION)) {
             long currentTime = System.currentTimeMillis();
             long lastTime = lastPressedForm.getOrDefault(form, 0L);
 

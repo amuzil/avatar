@@ -7,6 +7,7 @@ import com.amuzil.omegasource.api.magus.condition.Condition;
 import com.amuzil.omegasource.api.magus.skill.Skill;
 import com.amuzil.omegasource.api.magus.skill.utils.traits.DataTrait;
 import com.amuzil.omegasource.api.magus.skill.utils.traits.SkillTrait;
+import com.amuzil.omegasource.bending.BendingForm;
 import com.amuzil.omegasource.bending.BendingForms;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
@@ -32,7 +33,7 @@ public class Registries {
     public static Supplier<IForgeRegistry<DataTrait>> DATA_TRAITS;
     public static Supplier<IForgeRegistry<SkillCategory>> SKILL_CATEGORIES;
     public static Supplier<IForgeRegistry<Skill>> SKILLS;
-    public static Supplier<IForgeRegistry<Form>> FORMS;
+    public static Supplier<IForgeRegistry<BendingForm>> FORMS;
     public static List<DataTrait> traits = new ArrayList<>();
     public static List<SkillCategory> categories = new ArrayList<>();
     public static List<Condition> conditions = new ArrayList<>();
@@ -100,7 +101,7 @@ public class Registries {
     @SubscribeEvent
     public static void onRegistryRegister(NewRegistryEvent event) {
         // Forms
-        RegistryBuilder<Form> formRegistryBuilder = new RegistryBuilder<>();
+        RegistryBuilder<BendingForm> formRegistryBuilder = new RegistryBuilder<>();
         formRegistryBuilder.setName(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "forms"));
         FORMS = event.create(formRegistryBuilder);
 
@@ -126,13 +127,13 @@ public class Registries {
         BendingForms.init(); // Ensure Forms registry gets populated
         // Forms
         if (event.getRegistryKey().equals(FORMS.get().getRegistryKey())) {
-            IForgeRegistry<Form> registry = FORMS.get();
-            ResourceKey<Registry<Form>> resKey = registry.getRegistryKey();
+            IForgeRegistry<BendingForm> registry = FORMS.get();
+            ResourceKey<Registry<BendingForm>> resKey = registry.getRegistryKey();
 
             event.register(resKey, helper -> {
                 for (Form form : forms)
-                    registry.register(form.name(), form);
-                //TODO: Element specific forms
+                    registry.register(form.name(), (BendingForm) form);
+                // TODO: Element specific forms
             });
         }
 

@@ -1,29 +1,27 @@
 package com.amuzil.omegasource.bending;
 
-import com.amuzil.omegasource.api.magus.form.Form;
-
 public class BendingForms {
     // Basic Bending Forms
 
-    public static final Form NULL = new Form("null"); // Blank Form
-    public static final Form STRIKE = new Form("strike", Form.Type.MOTION);
-    public static final Form BLOCK = new Form("block", Form.Type.MOTION);
-    public static final Form STEP = new Form("step", Form.Type.MOTION);
-    public static final Form PUSH = new Form("push", Form.Type.MOTION);
-    public static final Form PULL = new Form("pull", Form.Type.MOTION);
-    public static final Form LEFT = new Form("left", Form.Type.MOTION);
-    public static final Form RIGHT = new Form("right", Form.Type.MOTION);
-    public static final Form RAISE = new Form("raise", Form.Type.MOTION);
-    public static final Form LOWER = new Form("lower", Form.Type.MOTION);
-    public static final Form ROTATE = new Form("rotate", Form.Type.MOTION);
-    public static final Form EXPAND = new Form("expand", Form.Type.SHAPE);
-    public static final Form COMPRESS = new Form("compress", Form.Type.SHAPE);
-    public static final Form SPLIT = new Form("split", Form.Type.SHAPE);
-    public static final Form COMBINE = new Form("combine", Form.Type.SHAPE);
-    public static final Form ARC = new Form("arc", Form.Type.INITIALIZER); // Trigger & charge motion Forms
-    public static final Form SHAPE = new Form("shape", Form.Type.INITIALIZER); // Trigger & charge shape Forms
-    public static final Form TARGET = new Form("target", Form.Type.INITIALIZER);
-    public static final Form FOCUS = new Form("focus", Form.Type.INITIALIZER);
+    public static final BendingForm NULL = new BendingForm("null"); // Blank Form
+    public static final BendingForm STRIKE = new BendingForm("strike", BendingForm.Type.MOTION);
+    public static final BendingForm BLOCK = new BendingForm("block", BendingForm.Type.MOTION);
+    public static final BendingForm STEP = new BendingForm("step", BendingForm.Type.MOTION);
+    public static final BendingForm PUSH = new BendingForm("push", BendingForm.Type.MOTION);
+    public static final BendingForm PULL = new BendingForm("pull", BendingForm.Type.MOTION);
+    public static final BendingForm LEFT = new BendingForm("left", BendingForm.Type.MOTION);
+    public static final BendingForm RIGHT = new BendingForm("right", BendingForm.Type.MOTION);
+    public static final BendingForm RAISE = new BendingForm("raise", BendingForm.Type.MOTION);
+    public static final BendingForm LOWER = new BendingForm("lower", BendingForm.Type.MOTION);
+    public static final BendingForm ROTATE = new BendingForm("rotate", BendingForm.Type.MOTION);
+    public static final BendingForm EXPAND = new BendingForm("expand", BendingForm.Type.SHAPE);
+    public static final BendingForm COMPRESS = new BendingForm("compress", BendingForm.Type.SHAPE);
+    public static final BendingForm SPLIT = new BendingForm("split", BendingForm.Type.SHAPE);
+    public static final BendingForm COMBINE = new BendingForm("combine", BendingForm.Type.SHAPE);
+    public static final BendingForm ARC = new BendingForm("arc", BendingForm.Type.INITIALIZER); // Trigger & charge motion Forms
+    public static final BendingForm SHAPE = new BendingForm("shape", BendingForm.Type.INITIALIZER); // Trigger & charge shape Forms
+    public static final BendingForm TARGET = new BendingForm("target", BendingForm.Type.INITIALIZER);
+    public static final BendingForm FOCUS = new BendingForm("focus", BendingForm.Type.INITIALIZER);
 
     public static void init() {}
 }

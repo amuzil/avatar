@@ -1,28 +1,28 @@
 package com.amuzil.omegasource.events;
 
-import com.amuzil.omegasource.api.magus.form.Form;
+import com.amuzil.omegasource.bending.BendingForm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.eventbus.api.Event;
 
 
 public class FormActivatedEvent extends Event {
-    private final Form form;
+    private final BendingForm form;
     private final LivingEntity entity;
     private final boolean released;
 
-    public FormActivatedEvent(Form form, LivingEntity entity) {
+    public FormActivatedEvent(BendingForm form, LivingEntity entity) {
         this.form = form;
         this.entity = entity;
         this.released = false;
     }
 
-    public FormActivatedEvent(Form form, LivingEntity entity, boolean released) {
+    public FormActivatedEvent(BendingForm form, LivingEntity entity, boolean released) {
         this.form = form;
         this.entity = entity;
         this.released = released;
     }
 
-    public Form getForm() {
+    public BendingForm getForm() {
         return this.form;
     }
 

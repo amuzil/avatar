@@ -1,7 +1,7 @@
 package com.amuzil.omegasource.input;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.api.magus.form.Form;
+import com.amuzil.omegasource.bending.BendingForm;
 import com.amuzil.omegasource.bending.BendingForms;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
@@ -17,8 +17,8 @@ import java.util.HashMap;
 
 @Mod.EventBusSubscriber(modid = Avatar.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class KeyBindings {
-    static final HashMap<Integer, Form> MOUSE_FORM_MAPPINGS = new HashMap<>();
-    static final HashMap<Form, KeyMapping> FORM_KEY_MAPPINGS = new HashMap<>();
+    static final HashMap<Integer, BendingForm> MOUSE_FORM_MAPPINGS = new HashMap<>();
+    static final HashMap<BendingForm, KeyMapping> FORM_KEY_MAPPINGS = new HashMap<>();
     private static final KeyMapping toggleBendingKey = new KeyMapping(
             "key.av3.bending_toggle",
             InputConstants.KEY_GRAVE,
@@ -45,7 +45,7 @@ public class KeyBindings {
         // Add more mappings as needed
     }
 
-    private static void createKeyMapping(Form form, int defaultKey) {
+    private static void createKeyMapping(BendingForm form, int defaultKey) {
         if (defaultKey > 2) { // Exclude mouse buttons to avoid error
             KeyMapping keyMapping = new KeyMapping(
                     String.format("key.av3.form.%s", form.name().toLowerCase()),
@@ -57,7 +57,7 @@ public class KeyBindings {
         }
     }
 
-    public static KeyMapping getKeyMapping(Form form) {
+    public static KeyMapping getKeyMapping(BendingForm form) {
         return FORM_KEY_MAPPINGS.getOrDefault(form, null);
     }
 

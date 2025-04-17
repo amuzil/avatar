@@ -2,7 +2,7 @@ package com.amuzil.omegasource.network.packets.forms;
 
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.bending.element.Elements;
-import com.amuzil.omegasource.api.magus.form.Form;
+import com.amuzil.omegasource.bending.BendingForm;
 import com.amuzil.omegasource.entity.ElementProjectile;
 import com.amuzil.omegasource.events.FormActivatedEvent;
 import com.amuzil.omegasource.network.AvatarNetwork;
@@ -21,9 +21,9 @@ import static com.amuzil.omegasource.bending.BendingForms.*;
 
 
 public class ExecuteFormPacket implements AvatarPacket {
-    public Form form;
+    public BendingForm form;
 
-    public ExecuteFormPacket(Form form) {
+    public ExecuteFormPacket(BendingForm form) {
         this.form = form;
     }
 
@@ -68,6 +68,6 @@ public class ExecuteFormPacket implements AvatarPacket {
 
     public static ExecuteFormPacket fromBytes(FriendlyByteBuf buffer) {
         String formName = buffer.readUtf();
-        return new ExecuteFormPacket(new Form(formName));
+        return new ExecuteFormPacket(new BendingForm(formName));
     }
 }
