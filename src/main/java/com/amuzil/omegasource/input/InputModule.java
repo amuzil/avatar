@@ -126,7 +126,7 @@ public class InputModule {
                     if (index >= selectionTypes.length)
                         index = 0;
                     selection = selectionTypes[index];
-                    sendDebugMsg("Current Selection: " + selection);
+                    sendDebugMsg("Bending Selection: " + selection);
                 } else if (form.equals(BendingForms.STRIKE) || form.equals(BendingForms.BLOCK)) {
                     sendFormPacket(form, false);
                 } else if (isDoubleTap(form)) {
@@ -144,7 +144,8 @@ public class InputModule {
 
     private void releaseForm(BendingForm form, int key) {
         glfwKeysDown.remove(key);
-        sendFormPacket(form, true);
+        if (!form.equals(BendingForms.TARGET))
+            sendFormPacket(form, true);
     }
 
     private void sendFormPacket(BendingForm form, boolean released) {
