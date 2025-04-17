@@ -7,10 +7,7 @@ import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.skill.SkillCategory;
 import com.amuzil.omegasource.api.magus.skill.utils.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.utils.data.SkillPathBuilder;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.ColourTrait;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.DamageTrait;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.KnockbackTrait;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.SizeTrait;
+import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.*;
 import com.amuzil.omegasource.bending.BendingForms;
 import com.amuzil.omegasource.bending.BendingSkill;
 import com.amuzil.omegasource.bending.element.Elements;
@@ -29,6 +26,7 @@ public class FireStrikeSkill extends BendingSkill {
         addTrait(new SizeTrait(1.5F, "size"));
         addTrait(new KnockbackTrait(2f, "knockback"));
         addTrait(new ColourTrait(0, 0, 0, "fire_colour"));
+        addTrait(new TimedTrait(20, "lifetime"));
     }
 
     @Override
