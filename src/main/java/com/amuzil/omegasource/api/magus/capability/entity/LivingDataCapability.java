@@ -62,8 +62,8 @@ public class LivingDataCapability {
         public Magi getMagi(LivingEntity entity) {
             if (magi == null) {
                 if (entity instanceof Player) {
-                    Avatar.LOGGER.debug("Client Side: "  + entity.level().isClientSide);
-                    Avatar.LOGGER.warn("Magi instance is null.");
+//                    Avatar.LOGGER.debug("Client Side: "  + entity.level().isClientSide);
+//                    Avatar.LOGGER.warn("Magi instance is null.");
 //                    Thread.dumpStack();
                 }
                 fillTraits();

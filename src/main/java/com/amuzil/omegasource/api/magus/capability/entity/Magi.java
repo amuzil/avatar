@@ -88,8 +88,8 @@ public class Magi {
         if (cap == null) {
             // Capability isn't ready yet.
             if (entity instanceof Player) {
-                Avatar.LOGGER.warn("Living Data cap is null.");
-                Thread.dumpStack();
+//                Avatar.LOGGER.warn("Living Data cap is null.");
+//                Thread.dumpStack();
             }
             return null;
         }
