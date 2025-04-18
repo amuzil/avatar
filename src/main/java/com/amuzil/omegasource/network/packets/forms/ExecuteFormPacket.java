@@ -40,8 +40,9 @@ public class ExecuteFormPacket implements AvatarPacket {
             // Extra case for step
             if (msg.form.equals(STEP)) {
                 player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
-                    System.out.printf("Changed element from %s to air%n", bender.getElement());
-                    bender.setElement("air");
+                    String new_elem = "earth";
+                    System.out.printf("Changed element from %s to %s\n", bender.getElement(), new_elem);
+                    bender.setElement(new_elem);
                 });
                 AvatarNetwork.sendToServer(new ReleaseFormPacket(STEP));
             }

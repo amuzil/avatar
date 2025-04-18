@@ -28,6 +28,7 @@ public class Bender implements IBender {
 
     @Override
     public void deserializeNBT(CompoundTag tag) {
+        System.out.println("[Bender] Deserializing NBT: " + tag.getString("Element"));
         this.element = tag.getString("Element");
     }
 

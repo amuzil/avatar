@@ -30,7 +30,6 @@ public class BenderProvider implements ICapabilityProvider, INBTSerializable<Com
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        System.out.println("[Bender] Deserializing NBT: " + nbt.getString("Element"));
         bender.deserializeNBT(nbt);
     }
 

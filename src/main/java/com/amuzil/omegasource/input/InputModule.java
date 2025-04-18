@@ -222,9 +222,8 @@ public class InputModule {
             Player player = Minecraft.getInstance().player;
             assert player != null;
             IBender bender = Bender.getBender(player);
-            System.out.println("BEFORE: " + bender.getElement());
-            bender.setElement("air");
-            System.out.println("AFTER: " + bender.getElement());
+            // TODO use packets to sync to client
+            System.out.println("Sync data to client? " + bender.getElement());
         } else {
             terminate();
             isBending = false;

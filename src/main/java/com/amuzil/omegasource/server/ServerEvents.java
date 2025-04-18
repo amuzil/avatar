@@ -75,7 +75,7 @@ public class ServerEvents {
             if (!event.getLevel().isClientSide()) {
                 System.out.println();
                 player.getCapability(AvatarCapabilities.BENDER).ifPresent(cap -> {
-                    System.out.println("[JoinWorld] Ensuring capability exists at join for: " + cap.getElement());
+                    System.out.println("[JoinWorld] Ensure capability exists at join: " + cap.getElement());
                 });
             }
             Data data = CapabilityHandler.getCapability(player, CapabilityHandler.LIVING_DATA);

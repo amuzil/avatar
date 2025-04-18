@@ -1,6 +1,7 @@
 package com.amuzil.omegasource.capability;
 
 import com.amuzil.omegasource.Avatar;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.Capability;
@@ -9,6 +10,7 @@ import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -30,36 +32,25 @@ public class AvatarCapabilities {
         }
     }
 
+    @SubscribeEvent
+    public static void onPlayerDeath(LivingDeathEvent event) {
+        if (!(event.getEntity() instanceof Player player)) return;
+
+        player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
+            CompoundTag capData = bender.serializeNBT();
+            player.getPersistentData().put("BenderCap", capData);
+        });
+    }
+
     // Clone data on respawn
     @SubscribeEvent
     public static void onClonePlayer(PlayerEvent.Clone event) {
         if (!event.isWasDeath()) return;
 
-        LazyOptional<IBender> oldCapOpt = event.getOriginal().getCapability(AvatarCapabilities.BENDER);
-        LazyOptional<IBender> newCapOpt = event.getEntity().getCapability(AvatarCapabilities.BENDER);
-        System.out.println("[Bender] Death clone event");
-
-        if (oldCapOpt.isPresent()) {
-            IBender oldCap = oldCapOpt.orElse(null); // safe now
-            System.out.println("[Bender] Found old capability with element: " + oldCap.getElement());
-
-            if (newCapOpt.isPresent()) {
-                IBender newCap = newCapOpt.orElse(null);
-                System.out.println("[Bender] Found new capability before cloning: " + newCap.getElement());
-
-                // You can either do this...
-                newCap.setElement(oldCap.getElement());
-
-                // Or more generally (preferred if you add more fields later)
-                // newCap.deserializeNBT(oldCap.serializeNBT());
-
-                System.out.println("[Bender] Set new capability element to: " + oldCap.getElement());
-            } else {
-                System.out.println("[Bender] Could NOT find new player capability!");
-            }
-        } else {
-            System.out.println("[Bender] Could NOT find old player capability!");
-        }
+        CompoundTag capData = event.getOriginal().getPersistentData().getCompound("BenderCap");
+        System.out.println("CLONING -> "+ capData + " -> " + capData.get("Element"));
+        event.getEntity().getCapability(AvatarCapabilities.BENDER).ifPresent(newCap -> {
+            newCap.deserializeNBT(capData);
+        });
     }
-
 }
