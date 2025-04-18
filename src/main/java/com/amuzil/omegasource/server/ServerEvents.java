@@ -4,6 +4,8 @@ import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.capability.CapabilityHandler;
 import com.amuzil.omegasource.api.magus.capability.entity.Data;
 import com.amuzil.omegasource.api.magus.capability.entity.LivingDataCapability;
+import com.amuzil.omegasource.network.AvatarNetwork;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import com.amuzil.omegasource.api.magus.capability.entity.Magi;
 import net.minecraft.world.entity.LivingEntity;
@@ -16,6 +18,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
 
 
 @Mod.EventBusSubscriber(modid = Avatar.MOD_ID)
@@ -24,6 +27,20 @@ public class ServerEvents {
     @SubscribeEvent
     public static void worldStart(LevelEvent event) {}
 
+
+    @SubscribeEvent
+    public static void onServerLogin(PlayerEvent.PlayerLoggedInEvent event) {
+        ServerPlayer player = event.getEntity();
+        // Send a packet with the player’s current capability NBT
+        AvatarNetwork.CHANNEL.send(
+                PacketDistributor.PLAYER.with(() -> player),
+                new SyncCapabilityPacket(
+                        player.getCapability(CapabilityHandler.LIVING_DATA)
+                                .map(Data::serializeNBT)
+                                .orElse(new CompoundTag())
+                )
+        );
+    }
 
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event) {
