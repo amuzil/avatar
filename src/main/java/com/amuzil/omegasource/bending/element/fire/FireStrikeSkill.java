@@ -33,7 +33,7 @@ public class FireStrikeSkill extends BendingSkill {
 
         startPaths = SkillPathBuilder.getInstance().complex(new ActiveForm(STRIKE, false)).build();
     }
-    
+
 
     @Override
     public boolean shouldStart(LivingEntity entity, FormPath formPath) {

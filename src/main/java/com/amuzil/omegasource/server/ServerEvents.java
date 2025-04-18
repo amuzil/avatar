@@ -5,6 +5,7 @@ import com.amuzil.omegasource.api.magus.capability.CapabilityHandler;
 import com.amuzil.omegasource.api.magus.capability.entity.Data;
 import com.amuzil.omegasource.api.magus.capability.entity.LivingDataCapability;
 import com.amuzil.omegasource.network.AvatarNetwork;
+import com.amuzil.omegasource.network.packets.client.SyncCapabilityPacket;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import com.amuzil.omegasource.api.magus.capability.entity.Magi;
@@ -30,16 +31,18 @@ public class ServerEvents {
 
     @SubscribeEvent
     public static void onServerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        ServerPlayer player = event.getEntity();
-        // Send a packet with the player’s current capability NBT
-        AvatarNetwork.CHANNEL.send(
-                PacketDistributor.PLAYER.with(() -> player),
-                new SyncCapabilityPacket(
-                        player.getCapability(CapabilityHandler.LIVING_DATA)
-                                .map(Data::serializeNBT)
-                                .orElse(new CompoundTag())
-                )
-        );
+        Player player = event.getEntity();
+        if (!player.level().isClientSide) {
+            // Send a packet with the player’s current capability NBT
+            AvatarNetwork.CHANNEL.send(
+                    PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
+                    new SyncCapabilityPacket(
+                            player.getCapability(CapabilityHandler.LIVING_DATA)
+                                    .map(Data::serializeNBT)
+                                    .orElse(new CompoundTag())
+                    )
+            );
+        }
     }
 
     @SubscribeEvent
