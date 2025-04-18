@@ -26,6 +26,24 @@ public class ServerEvents {
 
 
     @SubscribeEvent
+    public static void onPlayerClone(PlayerEvent.Clone event) {
+        // Only copy when the player respawns from death
+        if (!event.isWasDeath()) return;
+
+        // Ensure the old player's caps are still valid
+        event.getOriginal().reviveCaps();                                   // :contentReference[oaicite:0]{index=0}
+
+        // Copy the NBT from the old instance to the new one
+        event.getOriginal().getCapability(CapabilityHandler.LIVING_DATA)
+                .ifPresent(oldCap -> event.getEntity().getCapability(CapabilityHandler.LIVING_DATA)
+                        .ifPresent(newCap -> newCap.deserializeNBT(oldCap.serializeNBT()))
+                );
+
+        // Clean up the old instance’s caps
+        event.getOriginal().invalidateCaps();                                // :contentReference[oaicite:1]{index=1}
+    }
+
+    @SubscribeEvent
     public static void onEntityJoinLevel(EntityJoinLevelEvent event) {
         if (!(event.getEntity() instanceof Player)) {
             return; // Ignore non-player entities
