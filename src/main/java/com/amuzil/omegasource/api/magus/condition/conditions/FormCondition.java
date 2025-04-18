@@ -2,6 +2,7 @@ package com.amuzil.omegasource.api.magus.condition.conditions;
 
 import com.amuzil.omegasource.api.magus.condition.Condition;
 import com.amuzil.omegasource.bending.BendingForm;
+import com.amuzil.omegasource.bending.BendingForms;
 import com.amuzil.omegasource.events.FormActivatedEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -15,7 +16,7 @@ public class FormCondition extends Condition {
     private final Consumer<TickEvent> tickListener;
     private BendingForm form;
     private boolean active;
-    private final int timeout = 20; // Adjust timeout time here
+    private final int timeout = 5; // Adjust timeout time here
     private int tick = timeout;
 
     public FormCondition() {

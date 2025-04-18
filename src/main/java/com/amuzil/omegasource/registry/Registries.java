@@ -41,8 +41,7 @@ public class Registries {
     public static List<Skill> skills = new ArrayList<>();
     public static List<Form> forms = new ArrayList<>();
 
-    public static void init() {
-    }
+    public static void init() {}
 
     /**
      * Registry methods.

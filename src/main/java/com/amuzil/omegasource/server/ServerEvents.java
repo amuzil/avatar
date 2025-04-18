@@ -22,8 +22,7 @@ import net.minecraftforge.fml.common.Mod;
 public class ServerEvents {
 
     @SubscribeEvent
-    public static void worldStart(LevelEvent event) {
-    }
+    public static void worldStart(LevelEvent event) {}
 
 
     @SubscribeEvent
