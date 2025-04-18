@@ -1,6 +1,9 @@
 package com.amuzil.omegasource.server;
 
 import com.amuzil.omegasource.Avatar;
+import com.amuzil.omegasource.api.magus.capability.CapabilityHandler;
+import com.amuzil.omegasource.api.magus.capability.entity.Data;
+import com.amuzil.omegasource.api.magus.capability.entity.LivingDataCapability;
 import net.minecraft.server.level.ServerPlayer;
 import com.amuzil.omegasource.api.magus.capability.entity.Magi;
 import net.minecraft.world.entity.LivingEntity;
@@ -9,12 +12,13 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(modid = Avatar.MOD_ID)
 public class ServerEvents {
 
     @SubscribeEvent
@@ -29,14 +33,17 @@ public class ServerEvents {
         }
 
         if (event.getEntity() instanceof Player player) {
-            Magi magi = Magi.get(player);
-            if (magi != null) {
-                magi.registerFormCondition();
+            Data data = CapabilityHandler.getCapability(player, CapabilityHandler.LIVING_DATA);
+            if (data != null) {
+                Magi magi = Magi.get(player);
+                if (magi != null) {
+                    magi.registerFormCondition();
 
-                if (event.getLevel().isClientSide) {
-                    Avatar.inputModule.registerListeners();
-                    Avatar.reloadFX();
-                    System.out.println("InputModule Initiated!");
+                    if (event.getLevel().isClientSide) {
+                        Avatar.inputModule.registerListeners();
+                        Avatar.reloadFX();
+                        System.out.println("InputModule Initiated!");
+                    }
                 }
             }
         }
@@ -65,8 +72,8 @@ public class ServerEvents {
         if (event.getEntity() != null) {
             if (Magi.get(event.getEntity()) != null) {
 //                if (event.getPhase().equals(TickEvent.Phase)) {
-                    Magi magi = Magi.get(event.getEntity());
-                    magi.onUpdate();
+                Magi magi = Magi.get(event.getEntity());
+                magi.onUpdate();
 //                }
             }
         }
