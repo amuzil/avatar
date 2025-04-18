@@ -30,12 +30,10 @@ public class FireStrikeSkill extends BendingSkill {
         addTrait(new ColourTrait(0, 0, 0, "fire_colour"));
         addTrait(new SpeedTrait(1.5f, "speed"));
         addTrait(new TimedTrait(15, "lifetime"));
-    }
 
-    @Override
-    public FormPath getStartPaths() {
-        return SkillPathBuilder.getInstance().complex(new ActiveForm(STRIKE, false)).build();
+        startPaths = SkillPathBuilder.getInstance().complex(new ActiveForm(STRIKE, false)).build();
     }
+    
 
     @Override
     public boolean shouldStart(LivingEntity entity, FormPath formPath) {
