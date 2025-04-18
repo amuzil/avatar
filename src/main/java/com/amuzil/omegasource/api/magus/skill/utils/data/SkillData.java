@@ -102,22 +102,28 @@ public class SkillData implements DataTrait {
         tag.putString("Skill ID", skillId.toString());
         tag.putString("Skill State", state.name());
         skillTraits.forEach(skillTrait -> {
-            if (skillTrait.isDirty()) tag.put(skillTrait.getName() + "Trait", skillTrait.serializeNBT());
+            if (skillTrait.isDirty())
+                tag.put(skillTrait.getName() + "Trait", skillTrait.serializeNBT());
         });
         return tag;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        markClean();
         try {
             skillId = ResourceLocation.tryParse(nbt.getString("Skill ID"));
             state = Skill.SkillState.valueOf(nbt.getString("Skill State"));
-            skillTraits.forEach(skillTrait -> skillTrait.deserializeNBT((CompoundTag) Objects.requireNonNull(nbt.get(skillTrait.getName() + "Trait"))));
+            if (!skillTraits.isEmpty())
+                skillTraits.forEach(skillTrait -> {
+                    if (skillTrait.isDirty())
+                        skillTrait.deserializeNBT((CompoundTag) Objects.requireNonNull(nbt.get(skillTrait.getName() + "Trait")));
+                    skillTrait.markClean();
+                });
         } catch (NullPointerException e) {
             RadixTree.getLogger().error("Something has gone seriously wrong:" + "A skill trait hasn't been carried over from the registry.");
             e.printStackTrace();
         }
+        markClean();
     }
 
 
@@ -156,7 +162,6 @@ public class SkillData implements DataTrait {
         }
         return null;
     }
-
 
 
     public void reset() {

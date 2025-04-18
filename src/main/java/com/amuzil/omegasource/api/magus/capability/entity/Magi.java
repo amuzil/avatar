@@ -11,6 +11,10 @@ import com.amuzil.omegasource.api.magus.skill.utils.data.SkillCategoryData;
 import com.amuzil.omegasource.api.magus.skill.utils.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.utils.traits.DataTrait;
 import com.amuzil.omegasource.api.magus.skill.utils.traits.SkillTrait;
+import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.DamageTrait;
+import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.SpeedTrait;
+import com.amuzil.omegasource.bending.element.fire.FireStrikeSkill;
+import com.amuzil.omegasource.bending.element.fire.Firebending;
 import com.amuzil.omegasource.registry.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -146,7 +150,7 @@ public class Magi {
     public void onUpdate() {
         if (getMagi() instanceof Player) {
             List<Skill> skills = Registries.getSkills();
-//            RadixTree.getLogger().debug("Skill Registry Size: " + skills.size());
+//            getSkillData(Firebending.FIRE_STRIKE_SKILL).getTrait("speed", SpeedTrait.class).setSpeed(4.5f);
             for (Skill skill : skills) {
 //                RadixTree.getLogger().debug("Skill: " + skill);
                 if (getSkillData(skill).canUse()) {

@@ -106,7 +106,7 @@ public class ServerEvents {
 
     @SubscribeEvent
     public static void worldTick(LivingEvent.LivingTickEvent event) {
-        if (event.getEntity() != null) {
+        if (event.getEntity() != null && event.getEntity().isAlive()) {
             if (Magi.get(event.getEntity()) != null) {
 //                if (event.getPhase().equals(TickEvent.Phase)) {
                 Magi magi = Magi.get(event.getEntity());
