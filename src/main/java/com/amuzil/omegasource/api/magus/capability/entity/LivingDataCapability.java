@@ -67,7 +67,7 @@ public class LivingDataCapability {
 //                    Thread.dumpStack();
                 }
                 fillTraits();
-                magi = new Magi(this, entity);
+                magi = new Magi(entity);
             }
             // Right now we need a "load default".
             return this.magi;

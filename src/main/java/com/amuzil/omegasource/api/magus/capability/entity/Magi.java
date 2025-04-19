@@ -46,7 +46,7 @@ public class Magi {
     // 1xx is should start, x1x is should run, xx1 is should stop
     private HashMap<String, Integer> skillStatuses = new HashMap<>();
 
-    public Magi(Data capabilityData, LivingEntity entity) {
+    public Magi(LivingEntity entity) {
         this.magi = entity;
 
         // Initialise skilldata.

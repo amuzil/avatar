@@ -2,6 +2,8 @@ package com.amuzil.omegasource.api.magus.capability;
 
 import com.amuzil.omegasource.api.magus.capability.entity.Data;
 import com.amuzil.omegasource.api.magus.capability.entity.LivingDataCapability;
+import com.amuzil.omegasource.capability.AvatarCapabilities;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -10,6 +12,8 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import javax.annotation.Nullable;
 
@@ -38,6 +42,17 @@ public class CapabilityHandler {
         if (entity == null) return null;
         return entity.getCapability(capability).orElse(null);
     }
+
+    @SubscribeEvent
+    public static void onPlayerDeath(LivingDeathEvent event) {
+        if (!(event.getEntity() instanceof Player player)) return;
+
+        player.getCapability(LIVING_DATA).ifPresent(bender -> {
+            CompoundTag capData = bender.serializeNBT();
+            player.getPersistentData().put("MagiCap", capData);
+        });
+    }
+
 
     public static void init() {
         // Prevents class loading exceptions
