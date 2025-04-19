@@ -1,6 +1,6 @@
 package com.amuzil.omegasource.network.packets.client;
 
-import com.amuzil.omegasource.api.magus.capability.CapabilityHandler;
+import com.amuzil.omegasource.capability.AvatarCapabilities;
 import com.amuzil.omegasource.network.packets.api.AvatarPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -48,7 +48,7 @@ public class SyncCapabilityPacket implements AvatarPacket {
             if (ctx.getDirection().getReceptionSide().isClient()) {
                 LocalPlayer player = Minecraft.getInstance().player;
                 // Apply the NBT to the capability :contentReference[oaicite:6]{index=6}
-                player.getCapability(CapabilityHandler.LIVING_DATA)
+                player.getCapability(AvatarCapabilities.BENDER)
                         .ifPresent(cap -> cap.deserializeNBT(msg.data));
             }
         });

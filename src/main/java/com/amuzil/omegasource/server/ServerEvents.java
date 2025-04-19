@@ -4,6 +4,8 @@ import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.capability.CapabilityHandler;
 import com.amuzil.omegasource.api.magus.capability.entity.Data;
 import com.amuzil.omegasource.api.magus.capability.entity.LivingDataCapability;
+import com.amuzil.omegasource.capability.AvatarCapabilities;
+import com.amuzil.omegasource.capability.IBender;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.client.SyncCapabilityPacket;
 import net.minecraft.nbt.CompoundTag;
@@ -37,8 +39,8 @@ public class ServerEvents {
             AvatarNetwork.CHANNEL.send(
                     PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
                     new SyncCapabilityPacket(
-                            player.getCapability(CapabilityHandler.LIVING_DATA)
-                                    .map(Data::serializeNBT)
+                            player.getCapability(AvatarCapabilities.BENDER)
+                                    .map(IBender::serializeNBT)
                                     .orElse(new CompoundTag())
                     )
             );
@@ -70,6 +72,12 @@ public class ServerEvents {
         }
 
         if (event.getEntity() instanceof Player player) {
+            if (!event.getLevel().isClientSide()) {
+                System.out.println();
+                player.getCapability(AvatarCapabilities.BENDER).ifPresent(cap -> {
+                    System.out.println("[JoinWorld] Ensure capability exists at join: " + cap.getElement());
+                });
+            }
             Data data = CapabilityHandler.getCapability(player, CapabilityHandler.LIVING_DATA);
             if (data != null) {
                 Magi magi = Magi.get(player);

@@ -1,21 +1,44 @@
 package com.amuzil.omegasource.bending;
 
-import com.amuzil.omegasource.api.magus.capability.entity.Data;
-import com.amuzil.omegasource.api.magus.capability.entity.Magi;
-import com.amuzil.omegasource.bending.element.Element;
-import com.amuzil.omegasource.bending.element.Elements;
+import com.amuzil.omegasource.capability.AvatarCapabilities;
+import com.amuzil.omegasource.capability.IBender;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 
-import java.util.HashMap;
 
+public class Bender implements IBender {
+    private String element = "fire"; // default
 
-public class Bender extends Magi {
-
-    HashMap<String, Element> elements = new HashMap<>();
-
-    public Bender(Data capabilityData, LivingEntity entity) {
-        super(capabilityData, entity);
-        elements.put(Elements.FIRE.name(), Elements.FIRE);
+    @Override
+    public String getElement() {
+        return element;
     }
 
+    @Override
+    public void setElement(String element) {
+        this.element = element;
+    }
+
+    @Override
+    public CompoundTag serializeNBT() {
+        CompoundTag tag = new CompoundTag();
+        tag.putString("Element", element);
+        return tag;
+    }
+
+    @Override
+    public void deserializeNBT(CompoundTag tag) {
+        System.out.println("[Bender] Deserializing NBT: " + tag.getString("Element"));
+        this.element = tag.getString("Element");
+    }
+
+    @Override
+    public String toString() {
+        return "Bender[ " + element + " ]";
+    }
+
+    public static IBender getBender(LivingEntity entity) {
+        return entity.getCapability(AvatarCapabilities.BENDER)
+                .orElse(null);
+    }
 }

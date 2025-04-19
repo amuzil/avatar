@@ -3,6 +3,7 @@ package com.amuzil.omegasource.network.packets.forms;
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.BendingForm;
+import com.amuzil.omegasource.capability.AvatarCapabilities;
 import com.amuzil.omegasource.entity.ElementProjectile;
 import com.amuzil.omegasource.events.FormActivatedEvent;
 import com.amuzil.omegasource.network.AvatarNetwork;
@@ -37,8 +38,14 @@ public class ExecuteFormPacket implements AvatarPacket {
             MinecraftForge.EVENT_BUS.post(new FormActivatedEvent(msg.form, player, false));
 
             // Extra case for step
-            if (msg.form.equals(STEP))
-                    AvatarNetwork.sendToServer(new ReleaseFormPacket(STEP));
+            if (msg.form.equals(STEP)) {
+                player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
+                    String new_elem = "earth";
+                    System.out.printf("Changed element from %s to %s\n", bender.getElement(), new_elem);
+                    bender.setElement(new_elem);
+                });
+                AvatarNetwork.sendToServer(new ReleaseFormPacket(STEP));
+            }
 //            ElementProjectile entity;
 //            entity = ElementProjectile.createElementEntity(msg.form, Elements.FIRE, player, level);
 //            int entityId = 0;
