@@ -3,17 +3,15 @@ package com.amuzil.omegasource.server;
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.capability.CapabilityHandler;
 import com.amuzil.omegasource.api.magus.capability.entity.Data;
-import com.amuzil.omegasource.api.magus.capability.entity.LivingDataCapability;
 import com.amuzil.omegasource.capability.AvatarCapabilities;
 import com.amuzil.omegasource.capability.IBender;
 import com.amuzil.omegasource.network.AvatarNetwork;
-import com.amuzil.omegasource.network.packets.client.SyncCapabilityPacket;
+import com.amuzil.omegasource.network.packets.client.SyncBenderPacket;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import com.amuzil.omegasource.api.magus.capability.entity.Magi;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -30,41 +28,6 @@ public class ServerEvents {
     @SubscribeEvent
     public static void worldStart(LevelEvent event) {}
 
-
-    @SubscribeEvent
-    public static void onServerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        Player player = event.getEntity();
-        if (!player.level().isClientSide) {
-            // Send a packet with the player’s current capability NBT
-            AvatarNetwork.CHANNEL.send(
-                    PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-                    new SyncCapabilityPacket(
-                            player.getCapability(AvatarCapabilities.BENDER)
-                                    .map(IBender::serializeNBT)
-                                    .orElse(new CompoundTag())
-                    )
-            );
-        }
-    }
-
-    @SubscribeEvent
-    public static void onPlayerClone(PlayerEvent.Clone event) {
-        // Only copy when the player respawns from death
-        if (!event.isWasDeath()) return;
-
-        // Ensure the old player's caps are still valid
-        event.getOriginal().reviveCaps();                                   // :contentReference[oaicite:0]{index=0}
-
-        // Copy the NBT from the old instance to the new one
-        event.getOriginal().getCapability(CapabilityHandler.LIVING_DATA)
-                .ifPresent(oldCap -> event.getEntity().getCapability(CapabilityHandler.LIVING_DATA)
-                        .ifPresent(newCap -> newCap.deserializeNBT(oldCap.serializeNBT()))
-                );
-
-        // Clean up the old instance’s caps
-        event.getOriginal().invalidateCaps();                                // :contentReference[oaicite:1]{index=1}
-    }
-
     @SubscribeEvent
     public static void onEntityJoinLevel(EntityJoinLevelEvent event) {
         if (!(event.getEntity() instanceof Player)) {
@@ -72,12 +35,7 @@ public class ServerEvents {
         }
 
         if (event.getEntity() instanceof Player player) {
-            if (!event.getLevel().isClientSide()) {
-                System.out.println();
-                player.getCapability(AvatarCapabilities.BENDER).ifPresent(cap -> {
-                    System.out.println("[JoinWorld] Ensure capability exists at join: " + cap.getElement());
-                });
-            }
+
             Data data = CapabilityHandler.getCapability(player, CapabilityHandler.LIVING_DATA);
             if (data != null) {
                 Magi magi = Magi.get(player);

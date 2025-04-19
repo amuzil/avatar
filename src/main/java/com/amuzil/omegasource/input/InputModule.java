@@ -223,7 +223,7 @@ public class InputModule {
             assert player != null;
             IBender bender = Bender.getBender(player);
             // TODO use packets to sync to client
-            System.out.println("Sync data to client? " + bender.getElement());
+            System.out.println("Current Bender Element -> " + bender.getElement());
         } else {
             terminate();
             isBending = false;

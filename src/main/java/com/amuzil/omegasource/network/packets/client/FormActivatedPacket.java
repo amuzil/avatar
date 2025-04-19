@@ -5,7 +5,7 @@ import com.amuzil.omegasource.bending.BendingForm;
 import com.amuzil.omegasource.entity.ElementProjectile;
 import com.amuzil.omegasource.events.FormActivatedEvent;
 import com.amuzil.omegasource.network.packets.api.AvatarPacket;
-import com.amuzil.omegasource.registry.Registries;
+import com.amuzil.omegasource.api.magus.registry.Registries;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -50,7 +50,7 @@ public class FormActivatedPacket implements AvatarPacket {
         String formName = buf.readUtf();
         String elementName = buf.readUtf();
         int entityId = buf.readInt();
-        BendingForm form = Registries.FORMS.get().getValue(ResourceLocation.fromNamespaceAndPath(MOD_ID, formName));
+        BendingForm form = (BendingForm) Registries.FORMS.get().getValue(ResourceLocation.fromNamespaceAndPath(MOD_ID, formName));
         Element element = (Element) Registries.SKILL_CATEGORIES.get().getValue(ResourceLocation.fromNamespaceAndPath(MOD_ID, elementName));
         return new FormActivatedPacket(form, element, entityId);
     }

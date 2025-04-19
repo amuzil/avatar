@@ -79,15 +79,9 @@ public class BendingSelection {
     }
 
     BendingSelection Copy() {
-        var positions = new ArrayList<BlockPos>();
-        positions.addAll(blockPositions);
-
-        var entityIds = new ArrayList<Long>();
-        entityIds.addAll(this.entityIds);
-
-        var skillIds = new ArrayList<String>();
-        skillIds.addAll(this.skillIds);
-
+        var positions = new ArrayList<>(blockPositions);
+        var entityIds = new ArrayList<>(this.entityIds);
+        var skillIds = new ArrayList<>(this.skillIds);
         return new BendingSelection(positions, entityIds, skillIds, type);
     }
 

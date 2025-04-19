@@ -3,7 +3,7 @@ package com.amuzil.omegasource.network;
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.network.packets.api.AvatarPacket;
 import com.amuzil.omegasource.network.packets.client.FormActivatedPacket;
-import com.amuzil.omegasource.network.packets.client.SyncCapabilityPacket;
+import com.amuzil.omegasource.network.packets.client.SyncBenderPacket;
 import com.amuzil.omegasource.network.packets.forms.ExecuteFormPacket;
 import com.amuzil.omegasource.network.packets.forms.ReleaseFormPacket;
 import net.minecraft.resources.ResourceLocation;
@@ -46,10 +46,10 @@ public class AvatarNetwork {
                 .consumerMainThread(ReleaseFormPacket::handle)
                 .add();
 
-        CHANNEL.messageBuilder(SyncCapabilityPacket.class, nextID())
-                .encoder(SyncCapabilityPacket::toBytes)
-                .decoder(SyncCapabilityPacket::fromBytes)
-                .consumerMainThread(SyncCapabilityPacket::handle)
+        CHANNEL.messageBuilder(SyncBenderPacket.class, nextID())
+                .encoder(SyncBenderPacket::toBytes)
+                .decoder(SyncBenderPacket::fromBytes)
+                .consumerMainThread(SyncBenderPacket::handle)
                 .add();
     }
 

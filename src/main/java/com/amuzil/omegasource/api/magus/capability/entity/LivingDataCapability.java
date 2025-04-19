@@ -1,13 +1,12 @@
 package com.amuzil.omegasource.api.magus.capability.entity;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.api.magus.radix.RadixTree;
 import com.amuzil.omegasource.api.magus.skill.Skill;
 import com.amuzil.omegasource.api.magus.skill.SkillCategory;
 import com.amuzil.omegasource.api.magus.capability.CapabilityHandler;
-import com.amuzil.omegasource.api.magus.skill.utils.data.SkillData;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.DataTrait;
-import com.amuzil.omegasource.registry.Registries;
+import com.amuzil.omegasource.api.magus.skill.data.SkillData;
+import com.amuzil.omegasource.api.magus.skill.traits.DataTrait;
+import com.amuzil.omegasource.api.magus.registry.Registries;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -31,17 +30,6 @@ public class LivingDataCapability {
      * TODO: Figure out how to save this data when MC wants to save but nothing has changed/.
      */
     public static class LivingDataCapabilityImp implements Data {
-
-        //Data Traits to add:
-        // private List<SkillBase> skills;
-//    private SkillData data;
-//    private List<SkillCategory> categories;
-//    private SkillCategory activeCategory;
-//    //Need to add energy mechanic; stored here
-//    //Need to add config and *global* skill modifiers.
-//    //Need to add something for inputs
-//    private Set<Consumer> activeListeners;
-//    //Miscellaneous data to save
 
         //The amount of data traits the player has should not change after initialisation.
         private final List<DataTrait> traits = new ArrayList<>();
@@ -116,16 +104,6 @@ public class LivingDataCapability {
             traits.add(trait);
         }
 
-        //Ideally, these delete methods are *never* used, because each piece of content
-        //added to the mod should be final.
-        public void removeTrait(DataTrait trait) {
-            traits.remove(trait);
-        }
-
-        public void removeTraits(List<DataTrait> dataTraits) {
-            traits.removeAll(dataTraits);
-        }
-
         @Nullable
         public DataTrait getTrait(String name) {
             for (DataTrait trait : getTraits())
@@ -177,8 +155,7 @@ public class LivingDataCapability {
 
         private final LazyOptional<Data> instance = LazyOptional.of(LivingDataCapabilityImp::new);
 
-        public static void init() {
-        }
+        public static void init() {}
 
         @Override
         public CompoundTag serializeNBT() {
@@ -190,8 +167,7 @@ public class LivingDataCapability {
             instance.orElseThrow(NullPointerException::new).deserializeNBT(nbt);
         }
 
-        @Nonnull
-        @Override
+        @Override @Nonnull
         public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
             return CapabilityHandler.LIVING_DATA.orEmpty(cap, instance.cast());
         }

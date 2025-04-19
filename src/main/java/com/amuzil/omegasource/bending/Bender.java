@@ -5,9 +5,18 @@ import com.amuzil.omegasource.capability.IBender;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 
+import java.util.HashMap;
+
 
 public class Bender implements IBender {
-    private String element = "fire"; // default
+    private final LivingEntity entity;
+    private boolean isDirty;
+    private String element = "fire"; // Currently active element
+    private HashMap<String, Integer> elementsStat = new HashMap<>();
+
+    public Bender(LivingEntity entity) {
+        this.entity = entity;
+    }
 
     @Override
     public String getElement() {
@@ -17,10 +26,27 @@ public class Bender implements IBender {
     @Override
     public void setElement(String element) {
         this.element = element;
+        markDirty();
+    }
+
+    @Override
+    public void markDirty() {
+        this.isDirty = true;
+    }
+
+    @Override
+    public void markClean() {
+        this.isDirty = false;
+    }
+
+    @Override
+    public boolean isDirty() {
+        return this.isDirty;
     }
 
     @Override
     public CompoundTag serializeNBT() {
+        System.out.println("[Bender] Serializing NBT: " + element);
         CompoundTag tag = new CompoundTag();
         tag.putString("Element", element);
         return tag;

@@ -3,8 +3,7 @@ package com.amuzil.omegasource.bending;
 import com.amuzil.omegasource.api.magus.capability.entity.Magi;
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.skill.SkillCategory;
-import com.amuzil.omegasource.api.magus.skill.utils.data.SkillData;
-import com.amuzil.omegasource.api.magus.skill.utils.data.SkillPathBuilder;
+import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import net.minecraft.world.entity.LivingEntity;
 
 public class BendingEffect extends BendingSkill {

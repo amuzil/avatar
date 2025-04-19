@@ -1,21 +1,15 @@
 package com.amuzil.omegasource.api.magus.capability.entity;
 
-import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.capability.CapabilityHandler;
 import com.amuzil.omegasource.api.magus.condition.conditions.FormCondition;
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.radix.RadixTree;
 import com.amuzil.omegasource.api.magus.skill.Skill;
-import com.amuzil.omegasource.api.magus.skill.utils.data.SkillCategoryData;
-import com.amuzil.omegasource.api.magus.skill.utils.data.SkillData;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.DataTrait;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.SkillTrait;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.DamageTrait;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.SpeedTrait;
-import com.amuzil.omegasource.bending.element.fire.FireStrikeSkill;
-import com.amuzil.omegasource.bending.element.fire.Firebending;
-import com.amuzil.omegasource.registry.Registries;
+import com.amuzil.omegasource.api.magus.skill.data.SkillCategoryData;
+import com.amuzil.omegasource.api.magus.skill.data.SkillData;
+import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
+import com.amuzil.omegasource.api.magus.registry.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -154,7 +148,6 @@ public class Magi {
             for (Skill skill : skills) {
 //                RadixTree.getLogger().debug("Skill: " + skill);
                 if (getSkillData(skill).canUse()) {
-                    // TODO: Make sure this works; blame Aidan if something needs to be client-side
 //                    if (!getMagi().level().isClientSide)
                     skill.tick(getMagi(), formPath);
                 }

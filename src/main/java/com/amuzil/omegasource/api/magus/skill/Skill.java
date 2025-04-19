@@ -1,14 +1,13 @@
 package com.amuzil.omegasource.api.magus.skill;
 
-import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.capability.entity.Magi;
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.radix.RadixTree;
 import com.amuzil.omegasource.api.magus.skill.event.SkillTickEvent;
-import com.amuzil.omegasource.api.magus.skill.utils.data.SkillData;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.SkillTrait;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.UseTrait;
-import com.amuzil.omegasource.registry.Registries;
+import com.amuzil.omegasource.api.magus.skill.data.SkillData;
+import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
+import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.UseTrait;
+import com.amuzil.omegasource.api.magus.registry.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.MinecraftForge;
@@ -32,12 +31,8 @@ public abstract class Skill {
     private boolean shouldStart, shouldRun, shouldStop;
     protected FormPath startPaths, runPaths, stopPaths;
 
-    public Skill(String modID, String name, SkillCategory category) {
-        this(ResourceLocation.fromNamespaceAndPath(modID, name), category);
-    }
-
-    public Skill(String name, SkillCategory category) {
-        this(Avatar.MOD_ID, name, category);
+    public Skill(String modId, String name, SkillCategory category) {
+        this(ResourceLocation.fromNamespaceAndPath(modId, name), category);
     }
 
     public Skill(ResourceLocation id, SkillCategory category) {
@@ -143,11 +138,16 @@ public abstract class Skill {
 
     public abstract void run(LivingEntity entity);
 
-    public abstract void stop(LivingEntity entity);
+    public void stop(LivingEntity entity) {
+        Magi magi = Magi.get(entity);
+        if (magi != null) {
+            SkillData data = magi.getSkillData(this);
+            data.setState(SkillState.IDLE);
+        }
+    };
 
     // Resets the skill and any necessary skill data; should be called upon stopping execution.
     public abstract void reset(LivingEntity entity, FormPath formPath);
-
 
     public enum SkillState {
         IDLE("idle"),

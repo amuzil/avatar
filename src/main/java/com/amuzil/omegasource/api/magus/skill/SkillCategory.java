@@ -1,18 +1,15 @@
 package com.amuzil.omegasource.api.magus.skill;
 
-import com.amuzil.omegasource.registry.Registries;
-
-import java.util.LinkedList;
+import com.amuzil.omegasource.api.magus.registry.Registries;
 
 
 public class SkillCategory {
+    protected final String name;
 
-    // List of all skills available within the category
-    public LinkedList<Skill> skills = new LinkedList<>();
-
-    public String name() { return "SkillCategory[ Blank ]"; }
-
-    public void registerSkills() {
-        Registries.registerSkills(skills);
+    public SkillCategory(String name) {
+        this.name = name;
+        Registries.registerSkillCategory(this);
     }
+
+    public String name() { return name; }
 }
