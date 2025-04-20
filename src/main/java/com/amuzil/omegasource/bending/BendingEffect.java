@@ -25,7 +25,6 @@ public class BendingEffect extends BendingSkill {
                 shouldStart = checkCooldown(data);
             }
         }
-
         return super.shouldStart(entity, formPath) && shouldStart;
     }
 }
