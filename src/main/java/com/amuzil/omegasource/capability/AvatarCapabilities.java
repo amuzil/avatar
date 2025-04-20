@@ -37,7 +37,7 @@ public class AvatarCapabilities {
     public static void onPlayerDeath(LivingDeathEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
 
-        player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
+        player.getCapability(BENDER).ifPresent(bender -> {
             CompoundTag capData = bender.serializeNBT();
             player.getPersistentData().put("BenderCap", capData);
         });
@@ -51,7 +51,7 @@ public class AvatarCapabilities {
 //        event.getOriginal().reviveCaps(); // Doesn't even work
 
         CompoundTag capData = event.getOriginal().getPersistentData().getCompound("BenderCap");
-        event.getEntity().getCapability(AvatarCapabilities.BENDER).ifPresent(newCap -> {
+        event.getEntity().getCapability(BENDER).ifPresent(newCap -> {
             // Load data on to new entity
             newCap.deserializeNBT(capData);
         });
