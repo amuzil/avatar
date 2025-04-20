@@ -31,7 +31,7 @@ public class ServerEvents {
         if (!(event.getEntity() instanceof Player)) return; // Ignore non-player entities
 
         if (event.getEntity() instanceof Player player) {
-            Bender bender = (Bender) Bender.getBender((LivingEntity) event.getEntity());
+            Bender bender = (Bender) Bender.getBender(player);
             bender.registerFormCondition();
             if (event.getLevel().isClientSide) {
                 Avatar.inputModule.registerListeners();
@@ -43,12 +43,12 @@ public class ServerEvents {
 
     @SubscribeEvent
     public static void onEntityLeaveLevel(EntityLeaveLevelEvent event) {
-        if (event.getEntity() instanceof ServerPlayer) {
+        if (event.getEntity() instanceof ServerPlayer player) {
             // TODO - Causes whole server to crash when player leaves
             //      java.lang.NullPointerException: Cannot invoke "com.amuzil.omegasource.magus.input.InputModule.getFormsTree()"
             //      because "com.amuzil.omegasource.magus.Magus.keyboardMouseInputModule" is null
 
-            Bender bender = (Bender) Bender.getBender((LivingEntity) event.getEntity());
+            Bender bender = (Bender) Bender.getBender(player);
             bender.unregisterFormCondition();
 
         } else if (event.getEntity() instanceof Player && event.getLevel().isClientSide) {
