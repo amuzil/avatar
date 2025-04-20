@@ -28,7 +28,7 @@ import java.util.List;
 
 public class Bender implements IBender {
 
-    public static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final int DATA_VERSION = 0; // Update this as your data structure changes
 
     private String element = "fire";
