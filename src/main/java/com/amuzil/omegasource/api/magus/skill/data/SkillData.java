@@ -119,7 +119,7 @@ public class SkillData implements DataTrait {
                     skillTrait.markClean();
                 });
         } catch (NullPointerException e) {
-            RadixTree.getLogger().error("Something has gone seriously wrong:" + "A skill trait hasn't been carried over from the registry.");
+            RadixTree.getLogger().error("Something has gone seriously wrong, a skill trait hasn't been carried over from the registry.");
             e.printStackTrace();
         }
         markClean();
