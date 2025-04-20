@@ -6,7 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 public class SkillCategoryData implements DataTrait {
 
     @Override
-    public String getName() {
+    public String name() {
         return null;
     }
 

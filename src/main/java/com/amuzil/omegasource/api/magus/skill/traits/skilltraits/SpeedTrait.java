@@ -15,14 +15,14 @@ public class SpeedTrait extends SkillTrait {
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = super.serializeNBT();
-        tag.putDouble(getName(), speed);
+        tag.putDouble(name(), speed);
         return super.serializeNBT();
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         super.deserializeNBT(nbt);
-        speed = nbt.getDouble(getName());
+        speed = nbt.getDouble(name());
     }
 
     public void setSpeed(double speed) {

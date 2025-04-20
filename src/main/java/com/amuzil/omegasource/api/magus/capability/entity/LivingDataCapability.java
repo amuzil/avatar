@@ -70,7 +70,7 @@ public class LivingDataCapability {
             } else tag = new CompoundTag();
             traits.forEach(trait -> {
                 if (trait.isDirty() || isDirty()) {
-                    tag.put(trait.getName(), trait.serializeNBT());
+                    tag.put(trait.name(), trait.serializeNBT());
                 }
             });
 
@@ -80,7 +80,7 @@ public class LivingDataCapability {
         @Override
         public void deserializeNBT(CompoundTag nbt) {
             markClean();
-            traits.forEach(trait -> trait.deserializeNBT((CompoundTag) nbt.get(trait.getName())));
+            traits.forEach(trait -> trait.deserializeNBT((CompoundTag) nbt.get(trait.name())));
             if (magi != null) {
                 magi.deserialiseNBT(nbt);
                 magi.setClean();
@@ -107,7 +107,7 @@ public class LivingDataCapability {
         @Nullable
         public DataTrait getTrait(String name) {
             for (DataTrait trait : getTraits())
-                if (trait.getName().equals(name))
+                if (trait.name().equals(name))
                     return trait;
 
             return null;

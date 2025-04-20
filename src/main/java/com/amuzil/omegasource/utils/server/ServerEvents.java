@@ -1,4 +1,4 @@
-package com.amuzil.omegasource.server;
+package com.amuzil.omegasource.utils.server;
 
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.capability.CapabilityHandler;
@@ -24,9 +24,6 @@ import net.minecraftforge.network.PacketDistributor;
 
 @Mod.EventBusSubscriber(modid = Avatar.MOD_ID)
 public class ServerEvents {
-
-    @SubscribeEvent
-    public static void worldStart(LevelEvent event) {}
 
     @SubscribeEvent
     public static void onEntityJoinLevel(EntityJoinLevelEvent event) {
@@ -74,10 +71,8 @@ public class ServerEvents {
     public static void worldTick(LivingEvent.LivingTickEvent event) {
         if (event.getEntity() != null && event.getEntity().isAlive()) {
             if (Magi.get(event.getEntity()) != null) {
-//                if (event.getPhase().equals(TickEvent.Phase)) {
                 Magi magi = Magi.get(event.getEntity());
                 magi.onUpdate();
-//                }
             }
         }
     }

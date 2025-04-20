@@ -170,9 +170,9 @@ public class Magi {
             // TODO: Figure out if I need to use the returned tags from each of these values....
 //            complexForms.forEach(activeForm -> tag.put(activeForm.form().name(), activeForm.serializeNBT()));
             if (skillCategoryData != null)
-                skillCategoryData.forEach(catData -> tag.put(catData.getName(), catData.serializeNBT()));
+                skillCategoryData.forEach(catData -> tag.put(catData.name(), catData.serializeNBT()));
             if (skillData != null)
-                skillData.forEach(sData -> tag.put(sData.getName(), sData.serializeNBT()));
+                skillData.forEach(sData -> tag.put(sData.name(), sData.serializeNBT()));
             if (formPath != null)
                 formPath.serializeNBT();
         }
@@ -182,9 +182,9 @@ public class Magi {
     public void deserialiseNBT(CompoundTag tag) {
 //        complexForms.forEach(activeForm -> activeForm.deserializeNBT(tag.getCompound(activeForm.form().name())));
         if (skillCategoryData != null)
-            skillCategoryData.forEach(catData -> catData.deserializeNBT(tag.getCompound(catData.getName())));
+            skillCategoryData.forEach(catData -> catData.deserializeNBT(tag.getCompound(catData.name())));
         if (skillData != null)
-            skillData.forEach(sData -> sData.deserializeNBT(tag.getCompound(sData.getName())));
+            skillData.forEach(sData -> sData.deserializeNBT(tag.getCompound(sData.name())));
         if (formPath != null)
             formPath.deserializeNBT(tag);
     }

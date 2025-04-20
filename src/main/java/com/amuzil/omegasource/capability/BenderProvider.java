@@ -1,7 +1,6 @@
 package com.amuzil.omegasource.capability;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.bending.Bender;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;

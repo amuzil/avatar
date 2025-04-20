@@ -112,8 +112,7 @@ public class Registries {
 
             event.register(resKey, helper -> {
                 for (Form form : forms)
-                    registry.register(form.name(), (Form) form);
-                // TODO: Element specific forms
+                    helper.register(form.name(), (Form) form);
             });
         }
 
@@ -124,7 +123,7 @@ public class Registries {
 
             event.register(resKey, helper -> {
                 for (Skill skill : skills)
-                    registry.register(skill.getId(), skill);
+                    helper.register(skill.getId(), skill);
             });
         }
 
@@ -135,8 +134,11 @@ public class Registries {
 
 
             event.register(resKey, helper -> {
-                for (SkillCategory category : categories)
-                    registry.register(category.name(), category);
+                System.out.println("REGISTER SKILL CATEGORIES -> " + categories);
+                for (SkillCategory category : categories) {
+                    System.out.println("REGISTER SKILL CATEGORY -> " + category.name());
+                    helper.register(category.name(), category);
+                }
             });
         }
 
@@ -149,10 +151,10 @@ public class Registries {
             // Register other traits manually.
             registerTraitsFromSkills(SKILLS.get().getValues().stream().toList(), event);
             event.register(resKey, helper -> {
-                System.out.println("REGISTERING SKILL TRAITS FROM SKILLS HERE");
+                System.out.println("REGISTERING SKILL TRAITS");
                 for (DataTrait trait : traits) {
-                    System.out.println("REGISTER SKILL TRAIT -> " + trait.getName());
-                    helper.register(trait.getName(), trait);
+                    System.out.println("REGISTER SKILL TRAIT -> " + trait.name());
+                    helper.register(trait.name(), trait);
                 }
             });
         }
@@ -170,7 +172,7 @@ public class Registries {
         IForgeRegistry<DataTrait> registry = DATA_TRAITS.get();
         for (Skill skill : skills)
             for (SkillTrait trait : skill.getTraits())
-                event.register(key, helper -> registry.register(ResourceLocation.parse(modID) + trait.getName(), trait));
+                event.register(key, helper -> registry.register(ResourceLocation.parse(modID) + trait.name(), trait));
 
     }
 
@@ -186,8 +188,8 @@ public class Registries {
         IForgeRegistry<DataTrait> registry = DATA_TRAITS.get();
         for (Skill skill : skills)
             for (SkillTrait trait : skill.getTraits()) {
-                System.out.println("REGISTER SKILL TRAIT -> " + trait.getName());
-                event.register(key, helper -> registry.register(trait.getName(), trait));
+                System.out.println("REGISTER SKILL TRAIT -> " + trait.name());
+                event.register(key, helper -> registry.register(trait.name(), trait));
             }
 
     }

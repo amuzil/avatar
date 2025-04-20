@@ -71,7 +71,7 @@ public class SkillData implements DataTrait {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return getSkillId() + "_skillData";
     }
 
@@ -103,7 +103,7 @@ public class SkillData implements DataTrait {
         tag.putString("Skill State", state.name());
         skillTraits.forEach(skillTrait -> {
             if (skillTrait.isDirty())
-                tag.put(skillTrait.getName() + "Trait", skillTrait.serializeNBT());
+                tag.put(skillTrait.name() + "Trait", skillTrait.serializeNBT());
         });
         return tag;
     }
@@ -116,7 +116,7 @@ public class SkillData implements DataTrait {
             if (!skillTraits.isEmpty())
                 skillTraits.forEach(skillTrait -> {
                     if (skillTrait.isDirty())
-                        skillTrait.deserializeNBT((CompoundTag) Objects.requireNonNull(nbt.get(skillTrait.getName() + "Trait")));
+                        skillTrait.deserializeNBT((CompoundTag) Objects.requireNonNull(nbt.get(skillTrait.name() + "Trait")));
                     skillTrait.markClean();
                 });
         } catch (NullPointerException e) {
@@ -148,7 +148,7 @@ public class SkillData implements DataTrait {
     @Nullable
     public SkillTrait getTrait(String name) {
         for (SkillTrait trait : getSkillTraits())
-            if (trait.getName().equals(name)) return trait;
+            if (trait.name().equals(name)) return trait;
 
         return null;
     }
@@ -156,7 +156,7 @@ public class SkillData implements DataTrait {
     @Nullable
     public <T extends SkillTrait> T getTrait(String name, Class<T> type) {
         for (SkillTrait trait : getSkillTraits()) {
-            if (trait.getName().equals(name) && type.isInstance(trait)) {
+            if (trait.name().equals(name) && type.isInstance(trait)) {
                 return type.cast(trait);
             }
         }

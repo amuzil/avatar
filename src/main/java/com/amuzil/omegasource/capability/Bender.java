@@ -1,7 +1,5 @@
-package com.amuzil.omegasource.bending;
+package com.amuzil.omegasource.capability;
 
-import com.amuzil.omegasource.capability.AvatarCapabilities;
-import com.amuzil.omegasource.capability.IBender;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -10,7 +8,7 @@ import java.util.HashMap;
 
 public class Bender implements IBender {
     private final LivingEntity entity;
-    private boolean isDirty;
+    private boolean isDirty = true; // Flag to indicate if data was changed
     private String element = "fire"; // Currently active element
     private HashMap<String, Integer> elementsStat = new HashMap<>();
 

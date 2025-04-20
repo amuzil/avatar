@@ -7,7 +7,7 @@ import com.amuzil.omegasource.entity.AvatarEntities;
 import com.amuzil.omegasource.input.InputModule;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.api.magus.registry.Registries;
-import com.amuzil.omegasource.utils.AvatarCommand;
+import com.amuzil.omegasource.utils.server.AvatarCommand;
 import com.lowdragmc.photon.client.fx.FX;
 import com.lowdragmc.photon.client.fx.FXHelper;
 import net.minecraft.client.Minecraft;

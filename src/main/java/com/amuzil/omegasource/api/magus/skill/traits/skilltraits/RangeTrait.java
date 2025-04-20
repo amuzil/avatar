@@ -15,14 +15,14 @@ public class RangeTrait extends SkillTrait {
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = super.serializeNBT();
-        tag.putDouble(getName(), range);
+        tag.putDouble(name(), range);
         return tag;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         super.deserializeNBT(nbt);
-        range = nbt.getDouble(getName());
+        range = nbt.getDouble(name());
     }
 
     public void setRange(double range) {

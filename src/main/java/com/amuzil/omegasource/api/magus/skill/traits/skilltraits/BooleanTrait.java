@@ -20,14 +20,14 @@ public class BooleanTrait extends SkillTrait {
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = super.serializeNBT();
-        tag.putBoolean(getName(), enabled);
+        tag.putBoolean(name(), enabled);
         return tag;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         super.deserializeNBT(nbt);
-        enabled = nbt.getBoolean(getName());
+        enabled = nbt.getBoolean(name());
     }
 
     public void setEnabled(boolean enabled) {

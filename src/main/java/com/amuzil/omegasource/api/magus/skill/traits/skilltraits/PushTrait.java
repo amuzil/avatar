@@ -15,14 +15,14 @@ public class PushTrait extends SkillTrait {
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = super.serializeNBT();
-        tag.putString(getName(), type.name());
+        tag.putString(name(), type.name());
         return super.serializeNBT();
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         super.deserializeNBT(nbt);
-        type = PushType.valueOf(nbt.getString(getName()));
+        type = PushType.valueOf(nbt.getString(name()));
     }
 
     public void setType(PushType type) {

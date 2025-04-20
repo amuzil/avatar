@@ -13,7 +13,7 @@ public class SkillTrait implements DataTrait {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 

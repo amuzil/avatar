@@ -15,14 +15,14 @@ public class PotionLevelTrait extends SkillTrait {
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = super.serializeNBT();
-        tag.putInt(getName(), level);
+        tag.putInt(name(), level);
         return tag;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         super.deserializeNBT(nbt);
-        level = nbt.getInt(getName());
+        level = nbt.getInt(name());
     }
 
     public void setLevel(int level) {

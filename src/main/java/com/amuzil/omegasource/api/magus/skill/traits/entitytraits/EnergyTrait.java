@@ -51,7 +51,7 @@ public class EnergyTrait implements DataTrait {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
@@ -73,7 +73,7 @@ public class EnergyTrait implements DataTrait {
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
-        tag.putString("name", getName());
+        tag.putString("name", name());
         tag.putDouble("max_energy", maxEnergy);
         tag.putDouble("current_energy", currentEnergy);
         return tag;

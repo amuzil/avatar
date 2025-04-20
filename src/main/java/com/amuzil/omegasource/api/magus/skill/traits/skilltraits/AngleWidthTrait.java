@@ -19,14 +19,14 @@ public class AngleWidthTrait extends SkillTrait {
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = super.serializeNBT();
-        tag.putDouble(getName(), degrees);
+        tag.putDouble(name(), degrees);
         return tag;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         super.deserializeNBT(nbt);
-        degrees = nbt.getDouble(getName());
+        degrees = nbt.getDouble(name());
     }
 
     public void setDegrees(double degrees) {

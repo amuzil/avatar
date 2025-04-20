@@ -6,7 +6,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 
 public interface DataTrait extends INBTSerializable<CompoundTag> {
 
-    String getName();
+    String name();
 
     /* Remember to call these in *every* setter you have for each trait! */
     /* Methods for whether to save the data. */

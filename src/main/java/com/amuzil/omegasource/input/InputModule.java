@@ -1,11 +1,10 @@
 package com.amuzil.omegasource.input;
 
 import com.amuzil.omegasource.api.magus.capability.entity.Magi;
-import com.amuzil.omegasource.bending.Bender;
+import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.bending.BendingForm;
 import com.amuzil.omegasource.bending.BendingForms;
 import com.amuzil.omegasource.bending.BendingSelection;
-import com.amuzil.omegasource.capability.BenderProvider;
 import com.amuzil.omegasource.capability.IBender;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.forms.ExecuteFormPacket;
@@ -14,7 +13,6 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.MinecraftForge;
