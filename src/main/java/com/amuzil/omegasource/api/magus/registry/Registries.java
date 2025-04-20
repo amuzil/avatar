@@ -109,10 +109,9 @@ public class Registries {
         if (event.getRegistryKey().equals(FORMS.get().getRegistryKey())) {
             IForgeRegistry<Form> registry = FORMS.get();
             ResourceKey<Registry<Form>> resKey = registry.getRegistryKey();
-
             event.register(resKey, helper -> {
-                for (Form form : forms)
-                    helper.register(form.name(), (Form) form);
+                for (Form form: forms)
+                    helper.register(form.name(), form);
             });
         }
 
@@ -120,9 +119,8 @@ public class Registries {
         if (event.getRegistryKey().equals(SKILLS.get().getRegistryKey())) {
             IForgeRegistry<Skill> registry = SKILLS.get();
             ResourceKey<Registry<Skill>> resKey = registry.getRegistryKey();
-
             event.register(resKey, helper -> {
-                for (Skill skill : skills)
+                for (Skill skill: skills)
                     helper.register(skill.getId(), skill);
             });
         }
@@ -131,12 +129,8 @@ public class Registries {
         if (event.getRegistryKey().equals(SKILL_CATEGORIES.get().getRegistryKey())) {
             IForgeRegistry<SkillCategory> registry = SKILL_CATEGORIES.get();
             ResourceKey<Registry<SkillCategory>> resKey = registry.getRegistryKey();
-
-
             event.register(resKey, helper -> {
-                System.out.println("REGISTER SKILL CATEGORIES -> " + categories);
-                for (SkillCategory category : categories) {
-                    System.out.println("REGISTER SKILL CATEGORY -> " + category.name());
+                for (SkillCategory category: categories) {
                     helper.register(category.name(), category);
                 }
             });
@@ -146,13 +140,12 @@ public class Registries {
         if (event.getRegistryKey().equals(DATA_TRAITS.get().getRegistryKey())) {
             IForgeRegistry<DataTrait> registry = DATA_TRAITS.get();
             ResourceKey<Registry<DataTrait>> resKey = registry.getRegistryKey();
-
             // Registers every Data Trait for every skill included within Magus.
             // Register other traits manually.
             registerTraitsFromSkills(SKILLS.get().getValues().stream().toList(), event);
             event.register(resKey, helper -> {
                 System.out.println("REGISTERING SKILL TRAITS");
-                for (DataTrait trait : traits) {
+                for (DataTrait trait: traits) {
                     System.out.println("REGISTER SKILL TRAIT -> " + trait.name());
                     helper.register(trait.name(), trait);
                 }
