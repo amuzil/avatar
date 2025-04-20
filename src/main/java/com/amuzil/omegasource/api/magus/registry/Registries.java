@@ -39,20 +39,8 @@ public class Registries {
 
     public static void init() {}
 
-    /**
-     * Registry methods.
-     */
-    // These are added to the Forge Event Bus registry.
-    public static void registerTraits(List<DataTrait> dataTraits) {
-        traits.addAll(dataTraits);
-    }
-
     public static void registerTrait(DataTrait dataTrait) {
         traits.add(dataTrait);
-    }
-
-    public static void registerSkills(List<Skill> registrySkills) {
-        skills.addAll(registrySkills);
     }
 
     public static List<Skill> getSkills() {
@@ -71,10 +59,9 @@ public class Registries {
         forms.add(registryForm);
     }
 
-    //How registering will work:
-    /*
-        All skills will be registered first, along with skill categories.
-        Then, each skill will have its getTraits() method called, and each of its traits will be registered.
+    /**
+     * All skills will be registered first, along with skill categories.
+     * Then, each skill will have its getTraits() method called, and each of its traits will be registered.
      */
     @SubscribeEvent
     public static void onRegistryRegister(NewRegistryEvent event) {

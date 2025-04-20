@@ -10,6 +10,7 @@ import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.*;
 import com.amuzil.omegasource.bending.BendingSkill;
 import com.amuzil.omegasource.bending.element.Elements;
+import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.entity.ElementProjectile;
 import com.amuzil.omegasource.entity.projectile.FireProjectile;
 import net.minecraft.world.entity.LivingEntity;
@@ -40,8 +41,8 @@ public class FireStrikeSkill extends BendingSkill {
     public void start(LivingEntity entity) {
         super.start(entity);
 
-        Magi magi = Magi.get(entity);
-        SkillData data = magi.getSkillData(this);
+        Bender bender = (Bender) Bender.getBender(entity);
+        SkillData data = bender.getSkillData(this);
 
         int lifetime = data.getTrait("lifetime", TimedTrait.class).getTime();
         double speed = data.getTrait("speed", SpeedTrait.class).getSpeed();
@@ -57,8 +58,8 @@ public class FireStrikeSkill extends BendingSkill {
             entity.level().addFreshEntity(proj);
         }
 
-        if (magi != null) {
-            magi.formPath.clear();
+        if (bender != null) {
+            bender.formPath.clear();
             data.setState(SkillState.STOP);
 
             resetCooldown(data);

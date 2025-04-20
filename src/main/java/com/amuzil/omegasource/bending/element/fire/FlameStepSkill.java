@@ -13,6 +13,7 @@ import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SizeTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SpeedTrait;
 import com.amuzil.omegasource.bending.BendingEffect;
 import com.amuzil.omegasource.bending.element.Elements;
+import com.amuzil.omegasource.capability.Bender;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
@@ -50,9 +51,9 @@ public class FlameStepSkill extends BendingEffect {
     public void start(LivingEntity entity) {
         super.start(entity);
 
-        Magi magi = Magi.get(entity);
-        if (magi != null) {
-            SkillData data = magi.getSkillData(this);
+        Bender bender = (Bender) Bender.getBender(entity);
+        if (bender != null) {
+            SkillData data = bender.getSkillData(this);
 
 //        entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED));
 //        entity.level().addFreshEntity(new LightningBolt(EntityType.LIGHTNING_BOLT, entity.level()));
@@ -87,7 +88,7 @@ public class FlameStepSkill extends BendingEffect {
 //        System.out.println("New Delta: " + entity.getDeltaMovement());
 
 
-            magi.formPath.clear();
+            bender.formPath.clear();
             data.setState(SkillState.IDLE);
 
             resetCooldown(data);

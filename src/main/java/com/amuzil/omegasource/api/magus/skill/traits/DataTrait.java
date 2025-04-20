@@ -1,6 +1,7 @@
 package com.amuzil.omegasource.api.magus.skill.traits;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.util.INBTSerializable;
 
 

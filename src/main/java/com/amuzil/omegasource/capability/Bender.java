@@ -13,9 +13,12 @@ import com.amuzil.omegasource.api.magus.skill.traits.DataTrait;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,6 +27,10 @@ import java.util.List;
 
 
 public class Bender implements IBender {
+
+    public static final Logger LOGGER = LogManager.getLogger();
+    private static final int DATA_VERSION = 0; // Update this as your data structure changes
+
     private String element = "fire";
     private final LivingEntity entity;
     private boolean isDirty = true; // Flag to indicate if data was changed
@@ -47,8 +54,20 @@ public class Bender implements IBender {
 
         skillData.forEach(skillData1 -> skillData1.setCanUse(true));
         skillCategoryData.forEach(skillCategoryData1 -> skillCategoryData1.setCanUse(true));
+        this.formPath = new FormPath();
         this.formConditionHandler = new FormCondition();
         markDirty();
+    }
+
+    public void onUpdate() {
+        if (entity instanceof Player) {
+            List<Skill> skills = Registries.getSkills();
+            for (Skill skill : skills) {
+                if (getSkillData(skill).canUse()) {
+                    skill.tick(entity, formPath);
+                }
+            }
+        }
     }
 
     public void registerFormCondition() {
@@ -72,6 +91,14 @@ public class Bender implements IBender {
 
     public void unregisterFormCondition() {
         formConditionHandler.unregister();
+    }
+
+    public SkillData getSkillData(Skill skill) {
+        return getSkillData(skill.getId());
+    }
+
+    public SkillData getSkillData(ResourceLocation id) {
+        return skillData.stream().filter(skillData1 -> skillData1.getSkillId().equals(id)).toList().get(0);
     }
 
     @Override
@@ -101,8 +128,25 @@ public class Bender implements IBender {
     }
 
     @Override
+    public String toString() {
+        return "Bender[ " + activeElement.name() + " ]";
+    }
+
+    // TODO - Create generic method to check & return if data in NBT tag exists & warn if it doesn't
+//    private <T> T validate(CompoundTag tag, String key, byte type) {
+//        if (tag.contains(key, type)) {
+//            return (T) tag.get(key);
+//        } else {
+//            LOGGER.warn("Missing data for: {}", key);
+//            return null;
+//        }
+//        return list != null && !list.isEmpty();
+//    }
+
+    @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
+        tag.putInt("DataVersion", DATA_VERSION);
         tag.putString("Element", element);
         tag.putString("Active Element", activeElement.name());
         skillCategoryData.forEach(catData -> tag.put(catData.name(), catData.serializeNBT()));
@@ -113,35 +157,33 @@ public class Bender implements IBender {
 
     @Override
     public void deserializeNBT(CompoundTag tag) {
-        this.element = tag.getString("Element");
-        this.activeElement = Elements.ALL_FOUR.get(tag.getString("Active Element"));
-        skillCategoryData.forEach(catData -> catData.deserializeNBT(tag.getCompound(catData.name())));
-        skillData.forEach(sData -> sData.deserializeNBT(tag.getCompound(sData.name())));
         System.out.println("[Bender] Deserializing NBT: " + tag);
-    }
+        int version = tag.contains("DataVersion") ? tag.getInt("DataVersion") : 0; // Default to version 0 if not present
+        switch (version) {
+            case 1 -> {
+                LOGGER.info("Loading Bender data version: {}", version);
+                this.element = tag.getString("Element");
+            } default -> { // Handle unknown versions for migrating data
+                LOGGER.warn("Unknown Bender data version: {}", version);
+                this.element = tag.getString("Element");
+                this.activeElement = Elements.ALL_FOUR.get(element);
+                for (SkillCategoryData catData : skillCategoryData) {
+                    if (tag.contains(catData.name(), Tag.TAG_COMPOUND)) {
+                        catData.deserializeNBT(tag.getCompound(catData.name()));
+                    } else {
+                        LOGGER.warn("Missing skill category data for: {}", catData.name());
+                    }
+                }
 
-    @Override
-    public String toString() {
-        return "Bender[ " + activeElement.name() + " ]";
-    }
-
-    public void onUpdate() {
-        if (entity instanceof Player) {
-            List<Skill> skills = Registries.getSkills();
-            for (Skill skill : skills) {
-                if (getSkillData(skill).canUse()) {
-                    skill.tick(entity, formPath);
+                for (SkillData sData : skillData) {
+                    if (tag.contains(sData.name(), Tag.TAG_COMPOUND)) {
+                        sData.deserializeNBT(tag.getCompound(sData.name()));
+                    } else {
+                        LOGGER.warn("Missing skill data for: {}", sData.name());
+                    }
                 }
             }
         }
-    }
-
-    public SkillData getSkillData(Skill skill) {
-        return getSkillData(skill.getId());
-    }
-
-    public SkillData getSkillData(ResourceLocation id) {
-        return skillData.stream().filter(skillData1 -> skillData1.getSkillId().equals(id)).toList().get(0);
     }
 
     public static @Nullable IBender getBender(LivingEntity entity) {

@@ -4,6 +4,7 @@ import com.amuzil.omegasource.api.magus.capability.entity.Magi;
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.skill.SkillCategory;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
+import com.amuzil.omegasource.capability.Bender;
 import net.minecraft.world.entity.LivingEntity;
 
 public class BendingEffect extends BendingSkill {
@@ -15,9 +16,9 @@ public class BendingEffect extends BendingSkill {
     @Override
     public boolean shouldStart(LivingEntity entity, FormPath formPath) {
         boolean shouldStart = false;
-        Magi magi = Magi.get(entity);
-        if (magi != null) {
-            SkillData data = magi.getSkillData(this);
+        Bender bender = (Bender) Bender.getBender(entity);
+        if (bender != null) {
+            SkillData data = bender.getSkillData(this);
             if (data.getState().equals(SkillState.START)) {
                 shouldStart = true;
             }

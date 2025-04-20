@@ -39,7 +39,7 @@ public class InputModule {
     private final HashMap<Integer, Integer> glfwKeysDown = new HashMap<>();
     private final long DOUBLE_TAP_THRESHOLD = 250; // milliseconds
     private final HashMap<BendingForm, Long> lastPressedForm = new HashMap<>();
-    private Magi magi;
+    private Bender bender;
     private BendingSelection.Type selection = BendingSelection.Type.NONE;
 
     public InputModule() {
@@ -187,7 +187,7 @@ public class InputModule {
     }
 
     public void registerListeners() {
-        magi = Magi.get(Minecraft.getInstance().player);
+        bender = (Bender) Bender.getBender(Minecraft.getInstance().player);
         MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, InputEvent.Key.class, keyboardListener);
         MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, InputEvent.MouseButton.class, mouseListener);
         MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, TickEvent.ClientTickEvent.class, tickEventConsumer);
@@ -206,9 +206,10 @@ public class InputModule {
         unRegisterListeners();
         glfwKeysDown.clear();
         lastPressedForm.clear();
-        magi = Magi.get(Minecraft.getInstance().player);
-        if (magi != null) {
-            magi.formPath.clearAll();
+        assert Minecraft.getInstance().player != null;
+        bender = (Bender) Bender.getBender(Minecraft.getInstance().player);
+        if (bender != null) {
+            bender.formPath.clearAll();
         }
     }
 

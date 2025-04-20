@@ -27,7 +27,7 @@ public class SkillData implements DataTrait {
     protected ResourceLocation skillId;
     protected boolean canUse = false;
     protected boolean isDirty = false;
-    protected Skill.SkillState state = Skill.SkillState.IDLE;
+    protected Skill.SkillState state;
 
     public SkillData(ResourceLocation skillId) {
         this.skillId = skillId;
@@ -108,15 +108,14 @@ public class SkillData implements DataTrait {
     }
 
     @Override
-    public void deserializeNBT(CompoundTag nbt) {
+    public void deserializeNBT(CompoundTag tag) {
         try {
-            skillId = ResourceLocation.tryParse(nbt.getString("Skill ID"));
-            System.out.println("OIOIOI -> " + nbt.getString("Skill State"));
-            state = Skill.SkillState.valueOf(nbt.getString("Skill State"));
+            skillId = ResourceLocation.tryParse(tag.getString("Skill ID"));
+            state = Skill.SkillState.valueOf(tag.getString("Skill State"));
             if (!skillTraits.isEmpty())
                 skillTraits.forEach(skillTrait -> {
                     if (skillTrait.isDirty())
-                        skillTrait.deserializeNBT((CompoundTag) Objects.requireNonNull(nbt.get(skillTrait.name() + "Trait")));
+                        skillTrait.deserializeNBT((CompoundTag) Objects.requireNonNull(tag.get(skillTrait.name() + "Trait")));
                     skillTrait.markClean();
                 });
         } catch (NullPointerException e) {
@@ -161,7 +160,6 @@ public class SkillData implements DataTrait {
         }
         return null;
     }
-
 
     public void reset() {
         for (SkillTrait trait : getSkillTraits())
