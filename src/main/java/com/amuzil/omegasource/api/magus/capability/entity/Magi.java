@@ -38,7 +38,6 @@ public class Magi {
     // Change this to use an int - 0 for should start, 1 for should run, 2 for should stop,
     // -1 for default/idle. If I need multiple states, then use bits; 000 for idle, and then
     // 1xx is should start, x1x is should run, xx1 is should stop
-    private HashMap<String, Integer> skillStatuses = new HashMap<>();
 
     public Magi(LivingEntity entity) {
         this.magi = entity;
@@ -62,16 +61,10 @@ public class Magi {
             ActiveForm activeForm = new ActiveForm(formConditionHandler.form(), formConditionHandler.active());
             formPath.update(activeForm);
             markDirty();
-//            if (magi.level().isClientSide()) {
-//                RadixTree.getLogger().debug("Simple Forms: {}", formPath.simple());
-//                RadixTree.getLogger().debug("Complex Forms: {}", formPath.complex());
-//            }
         }, () -> {
             if (!formPath.isActive()) {
                 formPath.clear();
                 markDirty();
-//                if (magi.level().isClientSide())
-//                    RadixTree.getLogger().debug("Complex Forms Timed Out");
             }
         });
     }
@@ -155,8 +148,7 @@ public class Magi {
         }
     }
 
-    public void onDeath() {
-    }
+    public void onDeath() {}
 
     public LivingEntity getMagi() {
         return this.magi;
@@ -167,14 +159,12 @@ public class Magi {
     public CompoundTag serialiseNBT() {
         CompoundTag tag = new CompoundTag();
         if (isDirty()) {
-            // TODO: Figure out if I need to use the returned tags from each of these values....
-//            complexForms.forEach(activeForm -> tag.put(activeForm.form().name(), activeForm.serializeNBT()));
             if (skillCategoryData != null)
                 skillCategoryData.forEach(catData -> tag.put(catData.name(), catData.serializeNBT()));
             if (skillData != null)
                 skillData.forEach(sData -> tag.put(sData.name(), sData.serializeNBT()));
             if (formPath != null)
-                formPath.serializeNBT();
+                tag.put("Form Path", formPath.serializeNBT());
         }
         return tag;
     }

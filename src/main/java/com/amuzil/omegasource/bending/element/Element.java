@@ -1,5 +1,6 @@
 package com.amuzil.omegasource.bending.element;
 
+import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.skill.SkillCategory;
 
 
@@ -7,9 +8,9 @@ public class Element extends SkillCategory {
     private final Art art;
 
     public Element(Art art) {
-        super(art.toString());
+        super(Avatar.MOD_ID, art.toString());
         this.art = art;
-        Elements.LIST.add(this);
+        Elements.ALL_FOUR.put(art.toString(), this);
     }
 
     public Art type() {

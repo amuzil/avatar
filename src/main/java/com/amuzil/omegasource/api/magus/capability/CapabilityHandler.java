@@ -2,7 +2,6 @@ package com.amuzil.omegasource.api.magus.capability;
 
 import com.amuzil.omegasource.api.magus.capability.entity.Data;
 import com.amuzil.omegasource.api.magus.capability.entity.LivingDataCapability;
-import com.amuzil.omegasource.capability.AvatarCapabilities;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -30,7 +29,7 @@ public class CapabilityHandler {
             //capabilities all living entities get.
             //TODO: Add requirement to check against a list of compatible entities.
             //E.g custom npcs, or specific mobs you want to be able to use Skills.
-            e.addCapability(LivingDataCapability.IDENTIFIER, new LivingDataCapability.LivingDataProvider());
+            e.addCapability(LivingDataCapability.ID, new LivingDataCapability.LivingDataProvider());
             if (e.getObject() instanceof Player) {
                 //capabilities just players get.
             }

@@ -4,6 +4,7 @@ import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.capability.CapabilityHandler;
 import com.amuzil.omegasource.api.magus.capability.entity.Data;
 import com.amuzil.omegasource.capability.AvatarCapabilities;
+import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.capability.IBender;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.client.SyncBenderPacket;
@@ -27,38 +28,28 @@ public class ServerEvents {
 
     @SubscribeEvent
     public static void onEntityJoinLevel(EntityJoinLevelEvent event) {
-        if (!(event.getEntity() instanceof Player)) {
-            return; // Ignore non-player entities
-        }
+        if (!(event.getEntity() instanceof Player)) return; // Ignore non-player entities
 
         if (event.getEntity() instanceof Player player) {
-
-            Data data = CapabilityHandler.getCapability(player, CapabilityHandler.LIVING_DATA);
-            if (data != null) {
-                Magi magi = Magi.get(player);
-                if (magi != null) {
-                    magi.registerFormCondition();
-
-                    if (event.getLevel().isClientSide) {
-                        Avatar.inputModule.registerListeners();
-                        Avatar.reloadFX();
-                        System.out.println("InputModule Initiated!");
-                    }
-                }
+            Bender bender = (Bender) Bender.getBender((LivingEntity) event.getEntity());
+            bender.registerFormCondition();
+            if (event.getLevel().isClientSide) {
+                Avatar.inputModule.registerListeners();
+                Avatar.reloadFX();
+                System.out.println("InputModule Initiated!");
             }
         }
     }
 
     @SubscribeEvent
-    public static void OnPlayerLeaveWorld(EntityLeaveLevelEvent event) {
+    public static void onEntityLeaveLevel(EntityLeaveLevelEvent event) {
         if (event.getEntity() instanceof ServerPlayer) {
             // TODO - Causes whole server to crash when player leaves
             //      java.lang.NullPointerException: Cannot invoke "com.amuzil.omegasource.magus.input.InputModule.getFormsTree()"
             //      because "com.amuzil.omegasource.magus.Magus.keyboardMouseInputModule" is null
 
-            Magi magi = Magi.get((LivingEntity) event.getEntity());
-            if (magi != null)
-                magi.unregisterFormCondition();
+            Bender bender = (Bender) Bender.getBender((LivingEntity) event.getEntity());
+            bender.unregisterFormCondition();
 
         } else if (event.getEntity() instanceof Player && event.getLevel().isClientSide) {
             if (Avatar.inputModule != null) { // Temporary fix until we decide which side to make InputModules
@@ -70,10 +61,9 @@ public class ServerEvents {
     @SubscribeEvent
     public static void worldTick(LivingEvent.LivingTickEvent event) {
         if (event.getEntity() != null && event.getEntity().isAlive()) {
-            if (Magi.get(event.getEntity()) != null) {
-                Magi magi = Magi.get(event.getEntity());
-                magi.onUpdate();
-            }
+            Bender bender = (Bender) Bender.getBender(event.getEntity());
+            if (bender == null) return;
+            bender.onUpdate();
         }
     }
 }

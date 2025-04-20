@@ -33,8 +33,8 @@ public class BenderProvider implements ICapabilityProvider, INBTSerializable<Com
     }
 
     @Override
-    public void deserializeNBT(CompoundTag nbt) {
-        bender.deserializeNBT(nbt);
+    public void deserializeNBT(CompoundTag tag) {
+        bender.deserializeNBT(tag);
     }
 
     public void invalidate() {

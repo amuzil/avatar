@@ -150,18 +150,13 @@ public abstract class Skill {
     public abstract void reset(LivingEntity entity, FormPath formPath);
 
     public enum SkillState {
-        IDLE("idle"),
-        START("start"),
-        RUN("run"),
-        STOP("stop");
+        IDLE,
+        START,
+        RUN,
+        STOP;
 
-        String name;
-        SkillState(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return this.name;
+        public @Override String toString() {
+            return this.name();
         }
     }
 

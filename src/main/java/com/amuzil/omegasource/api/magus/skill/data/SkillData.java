@@ -20,19 +20,18 @@ import java.util.stream.Collectors;
 //E.g SizeTrait vs ElementTrait or something are both SkillTraits but....
 public class SkillData implements DataTrait {
 
-    List<SkillTrait> skillTraits;
+    protected List<SkillTrait> skillTraits;
     // Types should not need serialisation as they do not change
     //The reason we're using a resource location and not the actual Skill object is because
     //it's much easier to serialise a String and then get a skill from it.
-    ResourceLocation skillId;
-    private boolean canUse;
-    private boolean isDirty = false;
-    private Skill.SkillState state;
+    protected ResourceLocation skillId;
+    protected boolean canUse = false;
+    protected boolean isDirty = false;
+    protected Skill.SkillState state = Skill.SkillState.IDLE;
 
     public SkillData(ResourceLocation skillId) {
         this.skillId = skillId;
         this.skillTraits = new LinkedList<>();
-        this.canUse = false;
 
         this.state = Skill.SkillState.START;
         if (getSkill() != null)
@@ -112,6 +111,7 @@ public class SkillData implements DataTrait {
     public void deserializeNBT(CompoundTag nbt) {
         try {
             skillId = ResourceLocation.tryParse(nbt.getString("Skill ID"));
+            System.out.println("OIOIOI -> " + nbt.getString("Skill State"));
             state = Skill.SkillState.valueOf(nbt.getString("Skill State"));
             if (!skillTraits.isEmpty())
                 skillTraits.forEach(skillTrait -> {
@@ -125,7 +125,6 @@ public class SkillData implements DataTrait {
         }
         markClean();
     }
-
 
     public List<SkillTrait> getSkillTraits() {
         if (skillTraits == null || skillTraits.isEmpty())
