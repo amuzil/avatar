@@ -1,14 +1,13 @@
 package com.amuzil.omegasource;
 
-import com.amuzil.omegasource.api.magus.skill.Skills;
 import com.amuzil.omegasource.api.magus.capability.CapabilityHandler;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.capability.AvatarCapabilities;
 import com.amuzil.omegasource.entity.AvatarEntities;
 import com.amuzil.omegasource.input.InputModule;
 import com.amuzil.omegasource.network.AvatarNetwork;
-import com.amuzil.omegasource.registry.Registries;
-import com.amuzil.omegasource.utils.AvatarCommand;
+import com.amuzil.omegasource.api.magus.registry.Registries;
+import com.amuzil.omegasource.utils.server.AvatarCommand;
 import com.lowdragmc.photon.client.fx.FX;
 import com.lowdragmc.photon.client.fx.FXHelper;
 import net.minecraft.client.Minecraft;
@@ -52,7 +51,7 @@ public class Avatar {
         modEventBus.addListener(AvatarCapabilities::register);
         modEventBus.addListener(CapabilityHandler::registerCapabilities);
         // Attach capabilities
-        MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, AvatarCapabilities::attachCapabilities);
+//        MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, AvatarCapabilities::attachCapabilities);
         MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, CapabilityHandler::attachEntityCapability);
         // Register the setup method for mod loading
         modEventBus.addListener(this::setup);
@@ -75,7 +74,6 @@ public class Avatar {
         Registries.init();
         CapabilityHandler.init();
         AvatarNetwork.register();
-        Skills.register();
         Elements.init();
     }
 

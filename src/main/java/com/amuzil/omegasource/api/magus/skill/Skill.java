@@ -1,14 +1,13 @@
 package com.amuzil.omegasource.api.magus.skill;
 
-import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.api.magus.capability.entity.Magi;
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.radix.RadixTree;
 import com.amuzil.omegasource.api.magus.skill.event.SkillTickEvent;
-import com.amuzil.omegasource.api.magus.skill.utils.data.SkillData;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.SkillTrait;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.UseTrait;
-import com.amuzil.omegasource.registry.Registries;
+import com.amuzil.omegasource.api.magus.skill.data.SkillData;
+import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
+import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.UseTrait;
+import com.amuzil.omegasource.api.magus.registry.Registries;
+import com.amuzil.omegasource.capability.Bender;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.MinecraftForge;
@@ -32,12 +31,8 @@ public abstract class Skill {
     private boolean shouldStart, shouldRun, shouldStop;
     protected FormPath startPaths, runPaths, stopPaths;
 
-    public Skill(String modID, String name, SkillCategory category) {
-        this(ResourceLocation.fromNamespaceAndPath(modID, name), category);
-    }
-
-    public Skill(String name, SkillCategory category) {
-        this(Avatar.MOD_ID, name, category);
+    public Skill(String modId, String name, SkillCategory category) {
+        this(ResourceLocation.fromNamespaceAndPath(modId, name), category);
     }
 
     public Skill(ResourceLocation id, SkillCategory category) {
@@ -98,13 +93,13 @@ public abstract class Skill {
     public void tick(LivingEntity entity, FormPath formPath) {
         //Run this asynchronously
 
-        Magi magi = Magi.get(entity);
+        Bender bender = (Bender) Bender.getBender(entity);
         // Remember, for some reason post only returns true upon the event being cancelled. Blame Forge.
         if (shouldStart(entity, formPath)) {
             if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Start(entity, formPath, this))) return;
 
-            if (magi != null) {
-                SkillData skillData = magi.getSkillData(this);
+            if (bender != null) {
+                SkillData skillData = bender.getSkillData(this);
                 skillData.setState(SkillState.START);
             }
             start(entity);
@@ -113,8 +108,8 @@ public abstract class Skill {
         if (shouldRun(entity, formPath)) {
             if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Run(entity, formPath, this))) return;
 
-            if (magi != null) {
-                SkillData skillData = magi.getSkillData(this);
+            if (bender != null) {
+                SkillData skillData = bender.getSkillData(this);
                 if (!skillData.getState().equals(SkillState.RUN))
                     skillData.setState(SkillState.RUN);
             }
@@ -125,8 +120,8 @@ public abstract class Skill {
         if (shouldStop(entity, formPath)) {
             if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Stop(entity, formPath, this))) return;
 
-            if (magi != null) {
-                SkillData skillData = magi.getSkillData(this);
+            if (bender != null) {
+                SkillData skillData = bender.getSkillData(this);
                 skillData.setState(SkillState.STOP);
             }
             stop(entity);
@@ -150,25 +145,25 @@ public abstract class Skill {
 
     public abstract void run(LivingEntity entity);
 
-    public abstract void stop(LivingEntity entity);
+    public void stop(LivingEntity entity) {
+        Bender bender = (Bender) Bender.getBender(entity);
+        if (bender != null) {
+            SkillData data = bender.getSkillData(this);
+            data.setState(SkillState.IDLE);
+        }
+    };
 
     // Resets the skill and any necessary skill data; should be called upon stopping execution.
     public abstract void reset(LivingEntity entity, FormPath formPath);
 
-
     public enum SkillState {
-        IDLE("idle"),
-        START("start"),
-        RUN("run"),
-        STOP("stop");
+        IDLE,
+        START,
+        RUN,
+        STOP;
 
-        String name;
-        SkillState(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return this.name;
+        public @Override String toString() {
+            return this.name();
         }
     }
 

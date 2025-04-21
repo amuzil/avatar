@@ -1,15 +1,14 @@
 package com.amuzil.omegasource.api.magus.form;
 
+import com.amuzil.omegasource.api.magus.registry.Registries;
+
 
 public class Form {
-    private final String name;
+    protected final String name;
 
     public Form(String name) {
         this.name = name;
-    }
-
-    public Form() { // Create null Form to fix random NullPointerException
-        this.name = null;
+        Registries.registerForm(this);
     }
 
     public String name() {

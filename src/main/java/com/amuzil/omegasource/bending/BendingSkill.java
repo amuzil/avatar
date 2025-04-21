@@ -2,10 +2,10 @@ package com.amuzil.omegasource.bending;
 
 import com.amuzil.omegasource.api.magus.skill.SkillActive;
 import com.amuzil.omegasource.api.magus.skill.SkillCategory;
-import com.amuzil.omegasource.api.magus.skill.utils.data.SkillData;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.LevelTrait;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.TimedTrait;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.XPTrait;
+import com.amuzil.omegasource.api.magus.skill.data.SkillData;
+import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.LevelTrait;
+import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.TimedTrait;
+import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.XPTrait;
 
 public class BendingSkill extends SkillActive {
 

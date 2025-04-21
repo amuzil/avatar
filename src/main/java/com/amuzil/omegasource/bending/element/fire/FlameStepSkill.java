@@ -4,16 +4,16 @@ import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.capability.entity.Magi;
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
 import com.amuzil.omegasource.api.magus.form.FormPath;
-import com.amuzil.omegasource.api.magus.radix.RadixTree;
 import com.amuzil.omegasource.api.magus.skill.SkillCategory;
-import com.amuzil.omegasource.api.magus.skill.utils.data.SkillData;
-import com.amuzil.omegasource.api.magus.skill.utils.data.SkillPathBuilder;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.ColourTrait;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.KnockbackTrait;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.SizeTrait;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.SpeedTrait;
+import com.amuzil.omegasource.api.magus.skill.data.SkillData;
+import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
+import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.ColourTrait;
+import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.KnockbackTrait;
+import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SizeTrait;
+import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SpeedTrait;
 import com.amuzil.omegasource.bending.BendingEffect;
 import com.amuzil.omegasource.bending.element.Elements;
+import com.amuzil.omegasource.capability.Bender;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
@@ -27,7 +27,7 @@ public class FlameStepSkill extends BendingEffect {
     public FlameStepSkill() {
         super(Avatar.MOD_ID, "flame_step", Elements.FIRE);
         addTrait(new KnockbackTrait(1.5f, "knockback"));
-        addTrait(new SpeedTrait(1.5f, "dash_speed"));
+        addTrait(new SpeedTrait(5f, "dash_speed"));
         addTrait(new SizeTrait(1.0f, "size"));
         addTrait(new ColourTrait(0, 0, 0, "fire_colour"));
 
@@ -51,9 +51,9 @@ public class FlameStepSkill extends BendingEffect {
     public void start(LivingEntity entity) {
         super.start(entity);
 
-        Magi magi = Magi.get(entity);
-        if (magi != null) {
-            SkillData data = magi.getSkillData(this);
+        Bender bender = (Bender) Bender.getBender(entity);
+        if (bender != null) {
+            SkillData data = bender.getSkillData(this);
 
 //        entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED));
 //        entity.level().addFreshEntity(new LightningBolt(EntityType.LIGHTNING_BOLT, entity.level()));
@@ -66,6 +66,7 @@ public class FlameStepSkill extends BendingEffect {
 //        }
 
             float dashSpeed = (float) Objects.requireNonNull(data.getTrait("dash_speed", SpeedTrait.class)).getSpeed();
+            System.out.println("Dash Speed HEREEE: " + dashSpeed);
             Vec3 dashVec = Vec3.ZERO;
             if (entity.level().isClientSide) {
                 Minecraft mc = Minecraft.getInstance();
@@ -88,7 +89,7 @@ public class FlameStepSkill extends BendingEffect {
 //        System.out.println("New Delta: " + entity.getDeltaMovement());
 
 
-            magi.formPath.clear();
+            bender.formPath.clear();
             data.setState(SkillState.IDLE);
 
             resetCooldown(data);

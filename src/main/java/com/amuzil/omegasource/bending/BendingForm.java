@@ -1,32 +1,27 @@
 package com.amuzil.omegasource.bending;
 
 import com.amuzil.omegasource.api.magus.form.Form;
-import com.amuzil.omegasource.registry.Registries;
 
 
 public class BendingForm extends Form {
-    private final String name;
     private final Type type;
 
     public BendingForm(String name, Type type) {
         super(name);
-        this.name = name;
         this.type = type;
-        Registries.registerForm(this);
     }
 
     public BendingForm(String name) {
-        this.name = name;
-        this.type = Type.NONE;
+        this(name, Type.NONE);
     }
 
-    public BendingForm() { // Create null Form to fix random NullPointerException
-        this.name = null;
+    public BendingForm() {
+        super(null); // Create null Form to fix random NullPointerException
         this.type = Type.NONE;
     }
 
     public String name() {
-        return name;
+        return super.name();
     }
 
     @Override

@@ -4,18 +4,15 @@ import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.capability.entity.Magi;
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
 import com.amuzil.omegasource.api.magus.form.FormPath;
-import com.amuzil.omegasource.api.magus.skill.SkillActive;
 import com.amuzil.omegasource.api.magus.skill.SkillCategory;
-import com.amuzil.omegasource.api.magus.skill.utils.data.SkillData;
-import com.amuzil.omegasource.api.magus.skill.utils.data.SkillPathBuilder;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.*;
-import com.amuzil.omegasource.bending.BendingForms;
+import com.amuzil.omegasource.api.magus.skill.data.SkillData;
+import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
+import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.*;
 import com.amuzil.omegasource.bending.BendingSkill;
 import com.amuzil.omegasource.bending.element.Elements;
+import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.entity.ElementProjectile;
 import com.amuzil.omegasource.entity.projectile.FireProjectile;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 
 import static com.amuzil.omegasource.bending.BendingForms.STRIKE;
@@ -44,13 +41,12 @@ public class FireStrikeSkill extends BendingSkill {
     public void start(LivingEntity entity) {
         super.start(entity);
 
-        Magi magi = Magi.get(entity);
-        SkillData data = magi.getSkillData(this);
+        Bender bender = (Bender) Bender.getBender(entity);
+        SkillData data = bender.getSkillData(this);
 
         int lifetime = data.getTrait("lifetime", TimedTrait.class).getTime();
         double speed = data.getTrait("speed", SpeedTrait.class).getSpeed();
 
-        System.out.println(speed);
         ElementProjectile proj = new FireProjectile(entity, entity.level());
         proj.shoot(entity.getViewVector(1).x, entity.getViewVector(1).y, entity.getViewVector(1).z, (float) speed, 1);
         proj.setTimeToKill(lifetime);
@@ -62,8 +58,8 @@ public class FireStrikeSkill extends BendingSkill {
             entity.level().addFreshEntity(proj);
         }
 
-        if (magi != null) {
-            magi.formPath.clear();
+        if (bender != null) {
+            bender.formPath.clear();
             data.setState(SkillState.STOP);
 
             resetCooldown(data);

@@ -1,21 +1,15 @@
 package com.amuzil.omegasource.api.magus.capability.entity;
 
-import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.capability.CapabilityHandler;
 import com.amuzil.omegasource.api.magus.condition.conditions.FormCondition;
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.radix.RadixTree;
 import com.amuzil.omegasource.api.magus.skill.Skill;
-import com.amuzil.omegasource.api.magus.skill.utils.data.SkillCategoryData;
-import com.amuzil.omegasource.api.magus.skill.utils.data.SkillData;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.DataTrait;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.SkillTrait;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.DamageTrait;
-import com.amuzil.omegasource.api.magus.skill.utils.traits.skilltraits.SpeedTrait;
-import com.amuzil.omegasource.bending.element.fire.FireStrikeSkill;
-import com.amuzil.omegasource.bending.element.fire.Firebending;
-import com.amuzil.omegasource.registry.Registries;
+import com.amuzil.omegasource.api.magus.skill.data.SkillCategoryData;
+import com.amuzil.omegasource.api.magus.skill.data.SkillData;
+import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
+import com.amuzil.omegasource.api.magus.registry.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -44,7 +38,6 @@ public class Magi {
     // Change this to use an int - 0 for should start, 1 for should run, 2 for should stop,
     // -1 for default/idle. If I need multiple states, then use bits; 000 for idle, and then
     // 1xx is should start, x1x is should run, xx1 is should stop
-    private HashMap<String, Integer> skillStatuses = new HashMap<>();
 
     public Magi(LivingEntity entity) {
         this.magi = entity;
@@ -68,16 +61,10 @@ public class Magi {
             ActiveForm activeForm = new ActiveForm(formConditionHandler.form(), formConditionHandler.active());
             formPath.update(activeForm);
             markDirty();
-//            if (magi.level().isClientSide()) {
-//                RadixTree.getLogger().debug("Simple Forms: {}", formPath.simple());
-//                RadixTree.getLogger().debug("Complex Forms: {}", formPath.complex());
-//            }
         }, () -> {
             if (!formPath.isActive()) {
                 formPath.clear();
                 markDirty();
-//                if (magi.level().isClientSide())
-//                    RadixTree.getLogger().debug("Complex Forms Timed Out");
             }
         });
     }
@@ -154,7 +141,6 @@ public class Magi {
             for (Skill skill : skills) {
 //                RadixTree.getLogger().debug("Skill: " + skill);
                 if (getSkillData(skill).canUse()) {
-                    // TODO: Make sure this works; blame Aidan if something needs to be client-side
 //                    if (!getMagi().level().isClientSide)
                     skill.tick(getMagi(), formPath);
                 }
@@ -162,8 +148,7 @@ public class Magi {
         }
     }
 
-    public void onDeath() {
-    }
+    public void onDeath() {}
 
     public LivingEntity getMagi() {
         return this.magi;
@@ -174,14 +159,12 @@ public class Magi {
     public CompoundTag serialiseNBT() {
         CompoundTag tag = new CompoundTag();
         if (isDirty()) {
-            // TODO: Figure out if I need to use the returned tags from each of these values....
-//            complexForms.forEach(activeForm -> tag.put(activeForm.form().name(), activeForm.serializeNBT()));
             if (skillCategoryData != null)
-                skillCategoryData.forEach(catData -> tag.put(catData.getName(), catData.serializeNBT()));
+                skillCategoryData.forEach(catData -> tag.put(catData.name(), catData.serializeNBT()));
             if (skillData != null)
-                skillData.forEach(sData -> tag.put(sData.getName(), sData.serializeNBT()));
+                skillData.forEach(sData -> tag.put(sData.name(), sData.serializeNBT()));
             if (formPath != null)
-                formPath.serializeNBT();
+                tag.put("Form Path", formPath.serializeNBT());
         }
         return tag;
     }
@@ -189,9 +172,9 @@ public class Magi {
     public void deserialiseNBT(CompoundTag tag) {
 //        complexForms.forEach(activeForm -> activeForm.deserializeNBT(tag.getCompound(activeForm.form().name())));
         if (skillCategoryData != null)
-            skillCategoryData.forEach(catData -> catData.deserializeNBT(tag.getCompound(catData.getName())));
+            skillCategoryData.forEach(catData -> catData.deserializeNBT(tag.getCompound(catData.name())));
         if (skillData != null)
-            skillData.forEach(sData -> sData.deserializeNBT(tag.getCompound(sData.getName())));
+            skillData.forEach(sData -> sData.deserializeNBT(tag.getCompound(sData.name())));
         if (formPath != null)
             formPath.deserializeNBT(tag);
     }

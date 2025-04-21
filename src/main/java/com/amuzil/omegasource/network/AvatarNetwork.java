@@ -3,13 +3,14 @@ package com.amuzil.omegasource.network;
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.network.packets.api.AvatarPacket;
 import com.amuzil.omegasource.network.packets.client.FormActivatedPacket;
-import com.amuzil.omegasource.network.packets.client.SyncCapabilityPacket;
+import com.amuzil.omegasource.network.packets.client.SyncBenderPacket;
 import com.amuzil.omegasource.network.packets.forms.ExecuteFormPacket;
 import com.amuzil.omegasource.network.packets.forms.ReleaseFormPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 
@@ -46,15 +47,15 @@ public class AvatarNetwork {
                 .consumerMainThread(ReleaseFormPacket::handle)
                 .add();
 
-        CHANNEL.messageBuilder(SyncCapabilityPacket.class, nextID())
-                .encoder(SyncCapabilityPacket::toBytes)
-                .decoder(SyncCapabilityPacket::fromBytes)
-                .consumerMainThread(SyncCapabilityPacket::handle)
+        CHANNEL.messageBuilder(SyncBenderPacket.class, nextID())
+                .encoder(SyncBenderPacket::toBytes)
+                .decoder(SyncBenderPacket::fromBytes)
+                .consumerMainThread(SyncBenderPacket::handle)
                 .add();
     }
 
     public static void sendToClient(AvatarPacket packet, ServerPlayer player) {
-        CHANNEL.sendTo(packet, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+        CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), packet);
     }
 
     public static void sendToServer(AvatarPacket packet) {
