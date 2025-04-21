@@ -3,7 +3,6 @@ package com.amuzil.omegasource.api.magus.registry;
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.form.Form;
 import com.amuzil.omegasource.api.magus.skill.SkillCategory;
-import com.amuzil.omegasource.api.magus.condition.Condition;
 import com.amuzil.omegasource.api.magus.skill.Skill;
 import com.amuzil.omegasource.api.magus.skill.traits.DataTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
@@ -27,36 +26,35 @@ import java.util.function.Supplier;
 @Mod.EventBusSubscriber(modid = Avatar.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Registries {
 
-    public static Supplier<IForgeRegistry<DataTrait>> DATA_TRAITS;
-    public static Supplier<IForgeRegistry<SkillCategory>> SKILL_CATEGORIES;
-    public static Supplier<IForgeRegistry<Skill>> SKILLS;
     public static Supplier<IForgeRegistry<Form>> FORMS;
-    public static List<DataTrait> traits = new ArrayList<>();
-    public static List<SkillCategory> categories = new ArrayList<>();
-    public static List<Condition> conditions = new ArrayList<>();
-    public static List<Skill> skills = new ArrayList<>();
+    public static Supplier<IForgeRegistry<Skill>> SKILLS;
+    public static Supplier<IForgeRegistry<SkillCategory>> SKILL_CATEGORIES;
+    public static Supplier<IForgeRegistry<DataTrait>> DATA_TRAITS;
     public static List<Form> forms = new ArrayList<>();
+    public static List<Skill> skills = new ArrayList<>();
+    public static List<SkillCategory> categories = new ArrayList<>();
+    public static List<DataTrait> traits = new ArrayList<>();
 
     public static void init() {}
 
-    public static void registerTrait(DataTrait dataTrait) {
-        traits.add(dataTrait);
-    }
-
     public static List<Skill> getSkills() {
         return skills;
-    }
-
-    public static void registerSkill(Skill registrySkill) {
-        skills.add(registrySkill);
     }
 
     public static void registerSkillCategory(SkillCategory skillCategory) {
         categories.add(skillCategory);
     }
 
-    public static void registerForm(Form registryForm) {
-        forms.add(registryForm);
+    public static void registerSkill(Skill skill) {
+        skills.add(skill);
+    }
+
+    public static void registerForm(Form form) {
+        forms.add(form);
+    }
+
+    public static void registerTrait(DataTrait dataTrait) {
+        traits.add(dataTrait);
     }
 
     /**
