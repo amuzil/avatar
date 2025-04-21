@@ -1,26 +1,14 @@
-package com.amuzil.omegasource.utils.server;
+package com.amuzil.omegasource.events;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.api.magus.capability.CapabilityHandler;
-import com.amuzil.omegasource.api.magus.capability.entity.Data;
-import com.amuzil.omegasource.capability.AvatarCapabilities;
 import com.amuzil.omegasource.capability.Bender;
-import com.amuzil.omegasource.capability.IBender;
-import com.amuzil.omegasource.network.AvatarNetwork;
-import com.amuzil.omegasource.network.packets.client.SyncBenderPacket;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
-import com.amuzil.omegasource.api.magus.capability.entity.Magi;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.PacketDistributor;
 
 
 @Mod.EventBusSubscriber(modid = Avatar.MOD_ID)
@@ -33,7 +21,7 @@ public class ServerEvents {
         if (event.getEntity() instanceof Player player) {
             Bender bender = (Bender) Bender.getBender(player);
             bender.registerFormCondition();
-            System.out.println("Registering form condition ONCE");
+            System.out.println("Registering FormCondition CLIENT-SIDE: " + event.getLevel().isClientSide);
             if (event.getLevel().isClientSide) {
                 Avatar.inputModule.registerListeners();
                 Avatar.reloadFX();
@@ -50,14 +38,9 @@ public class ServerEvents {
             //      because "com.amuzil.omegasource.magus.Magus.keyboardMouseInputModule" is null
 
             Bender bender = (Bender) Bender.getBender(player);
-            System.out.println("CLIENT-SIDE: " + event.getLevel().isClientSide);
             assert bender != null;
             bender.unregisterFormCondition();
-            System.out.println("Unregistering form condition YES PLS");
-            if (event.getLevel().isClientSide) {
-                if (Avatar.inputModule != null)
-                    Avatar.inputModule.terminate();
-            }
+            System.out.println("Unregistering FormCondition SERVER-SIDE");
         }
     }
 
