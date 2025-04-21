@@ -47,12 +47,7 @@ public class Avatar {
 
     public Avatar(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
-        // Register capabilities
-        modEventBus.addListener(AvatarCapabilities::register);
-        modEventBus.addListener(CapabilityHandler::registerCapabilities);
-        // Attach capabilities
-//        MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, AvatarCapabilities::attachCapabilities);
-        MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, CapabilityHandler::attachEntityCapability);
+//        modEventBus.addListener(AvatarCapabilities::register);
         // Register the setup method for mod loading
         modEventBus.addListener(this::setup);
         // Register the enqueueIMC method for mod loading
