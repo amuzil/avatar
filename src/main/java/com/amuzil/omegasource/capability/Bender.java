@@ -29,19 +29,18 @@ import java.util.List;
 public class Bender implements IBender {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final int DATA_VERSION = 0; // Update this as your data structure changes
+    private static final int DATA_VERSION = 1; // Update this as your data structure changes
 
-    private String element = "fire";
     private final LivingEntity entity;
     private boolean isDirty = true; // Flag to indicate if data was changed
     public FormPath formPath;
     private FormCondition formConditionHandler;
 
-    // Persistent data
+    // Persistent NBT data
     private Element activeElement = Elements.FIRE; // Currently active element
     private final List<DataTrait> dataTraits = new ArrayList<>();
     private final List<SkillData> skillData = new ArrayList<>();
-    private final List<SkillCategoryData> skillCategoryData = new ArrayList<>();;
+    private final List<SkillCategoryData> skillCategoryData = new ArrayList<>();
 
     public Bender(LivingEntity entity) {
         this.entity = entity;
@@ -102,13 +101,13 @@ public class Bender implements IBender {
     }
 
     @Override
-    public String getElement() {
-        return element;
+    public Element getElement() {
+        return activeElement;
     }
 
     @Override
-    public void setElement(String element) {
-        this.element = element;
+    public void setElement(Element activeElement) {
+        this.activeElement = activeElement;
         markDirty();
     }
 
@@ -147,7 +146,6 @@ public class Bender implements IBender {
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
         tag.putInt("DataVersion", DATA_VERSION);
-        tag.putString("Element", element);
         tag.putString("Active Element", activeElement.name());
         skillCategoryData.forEach(catData -> tag.put(catData.name(), catData.serializeNBT()));
         skillData.forEach(sData -> tag.put(sData.name(), sData.serializeNBT()));
@@ -158,15 +156,11 @@ public class Bender implements IBender {
     @Override
     public void deserializeNBT(CompoundTag tag) {
         System.out.println("[Bender] Deserializing NBT: " + tag);
-        int version = tag.contains("DataVersion") ? tag.getInt("DataVersion") : 0; // Default to version 0 if not present
+        int version = tag.contains("DataVersion") ? tag.getInt("DataVersion") : 1; // Default to version 1 if not present
         switch (version) {
             case 1 -> {
                 LOGGER.info("Loading Bender data version: {}", version);
-                this.element = tag.getString("Element");
-            } default -> { // Handle unknown versions for migrating data
-                LOGGER.warn("Unknown Bender data version: {}", version);
-                this.element = tag.getString("Element");
-                this.activeElement = Elements.ALL_FOUR.get(element);
+                this.activeElement = Elements.ALL_FOUR.get(tag.getString("Active Element"));
                 for (SkillCategoryData catData : skillCategoryData) {
                     if (tag.contains(catData.name(), Tag.TAG_COMPOUND)) {
                         catData.deserializeNBT(tag.getCompound(catData.name()));
@@ -182,6 +176,9 @@ public class Bender implements IBender {
                         LOGGER.warn("Missing skill data for: {}", sData.name());
                     }
                 }
+            } default -> { // Handle unknown versions for migrating data
+                // Set defaults here
+                LOGGER.warn("Unknown Bender data version: {}", version);
             }
         }
     }

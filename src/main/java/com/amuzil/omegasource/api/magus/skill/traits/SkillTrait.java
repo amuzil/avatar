@@ -1,5 +1,6 @@
 package com.amuzil.omegasource.api.magus.skill.traits;
 
+import com.amuzil.omegasource.api.magus.registry.Registries;
 import net.minecraft.nbt.CompoundTag;
 
 
@@ -10,6 +11,12 @@ public class SkillTrait implements DataTrait {
     public SkillTrait(String name) {
         this.name = name;
         markDirty();
+        Registries.registerTrait(this);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("SkillTrait[ %s ]", name);
     }
 
     @Override

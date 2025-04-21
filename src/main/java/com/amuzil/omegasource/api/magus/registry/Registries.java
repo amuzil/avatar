@@ -107,10 +107,8 @@ public class Registries {
             IForgeRegistry<Skill> registry = SKILLS.get();
             ResourceKey<Registry<Skill>> resKey = registry.getRegistryKey();
             event.register(resKey, helper -> {
-                for (Skill skill: skills) {
-                    System.out.println("REGISTERING SKILL -> " + skill.getId());
+                for (Skill skill: skills)
                     helper.register(skill.getId(), skill);
-                }
             });
         }
 

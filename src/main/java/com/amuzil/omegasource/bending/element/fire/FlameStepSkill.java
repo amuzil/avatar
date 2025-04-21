@@ -66,6 +66,7 @@ public class FlameStepSkill extends BendingEffect {
 //        }
 
             float dashSpeed = (float) Objects.requireNonNull(data.getTrait("dash_speed", SpeedTrait.class)).getSpeed();
+            System.out.println("Dash Speed HEREEE: " + dashSpeed);
             Vec3 dashVec = Vec3.ZERO;
             if (entity.level().isClientSide) {
                 Minecraft mc = Minecraft.getInstance();

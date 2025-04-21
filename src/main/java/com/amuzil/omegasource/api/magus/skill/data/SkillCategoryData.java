@@ -22,17 +22,26 @@ public class SkillCategoryData implements DataTrait {
         this(category.getId());
     }
 
-    @Override
-    public String name() {
-        return getId() + "_skillCategory";
-    }
-
     public ResourceLocation getId() {
         return id;
     }
 
+    public void setCanUse(boolean canUse) {
+        this.canUse = canUse;
+        markDirty();
+    }
+
+    public boolean canUse() {
+        return this.canUse;
+    }
+
     public SkillCategory getSkillCategory() {
         return Registries.SKILL_CATEGORIES.get().getValue(getId());
+    }
+
+    @Override
+    public String name() {
+        return getId() + "_skillCategory";
     }
 
     @Override
@@ -48,15 +57,6 @@ public class SkillCategoryData implements DataTrait {
     @Override
     public boolean isDirty() {
         return this.isDirty;
-    }
-
-    public void setCanUse(boolean canUse) {
-        this.canUse = canUse;
-        markDirty();
-    }
-
-    public boolean canUse() {
-        return this.canUse;
     }
 
     @Override
