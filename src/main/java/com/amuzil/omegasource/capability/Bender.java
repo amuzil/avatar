@@ -20,6 +20,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -33,8 +34,8 @@ public class Bender implements IBender {
 
     // Non-Persistent data
     private final LivingEntity entity;
-    public final FormPath formPath;
-    private final FormCondition formConditionHandler;
+    public final FormPath formPath = new FormPath();
+    private final FormCondition formConditionHandler = new FormCondition();
     private boolean isDirty = true; // Flag to indicate if data was changed
 
     // Persistent data
@@ -56,8 +57,6 @@ public class Bender implements IBender {
         // Allow use of all Elements & Skills for testing!
         setAvatar();
 
-        this.formPath = new FormPath();
-        this.formConditionHandler = new FormCondition();
         markDirty();
     }
 
@@ -245,6 +244,8 @@ public class Bender implements IBender {
     }
 
     public static @Nullable IBender getBender(LivingEntity entity) {
+        if (entity == null)
+            return null;
         return entity.getCapability(AvatarCapabilities.BENDER)
                 .orElse(null);
     }

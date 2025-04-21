@@ -1,4 +1,4 @@
-package com.amuzil.omegasource.utils.server;
+package com.amuzil.omegasource.utils;
 
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
