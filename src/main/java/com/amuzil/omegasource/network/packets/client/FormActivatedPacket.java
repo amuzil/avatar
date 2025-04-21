@@ -98,13 +98,13 @@ public class FormActivatedPacket implements AvatarPacket {
         // Perform client-side particle effect or other rendering logic here
         Player player = Minecraft.getInstance().player;
         assert player != null;
-        ElementProjectile elementProjectile = (ElementProjectile) player.level().getEntity(entityId);
+//        ElementProjectile elementProjectile = (ElementProjectile) player.level().getEntity(entityId);
         /**
          NOTE: Need to ensure ElementProjectile's extra constructor args are set client-side.
          @see ElementProjectile#ElementProjectile(EntityType, Level) This gets called first and server-side only.
          Can't change this default constructor because it's needed to register entities. Add/use any extra args to Packet.
          */
-        assert elementProjectile != null;
+//        assert elementProjectile != null;
 //        elementProjectile.startEffect(form, player);
     }
 

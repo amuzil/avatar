@@ -51,9 +51,9 @@ public abstract class Skill {
     }
 
     public boolean addTrait(SkillTrait trait) {
-        String name = trait.getName();
+        String name = trait.name();
         for (SkillTrait st : this.skillTraits) {
-            if (st.getName().equals(name)) {
+            if (st.name().equals(name)) {
                 return false;
             }
         }

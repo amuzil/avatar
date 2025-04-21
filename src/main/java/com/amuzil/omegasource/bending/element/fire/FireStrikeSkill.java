@@ -47,6 +47,7 @@ public class FireStrikeSkill extends BendingSkill {
         int lifetime = data.getTrait("lifetime", TimedTrait.class).getTime();
         double speed = data.getTrait("speed", SpeedTrait.class).getSpeed();
 
+        Avatar.LOGGER.debug("Fire Strike Speed: " + speed);
         ElementProjectile proj = new FireProjectile(entity, entity.level());
         proj.shoot(entity.getViewVector(1).x, entity.getViewVector(1).y, entity.getViewVector(1).z, (float) speed, 1);
         proj.setTimeToKill(lifetime);

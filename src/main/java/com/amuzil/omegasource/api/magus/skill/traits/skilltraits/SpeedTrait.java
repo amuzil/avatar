@@ -5,7 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 
 public class SpeedTrait extends SkillTrait {
 
-    private double speed;
+    private double speed = 1;
 
     public SpeedTrait(double speed, String name) {
         super(name);
@@ -16,7 +16,7 @@ public class SpeedTrait extends SkillTrait {
     public CompoundTag serializeNBT() {
         CompoundTag tag = super.serializeNBT();
         tag.putDouble(name(), speed);
-        return super.serializeNBT();
+        return tag;
     }
 
     @Override

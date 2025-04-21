@@ -10,9 +10,11 @@ import com.amuzil.omegasource.api.magus.skill.SkillCategory;
 import com.amuzil.omegasource.api.magus.skill.data.SkillCategoryData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.traits.DataTrait;
+import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SpeedTrait;
 import com.amuzil.omegasource.bending.BendingSelection;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
+import com.amuzil.omegasource.bending.element.fire.Firebending;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -69,6 +71,7 @@ public class Bender implements IBender {
     public void onUpdate() {
         if (entity instanceof Player) {
             List<Skill> skills = Registries.getSkills();
+//            getSkillData(Firebending.FIRE_STRIKE_SKILL).getTrait("speed", SpeedTrait.class).setSpeed(4);
             for (Skill skill : skills) {
                 if (getSkillData(skill).canUse()) {
                     skill.tick(entity, formPath);
