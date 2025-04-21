@@ -10,6 +10,7 @@ import com.amuzil.omegasource.api.magus.skill.SkillCategory;
 import com.amuzil.omegasource.api.magus.skill.data.SkillCategoryData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.traits.DataTrait;
+import com.amuzil.omegasource.bending.BendingSelection;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
 import net.minecraft.nbt.CompoundTag;
@@ -19,7 +20,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -31,31 +31,39 @@ public class Bender implements IBender {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final int DATA_VERSION = 1; // Update this as your data structure changes
 
+    // Non-Persistent data
     private final LivingEntity entity;
+    public final FormPath formPath;
+    private final FormCondition formConditionHandler;
     private boolean isDirty = true; // Flag to indicate if data was changed
-    public FormPath formPath;
-    private FormCondition formConditionHandler;
 
-    // Persistent NBT data
+    // Persistent data
     private Element activeElement = Elements.FIRE; // Currently active element
-    private final List<DataTrait> dataTraits = new ArrayList<>();
-    private final List<SkillData> skillData = new ArrayList<>();
+    private BendingSelection.Target selection = BendingSelection.Target.NONE; // Currently selected target TODO - Impl NBT
     private final List<SkillCategoryData> skillCategoryData = new ArrayList<>();
+    private final List<SkillData> skillData = new ArrayList<>();
+    private final List<DataTrait> dataTraits = new ArrayList<>();
 
     public Bender(LivingEntity entity) {
         this.entity = entity;
 
-        for (Skill skill : Registries.skills)
-            skillData.add(new SkillData(skill));
-
         for (SkillCategory category : Registries.categories)
             skillCategoryData.add(new SkillCategoryData(category));
+        for (Skill skill : Registries.skills)
+            skillData.add(new SkillData(skill));
+        dataTraits.addAll(Registries.traits);
 
-        skillData.forEach(skillData1 -> skillData1.setCanUse(true));
-        skillCategoryData.forEach(skillCategoryData1 -> skillCategoryData1.setCanUse(true));
+        // Allow use of all Elements & Skills for testing!
+        setAvatar();
+
         this.formPath = new FormPath();
         this.formConditionHandler = new FormCondition();
         markDirty();
+    }
+
+    @Override
+    public String toString() {
+        return "Bender[ " + activeElement.name() + " ]";
     }
 
     public void onUpdate() {
@@ -92,12 +100,25 @@ public class Bender implements IBender {
         formConditionHandler.unregister();
     }
 
+    private SkillCategoryData getSkillCategoryData(Element element) {
+        return skillCategoryData.stream()
+                .filter(catData -> catData.getSkillCategory().name().equals(element.name()))
+                .findFirst()
+                .orElse(null);
+    }
+
     public SkillData getSkillData(Skill skill) {
         return getSkillData(skill.getId());
     }
 
     public SkillData getSkillData(ResourceLocation id) {
         return skillData.stream().filter(skillData1 -> skillData1.getSkillId().equals(id)).toList().get(0);
+    }
+
+    @Override
+    public void setAvatar() {
+        setCanUseAllElements();
+        setCanUseAllSkills();
     }
 
     @Override
@@ -109,6 +130,51 @@ public class Bender implements IBender {
     public void setElement(Element activeElement) {
         this.activeElement = activeElement;
         markDirty();
+    }
+
+    @Override
+    public void setCanUseElement(boolean canUse, Element element) {
+        SkillCategoryData catData = getSkillCategoryData(element);
+        if (catData != null) {
+            catData.setCanUse(canUse);
+            markDirty();
+        } else {
+            LOGGER.warn("Skill category data not found for element: {}", element.name());
+        }
+    }
+
+    @Override
+    public void setCanUseSkill(boolean canUse, ResourceLocation skillId) {
+        SkillData skillData = getSkillData(skillId);
+        if (skillData != null) {
+            skillData.setCanUse(canUse);
+            markDirty();
+        } else {
+            LOGGER.warn("Skill data not found for ID: {}", skillId);
+        }
+    }
+
+    @Override
+    public void setCanUseAllElements() {
+        skillCategoryData.forEach(element -> element.setCanUse(true));
+        markDirty();
+    }
+
+    @Override
+    public void setCanUseAllSkills() {
+        skillData.forEach(skill -> skill.setCanUse(true));
+        markDirty();
+    }
+
+    @Override
+    public void setSelectionTarget(BendingSelection.Target selection) {
+        this.selection = selection;
+        markDirty();
+    }
+
+    @Override
+    public void reset() {
+        this.formPath.clear();
     }
 
     @Override
@@ -124,11 +190,6 @@ public class Bender implements IBender {
     @Override
     public boolean isDirty() {
         return this.isDirty;
-    }
-
-    @Override
-    public String toString() {
-        return "Bender[ " + activeElement.name() + " ]";
     }
 
     // TODO - Create generic method to check & return if data in NBT tag exists & warn if it doesn't

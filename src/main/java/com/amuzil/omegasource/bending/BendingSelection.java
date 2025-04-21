@@ -11,13 +11,13 @@ public class BendingSelection {
     public List<BlockPos> blockPositions;
     public List<Long> entityIds;
     public List<String> skillIds;
-    public BendingSelection.Type type;
+    public Target target;
 
-    public BendingSelection(List<BlockPos> positions, List<Long> entities, List<String> skills, BendingSelection.Type type) {
+    public BendingSelection(List<BlockPos> positions, List<Long> entities, List<String> skills, Target target) {
         blockPositions = positions;
         entityIds = entities;
         skillIds = skills;
-        this.type = type;
+        this.target = target;
     }
 
     public BendingSelection()
@@ -29,49 +29,49 @@ public class BendingSelection {
         blockPositions = new ArrayList<>();
         entityIds = new ArrayList<>();
         skillIds = new ArrayList<>();
-        type = BendingSelection.Type.NONE;
+        target = Target.NONE;
     }
 
     public void AddBlockPositions(List<BlockPos> pos) {
         blockPositions.addAll(pos);
-        type = BendingSelection.Type.BLOCK;
+        target = Target.BLOCK;
     }
 
     public void AddBlockPosition(BlockPos pos) {
         blockPositions.add(pos);
-        type = BendingSelection.Type.BLOCK;
+        target = Target.BLOCK;
     }
 
     @Override
     public String toString() {
-        var suffix = switch (type) {
+        var suffix = switch (target) {
             case SELF -> "Player";
             case BLOCK -> String.valueOf(blockPositions.size());
             case ENTITY -> String.valueOf(entityIds.size());
             case SKILL -> String.valueOf(skillIds.size());
             default -> "";
         };
-        return type + ": " + suffix;
+        return target + ": " + suffix;
     }
 
     void AddSkillId(String skillId) {
         skillIds.add(skillId);
-        type = BendingSelection.Type.SKILL;
+        target = Target.SKILL;
     }
 
     void AddEntityId(long entityId) {
         entityIds.add(entityId);
-        type = BendingSelection.Type.SKILL;
+        target = Target.SKILL;
     }
 
     void AddSkillIds(List<String> skillIds) {
         this.skillIds.addAll(skillIds);
-        type = BendingSelection.Type.SKILL;
+        target = Target.SKILL;
     }
 
     void AddEntityIds(List<Long> entityIds) {
         this.entityIds.addAll(entityIds);
-        type = BendingSelection.Type.SKILL;
+        target = Target.SKILL;
     }
 
     void RemoveEntity(long entityId) {
@@ -82,16 +82,16 @@ public class BendingSelection {
         var positions = new ArrayList<>(blockPositions);
         var entityIds = new ArrayList<>(this.entityIds);
         var skillIds = new ArrayList<>(this.skillIds);
-        return new BendingSelection(positions, entityIds, skillIds, type);
+        return new BendingSelection(positions, entityIds, skillIds, target);
     }
 
-    public enum Type {
+    public enum Target {
         NONE,
         SELF,
         ENTITY,
         SKILL,
         BLOCK;
 
-        public static final Type[] selectionTypes = Arrays.copyOfRange(Type.values(), 0, 3);
+        public static final Target[] TYPES = Arrays.copyOfRange(Target.values(), 0, 3);
     }
 }

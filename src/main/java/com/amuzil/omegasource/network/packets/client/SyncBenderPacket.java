@@ -1,7 +1,6 @@
 package com.amuzil.omegasource.network.packets.client;
 
 import com.amuzil.omegasource.capability.AvatarCapabilities;
-import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.api.AvatarPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -9,7 +8,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.PacketDistributor;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -42,8 +40,7 @@ public class SyncBenderPacket implements AvatarPacket {
                 // Update Bender's data on their client
                 LocalPlayer player = Minecraft.getInstance().player;
                 assert player != null;
-                player.getCapability(AvatarCapabilities.BENDER).ifPresent(
-                        bender -> {
+                player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
                             System.out.printf("Changed element from %s to %s\n", bender.getElement(), msg.tag.getString("Active Element"));
                             bender.deserializeNBT(msg.tag);
                             bender.markClean();

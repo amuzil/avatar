@@ -162,12 +162,12 @@ public class Registries {
     public static void registerTraitsFromSkills(List<Skill> skills, RegisterEvent event) {
         ResourceKey<Registry<DataTrait>> key = DATA_TRAITS.get().getRegistryKey();
         IForgeRegistry<DataTrait> registry = DATA_TRAITS.get();
-        for (Skill skill : skills)
+        for (Skill skill : skills) {
+            System.out.println("REGISTER SKILL's TRAITS -> " + skill.getId());
             for (SkillTrait trait : skill.getTraits()) {
-                System.out.println("REGISTER SKILL TRAIT -> " + trait.name());
                 event.register(key, helper -> registry.register(trait.name(), trait));
             }
-
+        }
     }
 
     @Mod.EventBusSubscriber(modid = Avatar.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)

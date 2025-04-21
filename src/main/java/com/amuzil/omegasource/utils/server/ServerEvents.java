@@ -33,6 +33,7 @@ public class ServerEvents {
         if (event.getEntity() instanceof Player player) {
             Bender bender = (Bender) Bender.getBender(player);
             bender.registerFormCondition();
+            System.out.println("Registering form condition ONCE");
             if (event.getLevel().isClientSide) {
                 Avatar.inputModule.registerListeners();
                 Avatar.reloadFX();
@@ -49,11 +50,13 @@ public class ServerEvents {
             //      because "com.amuzil.omegasource.magus.Magus.keyboardMouseInputModule" is null
 
             Bender bender = (Bender) Bender.getBender(player);
+            System.out.println("CLIENT-SIDE: " + event.getLevel().isClientSide);
+            assert bender != null;
             bender.unregisterFormCondition();
-
-        } else if (event.getEntity() instanceof Player && event.getLevel().isClientSide) {
-            if (Avatar.inputModule != null) { // Temporary fix until we decide which side to make InputModules
-                Avatar.inputModule.terminate();
+            System.out.println("Unregistering form condition YES PLS");
+            if (event.getLevel().isClientSide) {
+                if (Avatar.inputModule != null)
+                    Avatar.inputModule.terminate();
             }
         }
     }

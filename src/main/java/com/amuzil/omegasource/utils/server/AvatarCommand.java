@@ -1,6 +1,7 @@
 package com.amuzil.omegasource.utils.server;
 
 import com.amuzil.omegasource.bending.element.Element;
+import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.capability.AvatarCapabilities;
 import com.amuzil.omegasource.input.InputModule;
 import com.amuzil.omegasource.network.AvatarNetwork;
@@ -31,6 +32,10 @@ public class AvatarCommand {
                         })));
 
         createActivateArtCommand();
+        // TODO -> Add the following commands:
+        //  - Add activate Skill command
+        //  - Add activate Form command
+        //  - Add setCanUse Element command
         dispatcher.register(builder);
     }
 
@@ -52,7 +57,7 @@ public class AvatarCommand {
             player = ctx.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = player;
         player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
-            bender.setElement(art.toString());
+            bender.setElement(Elements.get(art));
             SyncBenderPacket packet = new SyncBenderPacket(bender.serializeNBT(), targetPlayer.getUUID());
             AvatarNetwork.sendToClient(packet, targetPlayer);
             targetPlayer.sendSystemMessage(Component.literal("Bending set to " + art));

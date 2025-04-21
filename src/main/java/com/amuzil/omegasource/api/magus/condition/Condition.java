@@ -34,7 +34,6 @@ public abstract class Condition {
 		registerEntry();
 	}
 
-	// TODO: Change this to registerListeners()
 	public void register() {}
 
 	// Every Condition needs to call this in their constructor
@@ -43,10 +42,7 @@ public abstract class Condition {
 	}
 
 	public void unregister() {
-//		Thread.dumpStack();
         Avatar.LOGGER.debug("Unregistering condition:{}", getClass());
-		// This should not cause any errors when called if the condition is
-		// already unregistered or was never registered in the first place
 	}
 
 	protected Runnable runOn(Result result) {

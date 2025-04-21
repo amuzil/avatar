@@ -1,6 +1,5 @@
 package com.amuzil.omegasource.input;
 
-import com.amuzil.omegasource.api.magus.capability.entity.Magi;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.bending.BendingForm;
 import com.amuzil.omegasource.bending.BendingForms;
@@ -22,7 +21,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
-import static com.amuzil.omegasource.bending.BendingSelection.Type.selectionTypes;
+import static com.amuzil.omegasource.bending.BendingSelection.Target.TYPES;
 import static com.amuzil.omegasource.input.KeyBindings.*;
 
 
@@ -40,7 +39,7 @@ public class InputModule {
     private final long DOUBLE_TAP_THRESHOLD = 250; // milliseconds
     private final HashMap<BendingForm, Long> lastPressedForm = new HashMap<>();
     private Bender bender;
-    private BendingSelection.Type selection = BendingSelection.Type.NONE;
+    private BendingSelection.Target selection = BendingSelection.Target.NONE;
 
     public InputModule() {
         this.keyboardListener = keyboardEvent -> {
@@ -126,9 +125,10 @@ public class InputModule {
             if (!(isHoldingCtrl || isHoldingAlt)) {
                 if (form.equals(BendingForms.TARGET)) { // Don't send target Form packet
                     int index = selection.ordinal() + 1;
-                    if (index >= selectionTypes.length)
+                    if (index >= TYPES.length)
                         index = 0;
-                    selection = selectionTypes[index];
+                    selection = TYPES[index];
+                    bender.setSelectionTarget(selection);
                     sendDebugMsg("Bending Selection: " + selection);
                 } else if (form.equals(BendingForms.STRIKE) || form.equals(BendingForms.BLOCK)) {
                     sendFormPacket(form, false);
@@ -209,7 +209,7 @@ public class InputModule {
         assert Minecraft.getInstance().player != null;
         bender = (Bender) Bender.getBender(Minecraft.getInstance().player);
         if (bender != null) {
-            bender.formPath.clearAll();
+            bender.reset();
         }
     }
 
@@ -221,7 +221,6 @@ public class InputModule {
             Player player = Minecraft.getInstance().player;
             assert player != null;
             IBender bender = Bender.getBender(player);
-            // TODO use packets to sync to client
             System.out.println("Current Bender Element -> " + bender.getElement());
         } else {
             terminate();
