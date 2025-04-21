@@ -41,16 +41,16 @@ public class Registries {
         return skills;
     }
 
-    public static void registerSkillCategory(SkillCategory skillCategory) {
-        categories.add(skillCategory);
+    public static void registerForm(Form form) {
+        forms.add(form);
     }
 
     public static void registerSkill(Skill skill) {
         skills.add(skill);
     }
 
-    public static void registerForm(Form form) {
-        forms.add(form);
+    public static void registerSkillCategory(SkillCategory skillCategory) {
+        categories.add(skillCategory);
     }
 
     public static void registerTrait(DataTrait dataTrait) {
