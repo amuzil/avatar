@@ -101,10 +101,11 @@ public class SkillData implements DataTrait {
         CompoundTag tag = new CompoundTag();
         tag.putString("Skill ID", skillId.toString());
         tag.putString("Skill State", state.name());
-        skillTraits.forEach(skillTrait -> {
-            if (skillTrait.isDirty())
-                tag.put(skillTrait.getName() + "Trait", skillTrait.serializeNBT());
-        });
+        if (!skillTraits.isEmpty())
+            skillTraits.forEach(skillTrait -> {
+                if (skillTrait.isDirty())
+                    tag.put(skillTrait.getName() + "Trait", skillTrait.serializeNBT());
+            });
         return tag;
     }
 

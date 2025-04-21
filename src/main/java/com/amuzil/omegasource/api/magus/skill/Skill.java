@@ -55,8 +55,15 @@ public abstract class Skill {
         Registries.registerSkill(this);
     }
 
-    public void addTrait(SkillTrait trait) {
+    public boolean addTrait(SkillTrait trait) {
+        String name = trait.getName();
+        for (SkillTrait st : this.skillTraits) {
+            if (st.getName().equals(name)) {
+                return false;
+            }
+        }
         this.skillTraits.add(trait);
+        return true;
     }
 
     public void addType(SkillType type) {
