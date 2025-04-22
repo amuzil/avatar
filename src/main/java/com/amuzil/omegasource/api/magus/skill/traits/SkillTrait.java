@@ -1,6 +1,5 @@
 package com.amuzil.omegasource.api.magus.skill.traits;
 
-import com.amuzil.omegasource.api.magus.registry.Registries;
 import net.minecraft.nbt.CompoundTag;
 
 
