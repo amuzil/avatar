@@ -29,7 +29,7 @@ public class CapabilityHandler {
             //capabilities all living entities get.
             //TODO: Add requirement to check against a list of compatible entities.
             //E.g custom npcs, or specific mobs you want to be able to use Skills.
-            e.addCapability(LivingDataCapability.ID, new LivingDataCapability.LivingDataProvider());
+//            e.addCapability(LivingDataCapability.ID, new LivingDataCapability.LivingDataProvider());
             if (e.getObject() instanceof Player) {
                 //capabilities just players get.
             }
@@ -44,12 +44,12 @@ public class CapabilityHandler {
 
     @SubscribeEvent
     public static void onPlayerDeath(LivingDeathEvent event) {
-        if (!(event.getEntity() instanceof Player player)) return;
-
-        player.getCapability(LIVING_DATA).ifPresent(bender -> {
-            CompoundTag capData = bender.serializeNBT();
-            player.getPersistentData().put("MagiCap", capData);
-        });
+//        if (!(event.getEntity() instanceof Player player)) return;
+//
+//        player.getCapability(LIVING_DATA).ifPresent(bender -> {
+//            CompoundTag capData = bender.serializeNBT();
+//            player.getPersistentData().put("MagiCap", capData);
+//        });
     }
 
 
