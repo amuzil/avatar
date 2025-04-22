@@ -62,7 +62,10 @@ public class Bender implements IBender {
 
     @Override
     public String toString() {
-        return "Bender[ " + activeElement.name() + " ]";
+        String name = Elements.FIRE.name();
+        if (activeElement != null)
+            name = activeElement.name();
+        return "Bender[ " + name + " ]";
     }
 
     public void onUpdate() {
@@ -209,10 +212,10 @@ public class Bender implements IBender {
         tag.putString("Active Element", Objects.requireNonNullElse(activeElement, Elements.FIRE).getId().toString());
         skillCategoryData.forEach(catData -> tag.put(catData.name(), catData.serializeNBT()));
         skillData.forEach(sData -> tag.put(sData.name(), sData.serializeNBT()));
-        if (!entity.level().isClientSide()) {
-            CompoundTag flameStepTag = tag.getCompound("av3:flame_step_skillData");
-            System.out.println("[Bender] Serializing NBT: " + activeElement.name() + " " + flameStepTag.getCompound("dash_speed Trait"));
-        }
+//        if (!entity.level().isClientSide()) {
+//            CompoundTag flameStepTag = tag.getCompound("av3:flame_step_skillData");
+//            System.out.println("[Bender] Serializing NBT: " + activeElement.name() + " " + flameStepTag.getCompound("dash_speed Trait"));
+//        }
         return tag;
     }
 
