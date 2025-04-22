@@ -21,7 +21,6 @@ public class ServerEvents {
         if (event.getEntity() instanceof Player player) {
             Bender bender = (Bender) Bender.getBender(player);
             bender.registerFormCondition();
-            System.out.println("Registering FormCondition CLIENT-SIDE: " + event.getLevel().isClientSide);
             if (event.getLevel().isClientSide) {
                 Avatar.inputModule.registerListeners();
                 Avatar.reloadFX();
@@ -40,7 +39,6 @@ public class ServerEvents {
             Bender bender = (Bender) Bender.getBender(player);
             assert bender != null;
             bender.unregisterFormCondition();
-            System.out.println("Unregistering FormCondition SERVER-SIDE");
         }
     }
 
