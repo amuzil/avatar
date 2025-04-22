@@ -14,7 +14,7 @@ public abstract class SkillCategory {
         Registries.registerSkillCategory(this);
     }
 
-    public ResourceLocation getId() {
+    public ResourceLocation id() {
         return id;
     }
 

@@ -1,7 +1,6 @@
 package com.amuzil.omegasource.api.magus.skill.data;
 
 import com.amuzil.omegasource.api.magus.registry.Registries;
-import com.amuzil.omegasource.api.magus.skill.Skill;
 import com.amuzil.omegasource.api.magus.skill.SkillCategory;
 import com.amuzil.omegasource.api.magus.skill.traits.DataTrait;
 import net.minecraft.nbt.CompoundTag;
@@ -19,7 +18,7 @@ public class SkillCategoryData implements DataTrait {
     }
 
     public SkillCategoryData(SkillCategory category) {
-        this(category.getId());
+        this(category.id());
     }
 
     public ResourceLocation getId() {
