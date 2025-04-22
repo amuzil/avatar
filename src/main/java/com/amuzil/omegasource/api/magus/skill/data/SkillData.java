@@ -36,6 +36,7 @@ public class SkillData implements DataTrait {
         this.state = Skill.SkillState.START;
         if (getSkill() != null)
             skillTraits = getSkill().getTraits();
+
     }
 
     public SkillData(Skill skill) {

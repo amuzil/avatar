@@ -29,7 +29,7 @@ public class Registries {
     public static Supplier<IForgeRegistry<Form>> FORMS;
     public static Supplier<IForgeRegistry<Skill>> SKILLS;
     public static Supplier<IForgeRegistry<SkillCategory>> SKILL_CATEGORIES;
-    public static Supplier<IForgeRegistry<DataTrait>> DATA_TRAITS;
+  //  public static Supplier<IForgeRegistry<DataTrait>> DATA_TRAITS;
     public static List<Form> forms = new ArrayList<>();
     public static List<Skill> skills = new ArrayList<>();
     public static List<SkillCategory> categories = new ArrayList<>();
@@ -53,9 +53,9 @@ public class Registries {
         categories.add(skillCategory);
     }
 
-    public static void registerTrait(DataTrait dataTrait) {
-        traits.add(dataTrait);
-    }
+//    public static void registerTrait(DataTrait dataTrait) {
+//        traits.add(dataTrait);
+//    }
 
     /**
      * All skills will be registered first, along with skill categories.
@@ -79,9 +79,9 @@ public class Registries {
         SKILL_CATEGORIES = event.create(categories);
 
         // Data Traits
-        RegistryBuilder<DataTrait> traits = new RegistryBuilder<>();
-        traits.setName(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "data_traits"));
-        DATA_TRAITS = event.create(traits);
+//        RegistryBuilder<DataTrait> traits = new RegistryBuilder<>();
+//        traits.setName(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "data_traits"));
+//        DATA_TRAITS = event.create(traits);
     }
 
     @SubscribeEvent
@@ -121,17 +121,17 @@ public class Registries {
         }
 
         // Data Traits
-        if (event.getRegistryKey().equals(DATA_TRAITS.get().getRegistryKey())) {
-            IForgeRegistry<DataTrait> registry = DATA_TRAITS.get();
-            ResourceKey<Registry<DataTrait>> resKey = registry.getRegistryKey();
-            // Registers every Data Trait for every skill included within Magus.
-            // Register other traits manually.
-            registerTraitsFromSkills(SKILLS.get().getValues().stream().toList(), event);
-            event.register(resKey, helper -> {
-                for (DataTrait trait: traits)
-                    helper.register(trait.name(), trait);
-            });
-        }
+//        if (event.getRegistryKey().equals(DATA_TRAITS.get().getRegistryKey())) {
+//            IForgeRegistry<DataTrait> registry = DATA_TRAITS.get();
+//            ResourceKey<Registry<DataTrait>> resKey = registry.getRegistryKey();
+//            // Registers every Data Trait for every skill included within Magus.
+//            // Register other traits manually.
+//            registerTraitsFromSkills(SKILLS.get().getValues().stream().toList(), event);
+//            event.register(resKey, helper -> {
+//                for (DataTrait trait: traits)
+//                    helper.register(trait.name(), trait);
+//            });
+//        }
     }
 
     /**
@@ -141,14 +141,14 @@ public class Registries {
      * @param event  Registry event.
      * @param modID  ModID.
      */
-    public static void registerTraitsFromSkills(List<Skill> skills, RegisterEvent event, String modID) {
-        ResourceKey<Registry<DataTrait>> key = DATA_TRAITS.get().getRegistryKey();
-        IForgeRegistry<DataTrait> registry = DATA_TRAITS.get();
-        for (Skill skill : skills)
-            for (SkillTrait trait : skill.getTraits())
-                event.register(key, helper -> registry.register(ResourceLocation.parse(modID) + trait.name(), trait));
-
-    }
+//    public static void registerTraitsFromSkills(List<Skill> skills, RegisterEvent event, String modID) {
+//        ResourceKey<Registry<DataTrait>> key = DATA_TRAITS.get().getRegistryKey();
+//        IForgeRegistry<DataTrait> registry = DATA_TRAITS.get();
+//        for (Skill skill : skills)
+//            for (SkillTrait trait : skill.getTraits())
+//                event.register(key, helper -> registry.register(ResourceLocation.parse(modID) + trait.name(), trait));
+//
+//    }
 
     /**
      * Same as the above method, but if you standardise your modID in your data,
@@ -157,16 +157,16 @@ public class Registries {
      * @param skills Skills to register.
      * @param event  The registry event.
      */
-    public static void registerTraitsFromSkills(List<Skill> skills, RegisterEvent event) {
-        ResourceKey<Registry<DataTrait>> key = DATA_TRAITS.get().getRegistryKey();
-        IForgeRegistry<DataTrait> registry = DATA_TRAITS.get();
-        for (Skill skill : skills) {
-            System.out.println("REGISTER SKILL's TRAITS -> " + skill.getId());
-            for (SkillTrait trait : skill.getTraits()) {
-                event.register(key, helper -> registry.register(trait.name(), trait));
-            }
-        }
-    }
+//    public static void registerTraitsFromSkills(List<Skill> skills, RegisterEvent event) {
+//        ResourceKey<Registry<DataTrait>> key = DATA_TRAITS.get().getRegistryKey();
+//        IForgeRegistry<DataTrait> registry = DATA_TRAITS.get();
+//        for (Skill skill : skills) {
+//            System.out.println("REGISTER SKILL's TRAITS -> " + skill.getId());
+//            for (SkillTrait trait : skill.getTraits()) {
+//                event.register(key, helper -> registry.register(trait.name(), trait));
+//            }
+//        }
+//    }
 
     @Mod.EventBusSubscriber(modid = Avatar.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
     public static class ForgeRegistries {

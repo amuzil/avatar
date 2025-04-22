@@ -85,7 +85,7 @@ public class LivingDataCapability {
         }
 
         public void fillTraits() {
-            traits.addAll(Registries.DATA_TRAITS.get().getValues());
+//            traits.addAll(Registries.DATA_TRAITS.get().getValues());
         }
 
         public List<DataTrait> getTraits() {

@@ -27,7 +27,7 @@ public class FlameStepSkill extends BendingEffect {
     public FlameStepSkill() {
         super(Avatar.MOD_ID, "flame_step", Elements.FIRE);
         addTrait(new KnockbackTrait(1.5f, "knockback"));
-        addTrait(new SpeedTrait(5f, "dash_speed"));
+        addTrait(new SpeedTrait(1.5f, "dash_speed"));
         addTrait(new SizeTrait(1.0f, "size"));
         addTrait(new ColourTrait(0, 0, 0, "fire_colour"));
 

@@ -28,7 +28,8 @@ public class FireStrikeSkill extends BendingSkill {
         addTrait(new SpeedTrait(1.5f, "speed"));
         addTrait(new TimedTrait(15, "lifetime"));
 
-        startPaths = SkillPathBuilder.getInstance().complex(new ActiveForm(STRIKE, false)).build();
+        startPaths = SkillPathBuilder.getInstance().complex(new ActiveForm(STRIKE, true)).build();
+
     }
 
 
@@ -58,15 +59,15 @@ public class FireStrikeSkill extends BendingSkill {
 
             entity.level().addFreshEntity(proj);
         }
-
         if (bender != null) {
             bender.formPath.clear();
             data.setState(SkillState.STOP);
 
             resetCooldown(data);
         }
-
     }
+
+
 
     @Override
     public SkillCategory getCategory() {

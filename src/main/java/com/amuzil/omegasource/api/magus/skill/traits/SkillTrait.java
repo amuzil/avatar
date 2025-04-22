@@ -11,7 +11,6 @@ public class SkillTrait implements DataTrait {
     public SkillTrait(String name) {
         this.name = name;
         markDirty();
-        Registries.registerTrait(this);
     }
 
     @Override
