@@ -3,7 +3,9 @@ package com.amuzil.omegasource.entity;
 import com.amuzil.omegasource.api.magus.skill.traits.DataTrait;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
+import com.amuzil.omegasource.entity.modules.*;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -29,6 +31,12 @@ public abstract class AvatarEntity extends Entity {
 
     private List<DataTrait> traits;
 
+    private List<IEntityModule> modules;
+    private List<IControlModule> controlModules;
+    private List<IForceModule> forceModules;
+    private List<ICollisionModule> collisionModules;
+    private List<IRenderModule> renderModules;
+
     // Data Sync for Owner
     // Data Sync for Element
     // Data Sync for Behaviour
@@ -38,10 +46,23 @@ public abstract class AvatarEntity extends Entity {
         super(pEntityType, pLevel);
     }
 
+    /*
+        Call this after adding it to a world.
+     */
+    public void init() {
+        modules.forEach(mod -> mod.init(this));
+        controlModules.forEach(mod -> mod.init(this));
+        forceModules.forEach(mod -> mod.init(this));
+        collisionModules.forEach(mod -> mod.init(this));
+        renderModules.forEach(mod -> mod.init(this));
+    }
+
+
     public void setOwner(Entity owner) {
         this.owner = owner;
         this.entityData.set(OWNER_ID, Optional.of(owner.getUUID()));
     }
+
 
     public Entity owner() {
         if (this.owner == null) {
@@ -73,6 +94,50 @@ public abstract class AvatarEntity extends Entity {
             this.element = Elements.get(ResourceLocation.parse(pCompound.getString("Element")));
             this.entityData.set(ELEMENT, element.id().toString());
         }
+
+        ListTag modList = new ListTag();
+        // Generic modules
+        for (IEntityModule mod : modules) {
+            CompoundTag mTag = new CompoundTag();
+            mTag.putString("ModuleID", mod.id());
+            mod.save(mTag);
+            modList.add(mTag);
+        }
+
+        // Control Modules
+        for (IControlModule mod : controlModules) {
+            CompoundTag mTag = new CompoundTag();
+            mTag.putString("ModuleID", mod.id());
+            mod.save(mTag);
+            modList.add(mTag);
+        }
+
+        // Force/Motion Modules
+        for (IForceModule mod : forceModules) {
+            CompoundTag mTag = new CompoundTag();
+            mTag.putString("ModuleID", mod.id());
+            mod.save(mTag);
+            modList.add(mTag);
+        }
+
+        // Collision Modules
+        for (ICollisionModule mod : collisionModules) {
+            CompoundTag mTag = new CompoundTag();
+            mTag.putString("ModuleID", mod.id());
+            mod.save(mTag);
+            modList.add(mTag);
+        }
+
+        // Render Modules
+        for (ICollisionModule mod : collisionModules) {
+            CompoundTag mTag = new CompoundTag();
+            mTag.putString("ModuleID", mod.id());
+            mod.save(mTag);
+            modList.add(mTag);
+        }
+
+
+        pCompound.put("Modules", modList);
     }
 
     @Override
@@ -84,5 +149,22 @@ public abstract class AvatarEntity extends Entity {
             pCompound.putString("Element", element.name());
         }
 
+
+
+    }
+
+    /**
+     * Called to update the entity's position/logic.
+     */
+    @Override
+    public void tick() {
+        super.tick();
+
+        // Tick appropriate modules in each other
+        modules.forEach(mod -> mod.tick(this));
+        controlModules.forEach(mod -> mod.tick(this));
+        forceModules.forEach(mod -> mod.tick(this));
+        collisionModules.forEach(mod -> mod.tick(this));
+        renderModules.forEach(mod -> mod.tick(this));
     }
 }
