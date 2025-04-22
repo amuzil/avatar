@@ -20,7 +20,6 @@ public class ClientEvents {
         }
         if (Avatar.inputModule != null) {
             Avatar.inputModule.terminate();
-            System.out.println("Unregistering CLIENT-SIDE");
         }
     }
 }

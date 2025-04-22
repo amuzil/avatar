@@ -10,11 +10,9 @@ import com.amuzil.omegasource.api.magus.skill.SkillCategory;
 import com.amuzil.omegasource.api.magus.skill.data.SkillCategoryData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.traits.DataTrait;
-import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SpeedTrait;
 import com.amuzil.omegasource.bending.BendingSelection;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
-import com.amuzil.omegasource.bending.element.fire.Firebending;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -22,7 +20,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -70,7 +67,6 @@ public class Bender implements IBender {
     public void onUpdate() {
         if (entity instanceof Player) {
             List<Skill> skills = Registries.getSkills();
-//            getSkillData(Firebending.FIRE_STRIKE_SKILL).getTrait("speed", SpeedTrait.class).setSpeed(4);
             for (Skill skill : skills) {
                 if (getSkillData(skill).canUse()) {
                     skill.tick(entity, formPath);
@@ -212,7 +208,10 @@ public class Bender implements IBender {
         tag.putString("Active Element", activeElement.name());
         skillCategoryData.forEach(catData -> tag.put(catData.name(), catData.serializeNBT()));
         skillData.forEach(sData -> tag.put(sData.name(), sData.serializeNBT()));
-        System.out.println("[Bender] Serializing NBT: " + tag);
+        if (!entity.level().isClientSide()) {
+            CompoundTag flameStepTag = tag.getCompound("av3:flame_step_skillData");
+            System.out.println("[Bender] Serializing NBT: " + activeElement.name() + " " + flameStepTag.getCompound("dash_speed Trait"));
+        }
         return tag;
     }
 
@@ -241,7 +240,7 @@ public class Bender implements IBender {
                 }
             } default -> { // Handle unknown versions for migrating data
                 // Set defaults here
-                LOGGER.warn("Unknown Bender data version: {}", version);
+                LOGGER.info("Unknown Bender data version: {}", version);
             }
         }
     }
