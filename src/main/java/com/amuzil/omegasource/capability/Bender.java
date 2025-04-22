@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class Bender implements IBender {
@@ -205,7 +206,7 @@ public class Bender implements IBender {
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
         tag.putInt("DataVersion", DATA_VERSION);
-        tag.putString("Active Element", activeElement.name());
+        tag.putString("Active Element", Objects.requireNonNullElse(activeElement, Elements.FIRE).getId().toString());
         skillCategoryData.forEach(catData -> tag.put(catData.name(), catData.serializeNBT()));
         skillData.forEach(sData -> tag.put(sData.name(), sData.serializeNBT()));
         if (!entity.level().isClientSide()) {
@@ -222,7 +223,7 @@ public class Bender implements IBender {
         switch (version) {
             case 1 -> {
                 LOGGER.info("Loading Bender data version: {}", version);
-                this.activeElement = Elements.ALL_FOUR.get(tag.getString("Active Element"));
+                this.activeElement = Elements.get(ResourceLocation.parse(tag.getString("Active Element")));
                 for (SkillCategoryData catData : skillCategoryData) {
                     if (tag.contains(catData.name(), Tag.TAG_COMPOUND)) {
                         catData.deserializeNBT(tag.getCompound(catData.name()));

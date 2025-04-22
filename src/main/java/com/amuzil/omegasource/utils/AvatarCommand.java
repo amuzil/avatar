@@ -40,28 +40,28 @@ public class AvatarCommand {
     }
 
     private static void createActivateArtCommand() {
-        Arrays.stream(Element.Art.values()).toList().forEach(elem ->
-                builder.then(Commands.literal("art")
-                        .then(Commands.literal(elem.toString())
-                                .executes(c -> activateElementArt(c, elem, null))
-                                .then(Commands.argument("target", EntityArgument.player())
-                                        .executes(c -> activateElementArt(c, elem, EntityArgument.getPlayer(c, "target")))
-                                )
-                        )
-                )
-        );
+//        Arrays.stream(Element.Art.values()).toList().forEach(elem ->
+//                builder.then(Commands.literal("art")
+//                        .then(Commands.literal(elem.toString())
+//                                .executes(c -> activateElementArt(c, elem, null))
+//                                .then(Commands.argument("target", EntityArgument.player())
+//                                        .executes(c -> activateElementArt(c, elem, EntityArgument.getPlayer(c, "target")))
+//                                )
+//                        )
+//                )
+//        );
     }
 
-    private static int activateElementArt(CommandContext<CommandSourceStack> ctx, Element.Art art, ServerPlayer player) throws CommandSyntaxException {
-        if (player == null)
-            player = ctx.getSource().getPlayerOrException();
-        ServerPlayer targetPlayer = player;
-        player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
-            bender.setElement(Elements.get(art));
-            SyncBenderPacket packet = new SyncBenderPacket(bender.serializeNBT(), targetPlayer.getUUID());
-            AvatarNetwork.sendToClient(packet, targetPlayer);
-            targetPlayer.sendSystemMessage(Component.literal("Bending set to " + art));
-        });
-        return 1;
-    }
+//    private static int activateElementArt(CommandContext<CommandSourceStack> ctx, Element.Art art, ServerPlayer player) throws CommandSyntaxException {
+//        if (player == null)
+//            player = ctx.getSource().getPlayerOrException();
+//        ServerPlayer targetPlayer = player;
+//        player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
+//            bender.setElement(Elements.get(art));
+//            SyncBenderPacket packet = new SyncBenderPacket(bender.serializeNBT(), targetPlayer.getUUID());
+//            AvatarNetwork.sendToClient(packet, targetPlayer);
+//            targetPlayer.sendSystemMessage(Component.literal("Bending set to " + art));
+//        });
+//        return 1;
+//    }
 }
