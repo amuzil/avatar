@@ -6,6 +6,7 @@ import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.entity.modules.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -15,15 +16,13 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public abstract class AvatarEntity extends Entity {
 
     private static final EntityDataAccessor<Optional<UUID>> OWNER_ID =
             SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.OPTIONAL_UUID);
-    private static final EntityDataAccessor<String> ELEMENT=
+    private static final EntityDataAccessor<String> ELEMENT =
             SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.STRING);
 
     private Entity owner;
@@ -31,11 +30,11 @@ public abstract class AvatarEntity extends Entity {
 
     private List<DataTrait> traits;
 
-    private List<IEntityModule> modules;
-    private List<IControlModule> controlModules;
-    private List<IForceModule> forceModules;
-    private List<ICollisionModule> collisionModules;
-    private List<IRenderModule> renderModules;
+    private List<IEntityModule> modules = new ArrayList<>();
+    private List<IControlModule> controlModules = new ArrayList<>();
+    private List<IForceModule> forceModules = new ArrayList<>();
+    private List<ICollisionModule> collisionModules = new ArrayList<>();
+    private List<IRenderModule> renderModules = new ArrayList<>();
 
     // Data Sync for Owner
     // Data Sync for Element
@@ -44,6 +43,67 @@ public abstract class AvatarEntity extends Entity {
 
     public AvatarEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
+    }
+
+    // --- Module Management ---
+    public void addModule(IEntityModule mod) {
+        modules.add(mod);
+    }
+
+    public void addControlModule(IControlModule mod) {
+        controlModules.add(mod);
+    }
+
+    public void addForceModule(IForceModule mod) {
+        forceModules.add(mod);
+    }
+
+    public void addCollisionModule(ICollisionModule mod) {
+        collisionModules.add(mod);
+    }
+
+    public void addRenderModule(IRenderModule mod) {
+        renderModules.add(mod);
+    }
+
+    public boolean removeModule(IEntityModule mod) {
+        return modules.remove(mod);
+    }
+
+    public boolean removeControlModule(IControlModule mod) {
+        return controlModules.remove(mod);
+    }
+
+    public boolean removeForceModule(IForceModule mod) {
+        return forceModules.remove(mod);
+    }
+
+    public boolean removeCollisionModule(ICollisionModule mod) {
+        return collisionModules.remove(mod);
+    }
+
+    public boolean removeRenderModule(IRenderModule mod) {
+        return renderModules.remove(mod);
+    }
+
+    public List<IEntityModule> genericModules() {
+        return Collections.unmodifiableList(modules);
+    }
+
+    public List<IControlModule> controlModules() {
+        return Collections.unmodifiableList(controlModules);
+    }
+
+    public List<IForceModule> forceModules() {
+        return Collections.unmodifiableList(forceModules);
+    }
+
+    public List<ICollisionModule> collisionModules() {
+        return Collections.unmodifiableList(collisionModules);
+    }
+
+    public List<IRenderModule> renderModules() {
+        return Collections.unmodifiableList(renderModules);
     }
 
     /*
@@ -95,49 +155,11 @@ public abstract class AvatarEntity extends Entity {
             this.entityData.set(ELEMENT, element.id().toString());
         }
 
-        ListTag modList = new ListTag();
-        // Generic modules
-        for (IEntityModule mod : modules) {
-            CompoundTag mTag = new CompoundTag();
-            mTag.putString("ModuleID", mod.id());
-            mod.save(mTag);
-            modList.add(mTag);
-        }
-
-        // Control Modules
-        for (IControlModule mod : controlModules) {
-            CompoundTag mTag = new CompoundTag();
-            mTag.putString("ModuleID", mod.id());
-            mod.save(mTag);
-            modList.add(mTag);
-        }
-
-        // Force/Motion Modules
-        for (IForceModule mod : forceModules) {
-            CompoundTag mTag = new CompoundTag();
-            mTag.putString("ModuleID", mod.id());
-            mod.save(mTag);
-            modList.add(mTag);
-        }
-
-        // Collision Modules
-        for (ICollisionModule mod : collisionModules) {
-            CompoundTag mTag = new CompoundTag();
-            mTag.putString("ModuleID", mod.id());
-            mod.save(mTag);
-            modList.add(mTag);
-        }
-
-        // Render Modules
-        for (ICollisionModule mod : collisionModules) {
-            CompoundTag mTag = new CompoundTag();
-            mTag.putString("ModuleID", mod.id());
-            mod.save(mTag);
-            modList.add(mTag);
-        }
-
-
-        pCompound.put("Modules", modList);
+        readModuleList(pCompound, "GenericModules", modules);
+        readModuleList(pCompound, "ControlModules", controlModules);
+        readModuleList(pCompound, "ForceModules", forceModules);
+        readModuleList(pCompound, "CollisionModules", collisionModules);
+        readModuleList(pCompound, "RenderModules", renderModules);
     }
 
     @Override
@@ -149,7 +171,11 @@ public abstract class AvatarEntity extends Entity {
             pCompound.putString("Element", element.name());
         }
 
-
+        writeModuleList(pCompound, "GenericModules", modules);
+        writeModuleList(pCompound, "ControlModules", controlModules);
+        writeModuleList(pCompound, "ForceModules", forceModules);
+        writeModuleList(pCompound, "CollisionModules", collisionModules);
+        writeModuleList(pCompound, "RenderModules", renderModules);
 
     }
 
@@ -166,5 +192,31 @@ public abstract class AvatarEntity extends Entity {
         forceModules.forEach(mod -> mod.tick(this));
         collisionModules.forEach(mod -> mod.tick(this));
         renderModules.forEach(mod -> mod.tick(this));
+    }
+
+    private <T> void readModuleList(CompoundTag parent, String key, List<T> list) {
+        ListTag mods = parent.getList(key, Tag.TAG_COMPOUND);
+        for (Tag t : mods) {
+            CompoundTag mTag = (CompoundTag) t;
+            String id = mTag.getString("Module ID");
+            IEntityModule mod = ModuleRegistry.create(id);
+            if (mod != null) {
+                mod.load(mTag);
+                @SuppressWarnings("unchecked")
+                T casted = (T) mod;
+                list.add(casted);
+            }
+        }
+    }
+
+    private void writeModuleList(CompoundTag parent, String key, List<? extends IEntityModule> list) {
+        ListTag mods = new ListTag();
+        for (IEntityModule mod : list) {
+            CompoundTag mTag = new CompoundTag();
+            mTag.putString("Module ID", mod.id());
+            mod.save(mTag);
+            mods.add(mTag);
+        }
+        parent.put(key, mods);
     }
 }

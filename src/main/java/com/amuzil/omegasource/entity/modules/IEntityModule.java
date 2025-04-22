@@ -16,4 +16,5 @@ public interface IEntityModule {
     void save(CompoundTag nbt);
 
     void load(CompoundTag nbt);
+
 }
