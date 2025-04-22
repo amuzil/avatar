@@ -94,7 +94,7 @@ public class AirProjectile extends ElementProjectile {
             delta = hitresult.getLocation();
         }
 
-        while(!this.isRemoved()) {
+        while (!this.isRemoved()) {
             if (!this.level().isClientSide) {
                 this.tickDespawn();
             }
