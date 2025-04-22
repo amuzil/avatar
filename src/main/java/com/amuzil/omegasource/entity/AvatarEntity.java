@@ -50,61 +50,72 @@ public abstract class AvatarEntity extends Entity {
         modules.add(mod);
     }
 
-    public void addControlModule(IControlModule mod) {
-        controlModules.add(mod);
-    }
-
-    public void addForceModule(IForceModule mod) {
-        forceModules.add(mod);
-    }
-
-    public void addCollisionModule(ICollisionModule mod) {
-        collisionModules.add(mod);
-    }
-
-    public void addRenderModule(IRenderModule mod) {
-        renderModules.add(mod);
-    }
-
     public boolean removeModule(IEntityModule mod) {
-        return modules.remove(mod);
+        return removeModule(mod.id());
     }
-
-    public boolean removeControlModule(IControlModule mod) {
-        return controlModules.remove(mod);
+    public boolean removeModule(String id) {
+        return modules.removeIf(m -> m.id().equals(id));
     }
-
-    public boolean removeForceModule(IForceModule mod) {
-        return forceModules.remove(mod);
-    }
-
-    public boolean removeCollisionModule(ICollisionModule mod) {
-        return collisionModules.remove(mod);
-    }
-
-    public boolean removeRenderModule(IRenderModule mod) {
-        return renderModules.remove(mod);
-    }
-
     public List<IEntityModule> genericModules() {
         return Collections.unmodifiableList(modules);
     }
 
+    // Control modules
+    public void addControlModule(IControlModule mod) {
+        controlModules.add(mod);
+    }
+    public boolean removeControlModule(IControlModule mod) {
+        return removeControlModule(mod.id());
+    }
+    public boolean removeControlModule(String id) {
+        return controlModules.removeIf(m -> m.id().equals(id));
+    }
     public List<IControlModule> controlModules() {
         return Collections.unmodifiableList(controlModules);
     }
 
+    // Force modules
+    public void addForceModule(IForceModule mod) {
+        forceModules.add(mod);
+    }
+    public boolean removeForceModule(IForceModule mod) {
+        return removeForceModule(mod.id());
+    }
+    public boolean removeForceModule(String id) {
+        return forceModules.removeIf(m -> m.id().equals(id));
+    }
     public List<IForceModule> forceModules() {
         return Collections.unmodifiableList(forceModules);
     }
 
+    // Collision modules
+    public void addCollisionModule(ICollisionModule mod) {
+        collisionModules.add(mod);
+    }
+    public boolean removeCollisionModule(ICollisionModule mod) {
+        return removeCollisionModule(mod.id());
+    }
+    public boolean removeCollisionModule(String id) {
+        return collisionModules.removeIf(m -> m.id().equals(id));
+    }
     public List<ICollisionModule> collisionModules() {
         return Collections.unmodifiableList(collisionModules);
     }
 
+    // Render modules
+    public void addRenderModule(IRenderModule mod) {
+        renderModules.add(mod);
+    }
+    public boolean removeRenderModule(IRenderModule mod) {
+        return removeRenderModule(mod.id());
+    }
+    public boolean removeRenderModule(String id) {
+        return renderModules.removeIf(m -> m.id().equals(id));
+    }
     public List<IRenderModule> renderModules() {
         return Collections.unmodifiableList(renderModules);
     }
+
 
     /*
         Call this after adding it to a world.
