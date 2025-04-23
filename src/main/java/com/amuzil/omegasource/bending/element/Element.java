@@ -9,7 +9,7 @@ public abstract class Element extends SkillCategory {
     public Element(String modId, String name) {
         super(modId, name);
         nickName = name.replace("bending", "");
-        Elements.ALL_FOUR.put(name, this);
+        Elements.ALL_FOUR.put(nickName, this);
     }
 
     public String nickName() { return nickName; }
