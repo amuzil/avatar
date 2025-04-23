@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
+
 public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile, ItemSupplier {
 
     public AvatarProjectile(Level pLevel) {
@@ -21,6 +22,8 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile,
 
     public AvatarProjectile(EntityType<AvatarProjectile> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
+        // TODO: Fix is to call setPos()
+//        setPos(this.owner().position());
         addForceModule((IForceModule) ModuleRegistry.create("Move"));
 //        addCollisionModule((ICollisionModule) ModuleRegistry.create("Knockback"));
         addModule(ModuleRegistry.create("Timeout"));
