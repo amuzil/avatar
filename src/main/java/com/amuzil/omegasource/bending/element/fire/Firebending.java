@@ -6,6 +6,7 @@ import com.amuzil.omegasource.api.magus.skill.SkillCategory;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.entity.AvatarEntity;
 
+
 public class Firebending extends Element {
     // Class for registering Firebending skills
     public static final FlameStepSkill FLAME_STEP_SKILL = new FlameStepSkill();
@@ -13,14 +14,7 @@ public class Firebending extends Element {
 
     public Firebending() {
         super(Avatar.MOD_ID, "firebending");
-        Registries.registerSkillCategory(this);
     }
-
-
-//
-//    public Firebending(String modId, String name) {
-//        super(Avatar.MOD_ID, "firebending");
-//    }
 
     public static void init() {}
 }

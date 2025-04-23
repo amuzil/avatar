@@ -30,8 +30,7 @@ public class AvatarCommand {
                             InputModule.sendDebugMsg("Options: activate, form, tree");
                             return 1;
                         })));
-
-        createActivateArtCommand();
+        activateElementCommand();
         // TODO -> Add the following commands:
         //  - Add activate Skill command
         //  - Add activate Form command
@@ -39,29 +38,30 @@ public class AvatarCommand {
         dispatcher.register(builder);
     }
 
-    private static void createActivateArtCommand() {
-//        Arrays.stream(Element.Art.values()).toList().forEach(elem ->
-//                builder.then(Commands.literal("art")
-//                        .then(Commands.literal(elem.toString())
-//                                .executes(c -> activateElementArt(c, elem, null))
-//                                .then(Commands.argument("target", EntityArgument.player())
-//                                        .executes(c -> activateElementArt(c, elem, EntityArgument.getPlayer(c, "target")))
-//                                )
-//                        )
-//                )
-//        );
+    // For testing
+    private static void activateElementCommand() {
+        Elements.ALL_FOUR.values().forEach(elem ->
+            builder.then(Commands.literal("element")
+                .then(Commands.literal(elem.nickName())
+                    .executes(c -> activateElement(c, elem, null))
+                    .then(Commands.argument("target", EntityArgument.player())
+                            .executes(c -> activateElement(c, elem, EntityArgument.getPlayer(c, "target")))
+                    )
+                )
+            )
+        );
     }
 
-//    private static int activateElementArt(CommandContext<CommandSourceStack> ctx, Element.Art art, ServerPlayer player) throws CommandSyntaxException {
-//        if (player == null)
-//            player = ctx.getSource().getPlayerOrException();
-//        ServerPlayer targetPlayer = player;
-//        player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
-//            bender.setElement(Elements.get(art));
-//            SyncBenderPacket packet = new SyncBenderPacket(bender.serializeNBT(), targetPlayer.getUUID());
-//            AvatarNetwork.sendToClient(packet, targetPlayer);
-//            targetPlayer.sendSystemMessage(Component.literal("Bending set to " + art));
-//        });
-//        return 1;
-//    }
+    private static int activateElement(CommandContext<CommandSourceStack> ctx, Element element, ServerPlayer player) throws CommandSyntaxException {
+        if (player == null)
+            player = ctx.getSource().getPlayerOrException();
+        ServerPlayer targetPlayer = player;
+        player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
+            bender.setElement(element);
+            SyncBenderPacket packet = new SyncBenderPacket(bender.serializeNBT(), targetPlayer.getUUID());
+            AvatarNetwork.sendToClient(packet, targetPlayer);
+            targetPlayer.sendSystemMessage(Component.literal("Active Bending set to " + element.name()));
+        });
+        return 1;
+    }
 }

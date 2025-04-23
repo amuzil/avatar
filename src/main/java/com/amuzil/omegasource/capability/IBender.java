@@ -21,7 +21,7 @@ public interface IBender extends INBTSerializable<CompoundTag> {
 
     Element getElement();
 
-    void setElement(Element element);
+    void setElement(Element activeElement);
 
     void setCanUseElement(boolean canUse, Element element);
 

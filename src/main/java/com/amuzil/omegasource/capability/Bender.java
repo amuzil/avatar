@@ -218,17 +218,23 @@ public class Bender implements IBender {
         tag.putString("Active Element", Objects.requireNonNullElse(activeElement, Elements.FIRE).id().toString());
         skillCategoryData.forEach(catData -> tag.put(catData.name(), catData.serializeNBT()));
         skillData.forEach(sData -> tag.put(sData.name(), sData.serializeNBT()));
-//        if (!entity.level().isClientSide()) {
-//            CompoundTag flameStepTag = tag.getCompound("av3:flame_step_skillData");
-//            System.out.println("[Bender] Serializing NBT: " + activeElement.name() + " " + flameStepTag.getCompound("dash_speed Trait"));
-//        }
+        if (!entity.level().isClientSide()) {
+            CompoundTag flameStepTag = tag.getCompound("av3:flame_step_skillData");
+            System.out.println("[Bender] Serializing NBT: " + activeElement.name() + " " + flameStepTag.getCompound("dash_speed Trait"));
+        }
         return tag;
     }
 
+    /** NOTE: If you change the data structure in ANY way and want to overwrite the old data with defaults,
+     comment out the deserializing of whatever data changed. Then load the game and save and quit to overwrite.
+     ---
+     Now, if you want to migrate the data, bump the DATA_VERSION and add a new case in the switch statement.
+     After that, modify the previous case to handle the migration by loading up the old data to fit into the new.
+     */
     @Override
     public void deserializeNBT(CompoundTag tag) {
         System.out.println("[Bender] Deserializing NBT: " + tag);
-        int version = tag.contains("DataVersion") ? tag.getInt("DataVersion") : 1; // Default to version 1 if not present
+        int version = tag.contains("DataVersion") ? tag.getInt("DataVersion") : 0; // Default to version 0 if not present
         switch (version) {
             case 1 -> {
                 LOGGER.info("Loading Bender data version: {}", version);
@@ -249,7 +255,7 @@ public class Bender implements IBender {
                     }
                 }
             } default -> { // Handle unknown versions for migrating data
-                // Set defaults here
+                // Set defaults here for new player / world
                 LOGGER.info("Unknown Bender data version: {}", version);
             }
         }

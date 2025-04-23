@@ -72,7 +72,7 @@ public class Avatar {
         Registries.init();
         CapabilityHandler.init();
         AvatarNetwork.register();
-        Elements.init();
+//        Elements.init();
 
         ModuleRegistry.register("Move", MoveModule::new);
         ModuleRegistry.register("Timeout", TimeoutModule::new);
