@@ -41,7 +41,6 @@ public class SyncBenderPacket implements AvatarPacket {
                 LocalPlayer player = Minecraft.getInstance().player;
                 assert player != null;
                 player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
-                            System.out.printf("Changed element from %s to %s\n", bender.getElement().name(), msg.tag.getString("Active Element"));
                             bender.deserializeNBT(msg.tag);
                             bender.markClean();
                         });

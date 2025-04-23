@@ -211,6 +211,8 @@ public class Bender implements IBender {
 //        return list != null && !list.isEmpty();
 //    }
 
+    // TODO - Create utility method to print Bender's NBT data
+
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();

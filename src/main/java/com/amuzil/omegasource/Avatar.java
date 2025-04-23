@@ -50,7 +50,6 @@ public class Avatar {
 
     public Avatar(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
-//        modEventBus.addListener(AvatarCapabilities::register);
         // Register the setup method for mod loading
         modEventBus.addListener(this::setup);
         // Register the enqueueIMC method for mod loading
@@ -72,7 +71,6 @@ public class Avatar {
         Registries.init();
         CapabilityHandler.init();
         AvatarNetwork.register();
-//        Elements.init();
 
         ModuleRegistry.register("Move", MoveModule::new);
         ModuleRegistry.register("Timeout", TimeoutModule::new);
