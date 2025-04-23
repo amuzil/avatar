@@ -4,37 +4,48 @@ import com.amuzil.omegasource.api.magus.skill.traits.DataTrait;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.entity.modules.*;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 public abstract class AvatarEntity extends Entity {
 
-    private static final EntityDataAccessor<Optional<UUID>> OWNER_ID =
-            SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.OPTIONAL_UUID);
-    private static final EntityDataAccessor<String> ELEMENT =
-            SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.STRING);
-
+    private static final EntityDataAccessor<Optional<UUID>> OWNER_ID = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+    private static final EntityDataAccessor<String> ELEMENT = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<Boolean> COLLIDABLE = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> DAMAGEABLE = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> PHYSICS = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> TIER = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> LIFETIME = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.INT);
+    private final List<IEntityModule> modules = new ArrayList<>();
+    private final List<IControlModule> controlModules = new ArrayList<>();
+    private final List<IForceModule> forceModules = new ArrayList<>();
+    private final List<ICollisionModule> collisionModules = new ArrayList<>();
+    private final List<IRenderModule> renderModules = new ArrayList<>();
     private Entity owner;
     private Element element;
-
+    private boolean collidable = false;
+    private boolean damageable = false;
     private List<DataTrait> traits;
-
-    private List<IEntityModule> modules = new ArrayList<>();
-    private List<IControlModule> controlModules = new ArrayList<>();
-    private List<IForceModule> forceModules = new ArrayList<>();
-    private List<ICollisionModule> collisionModules = new ArrayList<>();
-    private List<IRenderModule> renderModules = new ArrayList<>();
+    private int maxLifetime = 0;
 
     // Data Sync for Owner
     // Data Sync for Element
@@ -45,6 +56,18 @@ public abstract class AvatarEntity extends Entity {
         super(pEntityType, pLevel);
     }
 
+    public static float lerpRotation(float pCurrentRotation, float pTargetRotation) {
+        while (pTargetRotation - pCurrentRotation < -180.0F) {
+            pCurrentRotation -= 360.0F;
+        }
+
+        while (pTargetRotation - pCurrentRotation >= 180.0F) {
+            pCurrentRotation += 360.0F;
+        }
+
+        return Mth.lerp(0.2F, pCurrentRotation, pTargetRotation);
+    }
+
     // --- Module Management ---
     public void addModule(IEntityModule mod) {
         modules.add(mod);
@@ -53,9 +76,11 @@ public abstract class AvatarEntity extends Entity {
     public boolean removeModule(IEntityModule mod) {
         return removeModule(mod.id());
     }
+
     public boolean removeModule(String id) {
         return modules.removeIf(m -> m.id().equals(id));
     }
+
     public List<IEntityModule> genericModules() {
         return Collections.unmodifiableList(modules);
     }
@@ -64,12 +89,15 @@ public abstract class AvatarEntity extends Entity {
     public void addControlModule(IControlModule mod) {
         controlModules.add(mod);
     }
+
     public boolean removeControlModule(IControlModule mod) {
         return removeControlModule(mod.id());
     }
+
     public boolean removeControlModule(String id) {
         return controlModules.removeIf(m -> m.id().equals(id));
     }
+
     public List<IControlModule> controlModules() {
         return Collections.unmodifiableList(controlModules);
     }
@@ -78,12 +106,15 @@ public abstract class AvatarEntity extends Entity {
     public void addForceModule(IForceModule mod) {
         forceModules.add(mod);
     }
+
     public boolean removeForceModule(IForceModule mod) {
         return removeForceModule(mod.id());
     }
+
     public boolean removeForceModule(String id) {
         return forceModules.removeIf(m -> m.id().equals(id));
     }
+
     public List<IForceModule> forceModules() {
         return Collections.unmodifiableList(forceModules);
     }
@@ -92,12 +123,15 @@ public abstract class AvatarEntity extends Entity {
     public void addCollisionModule(ICollisionModule mod) {
         collisionModules.add(mod);
     }
+
     public boolean removeCollisionModule(ICollisionModule mod) {
         return removeCollisionModule(mod.id());
     }
+
     public boolean removeCollisionModule(String id) {
         return collisionModules.removeIf(m -> m.id().equals(id));
     }
+
     public List<ICollisionModule> collisionModules() {
         return Collections.unmodifiableList(collisionModules);
     }
@@ -106,16 +140,34 @@ public abstract class AvatarEntity extends Entity {
     public void addRenderModule(IRenderModule mod) {
         renderModules.add(mod);
     }
+
     public boolean removeRenderModule(IRenderModule mod) {
         return removeRenderModule(mod.id());
     }
+
     public boolean removeRenderModule(String id) {
         return renderModules.removeIf(m -> m.id().equals(id));
     }
+
     public List<IRenderModule> renderModules() {
         return Collections.unmodifiableList(renderModules);
     }
 
+    public void incLifetime() {
+        this.entityData.set(LIFETIME, lifetime() + 1);
+    }
+
+    public int lifetime() {
+        return this.entityData.get(LIFETIME);
+    }
+
+    public void setMaxLifetime(int max) {
+        this.maxLifetime = max;
+    }
+
+    public int maxLifetime() {
+        return this.maxLifetime;
+    }
 
     /*
         Call this after adding it to a world.
@@ -128,12 +180,10 @@ public abstract class AvatarEntity extends Entity {
         renderModules.forEach(mod -> mod.init(this));
     }
 
-
     public void setOwner(Entity owner) {
         this.owner = owner;
         this.entityData.set(OWNER_ID, Optional.of(owner.getUUID()));
     }
-
 
     public Entity owner() {
         if (this.owner == null) {
@@ -143,10 +193,32 @@ public abstract class AvatarEntity extends Entity {
         return this.owner;
     }
 
+    public void setElement(Element element) {
+        this.entityData.set(ELEMENT, element.id().toString());
+        this.element = Elements.get(ResourceLocation.parse(this.entityData.get(ELEMENT)));
+    }
+
+    public Element element() {
+        return this.element;
+    }
+
+    public void setPhysics(boolean physics) {
+        this.entityData.set(PHYSICS, physics);
+    }
+
+    public boolean physics() {
+        return this.entityData.get(PHYSICS);
+    }
+
     @Override
     protected void defineSynchedData() {
         this.entityData.define(OWNER_ID, Optional.empty());
         this.entityData.define(ELEMENT, Elements.FIRE.id().toString());
+        this.entityData.define(COLLIDABLE, false);
+        this.entityData.define(DAMAGEABLE, false);
+        this.entityData.define(PHYSICS, false);
+        this.entityData.define(TIER, 0);
+        this.entityData.define(LIFETIME, -1);
     }
 
     /**
@@ -166,6 +238,10 @@ public abstract class AvatarEntity extends Entity {
             this.entityData.set(ELEMENT, element.id().toString());
         }
 
+        this.collidable = pCompound.getBoolean("Collidable");
+        this.damageable = pCompound.getBoolean("Damageable");
+
+        readTraits(pCompound);
         readModuleList(pCompound, "GenericModules", modules);
         readModuleList(pCompound, "ControlModules", controlModules);
         readModuleList(pCompound, "ForceModules", forceModules);
@@ -182,6 +258,10 @@ public abstract class AvatarEntity extends Entity {
             pCompound.putString("Element", element.name());
         }
 
+        pCompound.putBoolean("Collidable", collidable);
+        pCompound.putBoolean("Damageable", damageable);
+
+        writeTraits(pCompound);
         writeModuleList(pCompound, "GenericModules", modules);
         writeModuleList(pCompound, "ControlModules", controlModules);
         writeModuleList(pCompound, "ForceModules", forceModules);
@@ -205,6 +285,17 @@ public abstract class AvatarEntity extends Entity {
         renderModules.forEach(mod -> mod.tick(this));
     }
 
+    public void tickDespawn() {
+        incLifetime();
+        if (lifetime() >= maxLifetime) {
+            this.discard();
+        }
+    }
+
+    public void checkBlocks() {
+        checkInsideBlocks();
+    }
+
     private <T> void readModuleList(CompoundTag parent, String key, List<T> list) {
         ListTag mods = parent.getList(key, Tag.TAG_COMPOUND);
         for (Tag t : mods) {
@@ -213,8 +304,7 @@ public abstract class AvatarEntity extends Entity {
             IEntityModule mod = ModuleRegistry.create(id);
             if (mod != null) {
                 mod.load(mTag);
-                @SuppressWarnings("unchecked")
-                T casted = (T) mod;
+                @SuppressWarnings("unchecked") T casted = (T) mod;
                 list.add(casted);
             }
         }
@@ -229,5 +319,86 @@ public abstract class AvatarEntity extends Entity {
             mods.add(mTag);
         }
         parent.put(key, mods);
+    }
+
+    private void writeTraits(CompoundTag parent) {
+        ListTag list = new ListTag();
+        for (DataTrait trait : traits) {
+            CompoundTag tTag = trait.serializeNBT();
+            // ensure ID is included
+            tTag.putString("Trait ID", trait.name());
+            list.add(tTag);
+        }
+        parent.put("DataTraits", list);
+    }
+
+    private void readTraits(CompoundTag parent) {
+        traits.clear();
+        ListTag list = parent.getList("DataTraits", Tag.TAG_COMPOUND);
+
+        int i = 0;
+        for (Tag t : list) {
+            CompoundTag tTag = (CompoundTag) t;
+            DataTrait trait = traits.get(i);
+            trait.deserializeNBT(tTag);
+            traits.add(trait);
+            i++;
+        }
+    }
+
+    @Override
+    public boolean canBeCollidedWith() {
+        return collidable;
+    }
+
+    /**
+     * Returns {@code true} if this entity should push and be pushed by other entities when colliding.
+     */
+    @Override
+    public boolean isPushable() {
+        return collidable;
+    }
+
+    @Override
+    public boolean canBeHitByProjectile() {
+        return collidable;
+    }
+
+    @Override
+    public boolean isInvulnerable() {
+        return damageable;
+    }
+
+    public void updateRotation() {
+        Vec3 vec3 = this.getDeltaMovement();
+        double d0 = vec3.horizontalDistance();
+        this.setXRot(lerpRotation(this.xRotO, (float) (Mth.atan2(vec3.y, d0) * (double) (180F / (float) Math.PI))));
+        this.setYRot(lerpRotation(this.yRotO, (float) (Mth.atan2(vec3.x, vec3.z) * (double) (180F / (float) Math.PI))));
+    }
+
+    //  These were copied from the projectile class. Need to update these to account for the other dataserializers and important values
+    // that this class keeps track of. TODO.
+    public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket() {
+        Entity entity = this.owner();
+        return new ClientboundAddEntityPacket(this, entity == null ? 0 : entity.getId());
+    }
+
+
+    public void recreateFromPacket(ClientboundAddEntityPacket pPacket) {
+        super.recreateFromPacket(pPacket);
+        Entity entity = this.level().getEntity(pPacket.getData());
+        if (entity != null) {
+            this.setOwner(entity);
+        }
+
+    }
+
+    public boolean mayInteract(Level pLevel, BlockPos pPos) {
+        Entity entity = this.owner();
+        if (entity instanceof Player) {
+            return entity.mayInteract(pLevel, pPos);
+        } else {
+            return entity == null || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(pLevel, entity);
+        }
     }
 }

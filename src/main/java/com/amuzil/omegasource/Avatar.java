@@ -3,6 +3,9 @@ package com.amuzil.omegasource;
 import com.amuzil.omegasource.api.magus.capability.CapabilityHandler;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.entity.AvatarEntities;
+import com.amuzil.omegasource.entity.modules.ModuleRegistry;
+import com.amuzil.omegasource.entity.modules.entity.TimeoutModule;
+import com.amuzil.omegasource.entity.modules.force.MoveModule;
 import com.amuzil.omegasource.input.InputModule;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.api.magus.registry.Registries;
@@ -68,6 +71,9 @@ public class Avatar {
         CapabilityHandler.init();
         AvatarNetwork.register();
         Elements.init();
+
+        ModuleRegistry.register("Move", MoveModule::new);
+        ModuleRegistry.register("Timeout", TimeoutModule::new);
     }
 
     private void setupClient(final FMLClientSetupEvent event) {
