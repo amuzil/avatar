@@ -11,9 +11,12 @@ import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.*;
 import com.amuzil.omegasource.bending.BendingSkill;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.capability.Bender;
+import com.amuzil.omegasource.entity.AvatarProjectile;
 import com.amuzil.omegasource.entity.ElementProjectile;
+import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import com.amuzil.omegasource.entity.projectile.FireProjectile;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 
 import static com.amuzil.omegasource.bending.BendingForms.STRIKE;
 
@@ -43,22 +46,29 @@ public class FireStrikeSkill extends BendingSkill {
         super.start(entity);
 
         Bender bender = (Bender) Bender.getBender(entity);
+        Level level = entity.level();
         SkillData data = bender.getSkillData(this);
 
         int lifetime = data.getTrait("lifetime", TimedTrait.class).getTime();
         double speed = data.getTrait("speed", SpeedTrait.class).getSpeed();
 
         Avatar.LOGGER.debug("Fire Strike Speed: " + speed);
-        ElementProjectile proj = new FireProjectile(entity, entity.level());
-        proj.shoot(entity.getViewVector(1).x, entity.getViewVector(1).y, entity.getViewVector(1).z, (float) speed, 1);
-        proj.setTimeToKill(lifetime);
+        AvatarProjectile projectile = new AvatarProjectile(level);
+        projectile.setElement(Elements.FIRE);
+        projectile.setOwner(entity);
+        projectile.setMaxLifetime(lifetime);
+//        projectile.addModule(ModuleRegistry.create("Timeout"));
+
+
         if (!entity.level().isClientSide) {
 //            proj = ElementProjectile.createElementEntity(STRIKE, Elements.FIRE, (ServerPlayer) entity, (ServerLevel) entity.level());
 
 
 
-            entity.level().addFreshEntity(proj);
+            entity.level().addFreshEntity(projectile);
         }
+
+        projectile.shoot(entity.position().add(0, entity.getEyeY(), 0), entity.getLookAngle(), 0.5f, 0);
         if (bender != null) {
             bender.formPath.clear();
             data.setState(SkillState.STOP);

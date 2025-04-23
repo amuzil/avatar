@@ -45,6 +45,12 @@ public class Bender implements IBender {
     private final List<SkillData> skillData = new ArrayList<>();
     private final List<DataTrait> dataTraits = new ArrayList<>();
 
+    public void resetData() {
+        for (Skill skill : Registries.skills)
+            skillData.add(new SkillData(skill));
+    }
+
+
     public Bender(LivingEntity entity) {
         this.entity = entity;
 

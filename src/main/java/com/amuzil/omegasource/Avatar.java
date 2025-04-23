@@ -13,6 +13,8 @@ import com.amuzil.omegasource.utils.AvatarCommand;
 import com.lowdragmc.photon.client.fx.FX;
 import com.lowdragmc.photon.client.fx.FXHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.DragonFireballRenderer;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -74,6 +76,7 @@ public class Avatar {
 
         ModuleRegistry.register("Move", MoveModule::new);
         ModuleRegistry.register("Timeout", TimeoutModule::new);
+        //ModuleRegistry.register("");
     }
 
     private void setupClient(final FMLClientSetupEvent event) {
@@ -103,6 +106,8 @@ public class Avatar {
             EntityRenderers.register(AvatarEntities.WATER_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
             EntityRenderers.register(AvatarEntities.EARTH_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
             EntityRenderers.register(AvatarEntities.FIRE_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
+            // Change later
+            EntityRenderers.register(AvatarEntities.AVATAR_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
         }
     }

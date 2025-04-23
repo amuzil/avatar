@@ -3,6 +3,8 @@ package com.amuzil.omegasource.entity.modules.force;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.modules.IForceModule;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
@@ -11,9 +13,11 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class MoveModule implements IForceModule {
+    String id = "move";
+
     @Override
     public String id() {
-        return "move";
+        return id;
     }
 
     @Override
@@ -23,12 +27,20 @@ public class MoveModule implements IForceModule {
 
     @Override
     public void tick(AvatarEntity entity) {
+        if (entity.level().isClientSide)
+            System.out.println(entity.tickCount);
+
+        if (entity.level().isClientSide)
+            entity.level().addParticle(ParticleTypes.FIREWORK,
+                    entity.xo, entity.yo, entity.zo,
+                    0.0D, 0.0D, 0.0D);
+
         boolean flag = entity.physics();
         Vec3 deltaMovement = entity.getDeltaMovement();
         if (entity.xRotO == 0.0F && entity.yRotO == 0.0F) {
             double distance = deltaMovement.horizontalDistance();
-            entity.setYRot((float)(Mth.atan2(deltaMovement.x, deltaMovement.z) * (double)(180F / (float)Math.PI)));
-            entity.setXRot((float)(Mth.atan2(deltaMovement.y, distance) * (double)(180F / (float)Math.PI)));
+            entity.setYRot((float) (Mth.atan2(deltaMovement.x, deltaMovement.z) * (double) (180F / (float) Math.PI)));
+            entity.setXRot((float) (Mth.atan2(deltaMovement.y, distance) * (double) (180F / (float) Math.PI)));
             entity.yRotO = entity.getYRot();
             entity.xRotO = entity.getXRot();
         }
@@ -40,7 +52,7 @@ public class MoveModule implements IForceModule {
             if (!voxelshape.isEmpty()) {
                 Vec3 vec31 = entity.position();
 
-                for(AABB aabb : voxelshape.toAabbs()) {
+                for (AABB aabb : voxelshape.toAabbs()) {
                     if (aabb.move(blockpos).contains(vec31)) {
                         break;
                     }
@@ -96,18 +108,18 @@ public class MoveModule implements IForceModule {
         double d3 = entity.getZ() + d1;
         double d4 = deltaMovement.horizontalDistance();
         if (flag) {
-            entity.setYRot((float)(Mth.atan2(-d5, -d1) * (double)(180F / (float)Math.PI)));
+            entity.setYRot((float) (Mth.atan2(-d5, -d1) * (double) (180F / (float) Math.PI)));
         } else {
-            entity.setYRot((float)(Mth.atan2(d5, d1) * (double)(180F / (float)Math.PI)));
+            entity.setYRot((float) (Mth.atan2(d5, d1) * (double) (180F / (float) Math.PI)));
         }
 
-        entity.setXRot((float)(Mth.atan2(d6, d4) * (double)(180F / (float)Math.PI)));
+        entity.setXRot((float) (Mth.atan2(d6, d4) * (double) (180F / (float) Math.PI)));
         entity.setXRot(AvatarEntity.lerpRotation(entity.xRotO, entity.getXRot()));
         entity.setYRot(AvatarEntity.lerpRotation(entity.yRotO, entity.getYRot()));
 
         if (!entity.isNoGravity() && !flag) {
             Vec3 vec34 = entity.getDeltaMovement();
-            entity.setDeltaMovement(vec34.x, vec34.y - (double)0.05F, vec34.z);
+            entity.setDeltaMovement(vec34.x, vec34.y - (double) 0.05F, vec34.z);
         }
 
         entity.setPos(d7, d2, d3);
@@ -116,11 +128,11 @@ public class MoveModule implements IForceModule {
 
     @Override
     public void save(CompoundTag nbt) {
-
+        nbt.putString("ID", id);
     }
 
     @Override
     public void load(CompoundTag nbt) {
-
+        this.id = nbt.getString("ID");
     }
 }

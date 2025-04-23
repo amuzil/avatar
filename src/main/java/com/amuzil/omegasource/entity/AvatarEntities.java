@@ -38,6 +38,10 @@ public class AvatarEntities {
             ENTITY_TYPES.register("element_collision", () -> EntityType.Builder.<ElementCollision>of(ElementCollision::new, MobCategory.MISC)
                     .sized(0.5f, 0.5f).build("element_collision"));
 
+    public static final  RegistryObject<EntityType<AvatarProjectile>> AVATAR_PROJECTILE_ENTITY_TYPE =
+            ENTITY_TYPES.register("avatar_projectile", () -> EntityType.Builder.<AvatarProjectile>of(AvatarProjectile::new, MobCategory.MISC)
+                    .sized(0.5f, 0.5f).build("avatar_projectile")) ;
+
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
     }

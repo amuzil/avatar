@@ -23,8 +23,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public abstract class AvatarEntity extends Entity {
 
@@ -35,6 +38,7 @@ public abstract class AvatarEntity extends Entity {
     private static final EntityDataAccessor<Boolean> PHYSICS = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> TIER = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> LIFETIME = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.INT);
+
     private final List<IEntityModule> modules = new ArrayList<>();
     private final List<IControlModule> controlModules = new ArrayList<>();
     private final List<IForceModule> forceModules = new ArrayList<>();
@@ -44,7 +48,7 @@ public abstract class AvatarEntity extends Entity {
     private Element element;
     private boolean collidable = false;
     private boolean damageable = false;
-    private List<DataTrait> traits;
+    private final List<DataTrait> traits = new LinkedList<>();
     private int maxLifetime = 0;
 
     // Data Sync for Owner
@@ -167,6 +171,32 @@ public abstract class AvatarEntity extends Entity {
 
     public int maxLifetime() {
         return this.maxLifetime;
+    }
+
+    public void addTraits(DataTrait... traits) {
+        this.traits.addAll(List.of(traits));
+    }
+
+    public List<DataTrait> getFilteredTraits(Predicate<? super DataTrait> filter) {
+        return traits.stream().filter(filter).collect(Collectors.toList());
+    }
+
+    @Nullable
+    public DataTrait getTrait(String name) {
+        for (DataTrait trait : traits)
+            if (trait.name().equals(name)) return trait;
+
+        return null;
+    }
+
+    @Nullable
+    public <T extends DataTrait> T getTrait(String name, Class<T> type) {
+        for (DataTrait trait : traits) {
+            if (trait.name().equals(name) && type.isInstance(trait)) {
+                return type.cast(trait);
+            }
+        }
+        return null;
     }
 
     /*
