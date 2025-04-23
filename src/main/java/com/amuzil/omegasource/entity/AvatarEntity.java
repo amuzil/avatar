@@ -49,7 +49,7 @@ public abstract class AvatarEntity extends Entity {
     private boolean collidable = false;
     private boolean damageable = false;
     private final List<DataTrait> traits = new LinkedList<>();
-    private int maxLifetime = 0;
+    private int maxLifetime = 100;
 
     // Data Sync for Owner
     // Data Sync for Element
