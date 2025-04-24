@@ -1,23 +1,26 @@
 package com.amuzil.omegasource.entity;
 
-import com.amuzil.omegasource.entity.modules.ICollisionModule;
 import com.amuzil.omegasource.entity.modules.IForceModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 
 public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile, ItemSupplier {
 
+    private static final EntityDataAccessor<Float> WIDTH = SynchedEntityData.defineId(AvatarProjectile.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> HEIGHT = SynchedEntityData.defineId(AvatarProjectile.class, EntityDataSerializers.FLOAT);
+
     public AvatarProjectile(Level pLevel) {
-        super(AvatarEntities.AVATAR_PROJECTILE_ENTITY_TYPE.get(), pLevel);
-        addForceModule((IForceModule) ModuleRegistry.create("Move"));
-//        addCollisionModule((ICollisionModule) ModuleRegistry.create("Knockback"));
-        addModule(ModuleRegistry.create("Timeout"));
+        this(AvatarEntities.AVATAR_PROJECTILE_ENTITY_TYPE.get(), pLevel);
     }
 
     public AvatarProjectile(EntityType<AvatarProjectile> pEntityType, Level pLevel) {
@@ -27,6 +30,28 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile,
         addForceModule((IForceModule) ModuleRegistry.create("Move"));
 //        addCollisionModule((ICollisionModule) ModuleRegistry.create("Knockback"));
         addModule(ModuleRegistry.create("Timeout"));
+
+    }
+
+
+    public void setWidth(float width) {
+        entityData.set(WIDTH, width);
+    }
+
+    public void setHeight(float height) {
+        entityData.set(HEIGHT, height);
+    }
+
+    public float width() {
+        return entityData.get(WIDTH);
+    }
+
+    public float height() {
+        return entityData.get(HEIGHT);
+    }
+
+    public AABB getSize() {
+        return new AABB(xo - width(), yo - height(), zo - width(), xo + width(), yo + height(), zo + width());
     }
 
     @Override
@@ -45,5 +70,26 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile,
     @Override
     public ItemStack getItem() {
         return ElementProjectile.PROJECTILE_ITEM;
+    }
+
+    @Override
+    public void remove(RemovalReason pReason) {
+        super.remove(pReason);
+//        Thread.dumpStack();
+    }
+
+    @Override
+    public void init() {
+        super.init();
+        System.out.println(height());
+        System.out.println(width());
+        setBoundingBox(getSize());
+    }
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(HEIGHT, 0.5f);
+        this.entityData.define(WIDTH, 0.5f);
     }
 }

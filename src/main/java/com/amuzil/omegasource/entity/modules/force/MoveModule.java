@@ -1,9 +1,9 @@
 package com.amuzil.omegasource.entity.modules.force;
 
+import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.modules.IForceModule;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
@@ -27,11 +27,11 @@ public class MoveModule implements IForceModule {
 
     @Override
     public void tick(AvatarEntity entity) {
-        if (entity.level().isClientSide)
-            System.out.println(entity.tickCount);
+
+//        Avatar.LOGGER.debug(entity.position());
 
         if (entity.level().isClientSide)
-            entity.level().addParticle(ParticleTypes.FIREWORK,
+            entity.level().addParticle(ParticleTypes.FLAME,
                     entity.xo, entity.yo, entity.zo,
                     0.0D, 0.0D, 0.0D);
 

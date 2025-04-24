@@ -51,12 +51,17 @@ public class FireStrikeSkill extends BendingSkill {
 
         int lifetime = data.getTrait("lifetime", TimedTrait.class).getTime();
         double speed = data.getTrait("speed", SpeedTrait.class).getSpeed();
+        double size = data.getTrait("size", SizeTrait.class).getSize();
 
         Avatar.LOGGER.debug("Fire Strike Speed: " + speed);
         AvatarProjectile projectile = new AvatarProjectile(level);
         projectile.setElement(Elements.FIRE);
         projectile.setOwner(entity);
         projectile.setMaxLifetime(lifetime);
+        projectile.setWidth((float) size);
+        projectile.setHeight((float) size);
+        projectile.setNoGravity(true);
+
 //        projectile.addModule(ModuleRegistry.create("Timeout"));
 
 
@@ -68,7 +73,8 @@ public class FireStrikeSkill extends BendingSkill {
             entity.level().addFreshEntity(projectile);
         }
 
-        projectile.shoot(entity.position().add(0, entity.getEyeY(), 0), entity.getLookAngle(), 0.5f, 0);
+        projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
+        projectile.init();
         if (bender != null) {
             bender.formPath.clear();
             data.setState(SkillState.STOP);
