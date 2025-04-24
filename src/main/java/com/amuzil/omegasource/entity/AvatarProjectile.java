@@ -49,7 +49,7 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile,
     }
 
     public AABB getSize() {
-        return new AABB(xo - width(), yo - height(), zo - width(), xo + width(), yo + height(), zo + width());
+        return new AABB(xo - width() / 2, yo - height() / 2, zo - width() / 2, xo + width() / 2, yo + height() / 2, zo + width() / 2);
     }
 
     @Override
