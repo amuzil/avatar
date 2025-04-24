@@ -4,7 +4,9 @@ import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SizeTrait;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.AvatarProjectile;
 import com.amuzil.omegasource.entity.modules.IEntityModule;
+import com.amuzil.omegasource.utils.Easings;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 
 public class GrowModule implements IEntityModule {
@@ -30,21 +32,30 @@ public class GrowModule implements IEntityModule {
         if (life <= 0) return;
 
         // normalize [0,1]
-        float t = (float) age / (float) life;
-        if (t < 0.125f)
-            t = 0f;
-        t = net.minecraft.util.Mth.clamp(t, 0f, 1f);
+        float t = (float) age / (float) (life);
+        t = Mth.clamp(t, 0f, 1f);
 
-        // quintic easing: 6t^5 - 15t^4 + 10t^3
-        float ease = t * t * t * (10f + t * (-15f + 6f * t));
+        // Compute overall growth (quintic or other)
+        float startSize = proj.width();
+        float maxSize   = (float)entity.getTrait("max_size", SizeTrait.class).getSize();
+        float overall   = startSize + (maxSize - startSize) * Easings.quinticEaseInOut(t);
 
-        // interpolate between start and max
-        float startSize = proj.width();  // or store initial in a field on spawn
-        float maxSize = (float) entity.getTrait("max_size", SizeTrait.class).getSize();
-        float size = startSize + (maxSize - startSize) * ease;
+        // Bezier parameters for width: mid-life peak at ~1.4×
+        float p1x = 0.45f, p1y = 2.5f;
+        float p2x = 0.99f, p2y = -0.5f;
+        // Evaluate cubic-Bezier width factor
+        float widthFactor = Easings.cubicBezier(t, p1x, p1y, p2x, p2y);
 
-        proj.setWidth(size);
-        proj.setHeight(size);
+        p1x = 0.15f;
+        p1y = 1.4f;
+        p2x = 0.85f;
+        p2y = 0.95f;
+        // Evaluate cubic-Bezier width factor
+        float heightFactor = Easings.cubicBezier(t, p1x, p1y, p2x, p2y);
+
+        // Apply final scales
+        proj.setWidth(overall * widthFactor);
+        proj.setHeight(overall * heightFactor);
     }
 
     @Override
