@@ -53,7 +53,6 @@ public class FireStrikeSkill extends BendingSkill {
         double speed = data.getTrait("speed", SpeedTrait.class).getSpeed();
         double size = data.getTrait("size", SizeTrait.class).getSize();
 
-        Avatar.LOGGER.debug("Fire Strike Speed: " + speed);
         AvatarProjectile projectile = new AvatarProjectile(level);
         projectile.setElement(Elements.FIRE);
         projectile.setOwner(entity);

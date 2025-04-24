@@ -79,8 +79,6 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile,
     @Override
     public void init() {
         super.init();
-        System.out.println(height());
-        System.out.println(width());
         setBoundingBox(getSize());
     }
 
