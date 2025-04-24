@@ -73,7 +73,6 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile,
     @Override
     public void remove(RemovalReason pReason) {
         super.remove(pReason);
-//        Thread.dumpStack();
     }
 
     @Override
