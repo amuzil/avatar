@@ -45,12 +45,6 @@ public class Bender implements IBender {
     private final List<SkillData> skillData = new ArrayList<>();
     private final List<DataTrait> dataTraits = new ArrayList<>();
 
-    public void resetData() {
-        for (Skill skill : Registries.skills)
-            skillData.add(new SkillData(skill));
-    }
-
-
     public Bender(LivingEntity entity) {
         this.entity = entity;
 
@@ -74,7 +68,7 @@ public class Bender implements IBender {
         return "Bender[ " + name + " ]";
     }
 
-    public void onUpdate() {
+    public void tick() {
         if (entity instanceof Player) {
             List<Skill> skills = Registries.getSkills();
             for (Skill skill : skills) {
@@ -121,6 +115,11 @@ public class Bender implements IBender {
 
     public SkillData getSkillData(ResourceLocation id) {
         return skillData.stream().filter(skillData1 -> skillData1.getSkillId().equals(id)).toList().get(0);
+    }
+
+    public void resetData() {
+        for (Skill skill : Registries.skills)
+            skillData.add(new SkillData(skill));
     }
 
     @Override
@@ -211,7 +210,18 @@ public class Bender implements IBender {
 //        return list != null && !list.isEmpty();
 //    }
 
-    // TODO - Create utility method to print Bender's NBT data
+    public void printNBT() {
+        CompoundTag tag = this.serializeNBT();
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format(
+                """
+                \nData Version: %d
+                Active Element: %s
+                """, tag.getInt("DataVersion"), tag.getString("Active Element")));
+        skillCategoryData.forEach(catData -> sb.append(tag.get(catData.name())).append("\n"));
+        skillData.forEach(sData -> sb.append(tag.get(sData.name())).append("\n"));
+        LOGGER.info(sb.toString());
+    }
 
     @Override
     public CompoundTag serializeNBT() {
@@ -220,10 +230,6 @@ public class Bender implements IBender {
         tag.putString("Active Element", Objects.requireNonNullElse(activeElement, Elements.FIRE).id().toString());
         skillCategoryData.forEach(catData -> tag.put(catData.name(), catData.serializeNBT()));
         skillData.forEach(sData -> tag.put(sData.name(), sData.serializeNBT()));
-//        if (!entity.level().isClientSide()) {
-//            CompoundTag flameStepTag = tag.getCompound("av3:flame_step_skillData");
-//            System.out.println("[Bender] Serializing NBT: " + activeElement.name() + " " + flameStepTag.getCompound("dash_speed Trait"));
-//        }
         return tag;
     }
 
