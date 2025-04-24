@@ -25,11 +25,11 @@ public class FireStrikeSkill extends BendingSkill {
     public FireStrikeSkill() {
         super(Avatar.MOD_ID, "fire_strike", Elements.FIRE);
         addTrait(new DamageTrait(2.5f, "damage"));
-        addTrait(new SizeTrait(0.5F, "size"));
-        addTrait(new SizeTrait(1.15f, "max_size"));
+        addTrait(new SizeTrait(0.125F, "size"));
+        addTrait(new SizeTrait(0.75f, "max_size"));
         addTrait(new KnockbackTrait(2f, "knockback"));
         addTrait(new ColourTrait(0, 0, 0, "fire_colour"));
-        addTrait(new SpeedTrait(0.5f, "speed"));
+        addTrait(new SpeedTrait(0.125f, "speed"));
         addTrait(new TimedTrait(15, "lifetime"));
 
         startPaths = SkillPathBuilder.getInstance().complex(new ActiveForm(STRIKE, false)).build();
@@ -48,7 +48,7 @@ public class FireStrikeSkill extends BendingSkill {
 
         Bender bender = (Bender) Bender.getBender(entity);
         // Resets data so we can test
-        bender.resetData();
+//        bender.resetData();
         Level level = entity.level();
         SkillData data = bender.getSkillData(this);
 
