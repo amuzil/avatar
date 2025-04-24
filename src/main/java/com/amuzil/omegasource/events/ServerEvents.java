@@ -47,7 +47,7 @@ public class ServerEvents {
         if (event.getEntity() != null && event.getEntity().isAlive()) {
             Bender bender = (Bender) Bender.getBender(event.getEntity());
             if (bender == null) return;
-            bender.onUpdate();
+            bender.tick();
         }
     }
 }

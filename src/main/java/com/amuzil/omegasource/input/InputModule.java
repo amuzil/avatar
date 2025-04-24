@@ -222,6 +222,7 @@ public class InputModule {
             assert player != null;
             IBender bender = Bender.getBender(player);
             System.out.println("Current Bender Element -> " + bender.getElement());
+            ((Bender)bender).printNBT();
         } else {
             terminate();
             isBending = false;
