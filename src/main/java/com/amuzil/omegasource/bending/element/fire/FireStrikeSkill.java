@@ -25,7 +25,8 @@ public class FireStrikeSkill extends BendingSkill {
     public FireStrikeSkill() {
         super(Avatar.MOD_ID, "fire_strike", Elements.FIRE);
         addTrait(new DamageTrait(2.5f, "damage"));
-        addTrait(new SizeTrait(1.5F, "size"));
+        addTrait(new SizeTrait(0.5F, "size"));
+        addTrait(new SizeTrait(1.15f, "max_size"));
         addTrait(new KnockbackTrait(2f, "knockback"));
         addTrait(new ColourTrait(0, 0, 0, "fire_colour"));
         addTrait(new SpeedTrait(0.5f, "speed"));
@@ -46,6 +47,8 @@ public class FireStrikeSkill extends BendingSkill {
         super.start(entity);
 
         Bender bender = (Bender) Bender.getBender(entity);
+        // Resets data so we can test
+        bender.resetData();
         Level level = entity.level();
         SkillData data = bender.getSkillData(this);
 
@@ -61,7 +64,9 @@ public class FireStrikeSkill extends BendingSkill {
         projectile.setHeight((float) size);
         projectile.setNoGravity(true);
 
-//        projectile.addModule(ModuleRegistry.create("Timeout"));
+        projectile.addTraits(data.getTrait("max_size", SizeTrait.class));
+
+        projectile.addModule(ModuleRegistry.create("Grow"));
 
 
         if (!entity.level().isClientSide) {
@@ -88,4 +93,5 @@ public class FireStrikeSkill extends BendingSkill {
     public SkillCategory getCategory() {
         return Elements.FIRE;
     }
+
 }
