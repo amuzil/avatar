@@ -1,6 +1,5 @@
 package com.amuzil.omegasource.entity.modules.force;
 
-import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.modules.IForceModule;
 import net.minecraft.core.BlockPos;
@@ -21,9 +20,7 @@ public class MoveModule implements IForceModule {
     }
 
     @Override
-    public void init(AvatarEntity entity) {
-
-    }
+    public void init(AvatarEntity entity) {}
 
     @Override
     public void tick(AvatarEntity entity) {

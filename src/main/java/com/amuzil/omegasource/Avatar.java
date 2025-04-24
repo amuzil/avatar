@@ -1,7 +1,6 @@
 package com.amuzil.omegasource;
 
 import com.amuzil.omegasource.api.magus.capability.CapabilityHandler;
-import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.entity.AvatarEntities;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import com.amuzil.omegasource.entity.modules.entity.GrowModule;
@@ -14,8 +13,6 @@ import com.amuzil.omegasource.utils.AvatarCommand;
 import com.lowdragmc.photon.client.fx.FX;
 import com.lowdragmc.photon.client.fx.FXHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.DragonFireballRenderer;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.resources.ResourceLocation;
