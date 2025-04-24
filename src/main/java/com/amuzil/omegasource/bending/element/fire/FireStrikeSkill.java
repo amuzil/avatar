@@ -17,6 +17,7 @@ import net.minecraft.world.level.Level;
 
 import static com.amuzil.omegasource.bending.BendingForms.STRIKE;
 
+
 public class FireStrikeSkill extends BendingSkill {
 
     public FireStrikeSkill() {
@@ -65,12 +66,8 @@ public class FireStrikeSkill extends BendingSkill {
 
         projectile.addModule(ModuleRegistry.create("Grow"));
 
-
         if (!entity.level().isClientSide) {
 //            proj = ElementProjectile.createElementEntity(STRIKE, Elements.FIRE, (ServerPlayer) entity, (ServerLevel) entity.level());
-
-
-
             entity.level().addFreshEntity(projectile);
         }
 
