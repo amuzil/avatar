@@ -25,8 +25,6 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile,
 
     public AvatarProjectile(EntityType<AvatarProjectile> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
-        // TODO: Fix is to call setPos()
-//        setPos(this.owner().position());
         addForceModule((IForceModule) ModuleRegistry.create("Move"));
 //        addCollisionModule((ICollisionModule) ModuleRegistry.create("Knockback"));
         addModule(ModuleRegistry.create("Timeout"));
