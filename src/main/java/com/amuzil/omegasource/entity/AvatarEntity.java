@@ -37,19 +37,18 @@ public abstract class AvatarEntity extends Entity {
     private static final EntityDataAccessor<Boolean> DAMAGEABLE = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> PHYSICS = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> TIER = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> LIFETIME = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> MAX_LIFETIME = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.INT);
 
     private final List<IEntityModule> modules = new ArrayList<>();
     private final List<IControlModule> controlModules = new ArrayList<>();
     private final List<IForceModule> forceModules = new ArrayList<>();
     private final List<ICollisionModule> collisionModules = new ArrayList<>();
     private final List<IRenderModule> renderModules = new ArrayList<>();
+    private final List<DataTrait> traits = new LinkedList<>();
     private Entity owner;
     private Element element;
     private boolean collidable = false;
     private boolean damageable = false;
-    private final List<DataTrait> traits = new LinkedList<>();
-    private int maxLifetime = 100;
 
     // Data Sync for Owner
     // Data Sync for Element
@@ -157,20 +156,12 @@ public abstract class AvatarEntity extends Entity {
         return Collections.unmodifiableList(renderModules);
     }
 
-    public void incLifetime() {
-        this.entityData.set(LIFETIME, lifetime() + 1);
-    }
-
-    public int lifetime() {
-        return this.entityData.get(LIFETIME);
-    }
-
     public void setMaxLifetime(int max) {
-        this.maxLifetime = max;
+        entityData.set(MAX_LIFETIME, max);
     }
 
     public int maxLifetime() {
-        return this.maxLifetime;
+        return entityData.get(MAX_LIFETIME);
     }
 
     public void addTraits(DataTrait... traits) {
@@ -248,7 +239,7 @@ public abstract class AvatarEntity extends Entity {
         this.entityData.define(DAMAGEABLE, false);
         this.entityData.define(PHYSICS, false);
         this.entityData.define(TIER, 0);
-        this.entityData.define(LIFETIME, -1);
+        this.entityData.define(MAX_LIFETIME, 100);
     }
 
     /**
@@ -316,8 +307,7 @@ public abstract class AvatarEntity extends Entity {
     }
 
     public void tickDespawn() {
-        incLifetime();
-        if (lifetime() >= maxLifetime) {
+        if (tickCount >= maxLifetime()) {
             this.discard();
         }
     }
@@ -430,5 +420,13 @@ public abstract class AvatarEntity extends Entity {
         } else {
             return entity == null || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(pLevel, entity);
         }
+    }
+
+    public void setDamageable(boolean damageable) {
+        entityData.set(DAMAGEABLE, damageable);
+    }
+
+    public void setCollidable(boolean collidable) {
+        entityData.set(COLLIDABLE, collidable);
     }
 }

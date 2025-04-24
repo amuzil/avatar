@@ -92,4 +92,11 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile,
         this.entityData.define(HEIGHT, 0.5f);
         this.entityData.define(WIDTH, 0.5f);
     }
+
+    // Unironically the worst piece of game design I have ever seen in my life.
+    // WHO LOCKS ENTITY SIZE BEHIND STATIC INSTANCES????
+    @Override
+    protected AABB makeBoundingBox() {
+        return getSize();
+    }
 }
