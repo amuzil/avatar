@@ -27,10 +27,11 @@ public class FireModule implements ICollisionModule {
     public void tick(AvatarEntity entity) {
         int firetime = -1;
         TimedTrait fire = entity.getTrait("firetime", TimedTrait.class);
-        if (fire != null) {
+        if (fire == null) {
             Avatar.LOGGER.warn("No fire time trait set for fire module. Remove the module or add the trait to the entity.");
-            firetime = fire.getTime();
+            return;
         }
+        firetime = fire.getTime();
 
         if (firetime > -1) {
             List<LivingEntity> targets = HitDetection.getEntitiesWithinBox(entity, 0.75f, hit ->

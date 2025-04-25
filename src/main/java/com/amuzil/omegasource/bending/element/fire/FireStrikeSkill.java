@@ -77,7 +77,7 @@ public class FireStrikeSkill extends BendingSkill {
                 new Point(0.40, 3),  // flare to 150%
                 new Point(0.70, 0.40),  // rapid taper
                 new Point(1.00, 0.00)   // die out completely
-                 ));
+        ));
 
         // Used for bezier curving
         projectile.addTraits(new PointsTrait("width_curve", new Point(0.00, 0.00),  // t=0: zero width
@@ -97,7 +97,10 @@ public class FireStrikeSkill extends BendingSkill {
         // Set Fire module
         projectile.addTraits(data.getTrait("firetime", TimedTrait.class));
         projectile.addModule(ModuleRegistry.create("FireTime"));
+
         // Damage module
+        projectile.addTraits(data.getTrait("damage", DamageTrait.class));
+        projectile.addModule(ModuleRegistry.create("SimpleDamage"));
 
         if (!entity.level().isClientSide) {
 //            proj = ElementProjectile.createElementEntity(STRIKE, Elements.FIRE, (ServerPlayer) entity, (ServerLevel) entity.level());
@@ -113,7 +116,6 @@ public class FireStrikeSkill extends BendingSkill {
             resetCooldown(data);
         }
     }
-
 
 
     @Override

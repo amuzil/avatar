@@ -4,6 +4,7 @@ import com.amuzil.omegasource.api.magus.capability.CapabilityHandler;
 import com.amuzil.omegasource.entity.AvatarEntities;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import com.amuzil.omegasource.entity.modules.collision.FireModule;
+import com.amuzil.omegasource.entity.modules.collision.SimpleDamageModule;
 import com.amuzil.omegasource.entity.modules.collision.SimpleKnockbackModule;
 import com.amuzil.omegasource.entity.modules.entity.GrowModule;
 import com.amuzil.omegasource.entity.modules.entity.TimeoutModule;
@@ -77,6 +78,7 @@ public class Avatar {
         ModuleRegistry.register("Grow", GrowModule::new);
         ModuleRegistry.register("SimpleKnockback", SimpleKnockbackModule::new);
         ModuleRegistry.register("FireTime", FireModule::new);
+        ModuleRegistry.register("SimpleDamage", SimpleDamageModule::new);
     }
 
     private void setupClient(final FMLClientSetupEvent event) {
