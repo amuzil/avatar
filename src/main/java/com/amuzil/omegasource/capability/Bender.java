@@ -62,7 +62,7 @@ public class Bender implements IBender {
 
     @Override
     public String toString() {
-        String name = Elements.FIRE.name();
+        String name = "";
         if (activeElement != null)
             name = activeElement.name();
         return "Bender[ " + name + " ]";
