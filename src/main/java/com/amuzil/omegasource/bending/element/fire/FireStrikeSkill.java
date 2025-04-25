@@ -34,7 +34,7 @@ public class FireStrikeSkill extends BendingSkill {
         addTrait(new TimedTrait(15, "lifetime"));
         // Ticks not seconds...
         addTrait(new TimedTrait(40, "firetime"));
-        addTrait(new SpeedTrait(0.95f, "slow_factor"));
+        addTrait(new SpeedTrait(1.15f, "speed_factor"));
 
         startPaths = SkillPathBuilder.getInstance().complex(new ActiveForm(STRIKE, false)).build();
 
@@ -102,6 +102,10 @@ public class FireStrikeSkill extends BendingSkill {
         // Damage module
         projectile.addTraits(data.getTrait("damage", DamageTrait.class));
         projectile.addModule(ModuleRegistry.create("SimpleDamage"));
+
+        // Slow down over time
+        projectile.addTraits(data.getTrait("speed_factor", SpeedTrait.class));
+        projectile.addModule(ModuleRegistry.create("ChangeSpeed"));
 
         if (!entity.level().isClientSide) {
 //            proj = ElementProjectile.createElementEntity(STRIKE, Elements.FIRE, (ServerPlayer) entity, (ServerLevel) entity.level());
