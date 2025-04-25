@@ -3,13 +3,22 @@ package com.amuzil.omegasource.api.magus.skill.traits;
 import net.minecraft.nbt.CompoundTag;
 
 
-public class SkillTrait implements DataTrait {
+public class SkillTrait implements DataTrait, Cloneable {
     private String name;
     private boolean isDirty = false;
 
     public SkillTrait(String name) {
         this.name = name;
         markDirty();
+    }
+
+    @Override
+    public SkillTrait clone() {
+        try {
+            return (SkillTrait) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 
     @Override

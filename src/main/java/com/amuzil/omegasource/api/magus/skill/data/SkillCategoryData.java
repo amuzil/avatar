@@ -68,7 +68,7 @@ public class SkillCategoryData implements DataTrait {
 
     @Override
     public void deserializeNBT(CompoundTag tag) {
-        this.id = ResourceLocation.tryParse(tag.getString("Skill Category"));
-        this.canUse = tag.getBoolean("Can Use");
+        id = ResourceLocation.tryParse(tag.getString("Skill Category"));
+        canUse = tag.getBoolean("Can Use");
     }
 }

@@ -117,7 +117,8 @@ public class Bender implements IBender {
         return skillData.stream().filter(skillData1 -> skillData1.getSkillId().equals(id)).toList().get(0);
     }
 
-    public void resetData() {
+    public void resetSkillData() {
+        skillData.clear();
         for (Skill skill : Registries.skills)
             skillData.add(new SkillData(skill));
     }

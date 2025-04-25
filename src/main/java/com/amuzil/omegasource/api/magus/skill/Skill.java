@@ -20,6 +20,7 @@ import java.util.List;
  * Basic skill class. All other skills extend this.
  */
 public abstract class Skill {
+    private final String name;
     private final ResourceLocation id;
     private final SkillCategory category;
     private final List<RadixTree.ActivationType> activationTypes;
@@ -32,11 +33,12 @@ public abstract class Skill {
     protected FormPath startPaths, runPaths, stopPaths;
 
     public Skill(String modId, String name, SkillCategory category) {
-        this(ResourceLocation.fromNamespaceAndPath(modId, name), category);
+        this(ResourceLocation.fromNamespaceAndPath(modId, name), name, category);
     }
 
-    public Skill(ResourceLocation id, SkillCategory category) {
+    public Skill(ResourceLocation id, String name, SkillCategory category) {
         this.id = id;
+        this. name = "";
         this.category = category;
         // Menu is default
         this.activatedType = RadixTree.ActivationType.MENU;
@@ -75,6 +77,10 @@ public abstract class Skill {
 
     public SkillCategory getCategory() {
         return category;
+    }
+
+    public String name() {
+        return name;
     }
 
     public ResourceLocation getId() {

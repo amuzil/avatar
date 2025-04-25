@@ -35,7 +35,12 @@ public class SkillData implements DataTrait {
 
         this.state = Skill.SkillState.START;
         if (getSkill() != null)
-            skillTraits = getSkill().getTraits();
+            skillTraits = getSkill().getTraits()
+                    .stream()
+                    .map(SkillTrait::clone)
+                    .toList();
+
+        // TODO - Fix this by performing a deep copy of getSkill().getTraits() !!!
 
     }
 
@@ -100,6 +105,7 @@ public class SkillData implements DataTrait {
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
         tag.putString("Skill ID", skillId.toString());
+        tag.putBoolean("Can Use", canUse);
         tag.putString("Skill State", state.name());
         skillTraits.forEach(skillTrait -> {
             tag.put(skillTrait.name() + " Trait", skillTrait.serializeNBT());
@@ -111,6 +117,7 @@ public class SkillData implements DataTrait {
     public void deserializeNBT(CompoundTag tag) {
         try {
             skillId = ResourceLocation.tryParse(tag.getString("Skill ID"));
+            canUse = tag.getBoolean("Can Use");
             state = Skill.SkillState.valueOf(tag.getString("Skill State"));
             if (!skillTraits.isEmpty())
                 skillTraits.forEach(skillTrait -> {

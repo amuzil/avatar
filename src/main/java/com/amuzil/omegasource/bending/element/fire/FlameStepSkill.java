@@ -1,7 +1,6 @@
 package com.amuzil.omegasource.bending.element.fire;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.api.magus.capability.entity.Magi;
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.skill.SkillCategory;
@@ -27,7 +26,7 @@ public class FlameStepSkill extends BendingEffect {
     public FlameStepSkill() {
         super(Avatar.MOD_ID, "flame_step", Elements.FIRE);
         addTrait(new KnockbackTrait(1.5f, "knockback"));
-        addTrait(new SpeedTrait(1.5f, "dash_speed"));
+        addTrait(new SpeedTrait(3f, "dash_speed"));
         addTrait(new SizeTrait(1.0f, "size"));
         addTrait(new ColourTrait(0, 0, 0, "fire_colour"));
 
