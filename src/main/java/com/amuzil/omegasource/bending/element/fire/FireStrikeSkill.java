@@ -65,8 +65,10 @@ public class FireStrikeSkill extends BendingSkill {
         projectile.setNoGravity(true);
 
         projectile.addTraits(data.getTrait("max_size", SizeTrait.class));
-        projectile.addTraits(new PointsTrait("width_curve", new Point(0.125, 0.5), new Point(0.35, 1.5), new Point(0, 0), new Point(1, 0)));
-        projectile.addTraits(new PointsTrait("height_curve", new Point(0.125, 1), new Point(0.35, 2), new Point(0.75, 2.5), new Point(1, 0)));
+        projectile.addTraits(new PointsTrait("width_curve", new Point(0.125, 0.75), new Point(0.35, 2), new Point(0.75, 2.5), new Point(0.9, 0.5),
+                new Point(1, -3)));
+        projectile.addTraits(new PointsTrait("height_curve", new Point(0.125, 1), new Point(0.35, 2), new Point(0.75, 2.5), new Point(0.9, 1),
+                new Point(1, -2)));
 
         projectile.addModule(ModuleRegistry.create("Grow"));
 

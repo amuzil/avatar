@@ -121,7 +121,7 @@ public class Easings {
             for (int j = 0; j < xs.size(); j++) tmp[j] = xs.get(j);
             float xAtMid = deCasteljau(tmp, mid);
             if (xAtMid < t) low = mid;
-            else            high = mid;
+            else high = mid;
         }
         return mid;
     }
@@ -165,6 +165,15 @@ public class Easings {
         List<Float> l = new ArrayList<>(arr.length);
         for (float v : arr) l.add(v);
         return l;
+    }
+
+    public static float evaluate(List<Point> points, float t) {
+        List<Float> xs = new ArrayList<>(), ys = new ArrayList<>();
+        for (Point p : points) {
+            xs.add((float) p.x());
+            ys.add((float) p.y());
+        }
+        return Easings.bezier(xs, ys, t);
     }
 
     /**
