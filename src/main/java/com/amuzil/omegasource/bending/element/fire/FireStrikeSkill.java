@@ -30,11 +30,11 @@ public class FireStrikeSkill extends BendingSkill {
         addTrait(new SizeTrait(1.25f, "max_size"));
         addTrait(new KnockbackTrait(0.5f, "knockback"));
         addTrait(new ColourTrait(0, 0, 0, "fire_colour"));
-        addTrait(new SpeedTrait(0.675f, "speed"));
+        addTrait(new SpeedTrait(0.875f, "speed"));
         addTrait(new TimedTrait(15, "lifetime"));
         // Ticks not seconds...
         addTrait(new TimedTrait(40, "firetime"));
-        addTrait(new SpeedTrait(1.15f, "speed_factor"));
+        addTrait(new SpeedTrait(0.85f, "speed_factor"));
 
         startPaths = SkillPathBuilder.getInstance().complex(new ActiveForm(STRIKE, false)).build();
 
@@ -73,17 +73,17 @@ public class FireStrikeSkill extends BendingSkill {
         projectile.addTraits(data.getTrait("max_size", SizeTrait.class));
 
         // Copied from the fire easing constant
-        projectile.addTraits(new PointsTrait("height_curve", new Point(0.00, 0.00),  // t=0: zero width
-                new Point(0.20, 0.25),  // rise slowly
-                new Point(0.40, 3),  // flare to 150%
+        projectile.addTraits(new PointsTrait("height_curve", new Point(0.00, 0.5),  // t=0: zero width
+                new Point(0.20, 0.75),  // rise slowly
+                new Point(0.40, 2.5),  // flare to 150%
                 new Point(0.70, 0.40),  // rapid taper
                 new Point(1.00, 0.00)   // die out completely
         ));
 
         // Used for bezier curving
-        projectile.addTraits(new PointsTrait("width_curve", new Point(0.00, 0.00),  // t=0: zero width
-                new Point(0.20, 0.25),  // rise slowly
-                new Point(0.40, 2),  // flare to 150%
+        projectile.addTraits(new PointsTrait("width_curve", new Point(0.00, 0.5),  // t=0: zero width
+                new Point(0.20, 0.75),  // rise slowly
+                new Point(0.40, 1.75),  // flare to 150%
                 new Point(0.70, 0.40),  // rapid taper
                 new Point(1.00, 0.00)   // die out completely
         ));

@@ -104,15 +104,15 @@ public class MoveModule implements IForceModule {
         double d2 = entity.getY() + d6;
         double d3 = entity.getZ() + d1;
         double d4 = deltaMovement.horizontalDistance();
-        if (flag) {
-            entity.setYRot((float) (Mth.atan2(-d5, -d1) * (double) (180F / (float) Math.PI)));
-        } else {
-            entity.setYRot((float) (Mth.atan2(d5, d1) * (double) (180F / (float) Math.PI)));
-        }
-
-        entity.setXRot((float) (Mth.atan2(d6, d4) * (double) (180F / (float) Math.PI)));
-        entity.setXRot(AvatarEntity.lerpRotation(entity.xRotO, entity.getXRot()));
-        entity.setYRot(AvatarEntity.lerpRotation(entity.yRotO, entity.getYRot()));
+//        if (flag) {
+//            entity.setYRot((float) (Mth.atan2(-d5, -d1) * (double) (180F / (float) Math.PI)));
+//        } else {
+//            entity.setYRot((float) (Mth.atan2(d5, d1) * (double) (180F / (float) Math.PI)));
+//        }
+//
+//        entity.setXRot((float) (Mth.atan2(d6, d4) * (double) (180F / (float) Math.PI)));
+//        entity.setXRot(AvatarEntity.lerpRotation(entity.xRotO, entity.getXRot()));
+//        entity.setYRot(AvatarEntity.lerpRotation(entity.yRotO, entity.getYRot()));
 
         if (!entity.isNoGravity() && !flag) {
             Vec3 vec34 = entity.getDeltaMovement();
