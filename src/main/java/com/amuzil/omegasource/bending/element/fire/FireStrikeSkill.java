@@ -28,9 +28,9 @@ public class FireStrikeSkill extends BendingSkill {
         addTrait(new DamageTrait(2.5f, "damage"));
         addTrait(new SizeTrait(0.125F, "size"));
         addTrait(new SizeTrait(1.25f, "max_size"));
-        addTrait(new KnockbackTrait(2f, "knockback"));
+        addTrait(new KnockbackTrait(0.5f, "knockback"));
         addTrait(new ColourTrait(0, 0, 0, "fire_colour"));
-        addTrait(new SpeedTrait(0.125f, "speed"));
+        addTrait(new SpeedTrait(0.675f, "speed"));
         addTrait(new TimedTrait(15, "lifetime"));
 
         startPaths = SkillPathBuilder.getInstance().complex(new ActiveForm(STRIKE, false)).build();
@@ -88,7 +88,7 @@ public class FireStrikeSkill extends BendingSkill {
         projectile.addModule(ModuleRegistry.create("Grow"));
 
         projectile.addTraits(data.getTrait("knockback", KnockbackTrait.class));
-        projectile.addTraits(new DirectionTrait("upwards_knockback", new Vec3(0, 0.5, 0)));
+        projectile.addTraits(new DirectionTrait("knockback_direction", new Vec3(0, 0.9, 0)));
         projectile.addModule(ModuleRegistry.create("SimpleKnockback"));
 
         if (!entity.level().isClientSide) {
@@ -96,7 +96,7 @@ public class FireStrikeSkill extends BendingSkill {
             entity.level().addFreshEntity(projectile);
         }
 
-        projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
+        projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), 0.65, 0);
         projectile.init();
         if (bender != null) {
             bender.formPath.clear();
