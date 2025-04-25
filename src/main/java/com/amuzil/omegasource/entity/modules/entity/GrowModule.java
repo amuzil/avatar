@@ -1,17 +1,14 @@
 package com.amuzil.omegasource.entity.modules.entity;
 
+import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.skill.traits.entitytraits.PointsTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SizeTrait;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.AvatarProjectile;
 import com.amuzil.omegasource.entity.modules.IEntityModule;
-import com.amuzil.omegasource.utils.maths.Easings;
-import com.amuzil.omegasource.utils.maths.Point;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
-
-import java.util.List;
 
 public class GrowModule implements IEntityModule {
 
@@ -41,8 +38,13 @@ public class GrowModule implements IEntityModule {
 
         // Compute overall growth (quintic or other)
         float startSize = proj.width();
-        float maxSize   = (float)entity.getTrait("max_size", SizeTrait.class).getSize();
-        float overall   = startSize + (maxSize - startSize) * Easings.quinticEaseInOut(t);
+        SizeTrait maxTrait = entity.getTrait("max_size", SizeTrait.class);
+        if (maxTrait == null) {
+            Avatar.LOGGER.warn("No max size set for growth module. Remove the module or set max size");
+            return;
+        }
+        float maxSize = (float) maxTrait.getSize();
+        float overall = startSize + (maxSize - startSize) * t;
 
         // two different ways to grow.
         PointsTrait sizePoints = entity.getTrait("size_curve", PointsTrait.class);
@@ -52,9 +54,8 @@ public class GrowModule implements IEntityModule {
             float heightFactor = (float) entity.getTrait("height_factor", SizeTrait.class).getSize();
 
             proj.setWidth(overall * widthFactor * sizeFactor);
-            proj.setWidth(overall * heightFactor * sizeFactor);
-        }
-        else {
+            proj.setHeight(overall * heightFactor * sizeFactor);
+        } else {
             PointsTrait widthPoints = entity.getTrait("width_curve", PointsTrait.class);
             PointsTrait heightPoints = entity.getTrait("height_curve", PointsTrait.class);
 
