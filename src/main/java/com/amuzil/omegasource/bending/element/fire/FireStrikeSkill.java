@@ -6,12 +6,14 @@ import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.skill.SkillCategory;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
+import com.amuzil.omegasource.api.magus.skill.traits.entitytraits.PointsTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.*;
 import com.amuzil.omegasource.bending.BendingSkill;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.entity.AvatarProjectile;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
+import com.amuzil.omegasource.utils.maths.Point;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 
@@ -62,6 +64,8 @@ public class FireStrikeSkill extends BendingSkill {
         projectile.setNoGravity(true);
 
         projectile.addTraits(data.getTrait("max_size", SizeTrait.class));
+        projectile.addTraits(new PointsTrait("width_curve", new Point(0.125, 0.5), new Point(0.35, 1.5), new Point(0, 0), new Point(1, 0)));
+        projectile.addTraits(new PointsTrait("height_curve", new Point(0.125, 1), new Point(0.35, 2), new Point(0.75, 2.5), new Point(1, 0)));
 
         projectile.addModule(ModuleRegistry.create("Grow"));
 
