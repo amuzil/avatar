@@ -1,0 +1,56 @@
+package com.amuzil.omegasource.entity.modules.collision;
+
+import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.DirectionTrait;
+import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.KnockbackTrait;
+import com.amuzil.omegasource.entity.AvatarEntity;
+import com.amuzil.omegasource.entity.modules.ICollisionModule;
+import com.amuzil.omegasource.utils.HitDetection;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
+
+/**
+ * Very basic knockback module. Only targets valid living entities.
+ * No bending interaction (with own or other entities' bending), no projectile interaction, e.t.c.
+ */
+public class SimpleKnockbackModule implements ICollisionModule {
+
+    String id = "simple_knockback";
+    @Override
+    public String id() {
+        return id;
+    }
+
+    @Override
+    public void init(AvatarEntity entity) {
+
+    }
+
+    @Override
+    public void tick(AvatarEntity entity) {
+        // 1.25f gives a nice, extra boost
+        List<LivingEntity> targets = HitDetection.getEntitiesWithinBox(entity, 0.5f, hit ->
+            hit != entity.owner() && hit.canBeCollidedWith() && hit.isPushable() && (!(hit instanceof AvatarEntity) || ((AvatarEntity) hit).owner() != entity.owner())
+        , LivingEntity.class);
+
+        Vec3 knockback = entity.getTrait("knockback_direction", DirectionTrait.class).direction();
+        float scale = (float) entity.getTrait("knockback", KnockbackTrait.class).getKnockback();
+        Vec3 motion = entity.getDeltaMovement();
+        for (LivingEntity hit : targets) {
+            hit.addDeltaMovement(motion.scale(scale).add(knockback.scale(scale)));
+            hit.hasImpulse = true;
+        }
+    }
+
+    @Override
+    public void save(CompoundTag nbt) {
+        nbt.putString("ID", id);
+    }
+
+    @Override
+    public void load(CompoundTag nbt) {
+        id = nbt.getString("ID");
+    }
+}

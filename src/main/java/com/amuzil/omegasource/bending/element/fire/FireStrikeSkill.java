@@ -16,6 +16,7 @@ import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import com.amuzil.omegasource.utils.maths.Point;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 import static com.amuzil.omegasource.bending.BendingForms.STRIKE;
 
@@ -26,7 +27,7 @@ public class FireStrikeSkill extends BendingSkill {
         super(Avatar.MOD_ID, "fire_strike", Elements.FIRE);
         addTrait(new DamageTrait(2.5f, "damage"));
         addTrait(new SizeTrait(0.125F, "size"));
-        addTrait(new SizeTrait(0.75f, "max_size"));
+        addTrait(new SizeTrait(1.25f, "max_size"));
         addTrait(new KnockbackTrait(2f, "knockback"));
         addTrait(new ColourTrait(0, 0, 0, "fire_colour"));
         addTrait(new SpeedTrait(0.125f, "speed"));
@@ -63,14 +64,32 @@ public class FireStrikeSkill extends BendingSkill {
         projectile.setWidth((float) size);
         projectile.setHeight((float) size);
         projectile.setNoGravity(true);
+        projectile.setDamageable(false);
+        projectile.setCollidable(true);
 
         projectile.addTraits(data.getTrait("max_size", SizeTrait.class));
-        projectile.addTraits(new PointsTrait("width_curve", new Point(0.125, 0.75), new Point(0.35, 2), new Point(0.75, 2.5), new Point(0.9, 0.5),
-                new Point(1, -3)));
-        projectile.addTraits(new PointsTrait("height_curve", new Point(0.125, 1), new Point(0.35, 2), new Point(0.75, 2.5), new Point(0.9, 1),
-                new Point(1, -2)));
+
+        // Copied from the fire easing constant
+        projectile.addTraits(new PointsTrait("height_curve", new Point(0.00, 0.00),  // t=0: zero width
+                new Point(0.20, 0.25),  // rise slowly
+                new Point(0.40, 3),  // flare to 150%
+                new Point(0.70, 0.40),  // rapid taper
+                new Point(1.00, 0.00)   // die out completely
+                 ));
+
+        // Used for bezier curving
+        projectile.addTraits(new PointsTrait("width_curve", new Point(0.00, 0.00),  // t=0: zero width
+                new Point(0.20, 0.25),  // rise slowly
+                new Point(0.40, 2),  // flare to 150%
+                new Point(0.70, 0.40),  // rapid taper
+                new Point(1.00, 0.00)   // die out completely
+        ));
 
         projectile.addModule(ModuleRegistry.create("Grow"));
+
+        projectile.addTraits(data.getTrait("knockback", KnockbackTrait.class));
+        projectile.addTraits(new DirectionTrait("upwards_knockback", new Vec3(0, 0.5, 0)));
+        projectile.addModule(ModuleRegistry.create("SimpleKnockback"));
 
         if (!entity.level().isClientSide) {
 //            proj = ElementProjectile.createElementEntity(STRIKE, Elements.FIRE, (ServerPlayer) entity, (ServerLevel) entity.level());

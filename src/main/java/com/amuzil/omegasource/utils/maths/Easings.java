@@ -210,4 +210,107 @@ public class Easings {
                                     Function<Float, Float> easeFunc, float t) {
         return start + (end - start) * easeFunc.apply(t);
     }
+
+    /** Constants.
+     *
+     */
+
+    // Important Mathematical Presets. Uses lists of Points. Pass these into a bezier curve to interpolate what you need.
+    // Important mathematical presets: each list represents a cubic-bezier curve
+    public static final List<Point> SIMPLE_EASE = List.of(
+            new Point(0f, 0f),
+            new Point(0.25f, 0.10f),
+            new Point(0.25f, 1f),
+            new Point(1f, 1f)
+    );
+
+    public static final List<Point> EASE_IN = List.of(
+            new Point(0f, 0f),
+            new Point(0.42f, 0f),
+            new Point(1f, 1f),
+            new Point(1f, 1f)
+    );
+
+    public static final List<Point> EASE_OUT = List.of(
+            new Point(0f, 0f),
+            new Point(0f, 0f),
+            new Point(0.58f, 1f),
+            new Point(1f, 1f)
+    );
+
+    public static final List<Point> EASE_IN_OUT = List.of(
+            new Point(0f, 0f),
+            new Point(0.42f, 0f),
+            new Point(0.58f, 1f),
+            new Point(1f, 1f)
+    );
+
+    public static final List<Point> EASE_IN_QUAD = List.of(
+            new Point(0f, 0f),
+            new Point(0.33f, 0f),
+            new Point(0.67f, 0.33f),
+            new Point(1f, 1f)
+    );
+
+    public static final List<Point> EASE_OUT_QUAD = List.of(
+            new Point(0f, 0f),
+            new Point(0.33f, 0.67f),
+            new Point(0.67f, 1f),
+            new Point(1f, 1f)
+    );
+
+    public static final List<Point> EASE_IN_CUBIC = List.of(
+            new Point(0f, 0f),
+            new Point(0.32f, 0f),
+            new Point(0.67f, 0f),
+            new Point(1f, 1f)
+    );
+
+    public static final List<Point> EASE_OUT_CUBIC = List.of(
+            new Point(0f, 0f),
+            new Point(0.33f, 1f),
+            new Point(0.68f, 1f),
+            new Point(1f, 1f)
+    );
+
+    public static final List<Point> EASE_IN_OUT_BACK = List.of(
+            new Point(0f, 0f),
+            new Point(0.68f, -0.6f),
+            new Point(0.32f, 1.6f),
+            new Point(1f, 1f)
+    );
+
+    // Elemental Presets
+
+    public static final List<Point> FIRE_CURVE = List.of(
+            new Point(0.00, 0.00),  // t=0: zero width
+            new Point(0.20, 0.25),  // rise slowly
+            new Point(0.40, 1.50),  // flare to 150%
+            new Point(0.70, 0.40),  // rapid taper
+            new Point(1.00, 0.00)   // die out completely
+    );
+
+    public static final List<Point> EARTH_CURVE = List.of(
+            new Point(0.00, 0.00),  // t=0: at rest
+            new Point(0.30, 1.00),  // lift steadily to full height
+            new Point(0.60, 0.90),  // hold just below full
+            new Point(0.85, 1.10),  // slight overshoot bounce
+            new Point(1.00, 0.20)   // heavy squash to 20%
+    );
+
+    public static final List<Point> AIR_CURVE = List.of(
+            new Point(0.00, 1.00),  // start at normal size
+            new Point(0.25, 1.15),  // slight stretch
+            new Point(0.50, 0.85),  // gentle contraction
+            new Point(0.75, 1.15),  // stretch again
+            new Point(1.00, 1.00)   // back to normal
+    );
+
+    public static final List<Point> WATER_CURVE = List.of(
+            new Point(0.00, 0.00),  // in flight
+            new Point(0.50, 1.00),  // at 50% life: impact → full width
+            new Point(0.55, 1.50),  // quick rebound = 150%
+            new Point(0.70, 0.90),  // settle slightly below full
+            new Point(1.00, 1.00)   // calm at normal size
+    );
 }

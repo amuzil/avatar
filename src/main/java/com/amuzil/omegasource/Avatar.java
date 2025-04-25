@@ -3,6 +3,7 @@ package com.amuzil.omegasource;
 import com.amuzil.omegasource.api.magus.capability.CapabilityHandler;
 import com.amuzil.omegasource.entity.AvatarEntities;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
+import com.amuzil.omegasource.entity.modules.collision.SimpleKnockbackModule;
 import com.amuzil.omegasource.entity.modules.entity.GrowModule;
 import com.amuzil.omegasource.entity.modules.entity.TimeoutModule;
 import com.amuzil.omegasource.entity.modules.force.MoveModule;
@@ -73,6 +74,7 @@ public class Avatar {
         ModuleRegistry.register("Move", MoveModule::new);
         ModuleRegistry.register("Timeout", TimeoutModule::new);
         ModuleRegistry.register("Grow", GrowModule::new);
+        ModuleRegistry.register("SimpleKnockback", SimpleKnockbackModule::new);
     }
 
     private void setupClient(final FMLClientSetupEvent event) {

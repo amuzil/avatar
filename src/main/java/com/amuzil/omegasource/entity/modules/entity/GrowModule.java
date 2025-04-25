@@ -44,17 +44,29 @@ public class GrowModule implements IEntityModule {
         float maxSize   = (float)entity.getTrait("max_size", SizeTrait.class).getSize();
         float overall   = startSize + (maxSize - startSize) * Easings.quinticEaseInOut(t);
 
-        PointsTrait widthPoints = entity.getTrait("width_curve", PointsTrait.class);
-        PointsTrait heightPoints = entity.getTrait("height_curve", PointsTrait.class);
+        // two different ways to grow.
+        PointsTrait sizePoints = entity.getTrait("size_curve", PointsTrait.class);
+        if (sizePoints != null) {
+            float sizeFactor = sizePoints.evaluate(t);
+            float widthFactor = (float) entity.getTrait("width_factor", SizeTrait.class).getSize();
+            float heightFactor = (float) entity.getTrait("height_factor", SizeTrait.class).getSize();
+
+            proj.setWidth(overall * widthFactor * sizeFactor);
+            proj.setWidth(overall * heightFactor * sizeFactor);
+        }
+        else {
+            PointsTrait widthPoints = entity.getTrait("width_curve", PointsTrait.class);
+            PointsTrait heightPoints = entity.getTrait("height_curve", PointsTrait.class);
 
 
-        float widthFactor = widthPoints.evaluate(t);
-        // Evaluate cubic-Bezier width factor
-        float heightFactor = heightPoints.evaluate(t);
+            float widthFactor = widthPoints.evaluate(t);
+            // Evaluate cubic-Bezier width factor
+            float heightFactor = heightPoints.evaluate(t);
 
-        // Apply final scales
-        proj.setWidth(overall * widthFactor);
-        proj.setHeight(overall * heightFactor);
+            // Apply final scales
+            proj.setWidth(overall * widthFactor);
+            proj.setHeight(overall * heightFactor);
+        }
     }
 
     @Override
