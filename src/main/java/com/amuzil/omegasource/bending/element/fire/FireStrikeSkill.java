@@ -32,6 +32,8 @@ public class FireStrikeSkill extends BendingSkill {
         addTrait(new ColourTrait(0, 0, 0, "fire_colour"));
         addTrait(new SpeedTrait(0.675f, "speed"));
         addTrait(new TimedTrait(15, "lifetime"));
+        // Ticks not seconds...
+        addTrait(new TimedTrait(40, "firetime"));
 
         startPaths = SkillPathBuilder.getInstance().complex(new ActiveForm(STRIKE, false)).build();
 
@@ -87,16 +89,22 @@ public class FireStrikeSkill extends BendingSkill {
 
         projectile.addModule(ModuleRegistry.create("Grow"));
 
+        // TODO: make more advanced knockback calculator that uses the entity's current size as well as speed (mass * velocity!!!!)
         projectile.addTraits(data.getTrait("knockback", KnockbackTrait.class));
-        projectile.addTraits(new DirectionTrait("knockback_direction", new Vec3(0, 0.9, 0)));
+        projectile.addTraits(new DirectionTrait("knockback_direction", new Vec3(0, 0.45, 0)));
         projectile.addModule(ModuleRegistry.create("SimpleKnockback"));
+
+        // Set Fire module
+        projectile.addTraits(data.getTrait("firetime", TimedTrait.class));
+        projectile.addModule(ModuleRegistry.create("FireTime"));
+        // Damage module
 
         if (!entity.level().isClientSide) {
 //            proj = ElementProjectile.createElementEntity(STRIKE, Elements.FIRE, (ServerPlayer) entity, (ServerLevel) entity.level());
             entity.level().addFreshEntity(projectile);
         }
 
-        projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), 0.65, 0);
+        projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
         projectile.init();
         if (bender != null) {
             bender.formPath.clear();

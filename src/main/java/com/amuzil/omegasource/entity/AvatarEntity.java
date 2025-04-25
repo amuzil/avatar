@@ -298,7 +298,7 @@ public abstract class AvatarEntity extends Entity {
     public void tick() {
         super.tick();
 
-        // Tick appropriate modules in each other
+        // Tick appropriate modules in each order
         modules.forEach(mod -> mod.tick(this));
         controlModules.forEach(mod -> mod.tick(this));
         forceModules.forEach(mod -> mod.tick(this));
