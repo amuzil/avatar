@@ -33,7 +33,7 @@ public class Bender implements IBender {
     private static final int DATA_VERSION = 1; // Update this as your data structure changes
 
     // Non-Persistent data
-    private final LivingEntity entity;
+    public final LivingEntity entity;
     public final FormPath formPath = new FormPath();
     private final FormCondition formConditionHandler = new FormCondition();
     private boolean isDirty = true; // Flag to indicate if data was changed
@@ -41,21 +41,21 @@ public class Bender implements IBender {
     // Persistent data
     private Element activeElement = Elements.FIRE; // Currently active element
     private BendingSelection.Target selection = BendingSelection.Target.NONE; // Currently selected target TODO - Impl NBT
-    private final List<SkillCategoryData> skillCategoryData = new ArrayList<>();
     private final List<SkillData> skillData = new ArrayList<>();
+    private final List<SkillCategoryData> skillCategoryData = new ArrayList<>();
     private final List<DataTrait> dataTraits = new ArrayList<>();
 
     public Bender(LivingEntity entity) {
         this.entity = entity;
 
-        for (SkillCategory category : Registries.categories)
+        for (SkillCategory category : Registries.getSkillCategories())
             skillCategoryData.add(new SkillCategoryData(category));
-        for (Skill skill : Registries.skills)
+        for (Skill skill : Registries.getSkills())
             skillData.add(new SkillData(skill));
-        dataTraits.addAll(Registries.traits);
+        dataTraits.addAll(Registries.getTraits());
 
         // Allow use of all Elements & Skills for testing!
-        setAvatar();
+//        setAvatar(); // TODO - Uncomment this to grant all elements & skills
 
         markDirty();
     }
@@ -119,7 +119,7 @@ public class Bender implements IBender {
 
     public void resetSkillData() {
         skillData.clear();
-        for (Skill skill : Registries.skills)
+        for (Skill skill : Registries.getSkills())
             skillData.add(new SkillData(skill));
     }
 
@@ -242,7 +242,7 @@ public class Bender implements IBender {
      */
     @Override
     public void deserializeNBT(CompoundTag tag) {
-        System.out.println("[Bender] Deserializing NBT: " + tag);
+//        System.out.println("[Bender] Deserializing NBT: " + tag);
         int version = tag.contains("DataVersion") ? tag.getInt("DataVersion") : 0; // Default to version 0 if not present
         switch (version) {
             case 1 -> {

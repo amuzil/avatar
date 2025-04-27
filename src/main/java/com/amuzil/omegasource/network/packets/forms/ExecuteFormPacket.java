@@ -12,6 +12,7 @@ import com.amuzil.omegasource.network.packets.client.FormActivatedPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.PacketDistributor;
@@ -41,27 +42,27 @@ public class ExecuteFormPacket implements AvatarPacket {
             // Extra case for step
             if (msg.form.equals(STEP))
                 AvatarNetwork.sendToServer(new ReleaseFormPacket(STEP));
-//            ElementProjectile entity;
-//            entity = ElementProjectile.createElementEntity(msg.form, Elements.FIRE, player, level);
-//            int entityId = 0;
-//            assert entity != null;
-//            if (msg.form.equals(ARC) || msg.form.equals(NULL)) {
-//                entity.control(1.5f, msg.form);
-//            } else if (msg.form.equals(STRIKE) || msg.form.equals(BLOCK)) {
-//                entity.shoot(player.getViewVector(1).x, player.getViewVector(1).y, player.getViewVector(1).z, 1, 1);
-//            } else {
-//                if (msg.form.equals(STEP))
-//                    AvatarNetwork.sendToServer(new ReleaseFormPacket(STEP)); // Guarantee safe release to clean Magi's FormPath state
-//                entity.discard();
-//                return; // Unhandled Form - Discard and print no effects
-//            }
-//            level.addFreshEntity(entity);
-//            FormActivatedPacket packet = new FormActivatedPacket(msg.form, Elements.FIRE, entity.getId());
-//
-//            /* Distribute packet to clients within 500 blocks | CLIENT */
-//            AvatarNetwork.CHANNEL.send(PacketDistributor.NEAR.with(
-//                    () -> new PacketDistributor.TargetPoint(player.getX(), player.getY(), player.getZ(),
-//                            500, level.dimension())), packet);
+            ElementProjectile entity;
+            entity = ElementProjectile.createElementEntity(msg.form, Elements.FIRE, player, level);
+            int entityId = 0;
+            assert entity != null;
+            if (msg.form.equals(ARC) || msg.form.equals(NULL)) {
+                entity.control(1.5f, msg.form);
+            } else if (msg.form.equals(STRIKE) || msg.form.equals(BLOCK)) {
+                entity.shoot(player.getViewVector(1).x, player.getViewVector(1).y, player.getViewVector(1).z, 1, 1);
+            } else {
+                if (msg.form.equals(STEP))
+                    AvatarNetwork.sendToServer(new ReleaseFormPacket(STEP)); // Guarantee safe release to clean Magi's FormPath state
+                entity.discard();
+                return; // Unhandled Form - Discard and print no effects
+            }
+            level.addFreshEntity(entity);
+            FormActivatedPacket packet = new FormActivatedPacket(msg.form, Elements.FIRE, entity.getId());
+
+            /* Distribute packet to clients within 500 blocks | CLIENT */
+            AvatarNetwork.CHANNEL.send(PacketDistributor.NEAR.with(
+                    () -> new PacketDistributor.TargetPoint(player.getX(), player.getY(), player.getZ(),
+                            500, level.dimension())), packet);
         });
 
         ctx.get().setPacketHandled(true);

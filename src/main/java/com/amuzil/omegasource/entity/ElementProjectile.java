@@ -210,14 +210,19 @@ public abstract class ElementProjectile extends Projectile implements ItemSuppli
         return PROJECTILE_ITEM;
     }
 
-//    public static ElementProjectile createElementEntity(BendingForm form, Element element, ServerPlayer player, ServerLevel level) {
-//        return switch (element) {
-//            case Elements.AIR -> new AirProjectile(player, level);
-//            case Elements.WATER -> new WaterProjectile(player, level);
-//            case Elements.EARTH -> new EarthProjectile(player, level);
-//            case Elements.FIRE -> new FireProjectile(player, level);
-//        };
-//    }
+    public static ElementProjectile createElementEntity(BendingForm form, Element element, ServerPlayer player, ServerLevel level) {
+        if (element == Elements.AIR) {
+            return new AirProjectile(player, level);
+        } else if (element == Elements.WATER) {
+            return new WaterProjectile(player, level);
+        } else if (element == Elements.EARTH) {
+            return new EarthProjectile(player, level);
+        } else if (element == Elements.FIRE) {
+            return new FireProjectile(player, level);
+        } else {
+            return null;
+        }
+    }
 
 //     Method to start initial visual effect
     public void startEffect(BendingForm form, LivingEntity player) {

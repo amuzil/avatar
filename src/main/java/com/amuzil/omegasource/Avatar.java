@@ -13,7 +13,7 @@ import com.amuzil.omegasource.entity.modules.force.MoveModule;
 import com.amuzil.omegasource.input.InputModule;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.api.magus.registry.Registries;
-import com.amuzil.omegasource.utils.AvatarCommand;
+import com.amuzil.omegasource.utils.commands.AvatarCommands;
 import com.lowdragmc.photon.client.fx.FX;
 import com.lowdragmc.photon.client.fx.FXHelper;
 import net.minecraft.client.Minecraft;
@@ -97,7 +97,7 @@ public class Avatar {
     public void onServerStarting(ServerStartingEvent event) {
         // Do something when the server starts
         LOGGER.info("Setting up Avatar commands...");
-        AvatarCommand.register(event.getServer().getCommands().getDispatcher());
+        AvatarCommands.register(event.getServer().getCommands().getDispatcher());
     }
 
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -118,9 +118,9 @@ public class Avatar {
 
     public static void reloadFX() {
         fire_bloom = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "fire_bloom"));
-        fire_bloom_perma = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "fire_bloom_perma"));
+        fire_bloom_perma = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "fire_bloom_perma2"));
         blue_fire = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "blue_fire"));
-        blue_fire_perma = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "blue_fire_perma"));
+        blue_fire_perma = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "fire_bloom_perma5"));
         orb_bloom = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "orb_bloom"));
         water = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "water"));
         steam = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "steam"));
