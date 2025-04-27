@@ -34,7 +34,9 @@ public class AvatarCommands {
 //        createElementCommand("grant", grantElementCommand);
 //        createElementCommand("take", takeElementCommand);
         // TODO -> Add the following commands:
-        //  - Add activate Form command
+        //  - Add trigger Form command
+        //  - Add trigger Skill command
+        //  - Add set SkillTrait command
         dispatcher.register(builder);
     }
 
