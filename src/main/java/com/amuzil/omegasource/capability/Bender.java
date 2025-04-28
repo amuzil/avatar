@@ -40,7 +40,7 @@ public class Bender implements IBender {
 
     // Persistent data
     private Element activeElement = Elements.FIRE; // Currently active element
-    private BendingSelection.Target selection = BendingSelection.Target.NONE; // Currently selected target TODO - Impl NBT
+    private BendingSelection selection = new BendingSelection();
     private final List<SkillCategoryData> skillCategoryData = new ArrayList<>();
     private final List<SkillData> skillData = new ArrayList<>();
     private final List<DataTrait> dataTraits = new ArrayList<>();
@@ -175,7 +175,7 @@ public class Bender implements IBender {
     }
 
     @Override
-    public void setSelectionTarget(BendingSelection.Target selection) {
+    public void setSelection(BendingSelection selection) {
         this.selection = selection;
         markDirty();
     }

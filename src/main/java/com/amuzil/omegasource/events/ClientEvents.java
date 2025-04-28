@@ -4,6 +4,7 @@ import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.capability.Bender;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -22,4 +23,5 @@ public class ClientEvents {
             Avatar.inputModule.terminate();
         }
     }
+
 }
