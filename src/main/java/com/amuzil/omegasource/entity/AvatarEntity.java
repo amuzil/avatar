@@ -215,7 +215,7 @@ public abstract class AvatarEntity extends Entity {
     }
 
     public void setElement(Element element) {
-        this.entityData.set(ELEMENT, element.id().toString());
+        this.entityData.set(ELEMENT, element.getId().toString());
         this.element = Elements.get(ResourceLocation.parse(this.entityData.get(ELEMENT)));
     }
 
@@ -234,7 +234,7 @@ public abstract class AvatarEntity extends Entity {
     @Override
     protected void defineSynchedData() {
         this.entityData.define(OWNER_ID, Optional.empty());
-        this.entityData.define(ELEMENT, Elements.FIRE.id().toString());
+        this.entityData.define(ELEMENT, Elements.FIRE.getId().toString());
         this.entityData.define(COLLIDABLE, false);
         this.entityData.define(DAMAGEABLE, false);
         this.entityData.define(PHYSICS, false);
@@ -256,7 +256,7 @@ public abstract class AvatarEntity extends Entity {
         // Element
         if (pCompound.contains("Element")) {
             this.element = Elements.get(ResourceLocation.parse(pCompound.getString("Element")));
-            this.entityData.set(ELEMENT, element.id().toString());
+            this.entityData.set(ELEMENT, element.getId().toString());
         }
 
         this.collidable = pCompound.getBoolean("Collidable");

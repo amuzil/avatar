@@ -39,9 +39,6 @@ public class SkillData implements DataTrait {
                     .stream()
                     .map(SkillTrait::clone)
                     .toList();
-
-        // TODO - Fix this by performing a deep copy of getSkill().getTraits() !!!
-
     }
 
     public SkillData(Skill skill) {

@@ -71,12 +71,16 @@ public class Bender implements IBender {
     public void tick() {
         if (entity instanceof Player) {
             List<Skill> skills = Registries.getSkills();
-            for (Skill skill : skills) {
-                if (getSkillData(skill).canUse()) {
+            for (Skill skill: skills) {
+                if (canUseSkill(skill)) {
                     skill.tick(entity, formPath);
                 }
             }
         }
+    }
+
+    private boolean canUseSkill(Skill skill) {
+        return getSkillData(skill).canUse() && getSkillCategoryData(skill.getCategory().getId()).canUse();
     }
 
     public void registerFormCondition() {
@@ -103,8 +107,12 @@ public class Bender implements IBender {
     }
 
     private SkillCategoryData getSkillCategoryData(Element element) {
+        return getSkillCategoryData(element.getId());
+    }
+
+    private SkillCategoryData getSkillCategoryData(ResourceLocation id) {
         return skillCategoryData.stream()
-                .filter(catData -> catData.getSkillCategory().name().equals(element.name()))
+                .filter(data -> data.getSkillCategory().getId().equals(id))
                 .findFirst()
                 .orElse(null);
     }
@@ -114,7 +122,10 @@ public class Bender implements IBender {
     }
 
     public SkillData getSkillData(ResourceLocation id) {
-        return skillData.stream().filter(skillData1 -> skillData1.getSkillId().equals(id)).toList().get(0);
+        return skillData.stream()
+                .filter(data -> data.getSkillId().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
     public void resetSkillData() {
@@ -228,7 +239,7 @@ public class Bender implements IBender {
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
         tag.putInt("DataVersion", DATA_VERSION);
-        tag.putString("Active Element", Objects.requireNonNullElse(activeElement, Elements.FIRE).id().toString());
+        tag.putString("Active Element", Objects.requireNonNullElse(activeElement, Elements.FIRE).getId().toString());
         skillCategoryData.forEach(catData -> tag.put(catData.name(), catData.serializeNBT()));
         skillData.forEach(sData -> tag.put(sData.name(), sData.serializeNBT()));
         return tag;
