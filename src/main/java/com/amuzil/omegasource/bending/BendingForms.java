@@ -20,7 +20,6 @@ public class BendingForms {
     public static final BendingForm COMBINE = new BendingForm("combine", BendingForm.Type.SHAPE);
     public static final BendingForm ARC = new BendingForm("arc", BendingForm.Type.INITIALIZER); // Trigger & charge motion Forms
     public static final BendingForm SHAPE = new BendingForm("shape", BendingForm.Type.INITIALIZER); // Trigger & charge shape Forms
-    public static final BendingForm TARGET = new BendingForm("target", BendingForm.Type.INITIALIZER);
     public static final BendingForm FOCUS = new BendingForm("focus", BendingForm.Type.INITIALIZER);
 
     public static void init() {}

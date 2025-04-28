@@ -44,7 +44,7 @@ public class Magi {
 
         // Initialise skilldata.
         this.skillData = new ArrayList<>();
-        for (Skill skill : Registries.skills) {
+        for (Skill skill : Registries.getSkills()) {
             skillData.add(new SkillData(skill));
         }
 

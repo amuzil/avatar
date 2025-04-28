@@ -1,10 +1,6 @@
 package com.amuzil.omegasource.utils;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.utils.maths.Point;
-
-import java.util.LinkedList;
-import java.util.List;
 
 
 public final class Constants {
@@ -15,8 +11,4 @@ public final class Constants {
     private Constants() {
         // Private constructor to prevent instantiation
     }
-
-
-
-
 }

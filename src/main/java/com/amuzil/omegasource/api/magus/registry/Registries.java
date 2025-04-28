@@ -29,17 +29,29 @@ public class Registries {
     public static Supplier<IForgeRegistry<Skill>> SKILLS;
     public static Supplier<IForgeRegistry<SkillCategory>> SKILL_CATEGORIES;
 
-    public static List<Form> forms = new ArrayList<>();
-    public static List<Skill> skills = new ArrayList<>();
-    public static List<SkillCategory> categories = new ArrayList<>();
-    public static List<DataTrait> traits = new ArrayList<>();
+    private static final List<Form> forms = new ArrayList<>();
+    private static final List<Skill> skills = new ArrayList<>();
+    private static final List<SkillCategory> categories = new ArrayList<>();
+    private static final List<DataTrait> traits = new ArrayList<>();
 
     private static boolean initialized_bending = false;
 
     public static void init() {}
 
+    public static List<Form> getForms() {
+        return forms;
+    }
+
     public static List<Skill> getSkills() {
         return skills;
+    }
+
+    public static List<SkillCategory> getSkillCategories() {
+        return categories;
+    }
+
+    public static List<DataTrait> getTraits() {
+        return traits;
     }
 
     public static void registerForm(Form form) {

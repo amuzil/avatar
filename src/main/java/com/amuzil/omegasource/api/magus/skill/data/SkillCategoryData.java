@@ -18,7 +18,7 @@ public class SkillCategoryData implements DataTrait {
     }
 
     public SkillCategoryData(SkillCategory category) {
-        this(category.id());
+        this(category.getId());
     }
 
     public ResourceLocation getId() {

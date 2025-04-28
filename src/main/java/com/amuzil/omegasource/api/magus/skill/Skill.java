@@ -38,7 +38,7 @@ public abstract class Skill {
 
     public Skill(ResourceLocation id, String name, SkillCategory category) {
         this.id = id;
-        this. name = "";
+        this. name = name;
         this.category = category;
         // Menu is default
         this.activatedType = RadixTree.ActivationType.MENU;

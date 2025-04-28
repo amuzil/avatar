@@ -123,14 +123,7 @@ public class InputModule {
     private void checkForm(BendingForm form) { // Check if the form met the conditions before sending the packet
         if (isBending) {
             if (!(isHoldingCtrl || isHoldingAlt)) {
-                if (form.equals(BendingForms.TARGET)) { // Don't send target Form packet
-                    int index = selection.ordinal() + 1;
-                    if (index >= TYPES.length)
-                        index = 0;
-                    selection = TYPES[index];
-                    bender.setSelectionTarget(selection);
-                    sendDebugMsg("Bending Selection: " + selection);
-                } else if (form.equals(BendingForms.STRIKE) || form.equals(BendingForms.BLOCK)) {
+                if (form.equals(BendingForms.STRIKE) || form.equals(BendingForms.BLOCK)) {
                     sendFormPacket(form, false);
                 } else if (isDoubleTap(form)) {
                     sendFormPacket(BendingForms.STEP, false);
@@ -147,8 +140,7 @@ public class InputModule {
 
     private void releaseForm(BendingForm form, int key) {
         glfwKeysDown.remove(key);
-        if (!form.equals(BendingForms.TARGET))
-            sendFormPacket(form, true);
+        sendFormPacket(form, true);
     }
 
     private void sendFormPacket(BendingForm form, boolean released) {
@@ -220,9 +212,9 @@ public class InputModule {
             System.out.println("Enabled!");
             Player player = Minecraft.getInstance().player;
             assert player != null;
-            IBender bender = Bender.getBender(player);
+            Bender bender = (Bender) Bender.getBender(player);
             System.out.println("Current Bender Element -> " + bender.getElement());
-            ((Bender)bender).printNBT();
+            bender.printNBT();
         } else {
             terminate();
             isBending = false;
