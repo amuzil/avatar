@@ -27,7 +27,7 @@ public class KeyBindings {
             "key.av3.bending_toggle",
             InputConstants.KEY_GRAVE,
             "key.categories.av3");
-    private static final KeyMapping selectTargetKey = new KeyMapping(
+    static final KeyMapping selectTargetKey = new KeyMapping(
             "key.av3.bending_toggle",
             InputConstants.KEY_TAB,
             "key.categories.av3");
@@ -87,42 +87,10 @@ public class KeyBindings {
                 Avatar.inputModule.toggleListeners();
                 Avatar.reloadFX();
             }
-            if (key.getKey() == selectTargetKey.getKey().getValue()
-                && key.getAction() == InputConstants.RELEASE) {
-                handleSelectRaycast();
-            }
-        }
-
-        private static void handleSelectRaycast() {
-            Minecraft mc = Minecraft.getInstance();
-
-//            Vec3 vector3d = mc.player.getEyePosition(1.0F);
-//            Vec3 vector3d1 = mc.player.getViewVector(1.0F);
-
-            double d0 = 15;
-//            double d1 = d0 * d0;
-
-//            Vec3 vector3d2 = vector3d.add(vector3d1.x * d0, vector3d1.y * d0, vector3d1.z * d0);
-//            AABB axisalignedbb = mc.player.getBoundingBox().expandTowards(vector3d1.scale(d0)).inflate(1.0D, 1.0D, 1.0D);
-            HitResult result = ProjectileUtil.getHitResultOnViewVector(mc.player, entity -> true, d0);
-            switch(result.getType()) {
-                case ENTITY -> TrackEntityResult((EntityHitResult)result, mc.player);
-                case BLOCK -> TrackBlockResult((EntityHitResult)result, mc.player);
-                case MISS -> HandleMiss();
-            }
-        }
-
-        private static void HandleMiss() {
-
-        }
-
-        private static void TrackBlockResult(EntityHitResult result, LocalPlayer player) {
-
-        }
-
-        private static void TrackEntityResult(EntityHitResult result, LocalPlayer player) {
-
-
+//            if (key.getKey() == selectTargetKey.getKey().getValue()
+//                && key.getAction() == InputConstants.RELEASE) {
+//                handleSelectRaycast();
+//            }
         }
     }
 }

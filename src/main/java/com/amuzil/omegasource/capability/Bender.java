@@ -48,11 +48,11 @@ public class Bender implements IBender {
     public Bender(LivingEntity entity) {
         this.entity = entity;
 
-        for (SkillCategory category : Registries.categories)
+        for (SkillCategory category : Registries.getSkillCategories())
             skillCategoryData.add(new SkillCategoryData(category));
-        for (Skill skill : Registries.skills)
+        for (Skill skill : Registries.getSkills())
             skillData.add(new SkillData(skill));
-        dataTraits.addAll(Registries.traits);
+        dataTraits.addAll(Registries.getTraits());
 
         // Allow use of all Elements & Skills for testing!
         setAvatar();
@@ -119,7 +119,7 @@ public class Bender implements IBender {
 
     public void resetSkillData() {
         skillData.clear();
-        for (Skill skill : Registries.skills)
+        for (Skill skill : Registries.getSkills())
             skillData.add(new SkillData(skill));
     }
 
@@ -228,7 +228,7 @@ public class Bender implements IBender {
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
         tag.putInt("DataVersion", DATA_VERSION);
-        tag.putString("Active Element", Objects.requireNonNullElse(activeElement, Elements.FIRE).id().toString());
+        tag.putString("Active Element", Objects.requireNonNullElse(activeElement, Elements.FIRE).getId().toString());
         skillCategoryData.forEach(catData -> tag.put(catData.name(), catData.serializeNBT()));
         skillData.forEach(sData -> tag.put(sData.name(), sData.serializeNBT()));
         return tag;

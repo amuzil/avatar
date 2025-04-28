@@ -13,6 +13,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -30,6 +33,7 @@ public class InputModule {
     private final Consumer<InputEvent.MouseButton> mouseListener;
     private final Consumer<TickEvent.ClientTickEvent> tickEventConsumer;
 
+    private boolean isSelecting = false;
     private boolean isHoldingShift = false;
     private boolean isHoldingCtrl = false;
     private boolean isHoldingAlt = false;
@@ -118,6 +122,39 @@ public class InputModule {
                     checkForm(form);
             }
         });
+
+        if(glfwKeysDown.containsKey(selectTargetKey.getKey()) && !isSelecting) {
+            isSelecting = true;
+            handleSelectRaycast();
+        }
+    }
+
+    private void handleSelectRaycast() {
+        if(isHoldingShift) {
+            // set selection type to self
+        }
+
+        Minecraft mc = Minecraft.getInstance();
+        double distance = 15; // todo config/bender data?
+        HitResult result = ProjectileUtil.getHitResultOnViewVector(mc.player, entity -> true, distance);
+        switch(result.getType()) {
+            case ENTITY -> TrackEntityResult((EntityHitResult)result, mc.player);
+            case BLOCK -> TrackBlockResult((EntityHitResult)result, mc.player);
+            case MISS -> HandleMiss(mc.player);
+        }
+        isSelecting = false;
+    }
+
+    private void HandleMiss(LocalPlayer player) {
+        // set selection type to none
+    }
+
+    private void TrackBlockResult(EntityHitResult result, LocalPlayer player) {
+        // set selection type to block
+    }
+
+    private void TrackEntityResult(EntityHitResult result, LocalPlayer player) {
+        // check if bendable entity then set selection type to entity
     }
 
     private void checkForm(BendingForm form) { // Check if the form met the conditions before sending the packet
