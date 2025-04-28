@@ -41,7 +41,6 @@ public class KeyBindings {
         createKeyMapping(BendingForms.COMBINE, InputConstants.KEY_B);
         createKeyMapping(BendingForms.ARC, InputConstants.KEY_LCONTROL);
         createKeyMapping(BendingForms.SHAPE, InputConstants.KEY_LALT);
-        createKeyMapping(BendingForms.TARGET, InputConstants.KEY_TAB);
         // Add more mappings as needed
     }
 
