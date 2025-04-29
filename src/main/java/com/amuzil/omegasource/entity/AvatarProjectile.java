@@ -10,7 +10,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -39,6 +38,7 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile,
 
     public void startEffect(BendingForm form) {
         FX fx = null;
+        System.out.println("Starting effect for " + form.name() + " " + element());
         if (element().equals(Elements.FIRE)) {
             if (form.name().equals("strike"))
                 fx = fire_bloom_perma;
@@ -57,6 +57,7 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile,
                 fx = water;
         }
         if (fx != null) {
+            System.out.println("MADE IT TO FX START");
             EntityEffect entityEffect = new EntityEffect(fx, this.level(), this);
             entityEffect.start();
         }

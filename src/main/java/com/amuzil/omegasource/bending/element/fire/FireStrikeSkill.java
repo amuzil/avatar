@@ -14,6 +14,8 @@ import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.entity.AvatarProjectile;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
+import com.amuzil.omegasource.network.AvatarNetwork;
+import com.amuzil.omegasource.network.packets.client.FormActivatedPacket;
 import com.amuzil.omegasource.utils.maths.Point;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
@@ -110,10 +112,11 @@ public class FireStrikeSkill extends BendingSkill {
         projectile.addModule(ModuleRegistry.create("ChangeSpeed"));
 
         if (!entity.level().isClientSide) {
+            System.out.println("Server side SFX VFX!!! " + projectile.getId());
             entity.level().addFreshEntity(projectile);
+            AvatarNetwork.sendToServer(new FormActivatedPacket(projectile.getId()));
         } else {
-            System.out.println("Client side SFX VFX SPFX!!!");
-            projectile.startEffect(STRIKE);
+            System.out.println("Client side SFX VFX!!! " + projectile.getId());
         }
 
         projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
