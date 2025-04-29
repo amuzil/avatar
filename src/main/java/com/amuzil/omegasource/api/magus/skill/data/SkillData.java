@@ -105,7 +105,7 @@ public class SkillData implements DataTrait {
         tag.putBoolean("Can Use", canUse);
         tag.putString("Skill State", state.name());
         skillTraits.forEach(skillTrait -> {
-            tag.put(skillTrait.name() + " Trait", skillTrait.serializeNBT());
+            tag.put(skillTrait.name() + "_" + skillTrait.getClass().getSimpleName(), skillTrait.serializeNBT());
         });
         return tag;
     }
@@ -118,7 +118,7 @@ public class SkillData implements DataTrait {
             state = Skill.SkillState.valueOf(tag.getString("Skill State"));
             if (!skillTraits.isEmpty())
                 skillTraits.forEach(skillTrait -> {
-                    skillTrait.deserializeNBT((CompoundTag) Objects.requireNonNull(tag.get(skillTrait.name() + " Trait")));
+                    skillTrait.deserializeNBT((CompoundTag) Objects.requireNonNull(tag.get(skillTrait.name() + "_" + skillTrait.getClass().getSimpleName())));
                     skillTrait.markClean();
                 });
         } catch (NullPointerException e) {

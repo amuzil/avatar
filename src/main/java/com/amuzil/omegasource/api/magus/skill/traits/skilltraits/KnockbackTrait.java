@@ -15,14 +15,14 @@ public class KnockbackTrait extends SkillTrait {
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = super.serializeNBT();
-        tag.putDouble(name(), knockback);
+        tag.putDouble("value", knockback);
         return tag;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         super.deserializeNBT(nbt);
-        knockback = nbt.getDouble(name());
+        knockback = nbt.getDouble("value");
     }
 
     public void setKnockback(double knockback) {

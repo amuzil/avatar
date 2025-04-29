@@ -10,6 +10,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.CompoundTagArgument;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -30,6 +31,7 @@ public class AvatarCommands {
                         })));
         createSkillCommands();
         createElementCommands();
+        createMasterCommands();
 //        createElementCommand("activate", activateElementCommand);
 //        createElementCommand("grant", grantElementCommand);
 //        createElementCommand("take", takeElementCommand);
@@ -52,6 +54,12 @@ public class AvatarCommands {
         for (Skill skill : Registries.getSkills()) {
             builder.then(setCanUseSkillCommand(skill, "grant"));
             builder.then(setCanUseSkillCommand(skill, "take"));
+        }
+    }
+
+    private static void createMasterCommands() {
+        for (Element elem : Elements.ALL_FOUR.values()) {
+            builder.then(masterElementCommand(elem));
         }
     }
 
@@ -83,8 +91,21 @@ public class AvatarCommands {
                         .executes(c -> setCanUseSkill(c, skill, canUse, null))
                         .then(Commands.argument("target", EntityArgument.player())
                                 .executes(c -> setCanUseSkill(c, skill, canUse, EntityArgument.getPlayer(c, "target")))
+                                .then(Commands.argument("nbt", CompoundTagArgument.compoundTag())
+                                        .executes(c -> setSkillTrait(c, skill, canUse, EntityArgument.getPlayer(c, "target"), CompoundTagArgument.getCompoundTag(c, "nbt")))
+                                )
                         )
                 ));
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> masterElementCommand(Element elem) {
+        return Commands.literal("master")
+                .then(Commands.literal(elem.nickName())
+                        .executes(c -> masterElement(c, elem, null))
+                        .then(Commands.argument("target", EntityArgument.player())
+                                .executes(c -> masterElement(c, elem, EntityArgument.getPlayer(c, "target")))
+                        )
+                );
     }
 
 //        private static void createElementCommand(String action, Command<CommandSourceStack> subCommand) {

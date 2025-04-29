@@ -57,12 +57,12 @@ public class ExecuteFormPacket implements AvatarPacket {
                 return; // Unhandled Form - Discard and print no effects
             }
             level.addFreshEntity(entity);
-            FormActivatedPacket packet = new FormActivatedPacket(msg.form, Elements.FIRE, entity.getId());
 
             /* Distribute packet to clients within 500 blocks | CLIENT */
-            AvatarNetwork.CHANNEL.send(PacketDistributor.NEAR.with(
-                    () -> new PacketDistributor.TargetPoint(player.getX(), player.getY(), player.getZ(),
-                            500, level.dimension())), packet);
+//            FormActivatedPacket packet = new FormActivatedPacket(msg.form, Elements.FIRE, entity.getId());
+//            AvatarNetwork.CHANNEL.send(PacketDistributor.NEAR.with(
+//                    () -> new PacketDistributor.TargetPoint(player.getX(), player.getY(), player.getZ(),
+//                            500, level.dimension())), packet);
         });
 
         ctx.get().setPacketHandled(true);

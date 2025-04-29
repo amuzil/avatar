@@ -8,6 +8,7 @@ import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.traits.entitytraits.PointsTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.*;
+import com.amuzil.omegasource.bending.BendingForms;
 import com.amuzil.omegasource.bending.BendingSkill;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.capability.Bender;
@@ -33,7 +34,7 @@ public class FireStrikeSkill extends BendingSkill {
         addTrait(new SpeedTrait(0.875f, "speed"));
         addTrait(new TimedTrait(15, "lifetime"));
         // Ticks not seconds...
-        addTrait(new TimedTrait(40, "firetime"));
+        addTrait(new TimedTrait(40, "fire_time"));
         /** TODO - Fix this, can't add duplicate traits!
          * See {@link com.amuzil.omegasource.api.magus.skill.Skill#addTrait} */
         addTrait(new SpeedTrait(0.85f, "speed_factor"));
@@ -97,7 +98,7 @@ public class FireStrikeSkill extends BendingSkill {
         projectile.addModule(ModuleRegistry.create("SimpleKnockback"));
 
         // Set Fire module
-        projectile.addTraits(data.getTrait("firetime", TimedTrait.class));
+        projectile.addTraits(data.getTrait("fire_time", TimedTrait.class));
         projectile.addModule(ModuleRegistry.create("FireTime"));
 
         // Damage module
@@ -109,8 +110,10 @@ public class FireStrikeSkill extends BendingSkill {
         projectile.addModule(ModuleRegistry.create("ChangeSpeed"));
 
         if (!entity.level().isClientSide) {
-//            proj = ElementProjectile.createElementEntity(STRIKE, Elements.FIRE, (ServerPlayer) entity, (ServerLevel) entity.level());
             entity.level().addFreshEntity(projectile);
+        } else {
+            System.out.println("Client side SFX VFX SPFX!!!");
+            projectile.startEffect(STRIKE);
         }
 
         projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);

@@ -26,7 +26,7 @@ public class FireModule implements ICollisionModule {
     @Override
     public void tick(AvatarEntity entity) {
         int firetime = -1;
-        TimedTrait fire = entity.getTrait("firetime", TimedTrait.class);
+        TimedTrait fire = entity.getTrait("fire_time", TimedTrait.class);
         if (fire == null) {
             Avatar.LOGGER.warn("No fire time trait set for fire module. Remove the module or add the trait to the entity.");
             return;

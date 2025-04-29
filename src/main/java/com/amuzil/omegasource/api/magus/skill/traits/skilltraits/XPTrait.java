@@ -15,14 +15,14 @@ public class XPTrait extends SkillTrait {
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = super.serializeNBT();
-        tag.putDouble(name(), xp);
+        tag.putDouble("value", xp);
         return tag;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         super.deserializeNBT(nbt);
-        xp = nbt.getDouble(name());
+        xp = nbt.getDouble("value");
     }
 
     public void setXP(double xp) {

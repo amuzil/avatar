@@ -15,14 +15,14 @@ public class StringTrait extends SkillTrait {
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = super.serializeNBT();
-        tag.putString(name(), info);
+        tag.putString("value", info);
         return tag;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         super.deserializeNBT(nbt);
-        info = nbt.getString(name());
+        info = nbt.getString("value");
     }
 
     public void setInfo(String info) {
