@@ -28,8 +28,8 @@ public class SourceTrait extends SkillTrait {
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = super.serializeNBT();
-        tag.putInt(name() + " State", Block.getId((BlockState) state));
-        tag.putIntArray(name() + " Pos", new int[] {
+        tag.putInt("value" + " State", Block.getId((BlockState) state));
+        tag.putIntArray("value" + " Pos", new int[] {
                 pos.getX(), pos.getY(), pos.getZ()
         });
         return tag;
@@ -38,8 +38,8 @@ public class SourceTrait extends SkillTrait {
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         super.deserializeNBT(nbt);
-        state = Block.stateById(nbt.getInt(name() + " State"));
-        int[] blockPos = nbt.getIntArray(name() + " Pos");
+        state = Block.stateById(nbt.getInt("value" + " State"));
+        int[] blockPos = nbt.getIntArray("value" + " Pos");
         pos = new BlockPos(blockPos[0],  blockPos[1], blockPos[2]);
     }
 

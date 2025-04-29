@@ -46,7 +46,7 @@ public abstract class Skill {
         this.skillTraits = new LinkedList<>();
         this.activationTypes = new LinkedList<>();
 
-        // Maybe static instances of traits rather then new instances per Skill? Unsure
+        // Maybe static instances of traits rather than new instances per Skill? Unsure
         addTrait(new UseTrait("use_skill", false));
 
         Registries.registerSkill(this);
@@ -55,9 +55,8 @@ public abstract class Skill {
     public boolean addTrait(SkillTrait trait) {
         String name = trait.name();
         for (SkillTrait st : this.skillTraits) {
-            if (st.name().equals(name)) {
+            if (st.name().equals(name))
                 return false;
-            }
         }
         this.skillTraits.add(trait);
         return true;

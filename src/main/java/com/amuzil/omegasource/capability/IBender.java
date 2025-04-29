@@ -31,6 +31,8 @@ public interface IBender extends INBTSerializable<CompoundTag> {
 
     void setCanUseAllSkills();
 
+    void setCanUseAllSkills(Element element);
+
     void setSelection(BendingSelection selection);
     BendingSelection getSelection();
 

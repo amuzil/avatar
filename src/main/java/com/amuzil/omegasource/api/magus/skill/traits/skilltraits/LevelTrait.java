@@ -15,14 +15,14 @@ public class LevelTrait extends SkillTrait {
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = super.serializeNBT();
-        tag.putInt(name(), level);
+        tag.putInt("value", level);
         return tag;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         super.deserializeNBT(nbt);
-        level = nbt.getInt(name());
+        level = nbt.getInt("value");
     }
 
     public void setLevel(int level) {

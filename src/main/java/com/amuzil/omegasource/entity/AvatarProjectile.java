@@ -1,7 +1,11 @@
 package com.amuzil.omegasource.entity;
 
+import com.amuzil.omegasource.bending.BendingForm;
+import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.entity.modules.IForceModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
+import com.lowdragmc.photon.client.fx.EntityEffect;
+import com.lowdragmc.photon.client.fx.FX;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -11,6 +15,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+
+import static com.amuzil.omegasource.Avatar.*;
 
 
 public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile, ItemSupplier {
@@ -28,6 +34,33 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile,
 //        addCollisionModule((ICollisionModule) ModuleRegistry.create("Knockback"));
         addModule(ModuleRegistry.create("Timeout"));
 
+    }
+
+    public void startEffect(BendingForm form) {
+        FX fx = null;
+        System.out.println("Starting effect for " + form.name() + " " + element());
+        if (element().equals(Elements.FIRE)) {
+            if (form.name().equals("strike"))
+                fx = fire_bloom_perma;
+            if (form.name().equals("block"))
+                fx = blue_fire_perma;
+            if (form.name().equals("arc"))
+                fx = null;
+            if (form.name().equals("null"))
+                fx = fire_bloom_perma;
+            if (form.name().equals("step"))
+                fx = blue_fire_perma;
+        } else if (element().equals(Elements.WATER)) {
+            if (form.name().equals("strike"))
+                fx = water;
+            if (form.name().equals("block"))
+                fx = water;
+        }
+        if (fx != null) {
+            System.out.println("MADE IT TO FX START");
+            EntityEffect entityEffect = new EntityEffect(fx, this.level(), this);
+            entityEffect.start();
+        }
     }
 
 

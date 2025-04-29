@@ -27,18 +27,18 @@ public class ColourTrait extends SkillTrait {
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = super.serializeNBT();
-        tag.putDouble(name() + "Red", r);
-        tag.putDouble(name() + "Green", g);
-        tag.putDouble(name() + "Blue", b);
+        tag.putDouble("Red", r);
+        tag.putDouble("Green", g);
+        tag.putDouble("Blue", b);
         return tag;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         super.deserializeNBT(nbt);
-        r = nbt.getDouble(name() + "Red");
-        g = nbt.getDouble(name() + "Green");
-        b = nbt.getDouble(name() + "Blue");
+        r = nbt.getDouble("Red");
+        g = nbt.getDouble("Green");
+        b = nbt.getDouble("Blue");
     }
 
     public void setR(double r) {

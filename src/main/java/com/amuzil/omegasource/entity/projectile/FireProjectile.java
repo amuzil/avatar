@@ -291,7 +291,7 @@ public class FireProjectile extends ElementProjectile {
                     this.discard();
                     fireProjectile.hasElement = true;
 
-                    AvatarNetwork.sendToServer(new FormActivatedPacket(BendingForms.NULL, Elements.FIRE, fireProjectile.getId()));
+                    AvatarNetwork.sendToServer(new FormActivatedPacket(fireProjectile.getId()));
                 } else {
                     if (!this.getOwner().equals(fireProjectile.getOwner())) {
                         ElementCollision collisionEntity = new ElementCollision(this.getX(), this.getY(), this.getZ(), this.level());

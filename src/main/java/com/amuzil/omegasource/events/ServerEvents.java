@@ -67,6 +67,17 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
+    public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedOutEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer serverPlayer)) return;
+
+        serverPlayer.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
+            CompoundTag tag = bender.serializeNBT();
+            AvatarNetwork.sendToClient(new SyncBenderPacket(tag, serverPlayer.getUUID()), serverPlayer);
+            System.out.println("PlayerLoggedOutEvent SYNC SERVER TO CLIENT");
+        });
+    }
+
+    @SubscribeEvent
     public static void worldTick(LivingEvent.LivingTickEvent event) {
         if (event.getEntity() != null && event.getEntity().isAlive()) {
             Bender bender = (Bender) Bender.getBender(event.getEntity());

@@ -13,9 +13,12 @@ import com.amuzil.omegasource.api.magus.skill.traits.DataTrait;
 import com.amuzil.omegasource.bending.BendingSelection;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
+import com.amuzil.omegasource.network.AvatarNetwork;
+import com.amuzil.omegasource.network.packets.client.SyncBenderPacket;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import org.apache.logging.log4j.LogManager;
@@ -175,6 +178,16 @@ public class Bender implements IBender {
     }
 
     @Override
+    public void setCanUseAllSkills(Element element) {
+        setCanUseElement(true, element);
+        skillData.forEach(skill -> {
+            if (skill.getSkill().getCategory().getId().equals(element.getId()))
+                skill.setCanUse(true);
+        });
+        markDirty();
+    }
+
+    @Override
     public void setSelection(BendingSelection selection) {
         this.selection = selection;
         markDirty();
@@ -203,6 +216,15 @@ public class Bender implements IBender {
     @Override
     public boolean isDirty() {
         return this.isDirty;
+    }
+
+    public void syncToClient() {
+        if (!entity.level().isClientSide()) {
+            if (entity instanceof ServerPlayer player) {
+                SyncBenderPacket packet = new SyncBenderPacket(this.serializeNBT(), player.getUUID());
+                AvatarNetwork.sendToClient(packet, player);
+            }
+        }
     }
 
     // TODO - Create generic method to check & return if data in NBT tag exists & warn if it doesn't

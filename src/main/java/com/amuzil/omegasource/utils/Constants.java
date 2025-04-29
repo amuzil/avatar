@@ -8,6 +8,20 @@ public final class Constants {
 
     public static final String MOD_ID = Avatar.MOD_ID;
 
+    // Firebending
+    public static final String DAMAGE = "damage";
+    public static final String SIZE = "size";
+    public static final String MAX_SIZE = "max_size";
+    public static final String KNOCKBACK = "knockback";
+    public static final String FIRE_COLOUR = "fire_colour";
+    public static final String SPEED = "speed";
+    public static final String LIFETIME = "lifetime";
+    public static final String FIRE_TIME = "fire_time";
+    public static final String SPEED_FACTOR = "speed_factor";
+    public static final String HEIGHT_CURVE = "height_curve";
+    public static final String WIDTH_CURVE = "width_curve";
+    public static final String KNOCKBACK_DIRECTION = "knockback_direction";
+
     private Constants() {
         // Private constructor to prevent instantiation
     }

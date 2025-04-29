@@ -3,6 +3,7 @@ package com.amuzil.omegasource.api.magus.skill.traits.skilltraits;
 import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
 import net.minecraft.nbt.CompoundTag;
 
+
 public class SpeedTrait extends SkillTrait {
 
     private double speed = 1;
@@ -15,14 +16,14 @@ public class SpeedTrait extends SkillTrait {
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = super.serializeNBT();
-        tag.putDouble(name(), speed);
+        tag.putDouble("value", speed);
         return tag;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         super.deserializeNBT(nbt);
-        speed = nbt.getDouble(name());
+        speed = nbt.getDouble("value");
     }
 
     public void setSpeed(double speed) {

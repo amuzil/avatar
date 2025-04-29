@@ -18,14 +18,14 @@ public class TimedTrait extends SkillTrait {
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = super.serializeNBT();
-        tag.putInt(name(), time);
+        tag.putInt("value", time);
         return tag;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         super.deserializeNBT(nbt);
-        time = nbt.getInt(name());
+        time = nbt.getInt("value");
     }
 
     public void setTime(int time) {
