@@ -24,6 +24,12 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
         this.target = target;
     }
 
+    public BendingSelection(Target target)
+    {
+        Reset();
+        target = target;
+    }
+
     public BendingSelection()
     {
         Reset();

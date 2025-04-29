@@ -4,7 +4,6 @@ import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.bending.BendingForm;
 import com.amuzil.omegasource.bending.BendingForms;
 import com.amuzil.omegasource.bending.BendingSelection;
-import com.amuzil.omegasource.capability.IBender;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.forms.ExecuteFormPacket;
 import com.amuzil.omegasource.network.packets.forms.ReleaseFormPacket;
@@ -25,7 +24,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
-import static com.amuzil.omegasource.bending.BendingSelection.Target.TYPES;
+import static com.amuzil.omegasource.bending.BendingSelection.Target.*;
 import static com.amuzil.omegasource.input.KeyBindings.*;
 
 
@@ -133,35 +132,35 @@ public class InputModule {
     private void handleSelectRaycast() {
         if(isHoldingShift) {
             // set selection type to self
+            bender.setSelection(new BendingSelection(SELF));
         }
 
         Minecraft mc = Minecraft.getInstance();
         double distance = 15; // todo config/bender data?
         HitResult result = ProjectileUtil.getHitResultOnViewVector(mc.player, entity -> true, distance);
         switch(result.getType()) {
-            case ENTITY -> TrackEntityResult((EntityHitResult)result, mc.player);
-            case BLOCK -> TrackBlockResult((BlockHitResult)result, mc.player);
-            case MISS -> HandleMiss(mc.player);
+            case ENTITY -> TrackEntityResult((EntityHitResult)result);
+            case BLOCK -> TrackBlockResult((BlockHitResult)result);
+            case MISS -> HandleMiss();
         }
         isSelecting = false;
     }
 
-    private void HandleMiss(LocalPlayer player) {
+    private void HandleMiss() {
         // set selection type to none
-        IBender bender = Bender.getBender(player);
         bender.setSelection(new BendingSelection());
     }
 
-    private void TrackBlockResult(BlockHitResult result, LocalPlayer player) {
-        IBender bender = Bender.getBender(player);
+    private void TrackBlockResult(BlockHitResult result) {
         BendingSelection selection = bender.getSelection();
         selection.AddBlockPosition(result.getBlockPos());
+        bender.setSelection(selection);
     }
 
-    private void TrackEntityResult(EntityHitResult result, LocalPlayer player) {
-        IBender bender = Bender.getBender(player);
+    private void TrackEntityResult(EntityHitResult result) {
         BendingSelection selection = bender.getSelection();
         selection.AddEntityId(result.getEntity().getUUID());
+        bender.setSelection(selection);
     }
 
     private void checkForm(BendingForm form) { // Check if the form met the conditions before sending the packet
