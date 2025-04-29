@@ -1,19 +1,23 @@
 package com.amuzil.omegasource.bending;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.*;
+import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 
-public class BendingSelection {
+public class BendingSelection implements INBTSerializable<CompoundTag> {
     public List<BlockPos> blockPositions;
-    public List<Long> entityIds;
+    public List<UUID> entityIds;
     public List<String> skillIds;
     public Target target;
 
-    public BendingSelection(List<BlockPos> positions, List<Long> entities, List<String> skills, Target target) {
+    public BendingSelection(List<BlockPos> positions, List<UUID> entities, List<String> skills, Target target) {
         blockPositions = positions;
         entityIds = entities;
         skillIds = skills;
@@ -33,13 +37,68 @@ public class BendingSelection {
     }
 
     public void AddBlockPositions(List<BlockPos> pos) {
+        if(target != Target.BLOCK) {
+            entityIds = new ArrayList<>();
+            skillIds = new ArrayList<>();
+            target = Target.BLOCK;
+        }
         blockPositions.addAll(pos);
-        target = Target.BLOCK;
     }
 
     public void AddBlockPosition(BlockPos pos) {
+        if(target != Target.BLOCK) {
+            entityIds = new ArrayList<>();
+            skillIds = new ArrayList<>();
+            target = Target.BLOCK;
+        }
         blockPositions.add(pos);
-        target = Target.BLOCK;
+    }
+
+    public void AddSkillId(String skillId) {
+        if(target != Target.SKILL) {
+            entityIds = new ArrayList<>();
+            blockPositions = new ArrayList<>();
+            target = Target.SKILL;
+        }
+        skillIds.add(skillId);
+    }
+
+    public void AddEntityId(UUID entityId) {
+        if(target != Target.ENTITY) {
+            skillIds = new ArrayList<>();
+            blockPositions = new ArrayList<>();
+            target = Target.ENTITY;
+        }
+        entityIds.add(entityId);
+    }
+
+    public void AddSkillIds(List<String> skillIds) {
+        if(target != Target.SKILL) {
+            entityIds = new ArrayList<>();
+            blockPositions = new ArrayList<>();
+            target = Target.SKILL;
+        }
+        this.skillIds.addAll(skillIds);
+    }
+
+    public void AddEntityIds(List<UUID> entityIds) {
+        if(target != Target.ENTITY) {
+            skillIds = new ArrayList<>();
+            blockPositions = new ArrayList<>();
+            target = Target.ENTITY;
+        }
+        this.entityIds.addAll(entityIds);
+    }
+
+    public void RemoveEntity(long entityId) {
+        entityIds.remove(entityId);
+    }
+
+    BendingSelection Copy() {
+        var positions = new ArrayList<>(this.blockPositions);
+        var entityIds = new ArrayList<>(this.entityIds);
+        var skillIds = new ArrayList<>(this.skillIds);
+        return new BendingSelection(positions, entityIds, skillIds, target);
     }
 
     @Override
@@ -54,35 +113,83 @@ public class BendingSelection {
         return target + ": " + suffix;
     }
 
-    void AddSkillId(String skillId) {
-        skillIds.add(skillId);
-        target = Target.SKILL;
+    @Override
+    public CompoundTag serializeNBT() {
+        CompoundTag compoundTag = new CompoundTag();
+
+        compoundTag.putString("targetType", this.target.toString());
+
+        switch(this.target)
+        {
+            case BLOCK:
+                ListTag blockPositions = new ListTag();
+                for(int i = 0; i < this.blockPositions.size(); i++) {
+                    CompoundTag blockPos = new CompoundTag();
+                    BlockPos current = this.blockPositions.get(i);
+                    blockPos.putInt("x", current.getX());
+                    blockPos.putInt("y", current.getX());
+                    blockPos.putInt("z", current.getX());
+                    blockPositions.add(i, blockPos);
+                }
+                compoundTag.put("blockPositions", blockPositions);
+                break;
+            case ENTITY:
+                ListTag entities = new ListTag();
+                for(int i = 0; i < this.entityIds.size(); i++) {
+                    UUID current = this.entityIds.get(i);
+                    entities.add(i, NbtUtils.createUUID(current));
+                }
+                compoundTag.put("entities", entities);
+                break;
+            case SKILL:
+                ListTag skills = new ListTag();
+                for(int i = 0; i < this.skillIds.size(); i++) {
+                    String current = this.skillIds.get(i);
+                    skills.add(i, StringTag.valueOf(current));
+                }
+                compoundTag.put("skills", skills);
+                break;
+        }
+        return compoundTag;
     }
 
-    void AddEntityId(long entityId) {
-        entityIds.add(entityId);
-        target = Target.SKILL;
-    }
+    @Override
+    public void deserializeNBT(CompoundTag compoundTag) {
+        String targetType = compoundTag.getString("targetType");
+        this.target = Enum.valueOf(Target.class, targetType);
 
-    void AddSkillIds(List<String> skillIds) {
-        this.skillIds.addAll(skillIds);
-        target = Target.SKILL;
-    }
+        this.blockPositions = new ArrayList<>();
+        this.entityIds = new ArrayList<>();
+        this.skillIds = new ArrayList<>();
 
-    void AddEntityIds(List<Long> entityIds) {
-        this.entityIds.addAll(entityIds);
-        target = Target.SKILL;
-    }
-
-    void RemoveEntity(long entityId) {
-        entityIds.remove(entityId);
-    }
-
-    BendingSelection Copy() {
-        var positions = new ArrayList<>(blockPositions);
-        var entityIds = new ArrayList<>(this.entityIds);
-        var skillIds = new ArrayList<>(this.skillIds);
-        return new BendingSelection(positions, entityIds, skillIds, target);
+        switch(this.target)
+        {
+            case BLOCK:
+                ListTag blockPositions = (ListTag)compoundTag.get("blockPositions");
+                for(int i = 0; i < blockPositions.size(); i++) {
+                    CompoundTag blockPos = (CompoundTag) blockPositions.get(i);
+                    int x = blockPos.getInt("x");
+                    int y = blockPos.getInt("y");
+                    int z = blockPos.getInt("z");
+                    BlockPos current = new BlockPos(x,y,z);
+                    this.blockPositions.add(current);
+                }
+                break;
+            case ENTITY:
+                ListTag entities = (ListTag)compoundTag.get("entities");
+                for(int i = 0; i < entities.size(); i++) {
+                    UUID current = NbtUtils.loadUUID(entities.get(i));
+                    this.entityIds.add(current);
+                }
+                break;
+            case SKILL:
+                ListTag skills = (ListTag)compoundTag.get("skills");
+                for(int i = 0; i < skills.size(); i++) {
+                    String current = skills.get(i).getAsString();
+                    this.skillIds.add(current);
+                }
+                break;
+        }
     }
 
     public enum Target {

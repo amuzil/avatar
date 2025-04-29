@@ -14,6 +14,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.client.event.InputEvent;
@@ -139,7 +140,7 @@ public class InputModule {
         HitResult result = ProjectileUtil.getHitResultOnViewVector(mc.player, entity -> true, distance);
         switch(result.getType()) {
             case ENTITY -> TrackEntityResult((EntityHitResult)result, mc.player);
-            case BLOCK -> TrackBlockResult((EntityHitResult)result, mc.player);
+            case BLOCK -> TrackBlockResult((BlockHitResult)result, mc.player);
             case MISS -> HandleMiss(mc.player);
         }
         isSelecting = false;
@@ -147,14 +148,20 @@ public class InputModule {
 
     private void HandleMiss(LocalPlayer player) {
         // set selection type to none
+        IBender bender = Bender.getBender(player);
+        bender.setSelection(new BendingSelection());
     }
 
-    private void TrackBlockResult(EntityHitResult result, LocalPlayer player) {
-        // set selection type to block
+    private void TrackBlockResult(BlockHitResult result, LocalPlayer player) {
+        IBender bender = Bender.getBender(player);
+        BendingSelection selection = bender.getSelection();
+        selection.AddBlockPosition(result.getBlockPos());
     }
 
     private void TrackEntityResult(EntityHitResult result, LocalPlayer player) {
-        // check if bendable entity then set selection type to entity
+        IBender bender = Bender.getBender(player);
+        BendingSelection selection = bender.getSelection();
+        selection.AddEntityId(result.getEntity().getUUID());
     }
 
     private void checkForm(BendingForm form) { // Check if the form met the conditions before sending the packet

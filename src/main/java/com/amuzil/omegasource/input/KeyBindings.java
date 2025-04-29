@@ -87,10 +87,6 @@ public class KeyBindings {
                 Avatar.inputModule.toggleListeners();
                 Avatar.reloadFX();
             }
-//            if (key.getKey() == selectTargetKey.getKey().getValue()
-//                && key.getAction() == InputConstants.RELEASE) {
-//                handleSelectRaycast();
-//            }
         }
     }
 }

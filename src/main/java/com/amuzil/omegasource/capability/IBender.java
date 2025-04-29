@@ -32,6 +32,7 @@ public interface IBender extends INBTSerializable<CompoundTag> {
     void setCanUseAllSkills();
 
     void setSelection(BendingSelection selection);
+    BendingSelection getSelection();
 
     // Reset all non-persistent data
     void reset();

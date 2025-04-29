@@ -181,6 +181,11 @@ public class Bender implements IBender {
     }
 
     @Override
+    public BendingSelection getSelection() {
+        return this.selection;
+    }
+
+    @Override
     public void reset() {
         this.formPath.clear();
     }
