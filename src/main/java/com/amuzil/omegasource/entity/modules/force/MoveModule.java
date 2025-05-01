@@ -1,6 +1,8 @@
 package com.amuzil.omegasource.entity.modules.force;
 
+import com.amuzil.omegasource.bending.BendingForms;
 import com.amuzil.omegasource.entity.AvatarEntity;
+import com.amuzil.omegasource.entity.AvatarProjectile;
 import com.amuzil.omegasource.entity.modules.IForceModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -25,12 +27,11 @@ public class MoveModule implements IForceModule {
     @Override
     public void tick(AvatarEntity entity) {
 
-//        Avatar.LOGGER.debug(entity.position());
-
-        if (entity.level().isClientSide)
-            entity.level().addParticle(ParticleTypes.FLAME,
-                    entity.xo, entity.yo, entity.zo,
-                    0.0D, 0.0D, 0.0D);
+        if (entity.level().isClientSide) {
+            if (entity instanceof AvatarProjectile projectile) {
+                projectile.startEffect(BendingForms.STRIKE);
+            }
+        }
 
         boolean flag = entity.physics();
         Vec3 deltaMovement = entity.getDeltaMovement();

@@ -73,7 +73,7 @@ public class ServerEvents {
         serverPlayer.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
             CompoundTag tag = bender.serializeNBT();
             AvatarNetwork.sendToClient(new SyncBenderPacket(tag, serverPlayer.getUUID()), serverPlayer);
-            System.out.println("PlayerLoggedOutEvent SYNC SERVER TO CLIENT");
+            System.out.println("PlayerLoggedOutEvent SYNC SERVER TO CLIENT ON LEAVE BOIS");
         });
     }
 

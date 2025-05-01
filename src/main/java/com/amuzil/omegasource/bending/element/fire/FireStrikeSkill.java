@@ -8,14 +8,11 @@ import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.traits.entitytraits.PointsTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.*;
-import com.amuzil.omegasource.bending.BendingForms;
 import com.amuzil.omegasource.bending.BendingSkill;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.entity.AvatarProjectile;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
-import com.amuzil.omegasource.network.AvatarNetwork;
-import com.amuzil.omegasource.network.packets.client.FormActivatedPacket;
 import com.amuzil.omegasource.utils.maths.Point;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
@@ -72,7 +69,7 @@ public class FireStrikeSkill extends BendingSkill {
         projectile.setHeight((float) size);
         projectile.setNoGravity(true);
         projectile.setDamageable(false);
-        projectile.setCollidable(true);
+        projectile.setHittable(true);
 
         projectile.addTraits(data.getTrait("max_size", SizeTrait.class));
 
@@ -111,14 +108,6 @@ public class FireStrikeSkill extends BendingSkill {
         projectile.addTraits(data.getTrait("speed_factor", SpeedTrait.class));
         projectile.addModule(ModuleRegistry.create("ChangeSpeed"));
 
-        if (!entity.level().isClientSide) {
-            System.out.println("Server side SFX VFX!!! " + projectile.getId());
-            entity.level().addFreshEntity(projectile);
-            AvatarNetwork.sendToServer(new FormActivatedPacket(projectile.getId()));
-        } else {
-            System.out.println("Client side SFX VFX!!! " + projectile.getId());
-        }
-
         projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
         projectile.init();
         if (bender != null) {
@@ -126,6 +115,10 @@ public class FireStrikeSkill extends BendingSkill {
             data.setState(SkillState.STOP);
 
             resetCooldown(data);
+        }
+
+        if (!entity.level().isClientSide) {
+            entity.level().addFreshEntity(projectile);
         }
     }
 

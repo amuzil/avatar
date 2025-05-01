@@ -47,7 +47,7 @@ public abstract class AvatarEntity extends Entity {
     private final List<DataTrait> traits = new LinkedList<>();
     private Entity owner;
     private Element element;
-    private boolean collidable = false;
+    private boolean hittable = false;
     private boolean damageable = false;
 
     // Data Sync for Owner
@@ -57,6 +57,27 @@ public abstract class AvatarEntity extends Entity {
 
     public AvatarEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
+    }
+
+    /**
+     * Called to update the entity's position/logic.
+     */
+    @Override
+    public void tick() {
+        super.tick();
+
+        // Tick appropriate modules in each order
+        modules.forEach(mod -> mod.tick(this));
+        controlModules.forEach(mod -> mod.tick(this));
+        forceModules.forEach(mod -> mod.tick(this));
+        collisionModules.forEach(mod -> mod.tick(this));
+        renderModules.forEach(mod -> mod.tick(this));
+    }
+
+    public void tickDespawn() {
+        if (tickCount >= maxLifetime()) {
+            this.discard();
+        }
     }
 
     public static float lerpRotation(float pCurrentRotation, float pTargetRotation) {
@@ -72,6 +93,12 @@ public abstract class AvatarEntity extends Entity {
     }
 
     // --- Module Management ---
+    public void printModules() {
+        System.out.println("Server-Side: " + this.level().isClientSide() + " " + this.getUUID() + " has the following modules:");
+        modules.forEach(m -> System.out.print(m.id() + ", "));
+        System.out.println();
+    }
+
     public void addModule(IEntityModule mod) {
         modules.add(mod);
     }
@@ -190,8 +217,7 @@ public abstract class AvatarEntity extends Entity {
         return null;
     }
 
-    /*
-        Call this after adding it to a world.
+    /** Call this after adding it to a world.
      */
     public void init() {
         modules.forEach(mod -> mod.init(this));
@@ -216,11 +242,11 @@ public abstract class AvatarEntity extends Entity {
 
     public void setElement(Element element) {
         this.entityData.set(ELEMENT, element.getId().toString());
-        this.element = Elements.get(ResourceLocation.parse(this.entityData.get(ELEMENT)));
+        this.element = Elements.get(ResourceLocation.parse(this.entityData.get(ELEMENT))); // Doesn't live to see the next tick
     }
 
     public Element element() {
-        return this.element;
+        return Elements.get(ResourceLocation.parse(this.entityData.get(ELEMENT)));
     }
 
     public void setPhysics(boolean physics) {
@@ -256,10 +282,10 @@ public abstract class AvatarEntity extends Entity {
         // Element
         if (pCompound.contains("Element")) {
             this.element = Elements.get(ResourceLocation.parse(pCompound.getString("Element")));
-            this.entityData.set(ELEMENT, element.getId().toString());
+            this.entityData.set(ELEMENT, pCompound.getString("Element"));
         }
 
-        this.collidable = pCompound.getBoolean("Collidable");
+        this.hittable = pCompound.getBoolean("Collidable");
         this.damageable = pCompound.getBoolean("Damageable");
 
         readTraits(pCompound);
@@ -279,7 +305,7 @@ public abstract class AvatarEntity extends Entity {
             pCompound.putString("Element", element.name());
         }
 
-        pCompound.putBoolean("Collidable", collidable);
+        pCompound.putBoolean("Collidable", hittable);
         pCompound.putBoolean("Damageable", damageable);
 
         writeTraits(pCompound);
@@ -289,27 +315,6 @@ public abstract class AvatarEntity extends Entity {
         writeModuleList(pCompound, "CollisionModules", collisionModules);
         writeModuleList(pCompound, "RenderModules", renderModules);
 
-    }
-
-    /**
-     * Called to update the entity's position/logic.
-     */
-    @Override
-    public void tick() {
-        super.tick();
-
-        // Tick appropriate modules in each order
-        modules.forEach(mod -> mod.tick(this));
-        controlModules.forEach(mod -> mod.tick(this));
-        forceModules.forEach(mod -> mod.tick(this));
-        collisionModules.forEach(mod -> mod.tick(this));
-        renderModules.forEach(mod -> mod.tick(this));
-    }
-
-    public void tickDespawn() {
-        if (tickCount >= maxLifetime()) {
-            this.discard();
-        }
     }
 
     public void checkBlocks() {
@@ -368,7 +373,7 @@ public abstract class AvatarEntity extends Entity {
 
     @Override
     public boolean canBeCollidedWith() {
-        return collidable;
+        return hittable;
     }
 
     /**
@@ -376,12 +381,12 @@ public abstract class AvatarEntity extends Entity {
      */
     @Override
     public boolean isPushable() {
-        return collidable;
+        return hittable;
     }
 
     @Override
     public boolean canBeHitByProjectile() {
-        return collidable;
+        return hittable;
     }
 
     @Override
@@ -426,7 +431,7 @@ public abstract class AvatarEntity extends Entity {
         entityData.set(DAMAGEABLE, damageable);
     }
 
-    public void setCollidable(boolean collidable) {
-        entityData.set(COLLIDABLE, collidable);
+    public void setHittable(boolean hittable) {
+        entityData.set(COLLIDABLE, hittable);
     }
 }

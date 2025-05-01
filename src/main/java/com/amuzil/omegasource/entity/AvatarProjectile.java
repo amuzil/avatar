@@ -38,31 +38,30 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile,
 
     public void startEffect(BendingForm form) {
         FX fx = null;
-        System.out.println("Starting effect for " + form.name() + " " + element());
-        if (element().equals(Elements.FIRE)) {
-            if (form.name().equals("strike"))
-                fx = fire_bloom_perma;
-            if (form.name().equals("block"))
-                fx = blue_fire_perma;
-            if (form.name().equals("arc"))
-                fx = null;
-            if (form.name().equals("null"))
-                fx = fire_bloom_perma;
-            if (form.name().equals("step"))
-                fx = blue_fire_perma;
-        } else if (element().equals(Elements.WATER)) {
-            if (form.name().equals("strike"))
-                fx = water;
-            if (form.name().equals("block"))
-                fx = water;
+        if (element() != null) {
+            if (element().equals(Elements.FIRE)) {
+                if (form.name().equals("strike"))
+                    fx = fire_bloom_perma;
+                if (form.name().equals("block"))
+                    fx = blue_fire_perma;
+                if (form.name().equals("arc"))
+                    fx = null;
+                if (form.name().equals("null"))
+                    fx = fire_bloom_perma;
+                if (form.name().equals("step"))
+                    fx = blue_fire_perma;
+            } else if (element().equals(Elements.WATER)) {
+                if (form.name().equals("strike"))
+                    fx = water;
+                if (form.name().equals("block"))
+                    fx = water;
+            }
         }
         if (fx != null) {
-            System.out.println("MADE IT TO FX START");
             EntityEffect entityEffect = new EntityEffect(fx, this.level(), this);
             entityEffect.start();
         }
     }
-
 
     public void setWidth(float width) {
         entityData.set(WIDTH, width);

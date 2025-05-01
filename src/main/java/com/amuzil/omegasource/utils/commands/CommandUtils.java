@@ -102,7 +102,6 @@ class CommandUtils {
                     targetPlayer.sendSystemMessage(Component.literal("Updated " + trait.name() + " SkillTrait for " + skill.name()));
                 }
             });
-
         });
         return 1;
     }
