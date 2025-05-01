@@ -58,7 +58,7 @@ public class Bender implements IBender {
         dataTraits.addAll(Registries.getTraits());
 
         // Allow use of all Elements & Skills for testing!
-        setAvatar();
+//        setAvatar(); // TODO - Uncomment this to grant all elements & skills
 
         markDirty();
     }
@@ -74,12 +74,16 @@ public class Bender implements IBender {
     public void tick() {
         if (entity instanceof Player) {
             List<Skill> skills = Registries.getSkills();
-            for (Skill skill : skills) {
-                if (getSkillData(skill).canUse()) {
+            for (Skill skill: skills) {
+                if (canUseSkill(skill)) {
                     skill.tick(entity, formPath);
                 }
             }
         }
+    }
+
+    private boolean canUseSkill(Skill skill) {
+        return getSkillData(skill).canUse() && getSkillCategoryData(skill.getCategory().getId()).canUse();
     }
 
     public void registerFormCondition() {
@@ -106,8 +110,12 @@ public class Bender implements IBender {
     }
 
     private SkillCategoryData getSkillCategoryData(Element element) {
+        return getSkillCategoryData(element.getId());
+    }
+
+    private SkillCategoryData getSkillCategoryData(ResourceLocation id) {
         return skillCategoryData.stream()
-                .filter(catData -> catData.getSkillCategory().name().equals(element.name()))
+                .filter(data -> data.getSkillCategory().getId().equals(id))
                 .findFirst()
                 .orElse(null);
     }
@@ -117,7 +125,10 @@ public class Bender implements IBender {
     }
 
     public SkillData getSkillData(ResourceLocation id) {
-        return skillData.stream().filter(skillData1 -> skillData1.getSkillId().equals(id)).toList().get(0);
+        return skillData.stream()
+                .filter(data -> data.getSkillId().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
     public void resetSkillData() {
@@ -269,7 +280,7 @@ public class Bender implements IBender {
      */
     @Override
     public void deserializeNBT(CompoundTag tag) {
-        System.out.println("[Bender] Deserializing NBT: " + tag);
+//        System.out.println("[Bender] Deserializing NBT: " + tag);
         int version = tag.contains("DataVersion") ? tag.getInt("DataVersion") : 0; // Default to version 0 if not present
         switch (version) {
             case 1 -> {
