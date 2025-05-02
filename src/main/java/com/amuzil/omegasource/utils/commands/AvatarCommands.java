@@ -32,10 +32,10 @@ public class AvatarCommands {
                             InputModule.sendDebugMsg("Options: activate, grant, take, element");
                             return 1;
                         })));
+        createFormCommands();
         createSkillCommands();
         createElementCommands();
         createMasterCommands();
-        createFormCommands();
 //        createElementCommand("activate", activateElementCommand);
 //        createElementCommand("grant", grantElementCommand);
 //        createElementCommand("take", takeElementCommand);
@@ -61,7 +61,9 @@ public class AvatarCommands {
             builder.then(triggerSkillCommand(skill, "start"));
             builder.then(triggerSkillCommand(skill, "run"));
             builder.then(triggerSkillCommand(skill, "stop"));
+            builder.then(resetSkillCommand(skill));
         }
+        builder.then(resetSkillCommand(null)); // Pass null to reset all
     }
 
     private static void createMasterCommands() {
@@ -139,6 +141,21 @@ public class AvatarCommands {
                                 .executes(c -> triggerSkill(c, skill, action, EntityArgument.getPlayer(c, "target")))
                         )
                 )));
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> resetSkillCommand(Skill skill) {
+        String skillName;
+        if (skill == null)
+            skillName = "all";
+        else
+            skillName = skill.name();
+        return Commands.literal("reset").then(Commands.literal("skill")
+                .then(Commands.literal(skillName)
+                        .executes(c -> resetSkill(c, skill, null))
+                        .then(Commands.argument("target", EntityArgument.player())
+                                .executes(c -> resetSkill(c, skill, EntityArgument.getPlayer(c, "target")))
+                        )
+                ));
     }
 
 //        private static void createElementCommand(String action, Command<CommandSourceStack> subCommand) {

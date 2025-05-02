@@ -57,6 +57,26 @@ class CommandUtils {
         return 1;
     }
 
+    static int resetSkill(CommandContext<CommandSourceStack> ctx, Skill skill, ServerPlayer player) throws CommandSyntaxException {
+        if (player == null)
+            player = ctx.getSource().getPlayerOrException();
+        ServerPlayer targetPlayer = player;
+        player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
+            Bender ben = (Bender) bender;
+            String action;
+            if (skill != null) {
+                ben.resetSkillData(skill);
+                action = String.format("Resetting %s skill", skill.name());
+            } else {
+                ben.resetSkillData();
+                action = "Resetting all skills";
+            }
+            ben.syncToClient();
+            targetPlayer.sendSystemMessage(Component.literal(action));
+        });
+        return 1;
+    }
+
     static int setCanUseElement(CommandContext<CommandSourceStack> ctx, Element element, boolean canUse, ServerPlayer player) throws CommandSyntaxException {
         if (player == null)
             player = ctx.getSource().getPlayerOrException();

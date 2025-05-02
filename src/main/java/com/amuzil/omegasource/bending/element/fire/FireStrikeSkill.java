@@ -30,13 +30,10 @@ public class FireStrikeSkill extends BendingSkill {
         addTrait(new SizeTrait(1.25f, "max_size"));
         addTrait(new KnockbackTrait(0.5f, "knockback"));
         addTrait(new ColourTrait(0, 0, 0, "fire_colour"));
-        addTrait(new SpeedTrait(0.875f, "speed"));
-        addTrait(new TimedTrait(15, "lifetime"));
-        // Ticks not seconds...
+        addTrait(new SpeedTrait(0.875d, "speed"));
+        addTrait(new TimedTrait(15, "lifetime")); // Ticks not seconds...
         addTrait(new TimedTrait(40, "fire_time"));
-        /** TODO - Fix this, can't add duplicate traits!
-         * See {@link com.amuzil.omegasource.api.magus.skill.Skill#addTrait} */
-        addTrait(new SpeedTrait(0.85f, "speed_factor"));
+        addTrait(new SpeedTrait(0.85d, "speed_factor"));
 
         startPaths = SkillPathBuilder.getInstance().complex(new ActiveForm(STRIKE, false)).build();
 

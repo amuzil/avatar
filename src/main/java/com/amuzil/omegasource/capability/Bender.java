@@ -42,7 +42,7 @@ public class Bender implements IBender {
     private boolean isDirty = true; // Flag to indicate if data was changed
 
     // Persistent data
-    private Element activeElement = Elements.FIRE; // Currently active element
+    private Element activeElement = Elements.FIRE; // Currently active element // TODO - Randomize on first load
     private BendingSelection selection = new BendingSelection();
     private final List<SkillCategoryData> skillCategoryData = new ArrayList<>();
     private final List<SkillData> skillData = new ArrayList<>();
@@ -135,6 +135,18 @@ public class Bender implements IBender {
         skillData.clear();
         for (Skill skill : Registries.getSkills())
             skillData.add(new SkillData(skill));
+    }
+
+    public void resetSkillData(Skill skill) {
+        List<SkillData> newSkillData = new ArrayList<>();
+        for (SkillData data : skillData) {
+            if (data.getSkillId().equals(skill.getId()))
+                newSkillData.add(new SkillData(skill));
+            else
+                newSkillData.add(data);
+        }
+        skillData.clear();
+        skillData.addAll(newSkillData);
     }
 
     @Override
