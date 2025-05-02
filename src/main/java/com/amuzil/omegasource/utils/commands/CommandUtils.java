@@ -1,14 +1,16 @@
 package com.amuzil.omegasource.utils.commands;
 
+import com.amuzil.omegasource.api.magus.form.Form;
+import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.skill.Skill;
-import com.amuzil.omegasource.api.magus.skill.data.SkillData;
-import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
 import com.amuzil.omegasource.bending.BendingForm;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.capability.AvatarCapabilities;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.client.SyncBenderPacket;
+import com.amuzil.omegasource.network.packets.forms.ExecuteFormPacket;
+import com.amuzil.omegasource.network.packets.forms.ReleaseFormPacket;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
@@ -34,11 +36,24 @@ class CommandUtils {
         return 1;
     }
 
-    static int triggerForm(CommandContext<CommandSourceStack> ctx, BendingForm form, ServerPlayer player) throws CommandSyntaxException {
+    static int triggerForm(CommandContext<CommandSourceStack> ctx, Form form, ServerPlayer player) throws CommandSyntaxException {
         if (player == null)
             player = ctx.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = player;
-        
+        ExecuteFormPacket.handleServerSide((BendingForm) form, targetPlayer);
+        ReleaseFormPacket.handleServerSide((BendingForm) form, targetPlayer);
+        return 1;
+    }
+
+    static int triggerSkill(CommandContext<CommandSourceStack> ctx, Skill skill, String state, ServerPlayer player) throws CommandSyntaxException {
+        if (player == null)
+            player = ctx.getSource().getPlayerOrException();
+        ServerPlayer targetPlayer = player;
+        switch (state) {
+            case "start" -> skill.start(targetPlayer);
+            case "run" -> skill.run(targetPlayer);
+            case "stop" -> skill.stop(targetPlayer);
+        }
         return 1;
     }
 

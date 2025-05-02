@@ -1,7 +1,10 @@
 package com.amuzil.omegasource.utils.commands;
 
+import com.amuzil.omegasource.api.magus.form.Form;
 import com.amuzil.omegasource.api.magus.registry.Registries;
 import com.amuzil.omegasource.api.magus.skill.Skill;
+import com.amuzil.omegasource.bending.BendingForm;
+import com.amuzil.omegasource.bending.BendingForms;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.input.InputModule;
@@ -32,6 +35,7 @@ public class AvatarCommands {
         createSkillCommands();
         createElementCommands();
         createMasterCommands();
+        createFormCommands();
 //        createElementCommand("activate", activateElementCommand);
 //        createElementCommand("grant", grantElementCommand);
 //        createElementCommand("take", takeElementCommand);
@@ -54,12 +58,21 @@ public class AvatarCommands {
         for (Skill skill : Registries.getSkills()) {
             builder.then(setCanUseSkillCommand(skill, "grant"));
             builder.then(setCanUseSkillCommand(skill, "take"));
+            builder.then(triggerSkillCommand(skill, "start"));
+            builder.then(triggerSkillCommand(skill, "run"));
+            builder.then(triggerSkillCommand(skill, "stop"));
         }
     }
 
     private static void createMasterCommands() {
         for (Element elem : Elements.ALL_FOUR.values()) {
             builder.then(masterElementCommand(elem));
+        }
+    }
+
+    private static void createFormCommands() {
+        for (Form form : Registries.getForms()) {
+            builder.then(triggerFormCommand(form));
         }
     }
 
@@ -106,6 +119,26 @@ public class AvatarCommands {
                                 .executes(c -> masterElement(c, elem, EntityArgument.getPlayer(c, "target")))
                         )
                 );
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> triggerFormCommand(Form form) {
+        return Commands.literal("trigger").then(Commands.literal("form")
+                .then(Commands.literal(form.name())
+                        .executes(c -> triggerForm(c, form, null))
+                        .then(Commands.argument("target", EntityArgument.player())
+                                .executes(c -> triggerForm(c, form, EntityArgument.getPlayer(c, "target")))
+                        )
+                ));
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> triggerSkillCommand(Skill skill, String action) {
+        return Commands.literal("trigger").then(Commands.literal("skill").then(Commands.literal(action)
+                .then(Commands.literal(skill.name())
+                        .executes(c -> triggerSkill(c, skill, action, null))
+                        .then(Commands.argument("target", EntityArgument.player())
+                                .executes(c -> triggerSkill(c, skill, action, EntityArgument.getPlayer(c, "target")))
+                        )
+                )));
     }
 
 //        private static void createElementCommand(String action, Command<CommandSourceStack> subCommand) {

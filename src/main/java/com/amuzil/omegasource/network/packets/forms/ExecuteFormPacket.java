@@ -17,6 +17,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.PacketDistributor;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import static com.amuzil.omegasource.bending.BendingForms.*;
@@ -29,21 +30,23 @@ public class ExecuteFormPacket implements AvatarPacket {
         this.form = form;
     }
 
+    public static void handleServerSide(BendingForm form, ServerPlayer player) {
+        // Work that needs to be thread-safe (most work)
+        assert player != null;
+        ServerLevel level = player.serverLevel();
+        Avatar.LOGGER.debug("Form Executed: {}", form.name());
+
+        MinecraftForge.EVENT_BUS.post(new FormActivatedEvent(form, player, false));
+
+        // Extra case for step
+        if (form.equals(STEP))
+            AvatarNetwork.sendToServer(new ReleaseFormPacket(STEP));
+    }
+
     public static void handle(ExecuteFormPacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            // Work that needs to be thread-safe (most work)
-            ServerPlayer player = ctx.get().getSender(); // the client that sent this packet
-            assert player != null;
-            ServerLevel level = player.serverLevel();
-            Avatar.LOGGER.debug("Form Executed: {}", msg.form.name());
-
-            MinecraftForge.EVENT_BUS.post(new FormActivatedEvent(msg.form, player, false));
-
-            // Extra case for step
-            if (msg.form.equals(STEP))
-                AvatarNetwork.sendToServer(new ReleaseFormPacket(STEP));
+            handleServerSide(msg.form, Objects.requireNonNull(ctx.get().getSender()));
         });
-
         ctx.get().setPacketHandled(true);
     }
 
