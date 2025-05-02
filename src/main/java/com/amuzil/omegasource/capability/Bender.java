@@ -131,12 +131,15 @@ public class Bender implements IBender {
                 .orElse(null);
     }
 
+    @Override
     public void resetSkillData() {
         skillData.clear();
         for (Skill skill : Registries.getSkills())
             skillData.add(new SkillData(skill));
+        markDirty();
     }
 
+    @Override
     public void resetSkillData(Skill skill) {
         List<SkillData> newSkillData = new ArrayList<>();
         for (SkillData data : skillData) {
@@ -147,6 +150,7 @@ public class Bender implements IBender {
         }
         skillData.clear();
         skillData.addAll(newSkillData);
+        markDirty();
     }
 
     @Override
@@ -241,6 +245,7 @@ public class Bender implements IBender {
         return this.isDirty;
     }
 
+    @Override
     public void syncToClient() {
         if (!entity.level().isClientSide()) {
             if (entity instanceof ServerPlayer player) {

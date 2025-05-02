@@ -1,5 +1,6 @@
 package com.amuzil.omegasource.capability;
 
+import com.amuzil.omegasource.api.magus.skill.Skill;
 import com.amuzil.omegasource.bending.BendingSelection;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.network.packets.client.SyncBenderPacket;
@@ -16,6 +17,10 @@ import net.minecraftforge.common.util.INBTSerializable;
  */
 @AutoRegisterCapability
 public interface IBender extends INBTSerializable<CompoundTag> {
+
+    void resetSkillData();
+
+    void resetSkillData(Skill skill);
 
     void setAvatar();
 
@@ -47,6 +52,8 @@ public interface IBender extends INBTSerializable<CompoundTag> {
 
     // Check if data needs to be synced across client / server
     boolean isDirty();
+
+    void syncToClient();
 
     // Save data
     CompoundTag serializeNBT();

@@ -62,16 +62,15 @@ class CommandUtils {
             player = ctx.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = player;
         player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
-            Bender ben = (Bender) bender;
             String action;
             if (skill != null) {
-                ben.resetSkillData(skill);
+                bender.resetSkillData(skill);
                 action = String.format("Resetting %s skill", skill.name());
             } else {
-                ben.resetSkillData();
+                bender.resetSkillData();
                 action = "Resetting all skills";
             }
-            ben.syncToClient();
+            bender.syncToClient();
             targetPlayer.sendSystemMessage(Component.literal(action));
         });
         return 1;

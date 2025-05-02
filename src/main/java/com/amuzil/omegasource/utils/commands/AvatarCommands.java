@@ -39,18 +39,12 @@ public class AvatarCommands {
 //        createElementCommand("activate", activateElementCommand);
 //        createElementCommand("grant", grantElementCommand);
 //        createElementCommand("take", takeElementCommand);
-        // TODO -> Add the following commands:
-        //  - Add set SkillTrait command
-        //  - Add trigger Form command
-        //  - Add trigger Skill command
         dispatcher.register(builder);
     }
 
-    private static void createElementCommands() {
-        for (Element elem : Elements.ALL_FOUR.values()) {
-            builder.then(activateElementCommand(elem));
-            builder.then(setCanUseElementCommand(elem, "grant"));
-            builder.then(setCanUseElementCommand(elem, "take"));
+    private static void createFormCommands() {
+        for (Form form : Registries.getForms()) {
+            builder.then(triggerFormCommand(form));
         }
     }
 
@@ -66,16 +60,38 @@ public class AvatarCommands {
         builder.then(resetSkillCommand(null)); // Pass null to reset all
     }
 
+    private static void createElementCommands() {
+        for (Element elem : Elements.ALL_FOUR.values()) {
+            builder.then(activateElementCommand(elem));
+            builder.then(setCanUseElementCommand(elem, "grant"));
+            builder.then(setCanUseElementCommand(elem, "take"));
+        }
+    }
+
     private static void createMasterCommands() {
         for (Element elem : Elements.ALL_FOUR.values()) {
             builder.then(masterElementCommand(elem));
         }
     }
 
-    private static void createFormCommands() {
-        for (Form form : Registries.getForms()) {
-            builder.then(triggerFormCommand(form));
-        }
+    private static LiteralArgumentBuilder<CommandSourceStack> triggerFormCommand(Form form) {
+        return Commands.literal("trigger").then(Commands.literal("form")
+                .then(Commands.literal(form.name())
+                        .executes(c -> triggerForm(c, form, null))
+                        .then(Commands.argument("target", EntityArgument.player())
+                                .executes(c -> triggerForm(c, form, EntityArgument.getPlayer(c, "target")))
+                        )
+                ));
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> triggerSkillCommand(Skill skill, String action) {
+        return Commands.literal("trigger").then(Commands.literal("skill").then(Commands.literal(action)
+                .then(Commands.literal(skill.name())
+                        .executes(c -> triggerSkill(c, skill, action, null))
+                        .then(Commands.argument("target", EntityArgument.player())
+                                .executes(c -> triggerSkill(c, skill, action, EntityArgument.getPlayer(c, "target")))
+                        )
+                )));
     }
 
     private static LiteralArgumentBuilder<CommandSourceStack> activateElementCommand(Element elem) {
@@ -113,36 +129,6 @@ public class AvatarCommands {
                 ));
     }
 
-    private static LiteralArgumentBuilder<CommandSourceStack> masterElementCommand(Element elem) {
-        return Commands.literal("master")
-                .then(Commands.literal(elem.nickName())
-                        .executes(c -> masterElement(c, elem, null))
-                        .then(Commands.argument("target", EntityArgument.player())
-                                .executes(c -> masterElement(c, elem, EntityArgument.getPlayer(c, "target")))
-                        )
-                );
-    }
-
-    private static LiteralArgumentBuilder<CommandSourceStack> triggerFormCommand(Form form) {
-        return Commands.literal("trigger").then(Commands.literal("form")
-                .then(Commands.literal(form.name())
-                        .executes(c -> triggerForm(c, form, null))
-                        .then(Commands.argument("target", EntityArgument.player())
-                                .executes(c -> triggerForm(c, form, EntityArgument.getPlayer(c, "target")))
-                        )
-                ));
-    }
-
-    private static LiteralArgumentBuilder<CommandSourceStack> triggerSkillCommand(Skill skill, String action) {
-        return Commands.literal("trigger").then(Commands.literal("skill").then(Commands.literal(action)
-                .then(Commands.literal(skill.name())
-                        .executes(c -> triggerSkill(c, skill, action, null))
-                        .then(Commands.argument("target", EntityArgument.player())
-                                .executes(c -> triggerSkill(c, skill, action, EntityArgument.getPlayer(c, "target")))
-                        )
-                )));
-    }
-
     private static LiteralArgumentBuilder<CommandSourceStack> resetSkillCommand(Skill skill) {
         String skillName;
         if (skill == null)
@@ -156,6 +142,16 @@ public class AvatarCommands {
                                 .executes(c -> resetSkill(c, skill, EntityArgument.getPlayer(c, "target")))
                         )
                 ));
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> masterElementCommand(Element elem) {
+        return Commands.literal("master")
+                .then(Commands.literal(elem.nickName())
+                        .executes(c -> masterElement(c, elem, null))
+                        .then(Commands.argument("target", EntityArgument.player())
+                                .executes(c -> masterElement(c, elem, EntityArgument.getPlayer(c, "target")))
+                        )
+                );
     }
 
 //        private static void createElementCommand(String action, Command<CommandSourceStack> subCommand) {
