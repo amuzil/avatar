@@ -28,7 +28,7 @@ public class KeyBindings {
             InputConstants.KEY_GRAVE,
             "key.categories.av3");
     static final KeyMapping selectTargetKey = new KeyMapping(
-            "key.av3.bending_toggle",
+            "key.av3.select_target",
             InputConstants.KEY_TAB,
             "key.categories.av3");
 
