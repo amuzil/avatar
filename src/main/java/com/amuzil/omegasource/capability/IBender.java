@@ -1,6 +1,8 @@
 package com.amuzil.omegasource.capability;
 
 import com.amuzil.omegasource.api.magus.skill.Skill;
+import com.amuzil.omegasource.api.magus.skill.data.SkillCategoryData;
+import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.bending.BendingSelection;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.network.packets.client.SyncBenderPacket;
@@ -17,6 +19,14 @@ import net.minecraftforge.common.util.INBTSerializable;
  */
 @AutoRegisterCapability
 public interface IBender extends INBTSerializable<CompoundTag> {
+
+    SkillCategoryData getSkillCategoryData(Element element);
+
+    SkillCategoryData getSkillCategoryData(ResourceLocation id);
+
+    SkillData getSkillData(Skill skill);
+
+    SkillData getSkillData(ResourceLocation id);
 
     void resetSkillData();
 

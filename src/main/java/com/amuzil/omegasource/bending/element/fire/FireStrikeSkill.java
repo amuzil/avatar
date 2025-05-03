@@ -13,6 +13,7 @@ import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.entity.AvatarProjectile;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
+import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.maths.Point;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
@@ -25,15 +26,15 @@ public class FireStrikeSkill extends BendingSkill {
 
     public FireStrikeSkill() {
         super(Avatar.MOD_ID, "fire_strike", Elements.FIRE);
-        addTrait(new DamageTrait(2.5f, "damage"));
-        addTrait(new SizeTrait(0.125F, "size"));
-        addTrait(new SizeTrait(1.25f, "max_size"));
-        addTrait(new KnockbackTrait(0.5f, "knockback"));
-        addTrait(new ColourTrait(0, 0, 0, "fire_colour"));
-        addTrait(new SpeedTrait(0.875d, "speed"));
-        addTrait(new TimedTrait(15, "lifetime")); // Ticks not seconds...
-        addTrait(new TimedTrait(40, "fire_time"));
-        addTrait(new SpeedTrait(0.85d, "speed_factor"));
+        addTrait(new DamageTrait(2.5f, Constants.DAMAGE));
+        addTrait(new SizeTrait(0.125F, Constants.SIZE));
+        addTrait(new SizeTrait(1.25f, Constants.MAX_SIZE));
+        addTrait(new KnockbackTrait(0.5f, Constants.KNOCKBACK));
+        addTrait(new ColourTrait(0, 0, 0, Constants.FIRE_COLOUR));
+        addTrait(new SpeedTrait(0.875d, Constants.SPEED));
+        addTrait(new TimedTrait(15, Constants.LIFETIME)); // Ticks not seconds...
+        addTrait(new TimedTrait(40, Constants.FIRE_TIME));
+        addTrait(new SpeedTrait(0.85d, Constants.SPEED_FACTOR));
 
         startPaths = SkillPathBuilder.getInstance().complex(new ActiveForm(STRIKE, false)).build();
 
@@ -54,9 +55,9 @@ public class FireStrikeSkill extends BendingSkill {
         Level level = entity.level();
         SkillData data = bender.getSkillData(this);
 
-        int lifetime = data.getTrait("lifetime", TimedTrait.class).getTime();
-        double speed = data.getTrait("speed", SpeedTrait.class).getSpeed();
-        double size = data.getTrait("size", SizeTrait.class).getSize();
+        int lifetime = data.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
+        double speed = data.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
+        double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
         AvatarProjectile projectile = new AvatarProjectile(level);
         projectile.setElement(Elements.FIRE);
@@ -68,7 +69,7 @@ public class FireStrikeSkill extends BendingSkill {
         projectile.setDamageable(false);
         projectile.setHittable(true);
 
-        projectile.addTraits(data.getTrait("max_size", SizeTrait.class));
+        projectile.addTraits(data.getTrait(Constants.MAX_SIZE, SizeTrait.class));
 
         // Copied from the fire easing constant
         projectile.addTraits(new PointsTrait("height_curve", new Point(0.00, 0.5),  // t=0: zero width
@@ -89,20 +90,20 @@ public class FireStrikeSkill extends BendingSkill {
         projectile.addModule(ModuleRegistry.create("Grow"));
 
         // TODO: make more advanced knockback calculator that uses the entity's current size as well as speed (mass * velocity!!!!)
-        projectile.addTraits(data.getTrait("knockback", KnockbackTrait.class));
+        projectile.addTraits(data.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
         projectile.addTraits(new DirectionTrait("knockback_direction", new Vec3(0, 0.45, 0)));
         projectile.addModule(ModuleRegistry.create("SimpleKnockback"));
 
         // Set Fire module
-        projectile.addTraits(data.getTrait("fire_time", TimedTrait.class));
+        projectile.addTraits(data.getTrait(Constants.FIRE_TIME, TimedTrait.class));
         projectile.addModule(ModuleRegistry.create("FireTime"));
 
         // Damage module
-        projectile.addTraits(data.getTrait("damage", DamageTrait.class));
+        projectile.addTraits(data.getTrait(Constants.DAMAGE, DamageTrait.class));
         projectile.addModule(ModuleRegistry.create("SimpleDamage"));
 
         // Slow down over time
-        projectile.addTraits(data.getTrait("speed_factor", SpeedTrait.class));
+        projectile.addTraits(data.getTrait(Constants.SPEED_FACTOR, SpeedTrait.class));
         projectile.addModule(ModuleRegistry.create("ChangeSpeed"));
 
         projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);

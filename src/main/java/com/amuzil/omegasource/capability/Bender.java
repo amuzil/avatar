@@ -109,21 +109,25 @@ public class Bender implements IBender {
         formConditionHandler.unregister();
     }
 
-    private SkillCategoryData getSkillCategoryData(Element element) {
+    @Override
+    public SkillCategoryData getSkillCategoryData(Element element) {
         return getSkillCategoryData(element.getId());
     }
 
-    private SkillCategoryData getSkillCategoryData(ResourceLocation id) {
+    @Override
+    public SkillCategoryData getSkillCategoryData(ResourceLocation id) {
         return skillCategoryData.stream()
                 .filter(data -> data.getSkillCategory().getId().equals(id))
                 .findFirst()
                 .orElse(null);
     }
 
+    @Override
     public SkillData getSkillData(Skill skill) {
         return getSkillData(skill.getId());
     }
 
+    @Override
     public SkillData getSkillData(ResourceLocation id) {
         return skillData.stream()
                 .filter(data -> data.getSkillId().equals(id))

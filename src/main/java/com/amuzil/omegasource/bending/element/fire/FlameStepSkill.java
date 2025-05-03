@@ -13,6 +13,7 @@ import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SpeedTrait;
 import com.amuzil.omegasource.bending.BendingEffect;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.capability.Bender;
+import com.amuzil.omegasource.utils.Constants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
@@ -25,10 +26,10 @@ public class FlameStepSkill extends BendingEffect {
 
     public FlameStepSkill() {
         super(Avatar.MOD_ID, "flame_step", Elements.FIRE);
-        addTrait(new KnockbackTrait(1.5f, "knockback"));
-        addTrait(new SpeedTrait(3f, "dash_speed"));
-        addTrait(new SizeTrait(1.0f, "size"));
-        addTrait(new ColourTrait(0, 0, 0, "fire_colour"));
+        addTrait(new KnockbackTrait(1.5f, Constants.KNOCKBACK));
+        addTrait(new SpeedTrait(3f, Constants.DASH_SPEED));
+        addTrait(new SizeTrait(1.0f, Constants.SIZE));
+        addTrait(new ColourTrait(0, 0, 0, Constants.FIRE_COLOUR));
 
         this.startPaths = SkillPathBuilder.getInstance()
                 .complex(new ActiveForm(STEP, true))
@@ -54,17 +55,7 @@ public class FlameStepSkill extends BendingEffect {
         if (bender != null) {
             SkillData data = bender.getSkillData(this);
 
-//        entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED));
-//        entity.level().addFreshEntity(new LightningBolt(EntityType.LIGHTNING_BOLT, entity.level()));
-//        if (!entity.level().isClientSide) {
-//            ElementProjectile proj;
-//            proj = ElementProjectile.createElementEntity(STRIKE, Elements.FIRE, (ServerPlayer) entity, (ServerLevel) entity.level());
-//            proj.shoot(entity.getViewVector(1).x, entity.getViewVector(1).y, entity.getViewVector(1).z, 1, 1);
-//            entity.level().addFreshEntity(proj);
-//            RadixTree.getLogger().info("Attempting projectile spawn.");
-//        }
-
-            float dashSpeed = (float) Objects.requireNonNull(data.getTrait("dash_speed", SpeedTrait.class)).getSpeed();
+            float dashSpeed = (float) Objects.requireNonNull(data.getTrait(Constants.DASH_SPEED, SpeedTrait.class)).getSpeed();
             Vec3 dashVec = Vec3.ZERO;
             if (entity.level().isClientSide) {
                 Minecraft mc = Minecraft.getInstance();
