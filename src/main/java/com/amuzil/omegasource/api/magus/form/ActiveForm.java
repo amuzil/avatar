@@ -40,7 +40,7 @@ public class ActiveForm {
 
     @Override
     public int hashCode() {
-        return Objects.hash(form);// + Objects.hashCode(active);
+        return Objects.hash(form);
     }
 
     @Override

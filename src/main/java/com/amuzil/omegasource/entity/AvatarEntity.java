@@ -358,16 +358,12 @@ public abstract class AvatarEntity extends Entity {
     }
 
     private void readTraits(CompoundTag parent) {
-        traits.clear();
         ListTag list = parent.getList("DataTraits", Tag.TAG_COMPOUND);
 
-        int i = 0;
-        for (Tag t : list) {
-            CompoundTag tTag = (CompoundTag) t;
-            DataTrait trait = traits.get(i);
-            trait.deserializeNBT(tTag);
-            traits.add(trait);
-            i++;
+        int limit = Math.min(list.size(), traits.size());
+        for (int i = 0; i < limit; i++) {
+            CompoundTag tTag = list.getCompound(i);
+            traits.get(i).deserializeNBT(tTag);
         }
     }
 

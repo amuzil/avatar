@@ -27,12 +27,13 @@ public class ServerEvents {
         if (event.getEntity() instanceof Player player) {
             Bender bender = (Bender) Bender.getBender(player);
             bender.registerFormCondition();
+            System.out.println("registerFormCondition SERVER-SIDE: " + event.getLevel().isClientSide());
         }
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
             serverPlayer.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
                 CompoundTag tag = bender.serializeNBT();
                 AvatarNetwork.sendToClient(new SyncBenderPacket(tag, serverPlayer.getUUID()), serverPlayer);
-                System.out.println("EntityJoinLevelEvent SYNC SERVER TO CLIENT ON JOIN BOIS");
+                System.out.println("EntityJoinLevelEvent SYNC SERVER TO CLIENT ON JOIN");
             });
         }
     }
@@ -57,7 +58,7 @@ public class ServerEvents {
         serverPlayer.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
             CompoundTag tag = bender.serializeNBT();
             AvatarNetwork.sendToClient(new SyncBenderPacket(tag, serverPlayer.getUUID()), serverPlayer);
-            System.out.println("PlayerLoggedInEvent SYNC SERVER TO CLIENT ON JOIN BOIS");
+            System.out.println("PlayerLoggedInEvent SYNC SERVER TO CLIENT ON JOIN");
         });
     }
 
@@ -68,7 +69,7 @@ public class ServerEvents {
         serverPlayer.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
             CompoundTag tag = bender.serializeNBT();
             AvatarNetwork.sendToClient(new SyncBenderPacket(tag, serverPlayer.getUUID()), serverPlayer);
-            System.out.println("PlayerLoggedOutEvent SYNC SERVER TO CLIENT ON LEAVE BOIS");
+            System.out.println("PlayerLoggedOutEvent SYNC SERVER TO CLIENT ON LEAVE");
         });
     }
 

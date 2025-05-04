@@ -96,7 +96,7 @@ public abstract class Skill {
 
     // Fix this because this will not work lmao
     public void tick(LivingEntity entity, FormPath formPath) {
-        //Run this asynchronously
+        // Run this asynchronously
 
         Bender bender = (Bender) Bender.getBender(entity);
         // Remember, for some reason post only returns true upon the event being cancelled. Blame Forge.

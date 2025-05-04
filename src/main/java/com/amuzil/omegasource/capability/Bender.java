@@ -59,16 +59,17 @@ public class Bender implements IBender {
 
         // Allow use of all Elements & Skills for testing!
         setAvatar(); // TODO - Uncomment this to grant all elements & skills
+
         formConditionHandler = new FormCondition(entity);
         markDirty();
     }
 
     @Override
     public String toString() {
-        String name = "";
+        String elementName = "";
         if (activeElement != null)
-            name = activeElement.name();
-        return "Bender[ " + name + " ]";
+            elementName = activeElement.name();
+        return String.format("Bender[ %s | activeElement=%s ]", entity.getName() , elementName);
     }
 
     public void tick() {
@@ -90,7 +91,6 @@ public class Bender implements IBender {
         formConditionHandler.register("FormCondition", () -> {
             ActiveForm activeForm = new ActiveForm(formConditionHandler.form(), formConditionHandler.active());
             formPath.update(activeForm);
-            markDirty();
             if (entity.level().isClientSide()) {
                 RadixTree.getLogger().debug("Simple Forms: {}", formPath.simple());
                 RadixTree.getLogger().debug("Complex Forms: {}", formPath.complex());
@@ -98,7 +98,6 @@ public class Bender implements IBender {
         }, () -> {
             if (!formPath.isActive()) {
                 formPath.clear();
-                markDirty();
                 if (entity.level().isClientSide())
                     RadixTree.getLogger().debug("Complex Forms Timed Out");
             }

@@ -36,8 +36,7 @@ public class FireStrikeSkill extends BendingSkill {
         addTrait(new TimedTrait(40, Constants.FIRE_TIME));
         addTrait(new SpeedTrait(0.85d, Constants.SPEED_FACTOR));
 
-        startPaths = SkillPathBuilder.getInstance().complex(new ActiveForm(STRIKE, false)).build();
-
+        startPaths = SkillPathBuilder.getInstance().complex(new ActiveForm(STRIKE, true)).build();
     }
 
     @Override

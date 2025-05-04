@@ -1,6 +1,5 @@
 package com.amuzil.omegasource.bending;
 
-import com.amuzil.omegasource.api.magus.capability.entity.Magi;
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.skill.SkillCategory;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
