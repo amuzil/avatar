@@ -27,7 +27,7 @@ public class ServerEvents {
         if (event.getEntity() instanceof Player player) {
             Bender bender = (Bender) Bender.getBender(player);
             bender.registerFormCondition();
-            System.out.println("registerFormCondition SERVER-SIDE: " + event.getLevel().isClientSide());
+            System.out.println(player.getName().getString() + " registerFormCondition CLIENT-SIDE: " + event.getLevel().isClientSide());
         }
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
             serverPlayer.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
