@@ -17,9 +17,6 @@ public class ClientEvents {
         Avatar.inputModule.registerListeners();
         Avatar.reloadFX();
         System.out.println("InputModule Initiated for " + event.getPlayer().getName().getString());
-//        Bender bender = (Bender) Bender.getBender(event.getPlayer());
-//        if (bender != null)
-//            bender.registerFormCondition();
     }
 
     @SubscribeEvent

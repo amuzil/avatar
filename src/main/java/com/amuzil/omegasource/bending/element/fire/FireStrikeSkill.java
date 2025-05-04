@@ -49,8 +49,6 @@ public class FireStrikeSkill extends BendingSkill {
         super.start(entity);
 
         Bender bender = (Bender) Bender.getBender(entity);
-        // Resets data so we can test
-//        bender.resetData();
         Level level = entity.level();
         SkillData data = bender.getSkillData(this);
 
