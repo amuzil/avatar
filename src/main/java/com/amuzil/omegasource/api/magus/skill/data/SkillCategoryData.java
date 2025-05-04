@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 public class SkillCategoryData implements DataTrait {
 
     private ResourceLocation id;
-    private boolean canUse = false;
+    private boolean canUse = true; // TODO - Temporary for testing
     private boolean isDirty = false;
 
     public SkillCategoryData(ResourceLocation id) {

@@ -25,7 +25,7 @@ public class SkillData implements DataTrait {
     //The reason we're using a resource location and not the actual Skill object is because
     //it's much easier to serialise a String and then get a skill from it.
     protected ResourceLocation skillId;
-    protected boolean canUse = false;
+    protected boolean canUse = true; // TODO - Temporary for testing
     protected boolean isDirty = false;
     protected Skill.SkillState state;
 
