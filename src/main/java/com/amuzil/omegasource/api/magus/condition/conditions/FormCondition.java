@@ -22,7 +22,7 @@ public class FormCondition extends Condition {
 
     public FormCondition(LivingEntity entity) {
         listener = event -> {
-            if (event.getEntity() == entity) {
+            if (event.getEntity().getId() == entity.getId()) {
                 form = event.getForm();
                 active = !event.released();
                 onSuccess.run();
