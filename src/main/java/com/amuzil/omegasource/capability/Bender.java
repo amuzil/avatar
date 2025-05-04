@@ -38,7 +38,7 @@ public class Bender implements IBender {
     // Non-Persistent data
     private final LivingEntity entity;
     public final FormPath formPath = new FormPath();
-    private final FormCondition formConditionHandler = new FormCondition();
+    private final FormCondition formConditionHandler;
     private boolean isDirty = true; // Flag to indicate if data was changed
 
     // Persistent data
@@ -58,8 +58,8 @@ public class Bender implements IBender {
         dataTraits.addAll(Registries.getTraits());
 
         // Allow use of all Elements & Skills for testing!
-//        setAvatar(); // TODO - Uncomment this to grant all elements & skills
-
+        setAvatar(); // TODO - Uncomment this to grant all elements & skills
+        formConditionHandler = new FormCondition(entity);
         markDirty();
     }
 
@@ -107,6 +107,10 @@ public class Bender implements IBender {
 
     public void unregisterFormCondition() {
         formConditionHandler.unregister();
+    }
+
+    public LivingEntity getEntity() {
+        return entity;
     }
 
     @Override

@@ -13,8 +13,18 @@ import net.minecraftforge.fml.common.Mod;
 public class ClientEvents {
 
     @SubscribeEvent
+    public static void onClientLogin(ClientPlayerNetworkEvent.LoggingIn event) {
+        Avatar.inputModule.registerListeners();
+        Avatar.reloadFX();
+        System.out.println("InputModule Initiated for " + event.getPlayer().getName().getString());
+        Bender bender = (Bender) Bender.getBender(event.getPlayer());
+        if (bender != null)
+            bender.registerFormCondition();
+    }
+
+    @SubscribeEvent
     public static void onClientLogout(ClientPlayerNetworkEvent.LoggingOut event) {
-        if(event.getPlayer() != null) {
+        if (event.getPlayer() != null) {
             Bender bender = (Bender) Bender.getBender(event.getPlayer());
             if (bender != null)
                 bender.unregisterFormCondition();
@@ -23,5 +33,4 @@ public class ClientEvents {
             Avatar.inputModule.terminate();
         }
     }
-
 }

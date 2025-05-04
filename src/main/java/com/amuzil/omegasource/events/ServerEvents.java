@@ -27,11 +27,6 @@ public class ServerEvents {
         if (event.getEntity() instanceof Player player) {
             Bender bender = (Bender) Bender.getBender(player);
             bender.registerFormCondition();
-            if (event.getLevel().isClientSide) {
-                Avatar.inputModule.registerListeners();
-                Avatar.reloadFX();
-                System.out.println("InputModule Initiated!");
-            }
         }
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
             serverPlayer.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
