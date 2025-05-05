@@ -1,21 +1,14 @@
 package com.amuzil.omegasource.network.packets.forms;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.BendingForm;
-import com.amuzil.omegasource.capability.AvatarCapabilities;
-import com.amuzil.omegasource.entity.ElementProjectile;
 import com.amuzil.omegasource.events.FormActivatedEvent;
-import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.api.AvatarPacket;
-import com.amuzil.omegasource.network.packets.client.FormActivatedPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.PacketDistributor;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -40,12 +33,13 @@ public class ExecuteFormPacket implements AvatarPacket {
 
         // Extra case for step
         if (form.equals(STEP))
-            AvatarNetwork.sendToServer(new ReleaseFormPacket(STEP));
+            ReleaseFormPacket.handleServerSide(STEP, player);
     }
 
     public static void handle(ExecuteFormPacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            handleServerSide(msg.form, Objects.requireNonNull(ctx.get().getSender()));
+            if (ctx.get().getDirection().getReceptionSide().isServer())
+                handleServerSide(msg.form, Objects.requireNonNull(ctx.get().getSender()));
         });
         ctx.get().setPacketHandled(true);
     }

@@ -8,6 +8,8 @@ import com.amuzil.omegasource.network.packets.forms.ExecuteFormPacket;
 import com.amuzil.omegasource.network.packets.forms.ReleaseFormPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
@@ -58,6 +60,7 @@ public class AvatarNetwork {
         CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), packet);
     }
 
+    @OnlyIn(Dist.CLIENT)
     public static void sendToServer(AvatarPacket packet) {
         CHANNEL.sendToServer(packet);
     }

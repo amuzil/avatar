@@ -3,7 +3,6 @@ package com.amuzil.omegasource.network.packets.forms;
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.bending.BendingForm;
 import com.amuzil.omegasource.events.FormActivatedEvent;
-import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.api.AvatarPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
@@ -13,8 +12,6 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.Objects;
 import java.util.function.Supplier;
-
-import static com.amuzil.omegasource.bending.BendingForms.STEP;
 
 
 public class ReleaseFormPacket implements AvatarPacket {
@@ -35,7 +32,8 @@ public class ReleaseFormPacket implements AvatarPacket {
 
     public static void handle(ReleaseFormPacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            handleServerSide(msg.form, Objects.requireNonNull(ctx.get().getSender()));
+            if (ctx.get().getDirection().getReceptionSide().isServer())
+                handleServerSide(msg.form, Objects.requireNonNull(ctx.get().getSender()));
         });
         ctx.get().setPacketHandled(true);
     }

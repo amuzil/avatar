@@ -1,4 +1,4 @@
 package com.amuzil.omegasource.entity.modules;
 
-public interface IForceModule extends IEntityModule{
+public interface IForceModule extends IEntityModule {
 }
