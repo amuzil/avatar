@@ -85,7 +85,6 @@ public class FormCondition extends Condition {
     @Override
     public void register() {
         super.register();
-        //This is required because a class type check isn't built-in, for some reason.
         MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, listener);
         MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, tickListener);
     }
