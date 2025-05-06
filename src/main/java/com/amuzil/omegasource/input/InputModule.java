@@ -136,29 +136,29 @@ public class InputModule {
             double distance = 15; // TODO - Create Bender DataTrait
             assert mc.player != null;
             HitResult result = ProjectileUtil.getHitResultOnViewVector(mc.player, entity -> true, distance);
-            switch(result.getType()) {
-                case ENTITY -> TrackEntityResult((EntityHitResult)result);
-                case BLOCK -> TrackBlockResult((BlockHitResult)result);
-                case MISS -> HandleMiss();
+            switch (result.getType()) {
+                case ENTITY -> trackEntityResult((EntityHitResult)result);
+                case BLOCK -> trackBlockResult((BlockHitResult)result);
+                case MISS -> handleMiss();
             }
         }
         isSelecting = false;
     }
 
-    private void HandleMiss() {
+    private void handleMiss() {
         // set selection type to none
         bender.setSelection(new BendingSelection());
     }
 
-    private void TrackBlockResult(BlockHitResult result) {
+    private void trackBlockResult(BlockHitResult result) {
         BendingSelection selection = bender.getSelection();
-        selection.AddBlockPosition(result.getBlockPos());
+        selection.addBlockPosition(result.getBlockPos());
         bender.setSelection(selection);
     }
 
-    private void TrackEntityResult(EntityHitResult result) {
+    private void trackEntityResult(EntityHitResult result) {
         BendingSelection selection = bender.getSelection();
-        selection.AddEntityId(result.getEntity().getUUID());
+        selection.addEntityId(result.getEntity().getUUID());
         bender.setSelection(selection);
     }
 

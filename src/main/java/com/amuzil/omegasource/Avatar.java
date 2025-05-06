@@ -1,6 +1,5 @@
 package com.amuzil.omegasource;
 
-import com.amuzil.omegasource.api.magus.capability.CapabilityHandler;
 import com.amuzil.omegasource.entity.AvatarEntities;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import com.amuzil.omegasource.entity.modules.collision.FireModule;
@@ -71,7 +70,6 @@ public class Avatar {
     private void setup(final FMLCommonSetupEvent event) {
         // some pre init code
         Registries.init();
-        CapabilityHandler.init();
         AvatarNetwork.register();
 
         ModuleRegistry.register("Move", MoveModule::new);

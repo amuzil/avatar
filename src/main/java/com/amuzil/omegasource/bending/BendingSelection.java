@@ -2,11 +2,9 @@ package com.amuzil.omegasource.bending;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.*;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,26 +22,25 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
         this.target = target;
     }
 
-    public BendingSelection(Target target)
-    {
-        Reset();
+    public BendingSelection(Target target) {
+        reset();
         this.target = target;
     }
 
     public BendingSelection()
     {
-        Reset();
+        reset();
     }
 
-    public void Reset() {
-        blockPositions = new ArrayList<>();
-        entityIds = new ArrayList<>();
-        skillIds = new ArrayList<>();
+    public void reset() {
+        blockPositions.clear();
+        entityIds.clear();
+        skillIds.clear();
         target = Target.NONE;
     }
 
-    public void AddBlockPositions(List<BlockPos> pos) {
-        if(target != Target.BLOCK) {
+    public void addBlockPositions(List<BlockPos> pos) {
+        if (target != Target.BLOCK) {
             entityIds = new ArrayList<>();
             skillIds = new ArrayList<>();
             target = Target.BLOCK;
@@ -51,8 +48,8 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
         blockPositions.addAll(pos);
     }
 
-    public void AddBlockPosition(BlockPos pos) {
-        if(target != Target.BLOCK) {
+    public void addBlockPosition(BlockPos pos) {
+        if (target != Target.BLOCK) {
             entityIds = new ArrayList<>();
             skillIds = new ArrayList<>();
             target = Target.BLOCK;
@@ -60,8 +57,8 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
         blockPositions.add(pos);
     }
 
-    public void AddSkillId(String skillId) {
-        if(target != Target.SKILL) {
+    public void addSkillId(String skillId) {
+        if (target != Target.SKILL) {
             entityIds = new ArrayList<>();
             blockPositions = new ArrayList<>();
             target = Target.SKILL;
@@ -69,8 +66,8 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
         skillIds.add(skillId);
     }
 
-    public void AddEntityId(UUID entityId) {
-        if(target != Target.ENTITY) {
+    public void addEntityId(UUID entityId) {
+        if (target != Target.ENTITY) {
             skillIds = new ArrayList<>();
             blockPositions = new ArrayList<>();
             target = Target.ENTITY;
@@ -78,8 +75,8 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
         entityIds.add(entityId);
     }
 
-    public void AddSkillIds(List<String> skillIds) {
-        if(target != Target.SKILL) {
+    public void addSkillIds(List<String> skillIds) {
+        if (target != Target.SKILL) {
             entityIds = new ArrayList<>();
             blockPositions = new ArrayList<>();
             target = Target.SKILL;
@@ -87,8 +84,8 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
         this.skillIds.addAll(skillIds);
     }
 
-    public void AddEntityIds(List<UUID> entityIds) {
-        if(target != Target.ENTITY) {
+    public void addEntityIds(List<UUID> entityIds) {
+        if (target != Target.ENTITY) {
             skillIds = new ArrayList<>();
             blockPositions = new ArrayList<>();
             target = Target.ENTITY;
@@ -96,11 +93,11 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
         this.entityIds.addAll(entityIds);
     }
 
-    public void RemoveEntity(long entityId) {
+    public void removeEntity(UUID entityId) {
         entityIds.remove(entityId);
     }
 
-    BendingSelection Copy() {
+    BendingSelection copy() {
         var positions = new ArrayList<>(this.blockPositions);
         var entityIds = new ArrayList<>(this.entityIds);
         var skillIds = new ArrayList<>(this.skillIds);
@@ -125,11 +122,10 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
 
         compoundTag.putString("targetType", this.target.toString());
 
-        switch(this.target)
-        {
+        switch (this.target) {
             case BLOCK:
                 ListTag blockPositions = new ListTag();
-                for(int i = 0; i < this.blockPositions.size(); i++) {
+                for (int i = 0; i < this.blockPositions.size(); i++) {
                     CompoundTag blockPos = new CompoundTag();
                     BlockPos current = this.blockPositions.get(i);
                     blockPos.putInt("x", current.getX());
@@ -141,7 +137,7 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
                 break;
             case ENTITY:
                 ListTag entities = new ListTag();
-                for(int i = 0; i < this.entityIds.size(); i++) {
+                for (int i = 0; i < this.entityIds.size(); i++) {
                     UUID current = this.entityIds.get(i);
                     entities.add(i, NbtUtils.createUUID(current));
                 }
@@ -149,7 +145,7 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
                 break;
             case SKILL:
                 ListTag skills = new ListTag();
-                for(int i = 0; i < this.skillIds.size(); i++) {
+                for (int i = 0; i < this.skillIds.size(); i++) {
                     String current = this.skillIds.get(i);
                     skills.add(i, StringTag.valueOf(current));
                 }
@@ -168,11 +164,10 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
         this.entityIds = new ArrayList<>();
         this.skillIds = new ArrayList<>();
 
-        switch(this.target)
-        {
+        switch (this.target) {
             case BLOCK:
                 ListTag blockPositions = (ListTag)compoundTag.get("blockPositions");
-                for(int i = 0; i < blockPositions.size(); i++) {
+                for (int i = 0; i < blockPositions.size(); i++) {
                     CompoundTag blockPos = (CompoundTag) blockPositions.get(i);
                     int x = blockPos.getInt("x");
                     int y = blockPos.getInt("y");
@@ -183,14 +178,14 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
                 break;
             case ENTITY:
                 ListTag entities = (ListTag)compoundTag.get("entities");
-                for(int i = 0; i < entities.size(); i++) {
+                for (int i = 0; i < entities.size(); i++) {
                     UUID current = NbtUtils.loadUUID(entities.get(i));
                     this.entityIds.add(current);
                 }
                 break;
             case SKILL:
                 ListTag skills = (ListTag)compoundTag.get("skills");
-                for(int i = 0; i < skills.size(); i++) {
+                for (int i = 0; i < skills.size(); i++) {
                     String current = skills.get(i).getAsString();
                     this.skillIds.add(current);
                 }
@@ -204,7 +199,5 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
         ENTITY,
         SKILL,
         BLOCK;
-
-        public static final Target[] TYPES = Arrays.copyOfRange(Target.values(), 0, 3);
     }
 }
