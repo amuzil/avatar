@@ -69,10 +69,8 @@ public class FormActivatedPacket implements AvatarPacket {
          @see AvatarProjectile#AvatarProjectile(EntityType, Level) This gets called first and server-side only.
          Can't change this default constructor because it's needed to register entities. Add/use any extra args to Packet.
          */
-        System.out.println("HANDLE CLIENT SIDE " + projectile);
         assert projectile != null;
         projectile.startEffect(STRIKE);
-        System.out.println("Client-side handling of FormActivatedPacket for entity ID: " + entityId);
     }
 
     public boolean handle(Supplier<NetworkEvent.Context> ctx) {
