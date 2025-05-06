@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+
 public class SyncFormPathPacket implements AvatarPacket {
     private final CompoundTag tag; // The NBT data to sync
 

@@ -6,6 +6,7 @@ import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SizeTrait;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.AvatarProjectile;
 import com.amuzil.omegasource.entity.modules.IEntityModule;
+import com.amuzil.omegasource.utils.Constants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -38,7 +39,7 @@ public class GrowModule implements IEntityModule {
 
         // Compute overall growth (quintic or other)
         float startSize = proj.width();
-        SizeTrait maxTrait = entity.getTrait("max_size", SizeTrait.class);
+        SizeTrait maxTrait = entity.getTrait(Constants.MAX_SIZE, SizeTrait.class);
         if (maxTrait == null) {
             Avatar.LOGGER.warn("No max size set for growth module. Remove the module or set max size");
             return;

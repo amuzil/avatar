@@ -1,5 +1,6 @@
 package com.amuzil.omegasource.bending;
 
+
 public class BendingForms {
     // Basic Bending Forms
 
