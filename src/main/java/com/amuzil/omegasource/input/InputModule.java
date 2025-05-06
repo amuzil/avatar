@@ -43,7 +43,6 @@ public class InputModule {
     private final long DOUBLE_TAP_THRESHOLD = 250; // milliseconds
     private final HashMap<BendingForm, Long> lastPressedForm = new HashMap<>();
     private Bender bender;
-    private BendingSelection.Target selection = BendingSelection.Target.NONE;
 
     public InputModule() {
         this.keyboardListener = keyboardEvent -> {
@@ -56,16 +55,14 @@ public class InputModule {
                         switch (key) {
                             case InputConstants.KEY_LCONTROL -> isHoldingCtrl = true;
                             case InputConstants.KEY_LALT -> isHoldingAlt = true;
-//                            case InputConstants.KEY_LSHIFT -> isHoldingShift = true;
+                            case InputConstants.KEY_LSHIFT -> isHoldingShift = true;
                         }
                     }
                     case InputConstants.RELEASE -> {
-                        if (keyPressed(key)) {
-                            switch (key) {
-                                case InputConstants.KEY_LCONTROL -> isHoldingCtrl = false;
-                                case InputConstants.KEY_LALT -> isHoldingAlt = false;
-//                                case InputConstants.KEY_LSHIFT -> isHoldingShift = false;
-                            }
+                        switch (key) {
+                            case InputConstants.KEY_LCONTROL -> isHoldingCtrl = false;
+                            case InputConstants.KEY_LALT -> isHoldingAlt = false;
+                            case InputConstants.KEY_LSHIFT -> isHoldingShift = false;
                         }
                     }
                 }
@@ -123,25 +120,27 @@ public class InputModule {
             }
         });
 
-        if(glfwKeysDown.containsKey(selectTargetKey.getKey()) && !isSelecting) {
+        if (selectTargetKey.isDown() && !isSelecting) {
             isSelecting = true;
             handleSelectRaycast();
+//            sendDebugMsg("Selection: " + bender.getSelection().target.toString());
         }
     }
 
     private void handleSelectRaycast() {
-        if(isHoldingShift) {
+        if (isHoldingShift) {
             // set selection type to self
             bender.setSelection(new BendingSelection(SELF));
-        }
-
-        Minecraft mc = Minecraft.getInstance();
-        double distance = 15; // todo config/bender data?
-        HitResult result = ProjectileUtil.getHitResultOnViewVector(mc.player, entity -> true, distance);
-        switch(result.getType()) {
-            case ENTITY -> TrackEntityResult((EntityHitResult)result);
-            case BLOCK -> TrackBlockResult((BlockHitResult)result);
-            case MISS -> HandleMiss();
+        } else {
+            Minecraft mc = Minecraft.getInstance();
+            double distance = 15; // TODO - Create Bender DataTrait
+            assert mc.player != null;
+            HitResult result = ProjectileUtil.getHitResultOnViewVector(mc.player, entity -> true, distance);
+            switch(result.getType()) {
+                case ENTITY -> TrackEntityResult((EntityHitResult)result);
+                case BLOCK -> TrackBlockResult((BlockHitResult)result);
+                case MISS -> HandleMiss();
+            }
         }
         isSelecting = false;
     }
