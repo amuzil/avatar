@@ -10,10 +10,10 @@ import java.util.UUID;
 
 
 public class BendingSelection implements INBTSerializable<CompoundTag> {
-    public List<BlockPos> blockPositions;
-    public List<UUID> entityIds;
-    public List<String> skillIds;
-    public Target target;
+    public List<BlockPos> blockPositions = new ArrayList<>();
+    public List<UUID> entityIds = new ArrayList<>();
+    public List<String> skillIds = new ArrayList<>();
+    public Target target = Target.NONE;
 
     public BendingSelection(List<BlockPos> positions, List<UUID> entities, List<String> skills, Target target) {
         blockPositions = positions;
