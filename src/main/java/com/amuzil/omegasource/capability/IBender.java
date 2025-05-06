@@ -1,5 +1,6 @@
 package com.amuzil.omegasource.capability;
 
+import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.skill.Skill;
 import com.amuzil.omegasource.api.magus.skill.data.SkillCategoryData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
@@ -19,6 +20,8 @@ import net.minecraftforge.common.util.INBTSerializable;
  */
 @AutoRegisterCapability
 public interface IBender extends INBTSerializable<CompoundTag> {
+
+    FormPath getFormPath();
 
     SkillCategoryData getSkillCategoryData(Element element);
 
@@ -62,6 +65,8 @@ public interface IBender extends INBTSerializable<CompoundTag> {
 
     // Check if data needs to be synced across client / server
     boolean isDirty();
+
+    void syncFormPathToClient();
 
     void syncToClient();
 

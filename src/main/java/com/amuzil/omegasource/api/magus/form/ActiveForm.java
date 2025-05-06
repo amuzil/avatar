@@ -1,7 +1,9 @@
 package com.amuzil.omegasource.api.magus.form;
 
+import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.bending.BendingForm;
 import com.amuzil.omegasource.api.magus.registry.Registries;
+import com.amuzil.omegasource.bending.BendingForms;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
@@ -16,6 +18,10 @@ public class ActiveForm {
     public ActiveForm(BendingForm form, boolean active) {
         this.form = form;
         this.active = active;
+    }
+
+    public ActiveForm(CompoundTag tag) {
+        this.deserializeNBT(tag);
     }
 
     public BendingForm form() {
@@ -33,9 +39,9 @@ public class ActiveForm {
         return tag;
     }
 
-    public void deserializeNBT(CompoundTag compoundTag) {
-        form = (BendingForm) Registries.FORMS.get().getValue(ResourceLocation.tryParse(compoundTag.getString("Form")));
-        active = compoundTag.getBoolean("Active");
+    public void deserializeNBT(CompoundTag tag) {
+        form = (BendingForm) Registries.FORMS.get().getValue(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, tag.getString("Form")));
+        active = tag.getBoolean("Active");
     }
 
     @Override

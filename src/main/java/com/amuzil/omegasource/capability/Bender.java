@@ -15,6 +15,7 @@ import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.client.SyncBenderPacket;
+import com.amuzil.omegasource.network.packets.client.SyncFormPathPacket;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -91,14 +92,15 @@ public class Bender implements IBender {
         formConditionHandler.register("FormCondition", () -> {
             ActiveForm activeForm = new ActiveForm(formConditionHandler.form(), formConditionHandler.active());
             formPath.update(activeForm);
-            if (entity.level().isClientSide()) {
+            this.syncFormPathToClient();
+            if (!entity.level().isClientSide()) {
                 RadixTree.getLogger().debug("Simple Forms: {}", formPath.simple());
                 RadixTree.getLogger().debug("Complex Forms: {}", formPath.complex());
             }
         }, () -> {
             if (!formPath.isActive()) {
                 formPath.clear();
-                if (entity.level().isClientSide())
+                if (!entity.level().isClientSide())
                     RadixTree.getLogger().debug("Complex Forms Timed Out");
             }
         });
@@ -110,6 +112,11 @@ public class Bender implements IBender {
 
     public LivingEntity getEntity() {
         return entity;
+    }
+
+    @Override
+    public FormPath getFormPath() {
+        return formPath;
     }
 
     @Override
@@ -250,6 +257,16 @@ public class Bender implements IBender {
     @Override
     public boolean isDirty() {
         return this.isDirty;
+    }
+
+    @Override
+    public void syncFormPathToClient() {
+        if (!entity.level().isClientSide()) {
+            if (entity instanceof ServerPlayer player) {
+                SyncFormPathPacket packet = new SyncFormPathPacket(formPath.serializeNBT());
+                AvatarNetwork.sendToClient(packet, player);
+            }
+        }
     }
 
     @Override

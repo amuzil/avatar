@@ -1,6 +1,8 @@
 package com.amuzil.omegasource.api.magus.form;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -62,20 +64,47 @@ public class FormPath {
 
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
-        int i = 0;
+
+        // Serialize simpleForms
+        ListTag simpleList = new ListTag();
         for (ActiveForm form : simpleForms) {
-            tag.put("Active " + i, form.serializeNBT());
-            i++;
+            simpleList.add(form.serializeNBT());
         }
-        tag.putInt("Active Size", i);
+        tag.put("SimpleForms", simpleList);
+
+        // Serialize complexForms
+        ListTag complexList = new ListTag();
+        for (ActiveForm form : complexForms) {
+            complexList.add(form.serializeNBT());
+        }
+        tag.put("ComplexForms", complexList);
+
+        // Serialize active flag
+        tag.putBoolean("Active", active);
+
         return tag;
     }
 
-    public void deserializeNBT(CompoundTag compoundTag) {
-        int size = compoundTag.getInt("Active Size");
-        for (int i = 0; i < size; i++) {
-            simpleForms.get(i).deserializeNBT((CompoundTag) compoundTag.get("Active " + i));
+    public void deserializeNBT(CompoundTag tag) {
+        simpleForms.clear();
+        complexForms.clear();
+
+        // Deserialize simpleForms
+        ListTag simpleList = tag.getList("SimpleForms", Tag.TAG_COMPOUND);
+        for (int i = 0; i < simpleList.size(); i++) {
+            ActiveForm form = new ActiveForm(simpleList.getCompound(i));
+            simpleForms.add(form);
         }
+
+        // Deserialize complexForms
+        ListTag complexList = tag.getList("ComplexForms", Tag.TAG_COMPOUND);
+        for (int i = 0; i < complexList.size(); i++) {
+            ActiveForm form = new ActiveForm(complexList.getCompound(i));
+            complexForms.add(form);
+        }
+
+        // Deserialize active flag
+        active = tag.getBoolean("Active");
     }
 
     @Override
