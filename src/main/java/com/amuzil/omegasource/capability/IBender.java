@@ -9,6 +9,7 @@ import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.network.packets.client.SyncBenderPacket;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.capabilities.AutoRegisterCapability;
 import net.minecraftforge.common.util.INBTSerializable;
 
@@ -20,6 +21,12 @@ import net.minecraftforge.common.util.INBTSerializable;
  */
 @AutoRegisterCapability
 public interface IBender extends INBTSerializable<CompoundTag> {
+
+    void register();
+
+    void unregister();
+
+    LivingEntity getEntity();
 
     FormPath getFormPath();
 

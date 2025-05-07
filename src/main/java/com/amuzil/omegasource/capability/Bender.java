@@ -1,9 +1,7 @@
 package com.amuzil.omegasource.capability;
 
-import com.amuzil.omegasource.api.magus.condition.conditions.FormCondition;
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
 import com.amuzil.omegasource.api.magus.form.FormPath;
-import com.amuzil.omegasource.api.magus.radix.RadixTree;
 import com.amuzil.omegasource.api.magus.registry.Registries;
 import com.amuzil.omegasource.api.magus.skill.Skill;
 import com.amuzil.omegasource.api.magus.skill.SkillCategory;
@@ -13,6 +11,7 @@ import com.amuzil.omegasource.api.magus.skill.traits.DataTrait;
 import com.amuzil.omegasource.bending.BendingSelection;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
+import com.amuzil.omegasource.events.FormActivatedEvent;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.client.SyncBenderPacket;
 import com.amuzil.omegasource.network.packets.client.SyncFormPathPacket;
@@ -22,6 +21,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
@@ -29,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 
 public class Bender implements IBender {
@@ -39,8 +42,12 @@ public class Bender implements IBender {
     // Non-Persistent data
     private final LivingEntity entity;
     public final FormPath formPath = new FormPath();
-    private final FormCondition formConditionHandler;
+    private final Consumer<FormActivatedEvent> formListener;
+    private final Consumer<TickEvent.ServerTickEvent> tickListener;
     private boolean isDirty = true; // Flag to indicate if data was changed
+    private boolean active;
+    private final int timeout = 5; // Adjust timeout time here
+    private int tick = timeout;
 
     // Persistent data
     private Element activeElement = Elements.FIRE; // Currently active element // TODO - Randomize on first load
@@ -51,6 +58,8 @@ public class Bender implements IBender {
 
     public Bender(LivingEntity entity) {
         this.entity = entity;
+        this.formListener = this::onFormActivatedEvent;
+        this.tickListener = this::onServerTick;
 
         for (SkillCategory category : Registries.getSkillCategories())
             skillCategoryData.add(new SkillCategoryData(category));
@@ -61,7 +70,6 @@ public class Bender implements IBender {
         // Allow use of all Elements & Skills for testing!
         setAvatar(); // TODO - Uncomment this to grant all elements & skills
 
-        formConditionHandler = new FormCondition(entity);
         markDirty();
     }
 
@@ -88,28 +96,47 @@ public class Bender implements IBender {
         return getSkillData(skill).canUse() && getSkillCategoryData(skill.getCategory().getId()).canUse();
     }
 
-    public void registerFormCondition() {
-        formConditionHandler.register("FormCondition", () -> {
-            ActiveForm activeForm = new ActiveForm(formConditionHandler.form(), formConditionHandler.active());
+    private void onFormActivatedEvent(FormActivatedEvent event) {
+        if (event.getEntity().getId() == entity.getId()) {
+            active = !event.released();
+            ActiveForm activeForm = new ActiveForm(event.getForm(), !event.released());
             formPath.update(activeForm);
             this.syncFormPathToClient();
-            if (!entity.level().isClientSide()) {
-                RadixTree.getLogger().debug("Simple Forms: {}", formPath.simple());
-                RadixTree.getLogger().debug("Complex Forms: {}", formPath.complex());
-            }
-        }, () -> {
-            if (!formPath.isActive()) {
-                formPath.clear();
-                if (!entity.level().isClientSide())
-                    RadixTree.getLogger().debug("Complex Forms Timed Out");
-            }
-        });
+            tick = timeout;
+            LOGGER.debug("Simple Forms: {}", formPath.simple());
+            LOGGER.debug("Complex Forms: {}", formPath.complex());
+        }
     }
 
-    public void unregisterFormCondition() {
-        formConditionHandler.unregister();
+    private void onServerTick(TickEvent.ServerTickEvent event) {
+        if (event.phase == TickEvent.Phase.START) {
+            if (!active) {
+                if (tick == 0) {
+                    if (!formPath.isActive()) {
+                        formPath.clear(); // TODO - Complex forms not clearing after timeout
+                        LOGGER.debug("Complex Forms Timed Out");
+                    }
+                    tick = timeout;
+                    active = true;
+                }
+                tick--;
+            }
+        }
     }
 
+    @Override
+    public void register() {
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, formListener);
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, tickListener);
+    }
+
+    @Override
+    public void unregister() {
+        MinecraftForge.EVENT_BUS.unregister(formListener);
+        MinecraftForge.EVENT_BUS.unregister(tickListener);
+    }
+
+    @Override
     public LivingEntity getEntity() {
         return entity;
     }
@@ -261,22 +288,16 @@ public class Bender implements IBender {
 
     @Override
     public void syncFormPathToClient() {
-        if (!entity.level().isClientSide()) {
-            if (entity instanceof ServerPlayer player) {
-                SyncFormPathPacket packet = new SyncFormPathPacket(formPath.serializeNBT());
-                AvatarNetwork.sendToClient(packet, player);
-            }
-        }
+        if (!entity.level().isClientSide())
+            if (entity instanceof ServerPlayer player)
+                AvatarNetwork.sendToClient(new SyncFormPathPacket(formPath.serializeNBT()), player);
     }
 
     @Override
     public void syncToClient() {
-        if (!entity.level().isClientSide()) {
-            if (entity instanceof ServerPlayer player) {
-                SyncBenderPacket packet = new SyncBenderPacket(this.serializeNBT(), player.getUUID());
-                AvatarNetwork.sendToClient(packet, player);
-            }
-        }
+        if (!entity.level().isClientSide())
+            if (entity instanceof ServerPlayer player)
+                AvatarNetwork.sendToClient(new SyncBenderPacket(this.serializeNBT(), player.getUUID()), player);
     }
 
     // TODO - Create generic method to check & return if data in NBT tag exists & warn if it doesn't

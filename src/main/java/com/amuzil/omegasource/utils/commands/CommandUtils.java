@@ -29,8 +29,7 @@ class CommandUtils {
         ServerPlayer targetPlayer = player;
         player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
             bender.setElement(element);
-            SyncBenderPacket packet = new SyncBenderPacket(bender.serializeNBT(), targetPlayer.getUUID());
-            AvatarNetwork.sendToClient(packet, targetPlayer);
+            bender.syncToClient();
             targetPlayer.sendSystemMessage(Component.literal("Active Bending set to " + element.name()));
         });
         return 1;
@@ -82,8 +81,7 @@ class CommandUtils {
         ServerPlayer targetPlayer = player;
         player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
             bender.setCanUseElement(canUse, element);
-            SyncBenderPacket packet = new SyncBenderPacket(bender.serializeNBT(), targetPlayer.getUUID());
-            AvatarNetwork.sendToClient(packet, targetPlayer);
+            bender.syncToClient();
             String action = canUse
                     ? String.format("Granted the power of %s. May the element of %s protect you.", element.name(), element.nickName())
                     : String.format("Taken %s away.", element.name());
@@ -98,8 +96,7 @@ class CommandUtils {
         ServerPlayer targetPlayer = player;
         player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
             bender.setCanUseSkill(canUse, skill.getId());
-            SyncBenderPacket packet = new SyncBenderPacket(bender.serializeNBT(), targetPlayer.getUUID());
-            AvatarNetwork.sendToClient(packet, targetPlayer);
+            bender.syncToClient();
             String action = canUse
                     ? String.format("Learned %s skill", skill.name())
                     : String.format("Forgot %s skill", skill.name());
@@ -114,8 +111,7 @@ class CommandUtils {
         ServerPlayer targetPlayer = player;
         player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
             bender.setCanUseAllSkills(element);
-            SyncBenderPacket packet = new SyncBenderPacket(bender.serializeNBT(), targetPlayer.getUUID());
-            AvatarNetwork.sendToClient(packet, targetPlayer);
+            bender.syncToClient();
             targetPlayer.sendSystemMessage(Component.literal("Mastered the element of " + element.nickName() + "."));
         });
         return 1;
@@ -131,8 +127,7 @@ class CommandUtils {
             ben.getSkillData(skill.getId()).getSkillTraits().forEach(trait -> {
                 if (trait.name().equals(tag.getString("name"))) {
                     trait.deserializeNBT(tag);
-                    SyncBenderPacket packet = new SyncBenderPacket(bender.serializeNBT(), targetPlayer.getUUID());
-                    AvatarNetwork.sendToClient(packet, targetPlayer);
+                    bender.syncToClient();
                     targetPlayer.sendSystemMessage(Component.literal("Updated " + trait.name() + " SkillTrait for " + skill.name()));
                 }
             });

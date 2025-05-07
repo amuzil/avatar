@@ -2,7 +2,6 @@ package com.amuzil.omegasource.api.magus.condition.conditions;
 
 import com.amuzil.omegasource.api.magus.condition.Condition;
 import com.amuzil.omegasource.bending.BendingForm;
-import com.amuzil.omegasource.bending.BendingForms;
 import com.amuzil.omegasource.events.FormActivatedEvent;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.MinecraftForge;
@@ -28,29 +27,6 @@ public class FormCondition extends Condition {
                 onSuccess.run();
                 tick = timeout;
             }
-        };
-
-        tickListener = event -> {
-            if (event.phase == TickEvent.Phase.START
-                    && event.type == TickEvent.Type.SERVER) {
-                if (!active) {
-                    if (tick == 0) {
-                        onFailure.run();
-                        tick = timeout;
-                        active = true;
-                    }
-                    tick--;
-                }
-            }
-        };
-    }
-
-    public FormCondition() {
-        listener = event -> {
-            form = event.getForm();
-            active = !event.released();
-            onSuccess.run();
-            tick = timeout;
         };
 
         tickListener = event -> {

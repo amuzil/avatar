@@ -24,15 +24,10 @@ public class ServerEvents {
     public static void onEntityJoinLevel(EntityJoinLevelEvent event) {
         if (!(event.getEntity() instanceof Player)) return; // Ignore non-player entities
 
-        if (event.getEntity() instanceof Player player) {
-            Bender bender = (Bender) Bender.getBender(player);
-            bender.registerFormCondition();
-            System.out.println(player.getName().getString() + " registerFormCondition CLIENT-SIDE: " + event.getLevel().isClientSide());
-        }
-        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            serverPlayer.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
-                CompoundTag tag = bender.serializeNBT();
-                AvatarNetwork.sendToClient(new SyncBenderPacket(tag, serverPlayer.getUUID()), serverPlayer);
+        if (event.getEntity() instanceof ServerPlayer player) {
+            player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
+                bender.syncToClient();
+                bender.register();
                 System.out.println("EntityJoinLevelEvent SYNC SERVER TO CLIENT ON JOIN");
             });
         }
@@ -41,44 +36,42 @@ public class ServerEvents {
     @SubscribeEvent
     public static void onEntityLeaveLevel(EntityLeaveLevelEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            // TODO - Causes whole server to crash when player leaves
-            //      java.lang.NullPointerException: Cannot invoke "com.amuzil.omegasource.magus.input.InputModule.getFormsTree()"
-            //      because "com.amuzil.omegasource.magus.Magus.keyboardMouseInputModule" is null
-
-            Bender bender = (Bender) Bender.getBender(player);
-            assert bender != null;
-            bender.unregisterFormCondition();
+            player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
+                bender.syncToClient();
+                bender.unregister();
+                System.out.println("EntityLeaveLevelEvent SYNC SERVER TO CLIENT ON LEAVE");
+            });
         }
     }
 
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer serverPlayer)) return;
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
-        serverPlayer.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
-            CompoundTag tag = bender.serializeNBT();
-            AvatarNetwork.sendToClient(new SyncBenderPacket(tag, serverPlayer.getUUID()), serverPlayer);
+        player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
+            bender.syncToClient();
             System.out.println("PlayerLoggedInEvent SYNC SERVER TO CLIENT ON JOIN");
         });
     }
 
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedOutEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer serverPlayer)) return;
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
-        serverPlayer.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
-            CompoundTag tag = bender.serializeNBT();
-            AvatarNetwork.sendToClient(new SyncBenderPacket(tag, serverPlayer.getUUID()), serverPlayer);
+        player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
+            bender.syncToClient();
             System.out.println("PlayerLoggedOutEvent SYNC SERVER TO CLIENT ON LEAVE");
         });
     }
 
     @SubscribeEvent
     public static void worldTick(LivingEvent.LivingTickEvent event) {
-        if (event.getEntity() != null && event.getEntity().isAlive()) {
-            Bender bender = (Bender) Bender.getBender(event.getEntity());
-            if (bender == null) return;
-            bender.tick();
+        if (event.getEntity() instanceof Player) {
+            if (event.getEntity() != null && event.getEntity().isAlive()) {
+                Bender bender = (Bender) Bender.getBender(event.getEntity());
+                if (bender == null) return;
+                bender.tick();
+            }
         }
     }
 }

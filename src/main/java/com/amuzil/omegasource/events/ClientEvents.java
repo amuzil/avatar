@@ -21,11 +21,6 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onClientLogout(ClientPlayerNetworkEvent.LoggingOut event) {
-        if (event.getPlayer() != null) {
-            Bender bender = (Bender) Bender.getBender(event.getPlayer());
-            if (bender != null)
-                bender.unregisterFormCondition();
-        }
         if (Avatar.inputModule != null) {
             Avatar.inputModule.terminate();
         }
