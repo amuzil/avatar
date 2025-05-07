@@ -113,7 +113,7 @@ public class Bender implements IBender {
             if (!active) {
                 if (tick == 0) {
                     if (!formPath.isActive()) {
-                        formPath.clear(); // TODO - Complex forms not clearing after timeout
+                        formPath.clear();
                         LOGGER.debug("Complex Forms Timed Out");
                     }
                     tick = timeout;
