@@ -1,17 +1,17 @@
 package com.amuzil.omegasource.entity.modules.force;
 
-import com.amuzil.omegasource.bending.BendingForms;
+import com.amuzil.omegasource.bending.form.BendingForms;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.AvatarProjectile;
 import com.amuzil.omegasource.entity.modules.IForceModule;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
 
 public class MoveModule implements IForceModule {
     String id = "move";

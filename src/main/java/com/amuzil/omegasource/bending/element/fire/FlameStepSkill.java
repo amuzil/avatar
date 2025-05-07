@@ -20,7 +20,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.Objects;
 
-import static com.amuzil.omegasource.bending.BendingForms.STEP;
+import static com.amuzil.omegasource.bending.form.BendingForms.STEP;
 
 public class FlameStepSkill extends BendingEffect {
 

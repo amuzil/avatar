@@ -1,13 +1,13 @@
 package com.amuzil.omegasource.entity;
 
-import com.amuzil.omegasource.bending.BendingForm;
+import com.amuzil.omegasource.bending.form.BendingForm;
 import com.amuzil.omegasource.entity.projectile.AirProjectile;
 import com.amuzil.omegasource.entity.projectile.EarthProjectile;
 import com.amuzil.omegasource.entity.projectile.FireProjectile;
 import com.amuzil.omegasource.entity.projectile.WaterProjectile;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
-import com.amuzil.omegasource.bending.BendingForms;
+import com.amuzil.omegasource.bending.form.BendingForms;
 import com.lowdragmc.photon.client.fx.EntityEffect;
 import com.lowdragmc.photon.client.fx.FX;
 import net.minecraft.client.Minecraft;

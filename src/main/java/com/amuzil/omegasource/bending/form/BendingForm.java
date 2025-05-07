@@ -1,4 +1,4 @@
-package com.amuzil.omegasource.bending;
+package com.amuzil.omegasource.bending.form;
 
 import com.amuzil.omegasource.api.magus.form.Form;
 
@@ -16,12 +16,8 @@ public class BendingForm extends Form {
     }
 
     public BendingForm() {
-        super(null); // Create null Form to fix random NullPointerException
+        super(null);
         this.type = Type.NONE;
-    }
-
-    public String name() {
-        return super.name();
     }
 
     @Override
@@ -40,14 +36,39 @@ public class BendingForm extends Form {
         }
     }
 
+    public String name() {
+        return super.name();
+    }
+
     public BendingForm.Type type() {
         return type;
+    }
+
+    public BendingForm.Type.Direction direction() {
+        return type.direction;
     }
 
     public enum Type {
         NONE,
         MOTION,
         SHAPE,
-        INITIALIZER
+        INITIALIZER;
+
+        Direction direction = Direction.NONE;
+
+        Type subType(Direction direction) {
+            this.direction = direction;
+            return this;
+        }
+
+        public enum Direction {
+            NONE,
+            FORWARD,
+            BACKWARD,
+            LEFTWARD,
+            RIGHTWARD,
+            UPWARD,
+            DOWNWARD
+        }
     }
 }

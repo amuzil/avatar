@@ -1,6 +1,5 @@
 package com.amuzil.omegasource.capability;
 
-import com.amuzil.omegasource.api.magus.form.ActiveForm;
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.registry.Registries;
 import com.amuzil.omegasource.api.magus.skill.Skill;
@@ -99,8 +98,7 @@ public class Bender implements IBender {
     private void onFormActivatedEvent(FormActivatedEvent event) {
         if (event.getEntity().getId() == entity.getId()) {
             active = !event.released();
-            ActiveForm activeForm = new ActiveForm(event.getForm(), !event.released());
-            formPath.update(activeForm);
+            formPath.update(event.getActiveForm());
             this.syncFormPathToClient();
             tick = timeout;
             LOGGER.debug("Simple Forms: {}", formPath.simple());

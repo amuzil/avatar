@@ -22,8 +22,7 @@ public class SyncFormPathPacket implements AvatarPacket {
     }
 
     public static SyncFormPathPacket fromBytes(FriendlyByteBuf buf) {
-        CompoundTag tag = buf.readNbt();
-        return new SyncFormPathPacket(tag);
+        return new SyncFormPathPacket(buf.readNbt());
     }
 
     public void toBytes(FriendlyByteBuf buf) {

@@ -1,9 +1,8 @@
 package com.amuzil.omegasource.api.magus.form;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.bending.BendingForm;
+import com.amuzil.omegasource.bending.form.BendingForm;
 import com.amuzil.omegasource.api.magus.registry.Registries;
-import com.amuzil.omegasource.bending.BendingForms;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
@@ -14,6 +13,13 @@ public class ActiveForm {
     // TODO - Create way to save elapsedTime data server-side
     private BendingForm form;
     private boolean active;
+
+    public ActiveForm(String formName, boolean active) {
+        this(
+            (BendingForm) Registries.FORMS.get().getValue(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, formName)),
+            active
+        );
+    }
 
     public ActiveForm(BendingForm form, boolean active) {
         this.form = form;

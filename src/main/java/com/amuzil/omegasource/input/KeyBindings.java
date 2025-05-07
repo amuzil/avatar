@@ -1,8 +1,8 @@
 package com.amuzil.omegasource.input;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.bending.BendingForm;
-import com.amuzil.omegasource.bending.BendingForms;
+import com.amuzil.omegasource.bending.form.BendingForm;
+import com.amuzil.omegasource.bending.form.BendingForms;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;

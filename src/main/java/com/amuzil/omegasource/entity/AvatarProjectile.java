@@ -1,6 +1,6 @@
 package com.amuzil.omegasource.entity;
 
-import com.amuzil.omegasource.bending.BendingForm;
+import com.amuzil.omegasource.bending.form.BendingForm;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.entity.modules.IForceModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;

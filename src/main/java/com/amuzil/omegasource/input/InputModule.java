@@ -1,8 +1,9 @@
 package com.amuzil.omegasource.input;
 
+import com.amuzil.omegasource.api.magus.form.ActiveForm;
 import com.amuzil.omegasource.capability.Bender;
-import com.amuzil.omegasource.bending.BendingForm;
-import com.amuzil.omegasource.bending.BendingForms;
+import com.amuzil.omegasource.bending.form.BendingForm;
+import com.amuzil.omegasource.bending.form.BendingForms;
 import com.amuzil.omegasource.bending.BendingSelection;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.forms.ExecuteFormPacket;
@@ -127,6 +128,24 @@ public class InputModule {
         }
     }
 
+    private void checkForm(BendingForm form) { // Check if the form met the conditions before sending the packet
+        if (isBending) {
+            if (!(isHoldingCtrl || isHoldingAlt)) {
+                if (form.equals(BendingForms.STRIKE) || form.equals(BendingForms.BLOCK)) {
+                    sendFormPacket(form, false);
+                } else if (isDoubleTap(form)) {
+                    sendFormPacket(BendingForms.STEP, false);
+                }
+            } else if (isHoldingCtrl && form.type().equals(BendingForm.Type.MOTION)) {
+                sendFormPacket(form, false);
+            } else if (isHoldingAlt && form.type().equals(BendingForm.Type.SHAPE)) {
+                sendFormPacket(form, false);
+            } else if (form.type().equals(BendingForm.Type.INITIALIZER)) {
+                sendFormPacket(form, false);
+            }
+        }
+    }
+
     private void handleSelectRaycast() {
         if (isHoldingShift) {
             // set selection type to self
@@ -162,51 +181,32 @@ public class InputModule {
         bender.setSelection(selection);
     }
 
-    private void checkForm(BendingForm form) { // Check if the form met the conditions before sending the packet
-        if (isBending) {
-            if (!(isHoldingCtrl || isHoldingAlt)) {
-                if (form.equals(BendingForms.STRIKE) || form.equals(BendingForms.BLOCK)) {
-                    sendFormPacket(form, false);
-                } else if (isDoubleTap(form)) {
-                    sendFormPacket(BendingForms.STEP, false);
-                }
-            } else if (isHoldingCtrl && form.type().equals(BendingForm.Type.MOTION)) {
-                sendFormPacket(form, false);
-            } else if (isHoldingAlt && form.type().equals(BendingForm.Type.SHAPE)) {
-                sendFormPacket(form, false);
-            } else if (form.type().equals(BendingForm.Type.INITIALIZER)) {
-                sendFormPacket(form, false);
-            }
-        }
-    }
-
     private void releaseForm(BendingForm form, int key) {
         glfwKeysDown.remove(key);
         sendFormPacket(form, true);
     }
 
     private void sendFormPacket(BendingForm form, boolean released) {
+        ActiveForm activeForm = new ActiveForm(form, !released);
         if (!released) {
             // send Form execute packet
-            AvatarNetwork.sendToServer(new ExecuteFormPacket(form));
+            AvatarNetwork.sendToServer(new ExecuteFormPacket(activeForm.serializeNBT()));
             currentForm = form;
         } else {
             // send Form release packet
-            AvatarNetwork.sendToServer(new ReleaseFormPacket(form));
+            AvatarNetwork.sendToServer(new ReleaseFormPacket(activeForm.serializeNBT()));
             currentForm = BendingForms.NULL;
         }
     }
 
-    public boolean isDoubleTap(BendingForm form) {
+    private boolean isDoubleTap(BendingForm form) {
         if (form.type().equals(BendingForm.Type.MOTION)) {
             long currentTime = System.currentTimeMillis();
             long lastTime = lastPressedForm.getOrDefault(form, 0L);
-
             if (currentTime - lastTime < DOUBLE_TAP_THRESHOLD) {
                 lastPressedForm.put(form, 0L); // Reset to avoid triple tap
                 return true;
             }
-
             lastPressedForm.put(form, currentTime);
         }
         return false;
@@ -242,7 +242,7 @@ public class InputModule {
         lastPressedForm.clear();
         assert Minecraft.getInstance().player != null;
         bender = (Bender) Bender.getBender(Minecraft.getInstance().player);
-        if (bender != null) {
+        if (bender != null) { // Need this on startup!
             bender.reset();
         }
     }

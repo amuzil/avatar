@@ -1,14 +1,12 @@
 package com.amuzil.omegasource.utils.commands;
 
+import com.amuzil.omegasource.api.magus.form.ActiveForm;
 import com.amuzil.omegasource.api.magus.form.Form;
-import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.skill.Skill;
-import com.amuzil.omegasource.bending.BendingForm;
+import com.amuzil.omegasource.bending.form.BendingForm;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.capability.AvatarCapabilities;
 import com.amuzil.omegasource.capability.Bender;
-import com.amuzil.omegasource.network.AvatarNetwork;
-import com.amuzil.omegasource.network.packets.client.SyncBenderPacket;
 import com.amuzil.omegasource.network.packets.forms.ExecuteFormPacket;
 import com.amuzil.omegasource.network.packets.forms.ReleaseFormPacket;
 import com.mojang.brigadier.context.CommandContext;
@@ -17,8 +15,6 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-
-import java.util.List;
 
 
 class CommandUtils {
@@ -39,8 +35,9 @@ class CommandUtils {
         if (player == null)
             player = ctx.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = player;
-        ExecuteFormPacket.handleServerSide((BendingForm) form, targetPlayer);
-        ReleaseFormPacket.handleServerSide((BendingForm) form, targetPlayer);
+        BendingForm bendingForm = (BendingForm) form;
+        ExecuteFormPacket.handleServerSide(new ActiveForm(bendingForm, true).serializeNBT(), targetPlayer);
+        ReleaseFormPacket.handleServerSide(new ActiveForm(bendingForm, false).serializeNBT(), targetPlayer);
         return 1;
     }
 

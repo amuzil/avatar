@@ -19,7 +19,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-import static com.amuzil.omegasource.bending.BendingForms.STRIKE;
+import static com.amuzil.omegasource.bending.form.BendingForms.STRIKE;
 
 
 public class FireStrikeSkill extends BendingSkill {

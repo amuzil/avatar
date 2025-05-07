@@ -1,7 +1,6 @@
 package com.amuzil.omegasource.network.packets.client;
 
 import com.amuzil.omegasource.entity.AvatarProjectile;
-import com.amuzil.omegasource.entity.ElementProjectile;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.api.AvatarPacket;
 import net.minecraft.client.Minecraft;
@@ -20,7 +19,7 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static com.amuzil.omegasource.bending.BendingForms.*;
+import static com.amuzil.omegasource.bending.form.BendingForms.*;
 
 
 public class FormActivatedPacket implements AvatarPacket {

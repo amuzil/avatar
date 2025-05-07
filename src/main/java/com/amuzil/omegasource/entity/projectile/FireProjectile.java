@@ -7,7 +7,7 @@ import com.amuzil.omegasource.events.FormActivatedEvent;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
-import com.amuzil.omegasource.bending.BendingForms;
+import com.amuzil.omegasource.bending.form.BendingForms;
 import com.amuzil.omegasource.network.packets.client.FormActivatedPacket;
 import com.lowdragmc.photon.client.fx.EntityEffect;
 import net.minecraft.core.BlockPos;
@@ -190,7 +190,7 @@ public class FireProjectile extends ElementProjectile {
     public void onFormEvent(FormActivatedEvent event) {
         Entity owner = this.getOwner();
         if (owner != null && event.getEntity().getId() == owner.getId()) {
-            if (event.getForm().equals(BendingForms.STRIKE) && this.arcActive && this.hasElement) {
+            if (event.getActiveForm().equals(BendingForms.STRIKE) && this.arcActive && this.hasElement) {
                 // If LivingEntity owns this entity and has activated strike form, shoot held element
                 this.arcActive = false;
                 this.setTimeToKill(100);
