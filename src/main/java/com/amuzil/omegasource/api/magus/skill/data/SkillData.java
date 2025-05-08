@@ -103,7 +103,6 @@ public class SkillData implements DataTrait {
         CompoundTag tag = new CompoundTag();
         tag.putString("Skill ID", skillId.toString());
         tag.putBoolean("Can Use", canUse);
-        tag.putString("Skill State", state.name());
         skillTraits.forEach(skillTrait -> {
             tag.put(skillTrait.name() + "_" + skillTrait.getClass().getSimpleName(), skillTrait.serializeNBT());
         });
@@ -115,7 +114,6 @@ public class SkillData implements DataTrait {
         try {
             skillId = ResourceLocation.tryParse(tag.getString("Skill ID"));
             canUse = tag.getBoolean("Can Use");
-            state = Skill.SkillState.valueOf(tag.getString("Skill State"));
             if (!skillTraits.isEmpty())
                 skillTraits.forEach(skillTrait -> {
                     skillTrait.deserializeNBT((CompoundTag) Objects.requireNonNull(tag.get(skillTrait.name() + "_" + skillTrait.getClass().getSimpleName())));
