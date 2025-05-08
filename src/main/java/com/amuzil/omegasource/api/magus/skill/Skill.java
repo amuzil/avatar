@@ -109,7 +109,8 @@ public abstract class Skill {
             }
             start(entity);
         } else return;
-
+        // TODO - Make way for shouldStart to return true if the skill is already running,
+        //        so it doesn't need to be started again. Or skip to the run method if it is already running.
         if (shouldRun(entity, formPath)) {
             if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Run(entity, formPath, this))) return;
 

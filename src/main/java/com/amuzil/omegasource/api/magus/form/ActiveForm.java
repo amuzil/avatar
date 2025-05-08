@@ -10,9 +10,10 @@ import java.util.Objects;
 
 
 public class ActiveForm {
-    // TODO - Create way to save elapsedTime data server-side
+
     private BendingForm form;
     private boolean active;
+    private BendingForm.Type.Motion motion = BendingForm.Type.Motion.NONE;
 
     public ActiveForm(String formName, boolean active) {
         this(
@@ -38,16 +39,26 @@ public class ActiveForm {
         return active;
     }
 
+    public BendingForm.Type.Motion direction() {
+        return motion;
+    }
+
+    public void setDirection(BendingForm.Type.Motion motion) {
+        this.motion = motion;
+    }
+
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
         tag.putString("Form", this.form.name());
         tag.putBoolean("Active", this.active());
+        tag.putString("Direction", this.motion.name());
         return tag;
     }
 
     public void deserializeNBT(CompoundTag tag) {
         form = (BendingForm) Registries.FORMS.get().getValue(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, tag.getString("Form")));
         active = tag.getBoolean("Active");
+        motion = BendingForm.Type.Motion.valueOf(tag.getString("Direction"));
     }
 
     @Override

@@ -24,12 +24,13 @@ public abstract class LocalPlayerMixin extends Player {
     private void onAiStep(CallbackInfo ci) {
         // Only apply when on ground and jump key is pressed
 //        if (this.onGround() && Minecraft.getInstance().options.keyJump.isDown()) {
-            // Set upward velocity for a "super jump"
+//            System.out.println("Jumping");
+////             Set upward velocity for a "super jump"
 //            Vec3 motion = this.getDeltaMovement();
 //            this.setDeltaMovement(motion.x, 1.2D, motion.z);
 //            this.hurtMarked = true;
-
-            // Disable default jump behavior
+//
+//            // Disable default jump behavior
 //            this.setOnGround(false);
 //        }
     }

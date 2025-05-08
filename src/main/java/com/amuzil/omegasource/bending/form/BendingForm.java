@@ -5,19 +5,24 @@ import com.amuzil.omegasource.api.magus.form.Form;
 
 public class BendingForm extends Form {
     private final Type type;
+    private final Type.Motion direction;
 
-    public BendingForm(String name, Type type) {
+    public BendingForm(String name, Type type, Type.Motion direction) {
         super(name);
         this.type = type;
+        this.direction = direction;
+    }
+
+    public BendingForm(String name, Type type) {
+        this(name, type, Type.Motion.NONE);
     }
 
     public BendingForm(String name) {
-        this(name, Type.NONE);
+        this(name, Type.NONE, Type.Motion.NONE);
     }
 
     public BendingForm() {
-        super(null);
-        this.type = Type.NONE;
+        this(null, Type.NONE, Type.Motion.NONE);
     }
 
     @Override
@@ -40,12 +45,12 @@ public class BendingForm extends Form {
         return super.name();
     }
 
-    public BendingForm.Type type() {
+    public Type type() {
         return type;
     }
 
-    public BendingForm.Type.Direction direction() {
-        return type.direction;
+    public Type.Motion direction() {
+        return direction;
     }
 
     public enum Type {
@@ -54,14 +59,7 @@ public class BendingForm extends Form {
         SHAPE,
         INITIALIZER;
 
-        Direction direction = Direction.NONE;
-
-        Type subType(Direction direction) {
-            this.direction = direction;
-            return this;
-        }
-
-        public enum Direction {
+        public enum Motion {
             NONE,
             FORWARD,
             BACKWARD,

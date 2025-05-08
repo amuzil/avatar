@@ -3,6 +3,7 @@ package com.amuzil.omegasource.api.magus.skill;
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import net.minecraft.world.entity.LivingEntity;
 
+
 public class SkillActive extends Skill {
 
     public SkillActive(String modID, String name, SkillCategory category) {

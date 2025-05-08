@@ -40,9 +40,10 @@ public class InputModule {
     private boolean isHoldingAlt = false;
     private BendingForm currentForm = BendingForms.NULL;
     private boolean isBending = true;
-    private final HashMap<Integer, Integer> glfwKeysDown = new HashMap<>();
+    private BendingForm.Type.Motion motion = BendingForm.Type.Motion.NONE;
     private final long DOUBLE_TAP_THRESHOLD = 250; // milliseconds
     private final HashMap<BendingForm, Long> lastPressedForm = new HashMap<>();
+    private final HashMap<Integer, Integer> glfwKeysDown = new HashMap<>();
     private Bender bender;
 
     public InputModule() {
@@ -188,6 +189,7 @@ public class InputModule {
 
     private void sendFormPacket(BendingForm form, boolean released) {
         ActiveForm activeForm = new ActiveForm(form, !released);
+        activeForm.setDirection(motion);
         if (!released) {
             // send Form execute packet
             AvatarNetwork.sendToServer(new ExecuteFormPacket(activeForm.serializeNBT()));
@@ -205,10 +207,12 @@ public class InputModule {
             long lastTime = lastPressedForm.getOrDefault(form, 0L);
             if (currentTime - lastTime < DOUBLE_TAP_THRESHOLD) {
                 lastPressedForm.put(form, 0L); // Reset to avoid triple tap
+                motion = form.direction();
                 return true;
             }
             lastPressedForm.put(form, currentTime);
         }
+        motion = BendingForm.Type.Motion.NONE;
         return false;
     }
 

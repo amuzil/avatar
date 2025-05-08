@@ -12,6 +12,7 @@ import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SizeTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SpeedTrait;
 import com.amuzil.omegasource.bending.BendingEffect;
 import com.amuzil.omegasource.bending.element.Elements;
+import com.amuzil.omegasource.bending.form.BendingForm;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.utils.Constants;
 import net.minecraft.client.Minecraft;
@@ -35,6 +36,9 @@ public class FlameStepSkill extends BendingEffect {
                 .complex(new ActiveForm(STEP, true))
                 .build();
 
+//        this.runPaths = SkillPathBuilder.getInstance()
+//                .complex(new ActiveForm(STEP, true))
+//                .build();
     }
 
     @Override
@@ -53,23 +57,30 @@ public class FlameStepSkill extends BendingEffect {
 
         Bender bender = (Bender) Bender.getBender(entity);
         if (bender != null) {
+            BendingForm.Type.Motion motion = bender.getFormPath().complex().get(0).direction();
             SkillData data = bender.getSkillData(this);
 
-            float dashSpeed = (float) Objects.requireNonNull(data.getTrait(Constants.DASH_SPEED, SpeedTrait.class)).getSpeed();
-            Vec3 dashVec = Vec3.ZERO;
-            if (entity.level().isClientSide) {
-                Minecraft mc = Minecraft.getInstance();
-                if (mc.options.keyUp.isDown()) {
-                    dashVec = entity.getLookAngle().multiply(1, 0, 1).normalize().scale(dashSpeed); // W
-                } else if (mc.options.keyDown.isDown()) {
-                    dashVec = entity.getLookAngle().multiply(1, 0, 1).normalize().scale(-dashSpeed); // S
-                } else if (mc.options.keyLeft.isDown()) {
-                    dashVec = entity.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(-dashSpeed); // A
-                } else if (mc.options.keyRight.isDown()) {
-                    dashVec = entity.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(dashSpeed); // D
+            if (!entity.level().isClientSide()) {
+                float dashSpeed = (float) Objects.requireNonNull(data.getTrait(Constants.DASH_SPEED, SpeedTrait.class)).getSpeed();
+                Vec3 dashVec = Vec3.ZERO;
+                switch (motion) {
+                    case FORWARD ->
+                            dashVec = entity.getLookAngle().multiply(1, 0, 1).normalize().scale(dashSpeed); // W
+                    case BACKWARD ->
+                            dashVec = entity.getLookAngle().multiply(1, 0, 1).normalize().scale(-dashSpeed); // S
+                    case LEFTWARD ->
+                            dashVec = entity.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(-dashSpeed); // A
+                    case RIGHTWARD ->
+                            dashVec = entity.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(dashSpeed); // D
+                    case UPWARD ->
+                        dashVec = entity.getDeltaMovement().add(0, dashSpeed / 3, 0); // SPACE
                 }
+                dashVec = dashVec.add(0, entity.getDeltaMovement().x + 0.3D, 0); // Add a little hop for better dash
+                System.out.println("Dash Vec: " + dashVec);
+                entity.setDeltaMovement(dashVec);
+                entity.hurtMarked = true;
+                entity.hasImpulse = true;
             }
-            entity.setDeltaMovement(dashVec.x, entity.getDeltaMovement().y + 0.3D, dashVec.z);
 
 //        ((Player) entity).jumpFromGround();
 //        System.out.println("Delta: " + entity.getDeltaMovement());
@@ -77,20 +88,15 @@ public class FlameStepSkill extends BendingEffect {
 //        entity.hurtMarked = true; // Mark the entity for velocity sync
 //        System.out.println("New Delta: " + entity.getDeltaMovement());
 
-
-            bender.formPath.clear();
             data.setState(SkillState.IDLE);
-
             resetCooldown(data);
         }
-
-//        for (SkillTrait trait : getTraits()) {
-//            if (trait instanceof StringTrait) {
-//                if (trait.getName().equals("skill_state"))
-//                    ((StringTrait) trait).setInfo("stop");
-//            }
-//        }
-
     }
 
+    @Override
+    public void run(LivingEntity entity) {
+        super.run(entity);
+        entity.fallDistance = 0.0F;
+        System.out.println("Running Flame Step!");
+    }
 }
