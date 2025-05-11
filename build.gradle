@@ -124,6 +124,7 @@ mixin {
 }
 
 repositories {
+    mavenCentral()
     // Put repositories for dependencies here
     // ForgeGradle automatically adds the Forge maven and Maven Central for you
     maven { url = "https://maven.firstdarkdev.xyz/snapshots" } // LDLib, Photon
@@ -140,6 +141,16 @@ repositories {
             includeGroup("com.eliotlash.mclib")
         }
     }
+
+    maven {
+        name = 'Kotlin for Forge'
+        url = 'https://thedarkcolour.github.io/KotlinForForge/'
+    }
+
+    maven {
+        name = 'Valkyrien Skies Internal'
+        url = 'https://maven.valkyrienskies.org'
+    }
 }
 
 dependencies {
@@ -150,12 +161,16 @@ dependencies {
     // If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor' // TODO - Might not need
     implementation fg.deobf("com.lowdragmc.photon:photon-forge-1.20.1:1.0.7.a") { transitive = false }
     implementation fg.deobf("com.lowdragmc.ldlib:ldlib-forge-1.20.1:1.0.21.a") { transitive = false }
     testImplementation(platform('org.junit:junit-bom:5.11.2'))
     testImplementation('org.junit.jupiter:junit-jupiter')
     implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${minecraft_version}:${geckolib_version}")
     implementation("com.eliotlash.mclib:mclib:20")
+    implementation fg.deobf("org.valkyrienskies:valkyrienskies-120-forge:${vs2_version}")
+    implementation("org.valkyrienskies.core:api:${vs_core_version}")
+    implementation "thedarkcolour:kotlinforforge:4.11.0"
 
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime

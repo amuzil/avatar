@@ -3,8 +3,7 @@
   "minVersion": "0.8",
   "package": "com.amuzil.omegasource.utils.mixin",
   "client": [
-    "LocalPlayerMixin",
-    "MinecraftMixin"
+    "LocalPlayerMixin"
   ],
   "mixins": [
   ],

@@ -32,6 +32,10 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
         reset();
     }
 
+    public BendingSelection(CompoundTag tag) {
+        this.deserializeNBT(tag);
+    }
+
     public void reset() {
         blockPositions.clear();
         entityIds.clear();
@@ -54,7 +58,8 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
             skillIds = new ArrayList<>();
             target = Target.BLOCK;
         }
-        blockPositions.add(pos);
+        if (!blockPositions.contains(pos))
+            blockPositions.add(pos);
     }
 
     public void addSkillId(String skillId) {
