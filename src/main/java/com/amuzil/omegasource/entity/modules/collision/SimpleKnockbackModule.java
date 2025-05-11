@@ -42,7 +42,7 @@ public class SimpleKnockbackModule implements ICollisionModule {
         float scale = (float) entity.getTrait("knockback", KnockbackTrait.class).getKnockback();
         Vec3 motion = entity.getDeltaMovement();
 
-        //TODO: make projectile entities not hit the same target multiple times
+        // TODO: make projectile entities not hit the same target multiple times
         for (LivingEntity hit : targets) {
             hit.addDeltaMovement(motion.scale(scale).add(knockback.scale(scale)));
             hit.hasImpulse = true;

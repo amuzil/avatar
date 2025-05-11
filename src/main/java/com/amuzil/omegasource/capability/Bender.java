@@ -67,7 +67,7 @@ public class Bender implements IBender {
         dataTraits.addAll(Registries.getTraits());
 
         // Allow use of all Elements & Skills for testing!
-        setAvatar(); // TODO - Uncomment this to grant all elements & skills
+        setAvatar(); // Uncomment this to grant all elements & skills
 
         markDirty();
     }

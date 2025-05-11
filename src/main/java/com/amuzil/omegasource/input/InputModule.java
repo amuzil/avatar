@@ -189,7 +189,7 @@ public class InputModule {
 
     private void sendFormPacket(BendingForm form, boolean released) {
         ActiveForm activeForm = new ActiveForm(form, !released);
-        activeForm.setDirection(motion);
+        activeForm.setDirection(motion); // TODO - Improve this impl, maybe create BendingContext class
         if (!released) {
             // send Form execute packet
             AvatarNetwork.sendToServer(new ExecuteFormPacket(activeForm.serializeNBT()));
