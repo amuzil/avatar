@@ -175,6 +175,7 @@ public class InputModule {
         BendingSelection selection = bender.getSelection();
         selection.addBlockPosition(result.getBlockPos());
         bender.setSelection(selection);
+        bender.setBlockPos(result.getBlockPos());
     }
 
     private void trackEntityResult(EntityHitResult result) {

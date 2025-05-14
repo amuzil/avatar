@@ -15,19 +15,22 @@ import com.amuzil.omegasource.utils.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3d;
+import org.joml.Vector3i;
 import org.valkyrienskies.core.api.ships.LoadedServerShip;
 import org.valkyrienskies.core.api.ships.ServerShip;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 import org.valkyrienskies.mod.common.util.GameTickForceApplier;
 import org.valkyrienskies.mod.common.util.VectorConversionsMCKt;
+import org.valkyrienskies.mod.util.RelocationUtilKt;
 
 import static com.amuzil.omegasource.bending.form.BendingForms.BLOCK;
 
 
 public class EarthTossSkill extends BendingEffect {
 
-    private BlockPos blockPos = new BlockPos(48, -59, -289);
     ServerShip ship;
 
     public EarthTossSkill() {
@@ -55,6 +58,19 @@ public class EarthTossSkill extends BendingEffect {
         ship = null;
 
         Bender bender = (Bender) Bender.getBender(entity);
+        if (!entity.level().isClientSide()) {
+            ServerLevel level = (ServerLevel) entity.level();
+            if (bender.getSelection().target == BendingSelection.Target.BLOCK
+                    && !bender.getSelection().blockPositions.isEmpty()
+                    && !VSGameUtilsKt.isBlockInShipyard(level, bender.blockPos)) {
+                System.out.println("Starting Earth Toss!");
+                String dimensionId = VSGameUtilsKt.getDimensionId(level);
+                ship = VSGameUtilsKt.getShipObjectWorld(level).createNewShipAtBlock(VectorConversionsMCKt.toJOML(bender.blockPos), false, 1, dimensionId);
+                BlockPos centerPos = VectorConversionsMCKt.toBlockPos(ship.getChunkClaim().getCenterBlockCoordinates(VSGameUtilsKt.getYRange(level),new Vector3i()));
+                RelocationUtilKt.relocateBlock(level, bender.blockPos, centerPos, true, ship, Rotation.NONE);
+                System.out.println("Ship created: " + ship.getId() + " " + ship.getChunkClaim());
+            }
+        }
 
         if (bender != null) {
             SkillData data = bender.getSkillData(this);
@@ -69,26 +85,18 @@ public class EarthTossSkill extends BendingEffect {
         if (!entity.level().isClientSide()) {
             Bender bender = (Bender) Bender.getBender(entity);
             ServerLevel level = (ServerLevel) entity.level();
-            if (ship == null) {
-                if (bender.getSelection().target == BendingSelection.Target.BLOCK && !bender.getSelection().blockPositions.isEmpty()) {
-                    System.out.println("Starting Earth Toss! " + bender.getSelection().target);
-                    String dimensionId = VSGameUtilsKt.getDimensionId(level);
-                    ship = VSGameUtilsKt.getShipObjectWorld(level).createNewShipAtBlock(VectorConversionsMCKt.toJOML(blockPos), false, 1, dimensionId);
-                    System.out.println("Ship created: " + ship.getId() + " " + ship.getChunkClaim());
-                }
-            }
 
-            System.out.println("Running Earth Toss! " + blockPos + " " + ship.getId());
-            LoadedServerShip serverShip = (LoadedServerShip) VSGameUtilsKt.getShipObjectManagingPos(entity.level(), this.blockPos);
-            if (serverShip != null) {
-                System.out.println("Ship found: " + serverShip.getId());
-                double mass = serverShip.getInertiaData().getMass();
-                Vector3d qdc = qdc = new Vector3d(0,1, 0);
-                GameTickForceApplier gtfa = serverShip.getAttachment(GameTickForceApplier.class);
+            if (VSGameUtilsKt.isBlockInShipyard(level, bender.blockPos)) {
+                LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, bender.blockPos);
+                if (serverShip != null) {
+                    System.out.println("Running Earth Toss! " + bender.blockPos + " " + serverShip.getId());
 
-                if(gtfa != null) {
-                    gtfa.applyInvariantForce(qdc);
-                    System.out.println("Applying force!");
+                    GameTickForceApplier gtfa = serverShip.getAttachment(GameTickForceApplier.class);
+                    if (gtfa != null) {
+                        Vec3 vec3 = entity.getLookAngle().normalize().multiply(10000, 10000, 10000);
+                        Vector3d v3d = VectorConversionsMCKt.toJOML(vec3);
+                        gtfa.applyInvariantForce(v3d);
+                    }
                 }
             }
         }

@@ -7,6 +7,7 @@ import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.bending.BendingSelection;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.network.packets.client.SyncBenderPacket;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
@@ -84,4 +85,6 @@ public interface IBender extends INBTSerializable<CompoundTag> {
 
     // Load data
     void deserializeNBT(CompoundTag tag);
+
+    void setBlockPos(BlockPos blockPos);
 }

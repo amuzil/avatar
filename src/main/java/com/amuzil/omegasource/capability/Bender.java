@@ -15,6 +15,7 @@ import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.client.SyncBenderPacket;
 import com.amuzil.omegasource.network.packets.client.SyncFormPathPacket;
 import com.amuzil.omegasource.network.packets.client.SyncSelectionPacket;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -50,6 +51,7 @@ public class Bender implements IBender {
     private int tick = timeout;
 
     // Persistent data
+    public BlockPos blockPos = new BlockPos(0, 0, 0);
     private Element activeElement = Elements.FIRE; // Currently active element // TODO - Randomize on first load
     private BendingSelection selection = new BendingSelection();
     private final List<SkillCategoryData> skillCategoryData = new ArrayList<>();
@@ -255,6 +257,12 @@ public class Bender implements IBender {
     }
 
     @Override
+    public void setBlockPos(BlockPos blockPos) {
+        this.blockPos = blockPos;
+        markDirty();
+    }
+
+    @Override
     public void setSelection(BendingSelection selection) {
         this.selection = selection;
         markDirty();
@@ -288,7 +296,7 @@ public class Bender implements IBender {
     @Override
     public void syncSelectionToServer() {
         if (entity.level().isClientSide())
-            AvatarNetwork.sendToServer(new SyncSelectionPacket(selection.serializeNBT(), entity.getUUID()));
+            AvatarNetwork.sendToServer(new SyncSelectionPacket(selection.serializeNBT(), entity.getUUID(), blockPos));
     }
 
     @Override
