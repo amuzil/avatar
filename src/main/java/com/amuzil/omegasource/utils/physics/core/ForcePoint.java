@@ -1,4 +1,4 @@
-package com.amuzil.omegasource.utils.physics;
+package com.amuzil.omegasource.utils.physics.core;
 
 import net.minecraft.world.phys.Vec3;
 
@@ -19,6 +19,8 @@ public class ForcePoint {
     // Second byte flags such as constraints, etc
     private byte[] header;
     private double mass;
+    // Damping is used for drag in liquids and gasses; solids use it a bit differently.
+    //  Solids should be rigidbody.
     private double damping;
 
 
@@ -95,6 +97,10 @@ public class ForcePoint {
 
     public double damping() {
         return this.damping;
+    }
+
+    public int type() {
+        return header[0];
     }
 
 
