@@ -108,21 +108,20 @@ public abstract class Skill {
                 skillData.setState(SkillState.START);
             }
             start(entity);
-        } else return;
-        // TODO - Make way for shouldStart to return true if the skill is already running,
-        //        so it doesn't need to be started again. Or skip to the run method if it is already running.
-        if (shouldRun(entity, formPath)) {
-            if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Run(entity, formPath, this))) return;
-
-            if (bender != null) {
-                SkillData skillData = bender.getSkillData(this);
-                if (!skillData.getState().equals(SkillState.RUN))
-                    skillData.setState(SkillState.RUN);
-            }
-            run(entity);
-
         }
 
+        if (bender != null) {
+            SkillData skillData = bender.getSkillData(this);
+            if (shouldRun(entity, formPath) || skillData.getState().equals(SkillState.RUN)) {
+                if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Run(entity, formPath, this))) return;
+
+                if (!skillData.getState().equals(SkillState.RUN))
+                    skillData.setState(SkillState.RUN);
+                run(entity);
+            } else return;
+        }
+        // TODO - Make way for shouldStart to return true if the skill is already running,
+        //        so it doesn't need to be started again. Or skip to the run method if it is already running.
         if (shouldStop(entity, formPath)) {
             if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Stop(entity, formPath, this))) return;
 

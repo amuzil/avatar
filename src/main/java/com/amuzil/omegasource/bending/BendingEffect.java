@@ -23,7 +23,7 @@ public class BendingEffect extends BendingSkill {
             } else if (data.getState().equals(SkillState.IDLE)) {
                 shouldStart = checkCooldown(data);
             } else if (data.getState().equals(SkillState.RUN)) {
-                data.setState(SkillState.START);
+                shouldStart = checkCooldown(data);
             }
         }
         return super.shouldStart(entity, formPath) && shouldStart;

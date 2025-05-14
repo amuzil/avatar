@@ -134,8 +134,8 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
                     CompoundTag blockPos = new CompoundTag();
                     BlockPos current = this.blockPositions.get(i);
                     blockPos.putInt("x", current.getX());
-                    blockPos.putInt("y", current.getX());
-                    blockPos.putInt("z", current.getX());
+                    blockPos.putInt("y", current.getY());
+                    blockPos.putInt("z", current.getZ());
                     blockPositions.add(i, blockPos);
                 }
                 compoundTag.put("blockPositions", blockPositions);
@@ -161,8 +161,8 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
     }
 
     @Override
-    public void deserializeNBT(CompoundTag compoundTag) {
-        String targetType = compoundTag.getString("targetType");
+    public void deserializeNBT(CompoundTag tag) {
+        String targetType = tag.getString("targetType");
         this.target = Enum.valueOf(Target.class, targetType);
 
         this.blockPositions = new ArrayList<>();
@@ -171,7 +171,7 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
 
         switch (this.target) {
             case BLOCK:
-                ListTag blockPositions = (ListTag)compoundTag.get("blockPositions");
+                ListTag blockPositions = (ListTag)tag.get("blockPositions");
                 for (int i = 0; i < blockPositions.size(); i++) {
                     CompoundTag blockPos = (CompoundTag) blockPositions.get(i);
                     int x = blockPos.getInt("x");
@@ -182,14 +182,14 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
                 }
                 break;
             case ENTITY:
-                ListTag entities = (ListTag)compoundTag.get("entities");
+                ListTag entities = (ListTag)tag.get("entities");
                 for (int i = 0; i < entities.size(); i++) {
                     UUID current = NbtUtils.loadUUID(entities.get(i));
                     this.entityIds.add(current);
                 }
                 break;
             case SKILL:
-                ListTag skills = (ListTag)compoundTag.get("skills");
+                ListTag skills = (ListTag)tag.get("skills");
                 for (int i = 0; i < skills.size(); i++) {
                     String current = skills.get(i).getAsString();
                     this.skillIds.add(current);

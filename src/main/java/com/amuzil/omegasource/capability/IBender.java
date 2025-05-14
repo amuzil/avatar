@@ -73,6 +73,8 @@ public interface IBender extends INBTSerializable<CompoundTag> {
     // Check if data needs to be synced across client / server
     boolean isDirty();
 
+    void syncSelectionToServer();
+
     void syncFormPathToClient();
 
     void syncToClient();

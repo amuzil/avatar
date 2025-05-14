@@ -32,7 +32,9 @@ public class SkillActive extends Skill {
 
     @Override
     public boolean shouldRun(LivingEntity entity, FormPath formPath) {
-        return false;
+        if (getRunPaths() == null)
+            return false;
+        return formPath.hashCode() == getRunPaths().hashCode();
     }
 
     @Override

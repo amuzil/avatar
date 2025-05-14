@@ -125,6 +125,7 @@ public class InputModule {
         if (selectTargetKey.isDown() && !isSelecting) {
             isSelecting = true;
             handleSelectRaycast();
+            bender.syncSelectionToServer();
 //            sendDebugMsg("Selection: " + bender.getSelection().target);
         }
     }

@@ -8,18 +8,22 @@ import com.amuzil.omegasource.events.FormActivatedEvent;
 import com.amuzil.omegasource.network.packets.api.AvatarPacket;
 import kotlin.OptIn;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Position;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.phys.Vec2;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.network.NetworkEvent;
 import org.joml.Vector3d;
 import org.joml.Vector3i;
 import org.valkyrienskies.core.api.VSBeta;
+import org.valkyrienskies.core.api.ships.LoadedServerShip;
 import org.valkyrienskies.core.api.ships.PhysShip;
 import org.valkyrienskies.core.api.ships.ServerShip;
+import org.valkyrienskies.core.api.ships.Ship;
 import org.valkyrienskies.core.api.ships.properties.ShipTransform;
 import org.valkyrienskies.core.api.world.ServerShipWorld;
 import org.valkyrienskies.core.apigame.ShipTeleportData;
@@ -28,6 +32,7 @@ import org.valkyrienskies.mod.common.VSGameUtilsKt;
 import org.valkyrienskies.mod.common.ValkyrienSkiesMod;
 import org.valkyrienskies.mod.common.command.RelativeValue;
 import org.valkyrienskies.mod.common.command.RelativeVector3;
+import org.valkyrienskies.mod.common.util.GameTickForceApplier;
 import org.valkyrienskies.mod.common.util.VectorConversionsMCKt;
 import org.valkyrienskies.mod.util.RelocationUtilKt;
 
@@ -58,20 +63,6 @@ public class ExecuteFormPacket implements AvatarPacket {
         if (activeForm.form().equals(STEP)) {
             tag.putBoolean("Active", false);
             ReleaseFormPacket.handleServerSide(tag, player);
-        }
-        BendingSelection selection = activeForm.selection();
-        System.out.println("TARGET " + activeForm.selection().target);
-        if (selection.target == BendingSelection.Target.BLOCK) {
-            BlockPos blockPos = selection.blockPositions.get(0);
-            String dimensionId = VSGameUtilsKt.getDimensionId(level);
-            ServerShip serverShip = VSGameUtilsKt.getShipObjectWorld(level).createNewShipAtBlock(VectorConversionsMCKt.toJOML(blockPos), false, 1, dimensionId);
-            System.out.println("Ship created: " + serverShip.getId());
-            BlockPos centerPos = VectorConversionsMCKt.toBlockPos(serverShip.getChunkClaim().getCenterBlockCoordinates(VSGameUtilsKt.getYRange(level),new Vector3i()));
-            RelocationUtilKt.relocateBlock(level, blockPos, centerPos.above(), true, serverShip, Rotation.NONE);
-            ServerShipWorld serverShipWorld = (ServerShipWorld) VSGameUtilsKt.getVsCore().getHooks().getCurrentShipServerWorld();
-
-            serverShip.getVelocity().add(0D, 1D, 0D, new Vector3d());
-            selection.reset();
         }
     }
 

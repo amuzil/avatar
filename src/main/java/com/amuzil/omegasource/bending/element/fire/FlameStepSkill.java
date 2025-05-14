@@ -36,14 +36,19 @@ public class FlameStepSkill extends BendingEffect {
                 .complex(new ActiveForm(STEP, true))
                 .build();
 
-//        this.runPaths = SkillPathBuilder.getInstance()
-//                .complex(new ActiveForm(STEP, true))
-//                .build();
+        this.runPaths = SkillPathBuilder.getInstance()
+                .complex(new ActiveForm(STEP, true))
+                .build();
     }
 
     @Override
     public boolean shouldStart(LivingEntity entity, FormPath formPath) {
         return super.shouldStart(entity, formPath);
+    }
+
+    @Override
+    public boolean shouldRun(LivingEntity entity, FormPath formPath) {
+        return super.shouldRun(entity, formPath);
     }
 
     @Override
@@ -88,7 +93,7 @@ public class FlameStepSkill extends BendingEffect {
 //        entity.hurtMarked = true; // Mark the entity for velocity sync
 //        System.out.println("New Delta: " + entity.getDeltaMovement());
 
-            data.setState(SkillState.IDLE);
+            data.setState(SkillState.RUN);
             resetCooldown(data);
         }
     }
@@ -96,7 +101,8 @@ public class FlameStepSkill extends BendingEffect {
     @Override
     public void run(LivingEntity entity) {
         super.run(entity);
-        entity.fallDistance = 0.0F;
-        System.out.println("Running Flame Step!");
+        if (!entity.level().isClientSide()) {
+            entity.fallDistance = 0.0F;
+        }
     }
 }

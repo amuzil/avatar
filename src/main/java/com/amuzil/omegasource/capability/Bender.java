@@ -14,6 +14,7 @@ import com.amuzil.omegasource.events.FormActivatedEvent;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.client.SyncBenderPacket;
 import com.amuzil.omegasource.network.packets.client.SyncFormPathPacket;
+import com.amuzil.omegasource.network.packets.client.SyncSelectionPacket;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -282,6 +283,12 @@ public class Bender implements IBender {
     @Override
     public boolean isDirty() {
         return this.isDirty;
+    }
+
+    @Override
+    public void syncSelectionToServer() {
+        if (entity.level().isClientSide())
+            AvatarNetwork.sendToServer(new SyncSelectionPacket(selection.serializeNBT(), entity.getUUID()));
     }
 
     @Override
