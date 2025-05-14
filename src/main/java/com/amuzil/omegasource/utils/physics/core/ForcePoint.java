@@ -11,16 +11,17 @@ import net.minecraft.world.phys.Vec3;
  */
 public class ForcePoint {
 
-    private double[] data;
+    private final double[] data;
     private int id;
-    private int lifetime = - 1;
-    // Custom flags and information.
-    // Type first byte. 0 = gas, 1 = water, 2 = solid.
-    // Second byte flags such as constraints, etc
+    private int lifetime = -1;
+
+    /**
+     * Contains important information about the ForcePoint.
+     * What state is it? Gas, Liquid, Solid (first element)? What constraints does it have?
+     * See the Constraints class for a list of them.
+     */
     private byte[] header;
     private double mass;
-    // Damping is used for drag in liquids and gasses; solids use it a bit differently.
-    //  Solids should be rigidbody.
     private double damping;
 
 
