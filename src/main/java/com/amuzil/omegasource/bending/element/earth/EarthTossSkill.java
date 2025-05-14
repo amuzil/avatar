@@ -31,8 +31,6 @@ import static com.amuzil.omegasource.bending.form.BendingForms.BLOCK;
 
 public class EarthTossSkill extends BendingEffect {
 
-    ServerShip ship;
-
     public EarthTossSkill() {
         super(Avatar.MOD_ID, "earth_toss", Elements.EARTH);
         addTrait(new KnockbackTrait(1.5f, Constants.KNOCKBACK));
@@ -55,7 +53,6 @@ public class EarthTossSkill extends BendingEffect {
     @Override
     public void start(LivingEntity entity) {
         super.start(entity);
-        ship = null;
 
         Bender bender = (Bender) Bender.getBender(entity);
         if (!entity.level().isClientSide()) {
@@ -65,10 +62,12 @@ public class EarthTossSkill extends BendingEffect {
                     && !VSGameUtilsKt.isBlockInShipyard(level, bender.blockPos)) {
                 System.out.println("Starting Earth Toss!");
                 String dimensionId = VSGameUtilsKt.getDimensionId(level);
-                ship = VSGameUtilsKt.getShipObjectWorld(level).createNewShipAtBlock(VectorConversionsMCKt.toJOML(bender.blockPos), false, 1, dimensionId);
+                ServerShip ship = VSGameUtilsKt.getShipObjectWorld(level).createNewShipAtBlock(VectorConversionsMCKt.toJOML(bender.blockPos), false, 1, dimensionId);
                 BlockPos centerPos = VectorConversionsMCKt.toBlockPos(ship.getChunkClaim().getCenterBlockCoordinates(VSGameUtilsKt.getYRange(level),new Vector3i()));
                 RelocationUtilKt.relocateBlock(level, bender.blockPos, centerPos, true, ship, Rotation.NONE);
-                System.out.println("Ship created: " + ship.getId() + " " + ship.getChunkClaim());
+                if (ship != null) {
+                    System.out.println("Ship created: " + ship.getId() + " " + ship.getChunkClaim());
+                }
             }
         }
 
