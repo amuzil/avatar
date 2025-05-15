@@ -1,5 +1,7 @@
 package com.amuzil.omegasource.utils.physics.core;
 
+import com.amuzil.omegasource.utils.physics.constraints.ConstraintUtils;
+import com.amuzil.omegasource.utils.physics.constraints.Constraints;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -31,7 +33,7 @@ public class ForcePoint {
 
     // Size is default 15 (5 vectors x 3 variables for 3d space. We're not using 4d vectors here yet...)
     public ForcePoint(int size, Vec3 pos, Vec3 vel, Vec3 force) {
-        this.data = new double[15];
+        this.data = new double[size];
         insert(pos, 0);
         // Prev pos
         insert(Vec3.ZERO, 1);
@@ -100,8 +102,24 @@ public class ForcePoint {
         return this.damping;
     }
 
+    public void conOn(Constraints.ConstraintType c) {
+        ConstraintUtils.enableConstraint(header, c);
+    }
+
+    public void conOff(Constraints.ConstraintType c) {
+        ConstraintUtils.disableConstraint(header, c);
+    }
+
+    public boolean constraint(Constraints.ConstraintType c) {
+        return ConstraintUtils.hasConstraint(header, c);
+    }
+
     public int type() {
-        return header[0];
+        return header[Constraints.TYPE_INDEX];
+    }
+
+    public void type(int type) {
+        header[Constraints.TYPE_INDEX] = (byte) type;
     }
 
 
