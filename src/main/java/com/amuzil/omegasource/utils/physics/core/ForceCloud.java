@@ -1,7 +1,5 @@
 package com.amuzil.omegasource.utils.physics.core;
 
-import net.minecraft.world.phys.Vec3;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +40,7 @@ public class ForceCloud extends PhysicsElement {
         return this.points;
     }
 
-    // We only want coopies passed
+    // We only want copies passed
     public void writeHeader() {
         for (ForcePoint point : points())
             System.arraycopy(header, 0, point.header, 0, header.length);
