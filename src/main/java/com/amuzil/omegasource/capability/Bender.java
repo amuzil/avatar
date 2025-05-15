@@ -14,6 +14,7 @@ import com.amuzil.omegasource.events.FormActivatedEvent;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.client.SyncBenderPacket;
 import com.amuzil.omegasource.network.packets.client.SyncFormPathPacket;
+import com.amuzil.omegasource.network.packets.client.SyncMovementPacket;
 import com.amuzil.omegasource.network.packets.client.SyncSelectionPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -22,6 +23,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -49,6 +51,7 @@ public class Bender implements IBender {
     private boolean active;
     private final int timeout = 5; // Adjust timeout time here
     private int tick = timeout;
+    private Vec3 lastDeltaMovement = Vec3.ZERO;
 
     // Persistent data
     public BlockPos blockPos = new BlockPos(0, 0, 0);
@@ -123,6 +126,16 @@ public class Bender implements IBender {
                 tick--;
             }
         }
+    }
+
+    @Override
+    public Vec3 getDeltaMovement() {
+        return lastDeltaMovement;
+    }
+
+    @Override
+    public void setDeltaMovement(Vec3 lastDeltaMovement) {
+        this.lastDeltaMovement = lastDeltaMovement;
     }
 
     @Override
@@ -291,6 +304,12 @@ public class Bender implements IBender {
     @Override
     public boolean isDirty() {
         return this.isDirty;
+    }
+
+    @Override
+    public void syncDeltaMovementToServer() {
+        if (entity.level().isClientSide())
+            AvatarNetwork.sendToServer(new SyncMovementPacket(lastDeltaMovement, entity.getUUID()));
     }
 
     @Override

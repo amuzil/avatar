@@ -42,16 +42,6 @@ public class FlameStepSkill extends BendingEffect {
     }
 
     @Override
-    public boolean shouldStart(LivingEntity entity, FormPath formPath) {
-        return super.shouldStart(entity, formPath);
-    }
-
-    @Override
-    public boolean shouldRun(LivingEntity entity, FormPath formPath) {
-        return super.shouldRun(entity, formPath);
-    }
-
-    @Override
     public SkillCategory getCategory() {
         return Elements.FIRE;
     }
@@ -78,9 +68,9 @@ public class FlameStepSkill extends BendingEffect {
                     case RIGHTWARD ->
                             dashVec = entity.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(dashSpeed); // D
                     case UPWARD ->
-                        dashVec = entity.getDeltaMovement().add(0, dashSpeed / 3, 0); // SPACE
+                        dashVec = bender.getDeltaMovement().add(0, dashSpeed / 3, 0).multiply(4, 1, 4); // SPACE
                 }
-                dashVec = dashVec.add(0, entity.getDeltaMovement().x + 0.3D, 0); // Add a little hop for better dash
+                dashVec = dashVec.add(0, 0.3D, 0); // Add a little hop for better dash
                 System.out.println("Dash Vec: " + dashVec);
                 entity.setDeltaMovement(dashVec);
                 entity.hurtMarked = true;

@@ -11,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.AutoRegisterCapability;
 import net.minecraftforge.common.util.INBTSerializable;
 
@@ -22,6 +23,10 @@ import net.minecraftforge.common.util.INBTSerializable;
  */
 @AutoRegisterCapability
 public interface IBender extends INBTSerializable<CompoundTag> {
+
+    Vec3 getDeltaMovement();
+
+    void setDeltaMovement(Vec3 lastDeltaMovement);
 
     void register();
 
@@ -73,6 +78,8 @@ public interface IBender extends INBTSerializable<CompoundTag> {
 
     // Check if data needs to be synced across client / server
     boolean isDirty();
+
+    void syncDeltaMovementToServer();
 
     void syncSelectionToServer();
 

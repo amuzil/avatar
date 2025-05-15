@@ -136,6 +136,8 @@ public class InputModule {
                 if (form.equals(BendingForms.STRIKE) || form.equals(BendingForms.BLOCK)) {
                     sendFormPacket(form, false);
                 } else if (isDoubleTap(form)) {
+                    bender.setDeltaMovement(bender.getEntity().getDeltaMovement());
+                    bender.syncDeltaMovementToServer();
                     sendFormPacket(BendingForms.STEP, false);
                 }
             } else if (isHoldingCtrl && form.type().equals(BendingForm.Type.MOTION)) {
