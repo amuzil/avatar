@@ -20,11 +20,8 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
 import org.joml.Vector3i;
-import org.joml.Vector3ic;
 import org.valkyrienskies.core.api.ships.LoadedServerShip;
 import org.valkyrienskies.core.api.ships.ServerShip;
-import org.valkyrienskies.core.api.ships.properties.ShipTransform;
-import org.valkyrienskies.mod.api.ValkyrienSkies;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 import org.valkyrienskies.mod.common.util.GameTickForceApplier;
 import org.valkyrienskies.mod.common.util.VectorConversionsMCKt;
@@ -73,7 +70,7 @@ public class EarthTossSkill extends BendingEffect {
                 BlockPos shipyardBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipyardPos));
                 bender.setBlockPos(shipyardBlockPos);
                 if (ship != null) {
-                    System.out.println("Ship created: " + ship.getId() + " " + bender.blockPos + " " + shipyardBlockPos);
+                    System.out.println("Ship created: " + ship.getId() + " " + bender.blockPos);
                 }
             }
         }
@@ -94,18 +91,31 @@ public class EarthTossSkill extends BendingEffect {
             if (VSGameUtilsKt.isBlockInShipyard(level, bender.blockPos)) {
                 LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, bender.blockPos);
                 if (serverShip != null) {
-                    System.out.println("Run Earth Toss! " + bender.blockPos);
                     GameTickForceApplier gtfa = serverShip.getAttachment(GameTickForceApplier.class);
                     if (gtfa != null) {
-                        Vec3 vec3 = entity.getLookAngle().normalize()
-                                .add(0, 1, 0)
-                                .multiply(10000, 10000, 10000);
-                        System.out.println("Applying force: " + vec3);
-                        Vector3d v3d = VectorConversionsMCKt.toJOML(vec3);
-                        gtfa.applyInvariantForce(v3d);
+//                        hoverBlock(serverShip, gtfa);
+                        tossBlock(entity, gtfa);
                     }
                 }
             }
         }
+    }
+
+    private static void hoverBlock(LoadedServerShip ship, GameTickForceApplier gtfa) {
+        double gravity = 10; // Acceleration due to gravity
+        double mass = ship.getInertiaData().getMass(); // Mass of the ship
+        double requiredForce = (gravity * mass) + 5000.0D; // Force needed to counteract gravity
+        Vector3d v3d2 = new Vector3d(0, requiredForce, 0);
+        System.out.println("Levitating force 2: " + v3d2 + " " + requiredForce);
+        gtfa.applyInvariantForce(v3d2);
+    }
+
+    private static void tossBlock(LivingEntity entity, GameTickForceApplier gtfa) {
+        Vec3 vec3 = entity.getLookAngle().normalize()
+                .add(0, 1, 0)
+                .multiply(10000, 10000, 10000);
+        System.out.println("Applying force: " + vec3);
+        Vector3d v3d = VectorConversionsMCKt.toJOML(vec3);
+        gtfa.applyInvariantForce(v3d);
     }
 }
