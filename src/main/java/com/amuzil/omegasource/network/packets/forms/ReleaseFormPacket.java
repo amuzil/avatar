@@ -27,7 +27,7 @@ public class ReleaseFormPacket implements AvatarPacket {
         assert player != null;
         ServerLevel level = player.serverLevel();
         ActiveForm activeForm = new ActiveForm(tag);
-        Avatar.LOGGER.debug("Form Released: {}", activeForm.form().name());
+//        Avatar.LOGGER.info("Form Released: {}", activeForm.form().name());
 
         MinecraftForge.EVENT_BUS.post(new FormActivatedEvent(activeForm, player, true));
     }

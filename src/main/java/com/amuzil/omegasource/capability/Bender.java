@@ -104,8 +104,8 @@ public class Bender implements IBender {
             formPath.update(event.getActiveForm());
             this.syncFormPathToClient();
             tick = timeout;
-            LOGGER.debug("Simple Forms: {}", formPath.simple());
-            LOGGER.debug("Complex Forms: {}", formPath.complex());
+//            LOGGER.info("Simple Forms: {}", formPath.simple());
+//            LOGGER.info("Complex Forms: {}", formPath.complex());
         }
     }
 
@@ -115,7 +115,7 @@ public class Bender implements IBender {
                 if (tick == 0) {
                     if (!formPath.isActive()) {
                         formPath.clear();
-                        LOGGER.debug("Complex Forms Timed Out");
+//                        LOGGER.info("Complex Forms Timed Out");
                     }
                     tick = timeout;
                     active = true;

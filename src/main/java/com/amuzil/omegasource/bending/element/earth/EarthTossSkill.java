@@ -18,9 +18,13 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3d;
+import org.joml.Vector3dc;
 import org.joml.Vector3i;
+import org.joml.Vector3ic;
 import org.valkyrienskies.core.api.ships.LoadedServerShip;
 import org.valkyrienskies.core.api.ships.ServerShip;
+import org.valkyrienskies.core.api.ships.properties.ShipTransform;
+import org.valkyrienskies.mod.api.ValkyrienSkies;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 import org.valkyrienskies.mod.common.util.GameTickForceApplier;
 import org.valkyrienskies.mod.common.util.VectorConversionsMCKt;
@@ -41,7 +45,7 @@ public class EarthTossSkill extends BendingEffect {
                 .build();
 
         this.runPaths = SkillPathBuilder.getInstance()
-                .complex(new ActiveForm(BLOCK, true))
+                .simple(new ActiveForm(BLOCK, true))
                 .build();
     }
 
@@ -59,14 +63,17 @@ public class EarthTossSkill extends BendingEffect {
             ServerLevel level = (ServerLevel) entity.level();
             if (bender.getSelection().target == BendingSelection.Target.BLOCK
                     && !bender.getSelection().blockPositions.isEmpty()
-                    && !VSGameUtilsKt.isBlockInShipyard(level, bender.blockPos)) {
-                System.out.println("Starting Earth Toss!");
+                    && !VSGameUtilsKt.isBlockInShipyard(level, bender.blockPos)
+                    && !level.getBlockState(bender.blockPos).isAir()) {
                 String dimensionId = VSGameUtilsKt.getDimensionId(level);
                 ServerShip ship = VSGameUtilsKt.getShipObjectWorld(level).createNewShipAtBlock(VectorConversionsMCKt.toJOML(bender.blockPos), false, 1, dimensionId);
                 BlockPos centerPos = VectorConversionsMCKt.toBlockPos(ship.getChunkClaim().getCenterBlockCoordinates(VSGameUtilsKt.getYRange(level),new Vector3i()));
                 RelocationUtilKt.relocateBlock(level, bender.blockPos, centerPos, true, ship, Rotation.NONE);
+                Vector3dc shipyardPos = ship.getTransform().getPositionInShip();
+                BlockPos shipyardBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipyardPos));
+                bender.setBlockPos(shipyardBlockPos);
                 if (ship != null) {
-                    System.out.println("Ship created: " + ship.getId() + " " + ship.getChunkClaim());
+                    System.out.println("Ship created: " + ship.getId() + " " + bender.blockPos + " " + shipyardBlockPos);
                 }
             }
         }
@@ -84,15 +91,16 @@ public class EarthTossSkill extends BendingEffect {
         if (!entity.level().isClientSide()) {
             Bender bender = (Bender) Bender.getBender(entity);
             ServerLevel level = (ServerLevel) entity.level();
-
             if (VSGameUtilsKt.isBlockInShipyard(level, bender.blockPos)) {
                 LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, bender.blockPos);
                 if (serverShip != null) {
-                    System.out.println("Running Earth Toss! " + bender.blockPos + " " + serverShip.getId());
-
+                    System.out.println("Run Earth Toss! " + bender.blockPos);
                     GameTickForceApplier gtfa = serverShip.getAttachment(GameTickForceApplier.class);
                     if (gtfa != null) {
-                        Vec3 vec3 = entity.getLookAngle().normalize().multiply(10000, 10000, 10000);
+                        Vec3 vec3 = entity.getLookAngle().normalize()
+                                .add(0, 1, 0)
+                                .multiply(10000, 10000, 10000);
+                        System.out.println("Applying force: " + vec3);
                         Vector3d v3d = VectorConversionsMCKt.toJOML(vec3);
                         gtfa.applyInvariantForce(v3d);
                     }

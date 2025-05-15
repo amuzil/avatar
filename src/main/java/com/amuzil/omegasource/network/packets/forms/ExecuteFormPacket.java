@@ -55,7 +55,7 @@ public class ExecuteFormPacket implements AvatarPacket {
         assert player != null;
         ServerLevel level = player.serverLevel();
         ActiveForm activeForm = new ActiveForm(tag);
-        Avatar.LOGGER.debug("Form Executed: {}", activeForm.form().name());
+//        Avatar.LOGGER.info("Form Executed: {}", activeForm.form().name());
 
         MinecraftForge.EVENT_BUS.post(new FormActivatedEvent(activeForm, player, false));
 

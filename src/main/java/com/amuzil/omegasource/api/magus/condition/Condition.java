@@ -23,12 +23,12 @@ public abstract class Condition {
 	// TODO: Change to registerRunnables()
 	public void register(String name, Runnable onSuccess, Runnable onFailure) {
 		this.name = name;
-		//RadixTree.getLogger().debug("Registering results");
+		//RadixTree.getLogger().info("Registering results");
 //		if (this instanceof KeyPressCondition && ((KeyPressCondition) this).getKey() == 0)
 //			Thread.dumpStack();
-		//RadixTree.getLogger().debug("Result: success");
+		//RadixTree.getLogger().info("Result: success");
 		this.onSuccess = onSuccess;
-		//			RadixTree.getLogger().debug("Result: failure: " + getClass());
+		//			RadixTree.getLogger().info("Result: failure: " + getClass());
 		//			Thread.dumpStack();
 		this.onFailure = onFailure;
 		registerEntry();
