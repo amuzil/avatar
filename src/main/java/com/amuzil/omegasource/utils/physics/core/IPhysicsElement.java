@@ -44,13 +44,13 @@ public interface IPhysicsElement {
         return new Vec3(data()[column * 3], data()[1 + column * 3], data()[2 + column * 3]);
     }
 
-    Vec3 vel();
-
-    Vec3 prevVel();
-
     Vec3 pos();
 
     Vec3 prevPos();
+
+    Vec3 vel();
+
+    Vec3 prevVel();
 
     Vec3 force();
 
