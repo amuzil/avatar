@@ -71,7 +71,7 @@ public class FlameStepSkill extends BendingEffect {
                         dashVec = bender.getDeltaMovement().add(0, dashSpeed / 3, 0).multiply(4, 1, 4); // SPACE
                 }
                 dashVec = dashVec.add(0, 0.3D, 0); // Add a little hop for better dash
-                System.out.println("Dash Vec: " + dashVec);
+//                System.out.println("Dash Vec: " + dashVec);
                 entity.setDeltaMovement(dashVec);
                 entity.hurtMarked = true;
                 entity.hasImpulse = true;
