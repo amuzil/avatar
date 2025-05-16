@@ -161,7 +161,7 @@ dependencies {
     // If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor' // TODO - Might not need
+//    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor' // TODO - Might not need
     implementation fg.deobf("com.lowdragmc.photon:photon-forge-1.20.1:1.0.7.a") { transitive = false }
     implementation fg.deobf("com.lowdragmc.ldlib:ldlib-forge-1.20.1:1.0.21.a") { transitive = false }
     testImplementation(platform('org.junit:junit-bom:5.11.2'))

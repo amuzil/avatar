@@ -65,7 +65,21 @@ public class EarthTossSkill extends BendingEffect {
                 String dimensionId = VSGameUtilsKt.getDimensionId(level);
                 ServerShip ship = VSGameUtilsKt.getShipObjectWorld(level).createNewShipAtBlock(VectorConversionsMCKt.toJOML(bender.blockPos), false, 1, dimensionId);
                 BlockPos centerPos = VectorConversionsMCKt.toBlockPos(ship.getChunkClaim().getCenterBlockCoordinates(VSGameUtilsKt.getYRange(level),new Vector3i()));
-                RelocationUtilKt.relocateBlock(level, bender.blockPos, centerPos, true, ship, Rotation.NONE);
+                BlockPos selectedCentre = null;
+                int deltaX, deltaY, deltaZ;
+                for (BlockPos selectedBlock :
+                        bender.getSelection().blockPositions) {
+                    if(selectedCentre == null) {
+                        selectedCentre = selectedBlock;
+                        RelocationUtilKt.relocateBlock(level, selectedCentre, centerPos, true, ship, Rotation.NONE);
+                    } else {
+                        deltaX = selectedCentre.getX() - selectedBlock.getX();
+                        deltaY = selectedCentre.getY() - selectedBlock.getY();
+                        deltaZ = selectedCentre.getZ() - selectedBlock.getZ();
+
+                        RelocationUtilKt.relocateBlock(level, selectedBlock, centerPos.offset(deltaX, deltaY, deltaZ), true, ship, Rotation.NONE);
+                    }
+                }
                 Vector3dc shipyardPos = ship.getTransform().getPositionInShip();
                 BlockPos shipyardBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipyardPos));
                 bender.setBlockPos(shipyardBlockPos);
