@@ -77,15 +77,4 @@ public class ServerEvents {
             }
         }
     }
-
-    @SubscribeEvent
-    public void onBlockBreak(BlockEvent.BreakEvent event) {
-        System.out.println("Block broken: " + event.getState().getBlock().getName().getString());
-        event.getPlayer().getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
-            if (bender.getElement() == Elements.EARTH) {
-                event.setCanceled(true);
-            }
-        });
-    }
-
 }
