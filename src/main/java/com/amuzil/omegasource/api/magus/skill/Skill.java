@@ -112,7 +112,7 @@ public abstract class Skill {
 
         if (bender != null) {
             SkillData skillData = bender.getSkillData(this);
-            if (shouldRun(entity, formPath) || skillData.getState().equals(SkillState.RUN)) {
+            if (shouldRun(entity, formPath)) {
                 if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Run(entity, formPath, this))) return;
 
                 if (!skillData.getState().equals(SkillState.RUN))

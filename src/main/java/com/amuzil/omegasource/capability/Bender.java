@@ -98,7 +98,9 @@ public class Bender implements IBender {
     }
 
     private boolean canUseSkill(Skill skill) {
-        return getSkillData(skill).canUse() && getSkillCategoryData(skill.getCategory().getId()).canUse();
+        return getSkillData(skill).canUse()
+                && getSkillCategoryData(skill.getCategory().getId()).canUse()
+                && skill.getCategory() == getElement();
     }
 
     private void onFormActivatedEvent(FormActivatedEvent event) {
@@ -117,7 +119,7 @@ public class Bender implements IBender {
             if (!active) {
                 if (tick == 0) {
                     if (!formPath.isActive()) {
-                        formPath.clear();
+                        formPath.clear(); // Only clear when no Forms are active
 //                        LOGGER.info("Complex Forms Timed Out");
                     }
                     tick = timeout;

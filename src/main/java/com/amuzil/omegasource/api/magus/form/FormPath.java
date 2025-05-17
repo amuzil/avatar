@@ -111,4 +111,13 @@ public class FormPath {
     public int hashCode() {
         return Objects.hash(simpleForms, complexForms);
     }
+
+    @Override
+    public String toString() {
+        return "FormPath{" +
+                "simpleForms=" + simpleForms +
+                ", complexForms=" + complexForms +
+                ", active=" + active +
+                '}';
+    }
 }

@@ -23,9 +23,9 @@ public class Elements {
     }
 
     public static void init() {
-        Firebending.init();
+        Airbending.init();
         Waterbending.init();
         Earthbending.init();
-        Airbending.init();
+        Firebending.init();
     }
 }
