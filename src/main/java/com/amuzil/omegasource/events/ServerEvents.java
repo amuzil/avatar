@@ -1,6 +1,7 @@
 package com.amuzil.omegasource.events;
 
 import com.amuzil.omegasource.Avatar;
+import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.capability.AvatarCapabilities;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.network.AvatarNetwork;
@@ -10,8 +11,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
+import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
@@ -74,4 +77,15 @@ public class ServerEvents {
             }
         }
     }
+
+    @SubscribeEvent
+    public void onBlockBreak(BlockEvent.BreakEvent event) {
+        System.out.println("Block broken: " + event.getState().getBlock().getName().getString());
+        event.getPlayer().getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
+            if (bender.getElement() == Elements.EARTH) {
+                event.setCanceled(true);
+            }
+        });
+    }
+
 }
