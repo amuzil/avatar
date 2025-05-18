@@ -1,30 +1,30 @@
 package com.amuzil.omegasource.utils.physics.core;
 
 import com.amuzil.omegasource.utils.physics.modules.IPhysicsModule;
-import net.minecraft.world.phys.Vec3;
+import org.joml.Quaterniond;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ForceCloud extends PhysicsElement {
 
-    private List<ForcePoint> points;
+    private final List<ForcePoint> points;
 
-    private Vec3[] normals;
+    private double[] rotation;
 
-    private Vec3 rotation;
-
-    private List<IPhysicsModule> modules;
+    private final List<IPhysicsModule> modules;
 
 
     public ForceCloud(int type) {
         super(type);
+        this.rotation = new double[4];
         this.points = new ArrayList<>();
+        this.modules = new ArrayList<>();
     }
 
     public void addPoints(ForcePoint... points) {
         this.points.addAll(List.of(points));
-    };
+    }
 
     public void addPoints(List<ForcePoint> points) {
         this.points.addAll(points);
@@ -50,6 +50,31 @@ public class ForceCloud extends PhysicsElement {
         return this.points;
     }
 
+    public void mod(IPhysicsModule... modules) {
+        this.modules.addAll(List.of(modules));
+    }
+
+    public List<IPhysicsModule> modules() {
+        return this.modules;
+    }
+
+    public void rotate(double[] rotation) {
+        // De-reference the original array, we do not want to be affecting it.
+        this.rotation = rotation.clone();
+    }
+
+    public void rotate(Quaterniond rotation) {
+        rotate(new double[]{rotation.x, rotation.y, rotation.z, rotation.w});
+    }
+
+    public double[] rotation() {
+        return this.rotation;
+    }
+
+    public Quaterniond rot() {
+        return new Quaterniond(rotation[0], rotation[1], rotation[2], rotation[3]);
+    }
+
     // We only want copies passed
     public void writeHeader() {
         for (ForcePoint point : points())
@@ -57,8 +82,10 @@ public class ForceCloud extends PhysicsElement {
     }
 
     public void tick() {
-        modules.forEach(IPhysicsModule::preSolve);
-        modules.forEach(IPhysicsModule::solve);
-        modules.forEach(IPhysicsModule::postSolve);
+        for (IPhysicsModule module : modules) {
+            module.preSolve(this);
+            module.solve(this);
+            module.postSolve(this);
+        }
     }
 }

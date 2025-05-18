@@ -1,11 +1,13 @@
 package com.amuzil.omegasource.utils.physics.modules;
 
+import com.amuzil.omegasource.utils.physics.core.IPhysicsElement;
+
 public interface IPhysicsModule {
 
-    void preSolve();
+    void preSolve(IPhysicsElement element);
 
-    void solve();
+    void solve(IPhysicsElement element);
 
-    void postSolve();
+    void postSolve(IPhysicsElement element);
 
 }
