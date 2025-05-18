@@ -1,11 +1,21 @@
 package com.amuzil.omegasource.utils.physics.core;
 
+import com.amuzil.omegasource.utils.physics.modules.IPhysicsModule;
+import net.minecraft.world.phys.Vec3;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class ForceCloud extends PhysicsElement {
 
     private List<ForcePoint> points;
+
+    private Vec3[] normals;
+
+    private Vec3 rotation;
+
+    private List<IPhysicsModule> modules;
+
 
     public ForceCloud(int type) {
         super(type);
@@ -44,5 +54,11 @@ public class ForceCloud extends PhysicsElement {
     public void writeHeader() {
         for (ForcePoint point : points())
             System.arraycopy(header, 0, point.header, 0, header.length);
+    }
+
+    public void tick() {
+        modules.forEach(IPhysicsModule::preSolve);
+        modules.forEach(IPhysicsModule::solve);
+        modules.forEach(IPhysicsModule::postSolve);
     }
 }

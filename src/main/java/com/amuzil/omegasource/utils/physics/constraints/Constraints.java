@@ -20,6 +20,7 @@ public class Constraints {
         /** Simple Constraints **/
 
         // Fixed length between particles. Essential for ropes, whips, arcs; can be used for solids, but primarily liquids.
+                // Metadata: # of connections, then ids, then resting distance, then break strength/threshold, then stiffness
         POINT_POINT_DISTANCE(0),
 
         // Keeping a point near an edge or face - surface tension.

@@ -3,6 +3,8 @@ package com.amuzil.omegasource.utils.physics.core;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import java.util.List;
+
 
 public class ForceSystem {
 
@@ -11,6 +13,12 @@ public class ForceSystem {
 
     public Dist side() {
         return this.side;
+    }
+
+    private List<ForceEmitter> emitters;
+
+    public void tick() {
+        emitters.forEach(ForceEmitter::tick);
     }
 
 }
