@@ -13,6 +13,7 @@ import com.amuzil.omegasource.bending.BendingSkill;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.utils.Constants;
+import com.amuzil.omegasource.utils.ship.EarthController;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
@@ -101,7 +102,7 @@ public class EarthBlockSkill extends BendingSkill {
             if (VSGameUtilsKt.isBlockInShipyard(level, bender.blockPos)) {
                 LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, bender.blockPos);
                 if (serverShip != null) {
-                    GameTickForceApplier gtfa = serverShip.getAttachment(GameTickForceApplier.class);
+                    EarthController gtfa = EarthController.getOrCreate(serverShip);
                     if (gtfa != null) {
                         hoverBlock(serverShip, gtfa);
                     }
@@ -110,12 +111,12 @@ public class EarthBlockSkill extends BendingSkill {
         }
     }
 
-    private static void hoverBlock(LoadedServerShip ship, GameTickForceApplier gtfa) {
+    private static void hoverBlock(LoadedServerShip ship, EarthController gtfa) {
         double gravity = 10; // Acceleration due to gravity
         double mass = ship.getInertiaData().getMass(); // Mass of the ship
+//        System.out.println("Mass: " + mass);
         double requiredForce = (gravity * mass) + 25000.0D; // Force needed to counteract gravity
         Vector3d v3d2 = new Vector3d(0, requiredForce, 0);
         gtfa.applyInvariantForce(v3d2);
-//        gtfa.applyInvariantTorque(new Vector3d(0, 0, 0));
     }
 }
