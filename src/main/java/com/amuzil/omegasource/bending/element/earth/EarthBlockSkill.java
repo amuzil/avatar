@@ -102,7 +102,7 @@ public class EarthBlockSkill extends BendingSkill {
             if (VSGameUtilsKt.isBlockInShipyard(level, bender.blockPos)) {
                 LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, bender.blockPos);
                 if (serverShip != null) {
-                    EarthController gtfa = EarthController.getOrCreate(serverShip);
+                    EarthController gtfa = EarthController.getOrCreate(serverShip, bender.getEntity());
                     if (gtfa != null) {
                         hoverBlock(serverShip, gtfa);
                     }

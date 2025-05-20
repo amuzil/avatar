@@ -1,44 +1,57 @@
 package com.amuzil.omegasource.utils.ship;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
+import org.joml.primitives.AABBdc;
 import org.valkyrienskies.core.api.ships.LoadedServerShip;
 import org.valkyrienskies.core.api.ships.PhysShip;
 import org.valkyrienskies.core.api.ships.ServerShip;
 import org.valkyrienskies.core.api.ships.ShipForcesInducer;
+import org.valkyrienskies.mod.common.VSGameUtilsKt;
+import org.valkyrienskies.mod.common.util.VectorConversionsMCKt;
 
-import java.util.Objects;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
 public final class EarthController implements ShipForcesInducer {
-    private ConcurrentLinkedQueue<Vector3dc> invForces = new ConcurrentLinkedQueue<>();
-    private ConcurrentLinkedQueue<Vector3dc> invTorques = new ConcurrentLinkedQueue<>();
-    private ConcurrentLinkedQueue<Vector3dc> rotForces = new ConcurrentLinkedQueue<>();
-    private ConcurrentLinkedQueue<Vector3dc> rotTorques = new ConcurrentLinkedQueue<>();
-    private ConcurrentLinkedQueue<InvForceAtPos> invPosForces = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<Vector3dc> invForces = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<Vector3dc> invTorques = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<Vector3dc> rotForces = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<Vector3dc> rotTorques = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<InvForceAtPos> invPosForces = new ConcurrentLinkedQueue<>();
 
     private volatile boolean toBeStatic = false;
     private volatile boolean toBeStaticUpdated = false;
+    private ServerShip ship;
+    private LivingEntity entity;
     public final AtomicInteger tickCount = new AtomicInteger(0);
 
+    @Override
     public void applyForces(@NotNull PhysShip physShip) {
+
         if (!invForces.isEmpty()) {
+            if (physShip.isStatic())
+                physShip.setStatic(false);
             Vector3dc force = invForces.poll();
-            if (tickCount.get() >= 4) {
-                double yForce = force.y() - 24000.0D;
-                if (physShip.getVelocity().y() > 0) {
-                    yForce -= 500;
+            if (tickCount.get() >= 6) {
+                double yForce = force.y() - 20000.0D;
+                if (physShip.getVelocity().y() <= 0) {
+                    yForce += 1500;
                 } else {
-                    yForce += 800;
+                    yForce = 0;
                 }
                 Vector3d newForce = new Vector3d(0, yForce, 0);
-                System.out.println("applyForces: " + yForce +  " " + physShip.getVelocity().y());
+                System.out.println("applyForces: " + physShip.getVelocity());
                 physShip.applyInvariantForce(newForce);
             } else {
-                System.out.println("EarthController.applyForces initial: " + force);
                 physShip.applyInvariantForce(force);
             }
         }
@@ -61,7 +74,33 @@ public final class EarthController implements ShipForcesInducer {
             toBeStaticUpdated = false;
         }
 
+        checkCollision();
         tickCount.incrementAndGet();
+    }
+
+    private void checkCollision() {
+        ServerLevel level = (ServerLevel) entity.level();
+        String dimensionId = VSGameUtilsKt.getDimensionId(level);
+        VSGameUtilsKt.getShipObjectWorld(level).getAllShips().getIntersecting(
+                ship.getWorldAABB(),
+                dimensionId
+        ).forEach(serverShip -> {
+            if (serverShip.getId() != ship.getId()) {
+                Vector3dc shipYardPos = serverShip.getTransform().getPositionInShip();
+                BlockPos blockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipYardPos));
+                level.destroyBlock(blockPos, false);
+//                System.out.println("COLLIDED!!!");
+            }
+        });
+        getShipEntityCollisions(level, ship.getWorldAABB()).forEach(entity -> {
+            if (entity != null && entity != this.entity) {
+                Vector3dc shipYardPos = ship.getTransform().getPositionInShip();
+                BlockPos blockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipYardPos));
+                level.destroyBlock(blockPos, false);
+                entity.hurt(entity.damageSources().thrown(entity, entity), 3f);
+                System.out.println("HIT ENTITY!!!");
+            }
+        });
     }
 
     public void applyInvariantForce(Vector3dc force) {
@@ -91,12 +130,26 @@ public final class EarthController implements ShipForcesInducer {
 
     private record InvForceAtPos(Vector3dc force, Vector3dc pos) {}
 
-    public static EarthController getOrCreate(LoadedServerShip ship) {
+    public static List<LivingEntity> getShipEntityCollisions(Level level,
+                                                             AABBdc shipBox) {
+        return level.getEntitiesOfClass(
+                LivingEntity.class, toMcAABB(shipBox).inflate(1.0), LivingEntity::isAlive);
+    }
+
+    public static AABB toMcAABB(AABBdc jomlAABB) {
+        return new AABB(
+                jomlAABB.minX(), jomlAABB.minY(), jomlAABB.minZ(),
+                jomlAABB.maxX(), jomlAABB.maxY(), jomlAABB.maxZ());
+    }
+
+    public static EarthController getOrCreate(LoadedServerShip ship, LivingEntity entity) {
         EarthController existing = ship.getAttachment(EarthController.class);
         if (existing != null) {
             return existing;
         } else {
             EarthController control = new EarthController();
+            control.ship = ship;
+            control.entity = entity;
             ship.setAttachment(EarthController.class, control);
             return control;
         }
