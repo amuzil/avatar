@@ -115,7 +115,7 @@ public class EarthBlockSkill extends BendingSkill {
         double gravity = 10; // Acceleration due to gravity
         double mass = ship.getInertiaData().getMass(); // Mass of the ship
 //        System.out.println("Mass: " + mass);
-        double requiredForce = (gravity * mass) + 25000.0D; // Force needed to counteract gravity
+        double requiredForce = (gravity * mass) * 10; // Force needed to counteract gravity
         Vector3d v3d2 = new Vector3d(0, requiredForce, 0);
         gtfa.applyInvariantForce(v3d2);
     }

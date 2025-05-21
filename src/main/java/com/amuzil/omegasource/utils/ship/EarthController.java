@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
@@ -80,27 +81,15 @@ public final class EarthController implements ShipForcesInducer {
 
     private void checkCollision() {
         ServerLevel level = (ServerLevel) entity.level();
-        String dimensionId = VSGameUtilsKt.getDimensionId(level);
-        VSGameUtilsKt.getShipObjectWorld(level).getAllShips().getIntersecting(
-                ship.getWorldAABB(),
-                dimensionId
-        ).forEach(serverShip -> {
-            if (serverShip.getId() != ship.getId()) {
-                Vector3dc shipYardPos = serverShip.getTransform().getPositionInShip();
-                BlockPos blockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipYardPos));
-                level.destroyBlock(blockPos, false);
-//                System.out.println("COLLIDED!!!");
-            }
-        });
-        getShipEntityCollisions(level, ship.getWorldAABB()).forEach(entity -> {
-            if (entity != null && entity != this.entity) {
-                Vector3dc shipYardPos = ship.getTransform().getPositionInShip();
-                BlockPos blockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipYardPos));
-                level.destroyBlock(blockPos, false);
-                entity.hurt(entity.damageSources().thrown(entity, entity), 3f);
-                System.out.println("HIT ENTITY!!!");
-            }
-        });
+        Vector3dc velocity = ship.getVelocity();
+        double mag = velocity.length();
+        boolean isMoving = mag > 0.05;
+        boolean isMovingFast = mag > 2.0;
+        if (isMoving) {
+            if (isMovingFast)
+                checkShipShipCollisions(level, ship);
+            checkShipEntityCollisions(level, ship);
+        }
     }
 
     public void applyInvariantForce(Vector3dc force) {
@@ -130,10 +119,38 @@ public final class EarthController implements ShipForcesInducer {
 
     private record InvForceAtPos(Vector3dc force, Vector3dc pos) {}
 
+    public void checkShipShipCollisions(ServerLevel level, ServerShip ship) {
+        String dimensionId = VSGameUtilsKt.getDimensionId(level);
+        VSGameUtilsKt.getShipObjectWorld(level).getAllShips().getIntersecting(
+                ship.getWorldAABB(),
+                dimensionId
+        ).forEach(serverShip -> {
+            if (serverShip.getId() != ship.getId()) {
+                Vector3dc shipYardPos = serverShip.getTransform().getPositionInShip();
+                BlockPos blockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipYardPos));
+                level.destroyBlock(blockPos, false);
+            }
+        });
+    }
+
+    public void checkShipEntityCollisions(ServerLevel level, ServerShip ship) {
+        getShipEntityCollisions(level, ship.getWorldAABB()).forEach(entity -> {
+            if (entity != null && entity != this.entity) {
+                Vector3dc shipYardPos = ship.getTransform().getPositionInShip();
+                BlockPos blockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipYardPos));
+                level.destroyBlock(blockPos, false);
+                Vec3 motion = entity.getDeltaMovement();
+                entity.addDeltaMovement(motion.scale(0.5f));
+                entity.hasImpulse = true; entity.hurtMarked = true;
+                entity.hurt(entity.damageSources().thrown(entity, entity), 4f);
+            }
+        });
+    }
+
     public static List<LivingEntity> getShipEntityCollisions(Level level,
                                                              AABBdc shipBox) {
         return level.getEntitiesOfClass(
-                LivingEntity.class, toMcAABB(shipBox).inflate(1.0), LivingEntity::isAlive);
+                LivingEntity.class, toMcAABB(shipBox), LivingEntity::isAlive);
     }
 
     public static AABB toMcAABB(AABBdc jomlAABB) {
