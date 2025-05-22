@@ -7,7 +7,6 @@ import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.KnockbackTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SizeTrait;
-import com.amuzil.omegasource.bending.BendingEffect;
 import com.amuzil.omegasource.bending.BendingSelection;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.capability.Bender;
@@ -27,10 +26,10 @@ import org.valkyrienskies.mod.common.util.GameTickForceApplier;
 import org.valkyrienskies.mod.common.util.VectorConversionsMCKt;
 import org.valkyrienskies.mod.util.RelocationUtilKt;
 
-import static com.amuzil.omegasource.bending.form.BendingForms.BLOCK;
+import static com.amuzil.omegasource.bending.form.BendingForms.STRIKE;
 
 
-public class EarthTossSkill extends BendingEffect {
+public class EarthTossSkill extends BendingSkill {
 
     public EarthTossSkill() {
         super(Avatar.MOD_ID, "earth_toss", Elements.EARTH);
@@ -38,18 +37,28 @@ public class EarthTossSkill extends BendingEffect {
         addTrait(new SizeTrait(1.0f, Constants.SIZE));
 
         this.startPaths = SkillPathBuilder.getInstance()
-                .complex(new ActiveForm(BLOCK, true))
+                .complex(new ActiveForm(STRIKE, true))
                 .build();
 
-        this.runPaths = SkillPathBuilder.getInstance()
-                .simple(new ActiveForm(BLOCK, true))
-                .build();
+//        this.runPaths = SkillPathBuilder.getInstance()
+//                .simple(new ActiveForm(STRIKE, true))
+//                .build();
     }
 
     @Override
     public SkillCategory getCategory() {
         return Elements.EARTH;
     }
+
+    @Override
+    public boolean shouldStart(LivingEntity entity, FormPath formPath) {
+        return super.shouldStart(entity, formPath);
+    }
+
+//    @Override
+//    public boolean shouldRun(LivingEntity entity, FormPath formPath) {
+//        return formPath.simple().hashCode() == getRunPaths().simple().hashCode();
+//    }
 
     @Override
     public void start(LivingEntity entity) {
@@ -128,7 +137,8 @@ public class EarthTossSkill extends BendingEffect {
         Vec3 vec3 = entity.getLookAngle().normalize()
                 .add(0, 1, 0)
                 .multiply(10000, 10000, 10000);
-        System.out.println("Applying force: " + vec3);
+                .multiply(75000, 10000, 75000);
+//        System.out.println("Applying force: " + vec3);
         Vector3d v3d = VectorConversionsMCKt.toJOML(vec3);
         gtfa.applyInvariantForce(v3d);
     }
