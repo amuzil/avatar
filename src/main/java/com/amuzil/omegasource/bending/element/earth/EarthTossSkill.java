@@ -2,13 +2,13 @@ package com.amuzil.omegasource.bending.element.earth;
 
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
-import com.amuzil.omegasource.api.magus.skill.SkillCategory;
+import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.KnockbackTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SizeTrait;
 import com.amuzil.omegasource.bending.BendingSelection;
-import com.amuzil.omegasource.bending.element.Elements;
+import com.amuzil.omegasource.bending.skill.EarthSkill;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.utils.Constants;
 import net.minecraft.core.BlockPos;
@@ -29,10 +29,10 @@ import org.valkyrienskies.mod.util.RelocationUtilKt;
 import static com.amuzil.omegasource.bending.form.BendingForms.STRIKE;
 
 
-public class EarthTossSkill extends BendingSkill {
+public class EarthTossSkill extends EarthSkill {
 
     public EarthTossSkill() {
-        super(Avatar.MOD_ID, "earth_toss", Elements.EARTH);
+        super(Avatar.MOD_ID, "earth_toss");
         addTrait(new KnockbackTrait(1.5f, Constants.KNOCKBACK));
         addTrait(new SizeTrait(1.0f, Constants.SIZE));
 
@@ -46,19 +46,9 @@ public class EarthTossSkill extends BendingSkill {
     }
 
     @Override
-    public SkillCategory getCategory() {
-        return Elements.EARTH;
-    }
-
-    @Override
     public boolean shouldStart(LivingEntity entity, FormPath formPath) {
         return super.shouldStart(entity, formPath);
     }
-
-//    @Override
-//    public boolean shouldRun(LivingEntity entity, FormPath formPath) {
-//        return formPath.simple().hashCode() == getRunPaths().simple().hashCode();
-//    }
 
     @Override
     public void start(LivingEntity entity) {
@@ -96,6 +86,15 @@ public class EarthTossSkill extends BendingSkill {
                     System.out.println("Ship created: " + ship.getId() + " " + bender.blockPos);
                 }
             }
+            if (VSGameUtilsKt.isBlockInShipyard(level, bender.blockPos)) {
+                LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, bender.blockPos);
+                if (serverShip != null) {
+                    GameTickForceApplier gtfa = serverShip.getAttachment(GameTickForceApplier.class);
+                    if (gtfa != null) {
+                        tossBlock(entity, gtfa);
+                    }
+                }
+            }
         }
 
         if (bender != null) {
@@ -103,34 +102,6 @@ public class EarthTossSkill extends BendingSkill {
             data.setState(SkillState.RUN);
             resetCooldown(data);
         }
-    }
-
-    @Override
-    public void run(LivingEntity entity) {
-        super.run(entity);
-        if (!entity.level().isClientSide()) {
-            Bender bender = (Bender) Bender.getBender(entity);
-            ServerLevel level = (ServerLevel) entity.level();
-            if (VSGameUtilsKt.isBlockInShipyard(level, bender.blockPos)) {
-                LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, bender.blockPos);
-                if (serverShip != null) {
-                    GameTickForceApplier gtfa = serverShip.getAttachment(GameTickForceApplier.class);
-                    if (gtfa != null) {
-//                        hoverBlock(serverShip, gtfa);
-                        tossBlock(entity, gtfa);
-                    }
-                }
-            }
-        }
-    }
-
-    private static void hoverBlock(LoadedServerShip ship, GameTickForceApplier gtfa) {
-        double gravity = 10; // Acceleration due to gravity
-        double mass = ship.getInertiaData().getMass(); // Mass of the ship
-        double requiredForce = (gravity * mass) + 5000.0D; // Force needed to counteract gravity
-        Vector3d v3d2 = new Vector3d(0, requiredForce, 0);
-        System.out.println("Levitating force 2: " + v3d2 + " " + requiredForce);
-        gtfa.applyInvariantForce(v3d2);
     }
 
     private static void tossBlock(LivingEntity entity, GameTickForceApplier gtfa) {

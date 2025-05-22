@@ -6,6 +6,7 @@ import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.capability.Bender;
 import net.minecraft.world.entity.LivingEntity;
 
+
 public class BendingEffect extends BendingSkill {
 
     public BendingEffect(String modID, String name, SkillCategory category) {

@@ -3,13 +3,12 @@ package com.amuzil.omegasource.bending.element.fire;
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
 import com.amuzil.omegasource.api.magus.form.FormPath;
-import com.amuzil.omegasource.api.magus.skill.SkillCategory;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.traits.entitytraits.PointsTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.*;
-import com.amuzil.omegasource.bending.BendingSkill;
 import com.amuzil.omegasource.bending.element.Elements;
+import com.amuzil.omegasource.bending.skill.FireSkill;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.entity.AvatarProjectile;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
@@ -22,10 +21,10 @@ import net.minecraft.world.phys.Vec3;
 import static com.amuzil.omegasource.bending.form.BendingForms.STRIKE;
 
 
-public class FireStrikeSkill extends BendingSkill {
+public class FireStrikeSkill extends FireSkill {
 
     public FireStrikeSkill() {
-        super(Avatar.MOD_ID, "fire_strike", Elements.FIRE);
+        super(Avatar.MOD_ID, "fire_strike");
         addTrait(new DamageTrait(2.5f, Constants.DAMAGE));
         addTrait(new SizeTrait(0.125F, Constants.SIZE));
         addTrait(new SizeTrait(1.25f, Constants.MAX_SIZE));
@@ -116,11 +115,4 @@ public class FireStrikeSkill extends BendingSkill {
             entity.level().addFreshEntity(projectile);
         }
     }
-
-
-    @Override
-    public SkillCategory getCategory() {
-        return Elements.FIRE;
-    }
-
 }

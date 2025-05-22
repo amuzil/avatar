@@ -142,15 +142,14 @@ public final class EarthController implements ShipForcesInducer {
                 BlockPos blockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipYardPos));
                 level.destroyBlock(blockPos, false);
                 Vec3 motion = VectorConversionsMCKt.toMinecraft(ship.getVelocity());
-                entity.addDeltaMovement(motion.scale(0.025));
+                entity.addDeltaMovement(motion.scale(0.05));
                 entity.hasImpulse = true; entity.hurtMarked = true;
                 entity.hurt(entity.damageSources().thrown(entity, entity), 4f);
             }
         });
     }
 
-    public static List<LivingEntity> getShipEntityCollisions(Level level,
-                                                             AABBdc shipBox) {
+    public static List<LivingEntity> getShipEntityCollisions(Level level, AABBdc shipBox) {
         return level.getEntitiesOfClass(
                 LivingEntity.class, toMcAABB(shipBox), LivingEntity::isAlive);
     }

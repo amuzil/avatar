@@ -2,17 +2,14 @@ package com.amuzil.omegasource.bending.element.fire;
 
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
-import com.amuzil.omegasource.api.magus.form.FormPath;
-import com.amuzil.omegasource.api.magus.skill.SkillCategory;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.ColourTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.KnockbackTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SizeTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SpeedTrait;
-import com.amuzil.omegasource.bending.BendingSkill;
-import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.form.BendingForm;
+import com.amuzil.omegasource.bending.skill.FireSkill;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.utils.Constants;
 import net.minecraft.world.entity.LivingEntity;
@@ -23,10 +20,10 @@ import java.util.Objects;
 import static com.amuzil.omegasource.bending.form.BendingForms.STEP;
 
 
-public class FlameStepSkill extends BendingSkill {
+public class FlameStepSkill extends FireSkill {
 
     public FlameStepSkill() {
-        super(Avatar.MOD_ID, "flame_step", Elements.FIRE);
+        super(Avatar.MOD_ID, "flame_step");
         addTrait(new KnockbackTrait(1.5f, Constants.KNOCKBACK));
         addTrait(new SpeedTrait(3f, Constants.DASH_SPEED));
         addTrait(new SizeTrait(1.0f, Constants.SIZE));
@@ -39,11 +36,6 @@ public class FlameStepSkill extends BendingSkill {
         this.runPaths = SkillPathBuilder.getInstance()
                 .complex(new ActiveForm(STEP, true))
                 .build();
-    }
-
-    @Override
-    public SkillCategory getCategory() {
-        return Elements.FIRE;
     }
 
     @Override

@@ -3,14 +3,12 @@ package com.amuzil.omegasource.bending.element.earth;
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
 import com.amuzil.omegasource.api.magus.form.FormPath;
-import com.amuzil.omegasource.api.magus.skill.SkillCategory;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.KnockbackTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SizeTrait;
 import com.amuzil.omegasource.bending.BendingSelection;
-import com.amuzil.omegasource.bending.BendingSkill;
-import com.amuzil.omegasource.bending.element.Elements;
+import com.amuzil.omegasource.bending.skill.EarthSkill;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.ship.EarthController;
@@ -24,17 +22,16 @@ import org.joml.Vector3i;
 import org.valkyrienskies.core.api.ships.LoadedServerShip;
 import org.valkyrienskies.core.api.ships.ServerShip;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
-import org.valkyrienskies.mod.common.util.GameTickForceApplier;
 import org.valkyrienskies.mod.common.util.VectorConversionsMCKt;
 import org.valkyrienskies.mod.util.RelocationUtilKt;
 
 import static com.amuzil.omegasource.bending.form.BendingForms.BLOCK;
 
 
-public class EarthBlockSkill extends BendingSkill {
+public class EarthBlockSkill extends EarthSkill {
 
     public EarthBlockSkill() {
-        super(Avatar.MOD_ID, "earth_block", Elements.EARTH);
+        super(Avatar.MOD_ID, "earth_block");
         addTrait(new KnockbackTrait(1.5f, Constants.KNOCKBACK));
         addTrait(new SizeTrait(1.0f, Constants.SIZE));
 
@@ -45,11 +42,6 @@ public class EarthBlockSkill extends BendingSkill {
         this.runPaths = SkillPathBuilder.getInstance()
                 .simple(new ActiveForm(BLOCK, true))
                 .build();
-    }
-
-    @Override
-    public SkillCategory getCategory() {
-        return Elements.EARTH;
     }
 
     @Override

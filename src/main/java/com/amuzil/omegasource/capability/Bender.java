@@ -44,19 +44,19 @@ public class Bender implements IBender {
 
     // Non-Persistent data
     private final LivingEntity entity;
-    public final FormPath formPath = new FormPath();
     private final Consumer<FormActivatedEvent> formListener;
     private final Consumer<TickEvent.ServerTickEvent> tickListener;
     private boolean isDirty = true; // Flag to indicate if data was changed
     private boolean active;
     private final int timeout = 5; // Adjust timeout time here
     private int tick = timeout;
-    private Vec3 lastDeltaMovement = Vec3.ZERO;
+    public final FormPath formPath = new FormPath(); // in-sync
+    private Vec3 lastDeltaMovement = Vec3.ZERO; // in-sync
+    private BendingSelection selection = new BendingSelection(); // in-sync
 
     // Persistent data
     public BlockPos blockPos = new BlockPos(0, 0, 0);
     private Element activeElement = Elements.FIRE; // Currently active element // TODO - Randomize on first load
-    private BendingSelection selection = new BendingSelection();
     private final List<SkillCategoryData> skillCategoryData = new ArrayList<>();
     private final List<SkillData> skillData = new ArrayList<>();
     private final List<DataTrait> dataTraits = new ArrayList<>();
@@ -109,8 +109,8 @@ public class Bender implements IBender {
             formPath.update(event.getActiveForm());
             this.syncFormPathToClient();
             tick = timeout;
-//            LOGGER.info("Simple Forms: {}", formPath.simple());
-//            LOGGER.info("Complex Forms: {}", formPath.complex());
+            LOGGER.info("Simple Forms: {}", formPath.simple());
+            LOGGER.info("Complex Forms: {}", formPath.complex());
         }
     }
 
