@@ -136,7 +136,6 @@ public class EarthTossSkill extends BendingSkill {
     private static void tossBlock(LivingEntity entity, GameTickForceApplier gtfa) {
         Vec3 vec3 = entity.getLookAngle().normalize()
                 .add(0, 1, 0)
-                .multiply(10000, 10000, 10000);
                 .multiply(75000, 10000, 75000);
 //        System.out.println("Applying force: " + vec3);
         Vector3d v3d = VectorConversionsMCKt.toJOML(vec3);
