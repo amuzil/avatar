@@ -109,8 +109,8 @@ public class Bender implements IBender {
             formPath.update(event.getActiveForm());
             this.syncFormPathToClient();
             tick = timeout;
-            LOGGER.info("Simple Forms: {}", formPath.simple());
-            LOGGER.info("Complex Forms: {}", formPath.complex());
+//            LOGGER.info("Simple Forms: {}", formPath.simple());
+//            LOGGER.info("Complex Forms: {}", formPath.complex());
         }
     }
 

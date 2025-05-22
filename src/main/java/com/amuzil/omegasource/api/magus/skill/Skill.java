@@ -165,11 +165,7 @@ public abstract class Skill {
         IDLE,
         START,
         RUN,
-        STOP;
-
-        public @Override String toString() {
-            return this.name();
-        }
+        STOP
     }
 
     /**
