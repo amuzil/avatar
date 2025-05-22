@@ -34,7 +34,7 @@ import static com.amuzil.omegasource.bending.form.BendingForms.BLOCK;
 public class EarthBlockSkill extends BendingSkill {
 
     public EarthBlockSkill() {
-        super(Avatar.MOD_ID, "earth_toss", Elements.EARTH);
+        super(Avatar.MOD_ID, "earth_block", Elements.EARTH);
         addTrait(new KnockbackTrait(1.5f, Constants.KNOCKBACK));
         addTrait(new SizeTrait(1.0f, Constants.SIZE));
 

@@ -1,5 +1,6 @@
 package com.amuzil.omegasource.utils.ship;
 
+import com.amuzil.omegasource.Avatar;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,6 +18,7 @@ import org.valkyrienskies.core.api.ships.ShipForcesInducer;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 import org.valkyrienskies.mod.common.util.VectorConversionsMCKt;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -43,14 +45,14 @@ public final class EarthController implements ShipForcesInducer {
                 physShip.setStatic(false);
             Vector3dc force = invForces.poll();
             if (tickCount.get() >= 6) {
-                double yForce = force.y() - 20000.0D;
+                double yForce = force.y() / 10;
                 if (physShip.getVelocity().y() <= 0) {
-                    yForce += 1500;
+                    yForce += 7000;
                 } else {
                     yForce = 0;
                 }
                 Vector3d newForce = new Vector3d(0, yForce, 0);
-                System.out.println("applyForces: " + physShip.getVelocity());
+//                Avatar.LOGGER.info("applyForces: {} {}", yForce, physShip.getVelocity().y());
                 physShip.applyInvariantForce(newForce);
             } else {
                 physShip.applyInvariantForce(force);
@@ -139,8 +141,8 @@ public final class EarthController implements ShipForcesInducer {
                 Vector3dc shipYardPos = ship.getTransform().getPositionInShip();
                 BlockPos blockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipYardPos));
                 level.destroyBlock(blockPos, false);
-                Vec3 motion = entity.getDeltaMovement();
-                entity.addDeltaMovement(motion.scale(0.5f));
+                Vec3 motion = VectorConversionsMCKt.toMinecraft(ship.getVelocity());
+                entity.addDeltaMovement(motion.scale(0.025));
                 entity.hasImpulse = true; entity.hurtMarked = true;
                 entity.hurt(entity.damageSources().thrown(entity, entity), 4f);
             }

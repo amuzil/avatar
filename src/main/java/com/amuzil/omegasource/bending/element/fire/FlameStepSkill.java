@@ -10,12 +10,11 @@ import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.ColourTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.KnockbackTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SizeTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SpeedTrait;
-import com.amuzil.omegasource.bending.BendingEffect;
+import com.amuzil.omegasource.bending.BendingSkill;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.form.BendingForm;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.utils.Constants;
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
@@ -23,7 +22,8 @@ import java.util.Objects;
 
 import static com.amuzil.omegasource.bending.form.BendingForms.STEP;
 
-public class FlameStepSkill extends BendingEffect {
+
+public class FlameStepSkill extends BendingSkill {
 
     public FlameStepSkill() {
         super(Avatar.MOD_ID, "flame_step", Elements.FIRE);
@@ -92,6 +92,7 @@ public class FlameStepSkill extends BendingEffect {
     public void run(LivingEntity entity) {
         super.run(entity);
         if (!entity.level().isClientSide()) {
+            System.out.println("Running Flame Step");
             entity.fallDistance = 0.0F;
         }
     }
