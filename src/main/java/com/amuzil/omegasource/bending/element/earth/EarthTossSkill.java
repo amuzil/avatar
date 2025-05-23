@@ -99,15 +99,13 @@ public class EarthTossSkill extends EarthSkill {
 
         if (bender != null) {
             SkillData data = bender.getSkillData(this);
-            data.setSkillState(SkillState.RUN);
+            data.setSkillState(SkillState.IDLE);
         }
     }
 
     private static void tossBlock(LivingEntity entity, GameTickForceApplier gtfa) {
         Vec3 vec3 = entity.getLookAngle().normalize()
-                .add(0, 1, 0)
-                .multiply(75000, 10000, 75000);
-//        System.out.println("Applying force: " + vec3);
+                .multiply(75000, 45000, 75000);
         Vector3d v3d = VectorConversionsMCKt.toJOML(vec3);
         gtfa.applyInvariantForce(v3d);
     }

@@ -66,6 +66,15 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
+    public static void onBlockBreak(BlockEvent.BreakEvent event) {
+        event.getPlayer().getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
+            if (bender.getElement() == Elements.EARTH) {
+                event.setCanceled(true);
+            }
+        });
+    }
+
+    @SubscribeEvent
     public static void worldTick(LivingEvent.LivingTickEvent event) {
         if (event.getEntity() instanceof Player) {
             if (event.getEntity() != null && event.getEntity().isAlive()) {

@@ -94,42 +94,31 @@ public abstract class Skill {
         return this.skillTypes;
     }
 
-    // Fix this because this will not work lmao
     public void tick(LivingEntity entity, FormPath formPath) {
         // Run this asynchronously
 
         Bender bender = (Bender) Bender.getBender(entity);
         // Remember, for some reason post only returns true upon the event being cancelled. Blame Forge.
-        if (shouldStart(entity, formPath)) {
-            if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Start(entity, formPath, this))) return;
-
-            if (bender != null) {
-                SkillData skillData = bender.getSkillData(this);
-                skillData.setState(SkillState.START);
-            }
-            start(entity);
-        }
-
         if (bender != null) {
-            SkillData skillData = bender.getSkillData(this);
+            if (shouldStart(entity, formPath)) {
+                if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Start(entity, formPath, this))) return;
+
+                start(entity);
+            }
+
             if (shouldRun(entity, formPath)) {
                 if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Run(entity, formPath, this))) return;
 
-                if (!skillData.getState().equals(SkillState.RUN))
-                    skillData.setState(SkillState.RUN);
                 run(entity);
-            } else return;
-        }
-        // TODO - Make way for shouldStart to return true if the skill is already running,
-        //        so it doesn't need to be started again. Or skip to the run method if it is already running.
-        if (shouldStop(entity, formPath)) {
-            if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Stop(entity, formPath, this))) return;
-
-            if (bender != null) {
-                SkillData skillData = bender.getSkillData(this);
-                skillData.setState(SkillState.STOP);
             }
-            stop(entity);
+
+            if (shouldStop(entity, formPath)) {
+                if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Stop(entity, formPath, this))) return;
+
+                SkillData skillData = bender.getSkillData(this);
+                skillData.setSkillState(SkillState.STOP);
+                stop(entity);
+            }
         }
     }
 
@@ -150,16 +139,10 @@ public abstract class Skill {
 
     public abstract void run(LivingEntity entity);
 
-    public void stop(LivingEntity entity) {
-        Bender bender = (Bender) Bender.getBender(entity);
-        if (bender != null) {
-            SkillData data = bender.getSkillData(this);
-            data.setState(SkillState.IDLE);
-        }
-    };
+    public abstract void stop(LivingEntity entity);
 
     // Resets the skill and any necessary skill data; should be called upon stopping execution.
-    public abstract void reset(LivingEntity entity, FormPath formPath);
+    public abstract void reset(LivingEntity entity);
 
     public enum SkillState {
         IDLE,

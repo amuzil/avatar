@@ -1,10 +1,7 @@
 package com.amuzil.omegasource.bending;
 
-import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.skill.SkillCategory;
-import com.amuzil.omegasource.api.magus.skill.data.SkillData;
-import com.amuzil.omegasource.capability.Bender;
-import net.minecraft.world.entity.LivingEntity;
+
 
 @Deprecated
 public class BendingEffect extends BendingSkill {
@@ -13,20 +10,20 @@ public class BendingEffect extends BendingSkill {
         super(modID, name, category);
     }
 
-    @Override
-    public boolean shouldStart(LivingEntity entity, FormPath formPath) {
-        boolean shouldStart = false;
-        Bender bender = (Bender) Bender.getBender(entity);
-        if (bender != null) {
-            SkillData data = bender.getSkillData(this);
-            if (data.getSkillState().equals(SkillState.START)) {
-                shouldStart = true;
-            } else if (data.getSkillState().equals(SkillState.IDLE)) {
-                shouldStart = checkCooldown(data);
-            } else if (data.getSkillState().equals(SkillState.RUN)) {
-                shouldStart = checkCooldown(data);
-            }
-        }
-        return super.shouldStart(entity, formPath) && shouldStart;
-    }
+//    @Override
+//    public boolean shouldStart(LivingEntity entity, FormPath formPath) {
+//        boolean shouldStart = false;
+//        Bender bender = (Bender) Bender.getBender(entity);
+//        if (bender != null) {
+//            SkillData data = bender.getSkillData(this);
+//            if (data.getSkillState().equals(SkillState.START)) {
+//                shouldStart = true;
+//            } else if (data.getSkillState().equals(SkillState.IDLE)) {
+//                shouldStart = checkCooldown(data);
+//            } else if (data.getSkillState().equals(SkillState.RUN)) {
+//                shouldStart = checkCooldown(data);
+//            }
+//        }
+//        return super.shouldStart(entity, formPath) && shouldStart;
+//    }
 }

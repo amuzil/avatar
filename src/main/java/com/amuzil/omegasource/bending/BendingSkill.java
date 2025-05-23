@@ -36,6 +36,7 @@ public class BendingSkill extends SkillActive {
         }
     }
 
+    // Increment TimedTrait until maxTime is reached, then reset to 0 and set skill state to IDLE
     public void incrementTimedTrait(SkillData data, String name, int maxTime) {
         TimedTrait time = data.getTrait(name, TimedTrait.class);
         if (time.getTime() < maxTime) {

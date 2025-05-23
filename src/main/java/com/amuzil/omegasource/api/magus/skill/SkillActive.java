@@ -1,6 +1,8 @@
 package com.amuzil.omegasource.api.magus.skill;
 
 import com.amuzil.omegasource.api.magus.form.FormPath;
+import com.amuzil.omegasource.api.magus.skill.data.SkillData;
+import com.amuzil.omegasource.capability.Bender;
 import net.minecraft.world.entity.LivingEntity;
 
 
@@ -39,7 +41,9 @@ public class SkillActive extends Skill {
 
     @Override
     public boolean shouldStop(LivingEntity entity, FormPath formPath) {
-        return false;
+        if (getStopPaths() == null)
+            return false;
+        return formPath.hashCode() == getStopPaths().hashCode();
     }
 
     @Override
@@ -53,7 +57,16 @@ public class SkillActive extends Skill {
     }
 
     @Override
-    public void reset(LivingEntity entity, FormPath formPath) {
+    public void stop(LivingEntity entity) {
+        Bender bender = (Bender) Bender.getBender(entity);
+        if (bender != null) {
+            SkillData data = bender.getSkillData(this);
+            data.setSkillState(SkillState.IDLE);
+        }
+    }
+
+    @Override
+    public void reset(LivingEntity entity) {
 
     }
 

@@ -27,13 +27,12 @@ public class SkillData implements DataTrait {
     protected ResourceLocation skillId;
     protected boolean canUse = true; // TODO - Temporary for testing
     protected boolean isDirty = false;
-    protected Skill.SkillState state;
+    protected Skill.SkillState skillState;
 
     public SkillData(ResourceLocation skillId) {
         this.skillId = skillId;
         this.skillTraits = new LinkedList<>();
-
-        this.state = Skill.SkillState.START;
+        this.skillState = Skill.SkillState.IDLE;
         if (getSkill() != null)
             skillTraits = getSkill().getTraits()
                     .stream()
@@ -50,12 +49,12 @@ public class SkillData implements DataTrait {
         markDirty();
     }
 
-    public Skill.SkillState getState() {
-        return this.state;
+    public Skill.SkillState getSkillState() {
+        return this.skillState;
     }
 
-    public void setState(Skill.SkillState state) {
-        this.state = state;
+    public void setSkillState(Skill.SkillState skillState) {
+        this.skillState = skillState;
         markDirty();
     }
 

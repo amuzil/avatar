@@ -44,7 +44,7 @@ public final class EarthController implements ShipForcesInducer {
             if (physShip.isStatic())
                 physShip.setStatic(false);
             Vector3dc force = invForces.poll();
-            if (tickCount.get() >= 6) {
+            if (tickCount.get() >= 5) {
                 double yForce = force.y() / 10;
                 if (physShip.getVelocity().y() <= 0) {
                     yForce += 7000;
@@ -78,16 +78,16 @@ public final class EarthController implements ShipForcesInducer {
         }
 
         checkCollision();
-        tickCount.incrementAndGet();
     }
 
     private void checkCollision() {
         ServerLevel level = (ServerLevel) entity.level();
         Vector3dc velocity = ship.getVelocity();
         double mag = velocity.length();
-        boolean isMoving = mag > 0.05;
+        boolean isMoving = mag > 0.1;
         boolean isMovingFast = mag > 2.0;
         if (isMoving) {
+            tickCount.incrementAndGet();
             if (isMovingFast)
                 checkShipShipCollisions(level, ship);
             checkShipEntityCollisions(level, ship);
@@ -142,7 +142,7 @@ public final class EarthController implements ShipForcesInducer {
                 BlockPos blockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipYardPos));
                 level.destroyBlock(blockPos, false);
                 Vec3 motion = VectorConversionsMCKt.toMinecraft(ship.getVelocity());
-                entity.addDeltaMovement(motion.scale(0.05));
+                entity.addDeltaMovement(motion.scale(0.06));
                 entity.hasImpulse = true; entity.hurtMarked = true;
                 entity.hurt(entity.damageSources().thrown(entity, entity), 4f);
             }

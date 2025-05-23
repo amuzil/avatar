@@ -64,12 +64,6 @@ public class FlameStepSkill extends FireSkill {
                 entity.hasImpulse = true;
             }
 
-//        ((Player) entity).jumpFromGround();
-//        System.out.println("Delta: " + entity.getDeltaMovement());
-//        entity.setDeltaMovement(entity.getDeltaMovement().multiply(5,1,5).scale(dashSpeed).add(0,0.3D,0));
-//        entity.hurtMarked = true; // Mark the entity for velocity sync
-//        System.out.println("New Delta: " + entity.getDeltaMovement());
-
             data.setSkillState(SkillState.RUN);
         }
     }
@@ -80,7 +74,6 @@ public class FlameStepSkill extends FireSkill {
         if (!entity.level().isClientSide()) {
             Bender bender = (Bender) Bender.getBender(entity);
             if (bender != null) {
-                System.out.println("Running Flame Step");
                 SkillData data = bender.getSkillData(this);
                 entity.fallDistance = 0.0F;
                 incrementTimedTrait(data, Constants.RUNTIME, data.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime());

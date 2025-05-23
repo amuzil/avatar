@@ -42,6 +42,9 @@ public class EarthBlockSkill extends EarthSkill {
         this.runPaths = SkillPathBuilder.getInstance()
                 .simple(new ActiveForm(BLOCK, true))
                 .build();
+
+        this.stopPaths = SkillPathBuilder.getInstance()
+                .build();
     }
 
     @Override
@@ -51,7 +54,14 @@ public class EarthBlockSkill extends EarthSkill {
 
     @Override
     public boolean shouldRun(LivingEntity entity, FormPath formPath) {
-        return formPath.simple().hashCode() == getRunPaths().simple().hashCode();
+        Bender bender = (Bender) Bender.getBender(entity);
+        SkillData skillData = bender.getSkillData(this);
+        return skillData.getSkillState().equals(SkillState.RUN);
+    }
+
+    @Override
+    public boolean shouldStop(LivingEntity entity, FormPath formPath) {
+        return formPath.simple().hashCode() == getStopPaths().simple().hashCode();
     }
 
     @Override
@@ -100,6 +110,28 @@ public class EarthBlockSkill extends EarthSkill {
                 }
             }
         }
+    }
+
+    @Override
+    public void stop(LivingEntity entity) {
+        super.stop(entity);
+        Bender bender = (Bender) Bender.getBender(entity);
+        SkillData data = bender.getSkillData(this);
+        data.setSkillState(SkillState.IDLE);
+
+        if (!entity.level().isClientSide()) {
+            ServerLevel level = (ServerLevel) entity.level();
+            if (VSGameUtilsKt.isBlockInShipyard(level, bender.blockPos)) {
+                LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, bender.blockPos);
+                if (serverShip != null) {
+                    EarthController gtfa = EarthController.getOrCreate(serverShip, bender.getEntity());
+                    if (gtfa != null) {
+                        gtfa.tickCount.set(0);
+                    }
+                }
+            }
+        }
+
     }
 
     private static void hoverBlock(LoadedServerShip ship, EarthController gtfa) {

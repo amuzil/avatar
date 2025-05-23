@@ -1,7 +1,6 @@
 package com.amuzil.omegasource.api.magus.form;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.bending.BendingSelection;
 import com.amuzil.omegasource.bending.form.BendingForm;
 import com.amuzil.omegasource.api.magus.registry.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -15,7 +14,6 @@ public class ActiveForm {
     private BendingForm form;
     private boolean active;
     private BendingForm.Type.Motion motion = BendingForm.Type.Motion.NONE;
-    private BendingSelection selection = new BendingSelection();
 
     public ActiveForm(String formName, boolean active) {
         this(
@@ -49,20 +47,11 @@ public class ActiveForm {
         this.motion = motion;
     }
 
-    public BendingSelection selection() {
-        return selection;
-    }
-
-    public void setSelection(BendingSelection selection) {
-        this.selection = selection;
-    }
-
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
         tag.putString("Form", this.form.name());
         tag.putBoolean("Active", this.active());
         tag.putString("Direction", this.motion.name());
-        tag.put("Selection", this.selection.serializeNBT());
         return tag;
     }
 
@@ -70,7 +59,6 @@ public class ActiveForm {
         form = (BendingForm) Registries.FORMS.get().getValue(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, tag.getString("Form")));
         active = tag.getBoolean("Active");
         motion = BendingForm.Type.Motion.valueOf(tag.getString("Direction"));
-        selection = new BendingSelection(tag.getCompound("Selection"));
     }
 
     @Override
