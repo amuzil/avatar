@@ -6,7 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 
 /** Unlike the classes in the skilltraits package, these
  * traits exist outside the skill instance. For example
- * StanceTrait s are toggleable booleans that say whether a player has a certain stance enabled.
+ * StanceTrait's are toggleable booleans that say whether a player has a certain stance enabled.
  */
 public class BooleanTrait extends SkillTrait {
 
