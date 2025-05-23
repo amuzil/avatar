@@ -21,6 +21,8 @@ public final class Constants {
     public static final String HEIGHT_CURVE = "height_curve";
     public static final String WIDTH_CURVE = "width_curve";
     public static final String KNOCKBACK_DIRECTION = "knockback_direction";
+    public static final String RUNTIME = "runtime";
+    public static final String MAX_RUNTIME = "max_runtime";
 
     private Constants() {
         // Private constructor to prevent instantiation

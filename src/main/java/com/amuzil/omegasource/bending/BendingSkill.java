@@ -12,11 +12,11 @@ public class BendingSkill extends SkillActive {
 
     public BendingSkill(String modID, String name, SkillCategory category) {
         super(modID, name, category);
-        addTrait(new XPTrait(0, "xp"));
-        addTrait(new LevelTrait(0, "level"));
-        addTrait(new LevelTrait(1, "tier"));
-        addTrait(new TimedTrait(40, "max_cooldown"));
-        addTrait(new TimedTrait(40, "cooldown"));
+        addTrait(new XPTrait("xp", 0));
+        addTrait(new LevelTrait("level", 0));
+        addTrait(new LevelTrait("tier", 1));
+        addTrait(new TimedTrait("max_cooldown", 40));
+        addTrait(new TimedTrait("cooldown", 40));
     }
 
     public void resetCooldown(SkillData data) {
@@ -30,10 +30,19 @@ public class BendingSkill extends SkillActive {
         if (time.getTime() > 0) {
             time.setTime(time.getTime() - 1);
             return false;
-        }
-        else {
-            data.setState(SkillState.START);
+        } else {
+            data.setSkillState(SkillState.START);
             return true;
+        }
+    }
+
+    public void incrementTimedTrait(SkillData data, String name, int maxTime) {
+        TimedTrait time = data.getTrait(name, TimedTrait.class);
+        if (time.getTime() < maxTime) {
+            time.setTime(time.getTime() + 1);
+        } else {
+            time.setTime(0);
+            data.setSkillState(SkillState.IDLE);
         }
     }
 }

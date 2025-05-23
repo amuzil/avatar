@@ -31,7 +31,6 @@ public class ServerEvents {
             player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
                 bender.syncToClient();
                 bender.register();
-                System.out.println("EntityJoinLevelEvent SYNC SERVER TO CLIENT ON JOIN");
             });
         }
     }
@@ -42,7 +41,6 @@ public class ServerEvents {
             player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
                 bender.syncToClient();
                 bender.unregister();
-                System.out.println("EntityLeaveLevelEvent SYNC SERVER TO CLIENT ON LEAVE");
             });
         }
     }

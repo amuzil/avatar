@@ -3,11 +3,12 @@ package com.amuzil.omegasource.api.magus.skill.traits.skilltraits;
 import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
 import net.minecraft.nbt.CompoundTag;
 
+
 public class XPTrait extends SkillTrait {
 
     private double xp;
 
-    public XPTrait(double xp, String name) {
+    public XPTrait(String name, double xp) {
         super(name);
         this.xp = xp;
     }

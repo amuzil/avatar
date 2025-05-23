@@ -3,11 +3,12 @@ package com.amuzil.omegasource.api.magus.skill.traits.skilltraits;
 import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
 import net.minecraft.nbt.CompoundTag;
 
+
 public class LevelTrait extends SkillTrait {
 
     private int level;
 
-    public LevelTrait(int level, String name) {
+    public LevelTrait(String name, int level) {
         super(name);
         this.level = level;
     }

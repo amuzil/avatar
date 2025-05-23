@@ -8,7 +8,7 @@ public class SpeedTrait extends SkillTrait {
 
     private double speed = 1;
 
-    public SpeedTrait(double speed, String name) {
+    public SpeedTrait(String name, double speed) {
         super(name);
         this.speed = speed;
     }

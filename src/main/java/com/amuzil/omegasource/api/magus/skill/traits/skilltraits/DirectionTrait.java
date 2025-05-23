@@ -4,13 +4,10 @@ import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.Vec3;
 
+
 public class DirectionTrait extends SkillTrait {
 
     private Vec3 direction;
-
-    public DirectionTrait(String name) {
-        super(name);
-    }
 
     public DirectionTrait(String name, Vec3 direction) {
         super(name);

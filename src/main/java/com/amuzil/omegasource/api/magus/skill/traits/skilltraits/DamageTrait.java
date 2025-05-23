@@ -3,6 +3,7 @@ package com.amuzil.omegasource.api.magus.skill.traits.skilltraits;
 import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
 import net.minecraft.nbt.CompoundTag;
 
+
 /**
  * Basic DamageTrait class for skills. Lets the user determine
  * what kind of damage it's for. E.g a Lightning Arc technique might take
@@ -12,7 +13,7 @@ public class DamageTrait extends SkillTrait {
 
     private double damage;
 
-    public DamageTrait(double damage, String name) {
+    public DamageTrait(String name, double damage) {
         super(name);
         this.damage = damage;
     }

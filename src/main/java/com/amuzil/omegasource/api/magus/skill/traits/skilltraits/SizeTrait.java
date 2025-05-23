@@ -3,11 +3,12 @@ package com.amuzil.omegasource.api.magus.skill.traits.skilltraits;
 import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
 import net.minecraft.nbt.CompoundTag;
 
+
 public class SizeTrait extends SkillTrait {
 
     private double size;
 
-    public SizeTrait(float size, String name) {
+    public SizeTrait(String name, float size) {
         super(name);
         this.size = size;
     }

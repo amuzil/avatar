@@ -33,8 +33,8 @@ public class EarthTossSkill extends EarthSkill {
 
     public EarthTossSkill() {
         super(Avatar.MOD_ID, "earth_toss");
-        addTrait(new KnockbackTrait(1.5f, Constants.KNOCKBACK));
-        addTrait(new SizeTrait(1.0f, Constants.SIZE));
+        addTrait(new KnockbackTrait(Constants.KNOCKBACK, 1.5f));
+        addTrait(new SizeTrait(Constants.SIZE, 1.0f));
 
         this.startPaths = SkillPathBuilder.getInstance()
                 .complex(new ActiveForm(STRIKE, true))
@@ -99,8 +99,7 @@ public class EarthTossSkill extends EarthSkill {
 
         if (bender != null) {
             SkillData data = bender.getSkillData(this);
-            data.setState(SkillState.RUN);
-            resetCooldown(data);
+            data.setSkillState(SkillState.RUN);
         }
     }
 

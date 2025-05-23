@@ -3,11 +3,12 @@ package com.amuzil.omegasource.api.magus.skill.traits.skilltraits;
 import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
 import net.minecraft.nbt.CompoundTag;
 
+
 public class RangeTrait extends SkillTrait {
 
     private double range;
 
-    public RangeTrait(double range, String name) {
+    public RangeTrait(String name, double range) {
         super(name);
         this.range = range;
     }

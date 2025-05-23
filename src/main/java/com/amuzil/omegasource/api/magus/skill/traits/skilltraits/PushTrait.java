@@ -3,11 +3,12 @@ package com.amuzil.omegasource.api.magus.skill.traits.skilltraits;
 import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
 import net.minecraft.nbt.CompoundTag;
 
+
 public class PushTrait extends SkillTrait {
 
     private PushType type;
 
-    public PushTrait(PushType type, String name) {
+    public PushTrait(String name, PushType type) {
         super(name);
         this.type = type;
     }

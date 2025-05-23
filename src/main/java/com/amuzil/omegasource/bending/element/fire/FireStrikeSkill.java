@@ -25,15 +25,15 @@ public class FireStrikeSkill extends FireSkill {
 
     public FireStrikeSkill() {
         super(Avatar.MOD_ID, "fire_strike");
-        addTrait(new DamageTrait(2.5f, Constants.DAMAGE));
-        addTrait(new SizeTrait(0.125F, Constants.SIZE));
-        addTrait(new SizeTrait(1.25f, Constants.MAX_SIZE));
-        addTrait(new KnockbackTrait(0.5f, Constants.KNOCKBACK));
+        addTrait(new DamageTrait(Constants.DAMAGE, 2.5f));
+        addTrait(new SizeTrait(Constants.SIZE, 0.125F));
+        addTrait(new SizeTrait(Constants.MAX_SIZE, 1.25f));
+        addTrait(new KnockbackTrait(Constants.KNOCKBACK, 0.5f));
         addTrait(new ColourTrait(0, 0, 0, Constants.FIRE_COLOUR));
-        addTrait(new SpeedTrait(0.875d, Constants.SPEED));
-        addTrait(new TimedTrait(15, Constants.LIFETIME)); // Ticks not seconds...
-        addTrait(new TimedTrait(40, Constants.FIRE_TIME));
-        addTrait(new SpeedTrait(0.85d, Constants.SPEED_FACTOR));
+        addTrait(new SpeedTrait(Constants.SPEED, 0.875d));
+        addTrait(new TimedTrait(Constants.LIFETIME, 15)); // Ticks not seconds...
+        addTrait(new TimedTrait(Constants.FIRE_TIME, 40));
+        addTrait(new SpeedTrait(Constants.SPEED_FACTOR, 0.85d));
 
         startPaths = SkillPathBuilder.getInstance().complex(new ActiveForm(STRIKE, true)).build();
     }
@@ -106,9 +106,7 @@ public class FireStrikeSkill extends FireSkill {
         projectile.init();
         if (bender != null) {
             bender.formPath.clear();
-            data.setState(SkillState.STOP);
-
-            resetCooldown(data);
+            data.setSkillState(SkillState.IDLE);
         }
 
         if (!entity.level().isClientSide) {

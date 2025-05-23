@@ -4,10 +4,7 @@ import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
-import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.ColourTrait;
-import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.KnockbackTrait;
-import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SizeTrait;
-import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SpeedTrait;
+import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.*;
 import com.amuzil.omegasource.bending.form.BendingForm;
 import com.amuzil.omegasource.bending.skill.FireSkill;
 import com.amuzil.omegasource.capability.Bender;
@@ -24,16 +21,14 @@ public class FlameStepSkill extends FireSkill {
 
     public FlameStepSkill() {
         super(Avatar.MOD_ID, "flame_step");
-        addTrait(new KnockbackTrait(1.5f, Constants.KNOCKBACK));
-        addTrait(new SpeedTrait(3f, Constants.DASH_SPEED));
-        addTrait(new SizeTrait(1.0f, Constants.SIZE));
+        addTrait(new KnockbackTrait(Constants.KNOCKBACK, 1.5f));
+        addTrait(new SpeedTrait(Constants.DASH_SPEED, 3f));
+        addTrait(new SizeTrait(Constants.SIZE, 1.0f));
         addTrait(new ColourTrait(0, 0, 0, Constants.FIRE_COLOUR));
+        addTrait(new TimedTrait(Constants.MAX_RUNTIME, 60));
+        addTrait(new TimedTrait(Constants.RUNTIME, 0));
 
         this.startPaths = SkillPathBuilder.getInstance()
-                .complex(new ActiveForm(STEP, true))
-                .build();
-
-        this.runPaths = SkillPathBuilder.getInstance()
                 .complex(new ActiveForm(STEP, true))
                 .build();
     }
@@ -75,8 +70,7 @@ public class FlameStepSkill extends FireSkill {
 //        entity.hurtMarked = true; // Mark the entity for velocity sync
 //        System.out.println("New Delta: " + entity.getDeltaMovement());
 
-            data.setState(SkillState.RUN);
-            resetCooldown(data);
+            data.setSkillState(SkillState.RUN);
         }
     }
 
@@ -84,8 +78,13 @@ public class FlameStepSkill extends FireSkill {
     public void run(LivingEntity entity) {
         super.run(entity);
         if (!entity.level().isClientSide()) {
-            System.out.println("Running Flame Step");
-            entity.fallDistance = 0.0F;
+            Bender bender = (Bender) Bender.getBender(entity);
+            if (bender != null) {
+                System.out.println("Running Flame Step");
+                SkillData data = bender.getSkillData(this);
+                entity.fallDistance = 0.0F;
+                incrementTimedTrait(data, Constants.RUNTIME, data.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime());
+            }
         }
     }
 }

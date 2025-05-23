@@ -8,17 +8,17 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.extensions.IForgeBlockState;
 
+
 /**
  * Huge trait class, stores the source block of the Skill.
  */
 public class SourceTrait extends SkillTrait {
 
-    //TODO: Change this to an IForgeBlockState and make it support modded blocks. Right now it only supports vanilla.
     private IForgeBlockState state;
     private BlockPos pos;
 
-    //Note: If you want to know how long a usable blockstate has been selected, use another
-    //TimedTrait.
+    // Note: If you want to know how long a usable BlockState has been selected, use another
+    // TimedTrait.
     public SourceTrait(String name, IForgeBlockState state, BlockPos pos) {
         super(name);
         this.state = state;
@@ -28,8 +28,8 @@ public class SourceTrait extends SkillTrait {
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = super.serializeNBT();
-        tag.putInt("value" + " State", Block.getId((BlockState) state));
-        tag.putIntArray("value" + " Pos", new int[] {
+        tag.putInt("value", Block.getId((BlockState) state));
+        tag.putIntArray("value", new int[] {
                 pos.getX(), pos.getY(), pos.getZ()
         });
         return tag;
@@ -38,8 +38,8 @@ public class SourceTrait extends SkillTrait {
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         super.deserializeNBT(nbt);
-        state = Block.stateById(nbt.getInt("value" + " State"));
-        int[] blockPos = nbt.getIntArray("value" + " Pos");
+        state = Block.stateById(nbt.getInt("value"));
+        int[] blockPos = nbt.getIntArray("value");
         pos = new BlockPos(blockPos[0],  blockPos[1], blockPos[2]);
     }
 

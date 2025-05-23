@@ -3,6 +3,7 @@ package com.amuzil.omegasource.api.magus.skill.traits.skilltraits;
 import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
 import net.minecraft.nbt.CompoundTag;
 
+
 /**
  * The most generic trait of all time. Works for:
  * Fire time, charging, lifetime, potion duration, e.t.c.
@@ -10,7 +11,7 @@ import net.minecraft.nbt.CompoundTag;
 public class TimedTrait extends SkillTrait {
     private int time;
 
-    public TimedTrait(int time, String name) {
+    public TimedTrait(String name, int time) {
         super(name);
         this.time = time;
     }

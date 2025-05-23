@@ -3,6 +3,7 @@ package com.amuzil.omegasource.api.magus.skill.traits.skilltraits;
 import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
 import net.minecraft.nbt.CompoundTag;
 
+
 /**
  * Supports an R, G, and B value. Designed for 0 - 1D, but you can pass an int.
  */
@@ -10,7 +11,7 @@ public class ColourTrait extends SkillTrait {
 
     private double r, g, b;
 
-    public ColourTrait(double r, double g, double b, String name) {
+    public ColourTrait(String name, double r, double g, double b) {
         super(name);
         this.r = r;
         this.g = g;
