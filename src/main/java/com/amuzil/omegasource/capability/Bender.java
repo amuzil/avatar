@@ -100,7 +100,7 @@ public class Bender implements IBender {
     private boolean canUseSkill(Skill skill) {
         return getSkillData(skill).canUse()
                 && getSkillCategoryData(skill.getCategory().getId()).canUse()
-                && skill.getCategory() == getElement();
+                && getElement() == skill.getCategory();
     }
 
     private void onFormActivatedEvent(FormActivatedEvent event) {
