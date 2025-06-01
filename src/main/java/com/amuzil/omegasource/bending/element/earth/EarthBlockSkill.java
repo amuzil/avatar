@@ -143,7 +143,6 @@ public class EarthBlockSkill extends EarthSkill {
                 }
             }
         }
-
     }
 
     private static void hoverBlock(LoadedServerShip ship, EarthController gtfa) {
