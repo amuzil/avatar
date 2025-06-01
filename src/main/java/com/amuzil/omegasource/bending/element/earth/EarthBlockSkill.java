@@ -14,7 +14,6 @@ import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.ship.EarthController;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Rotation;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
@@ -48,29 +47,27 @@ public class EarthBlockSkill extends EarthSkill {
     }
 
     @Override
-    public boolean shouldStart(LivingEntity entity, FormPath formPath) {
+    public boolean shouldStart(Bender bender, FormPath formPath) {
         return formPath.simple().hashCode() == getStartPaths().simple().hashCode();
     }
 
     @Override
-    public boolean shouldRun(LivingEntity entity, FormPath formPath) {
-        Bender bender = (Bender) Bender.getBender(entity);
+    public boolean shouldRun(Bender bender, FormPath formPath) {
         SkillData skillData = bender.getSkillData(this);
         return skillData.getSkillState().equals(SkillState.RUN);
     }
 
     @Override
-    public boolean shouldStop(LivingEntity entity, FormPath formPath) {
+    public boolean shouldStop(Bender bender, FormPath formPath) {
         return formPath.simple().hashCode() == getStopPaths().simple().hashCode();
     }
 
     @Override
-    public void start(LivingEntity entity) {
-        super.start(entity);
+    public void start(Bender bender) {
+        super.start(bender);
 
-        Bender bender = (Bender) Bender.getBender(entity);
-        if (!entity.level().isClientSide()) {
-            ServerLevel level = (ServerLevel) entity.level();
+        if (!bender.getEntity().level().isClientSide()) {
+            ServerLevel level = (ServerLevel) bender.getEntity().level();
             if (bender.getSelection().target == BendingSelection.Target.BLOCK
                     && !bender.getSelection().blockPositions.isEmpty()
                     && !VSGameUtilsKt.isBlockInShipyard(level, bender.blockPos)
@@ -82,24 +79,18 @@ public class EarthBlockSkill extends EarthSkill {
                 Vector3dc shipyardPos = ship.getTransform().getPositionInShip();
                 BlockPos shipyardBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipyardPos));
                 bender.setBlockPos(shipyardBlockPos);
-                if (ship != null) {
-                    System.out.println("Ship created: " + ship.getId() + " " + centerPos);
-                }
             }
         }
 
-        if (bender != null) {
-            SkillData data = bender.getSkillData(this);
-            data.setSkillState(SkillState.RUN);
-        }
+        SkillData data = bender.getSkillData(this);
+        data.setSkillState(SkillState.RUN);
     }
 
     @Override
-    public void run(LivingEntity entity) {
-        super.run(entity);
-        if (!entity.level().isClientSide()) {
-            Bender bender = (Bender) Bender.getBender(entity);
-            ServerLevel level = (ServerLevel) entity.level();
+    public void run(Bender bender) {
+        super.run(bender);
+        if (!bender.getEntity().level().isClientSide()) {
+            ServerLevel level = (ServerLevel) bender.getEntity().level();
             if (VSGameUtilsKt.isBlockInShipyard(level, bender.blockPos)) {
                 LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, bender.blockPos);
                 if (serverShip != null) {
@@ -113,19 +104,17 @@ public class EarthBlockSkill extends EarthSkill {
     }
 
     @Override
-    public void stop(LivingEntity entity) {
-        super.stop(entity);
-        Bender bender = (Bender) Bender.getBender(entity);
-        SkillData data = bender.getSkillData(this);
-        data.setSkillState(SkillState.IDLE);
+    public void stop(Bender bender) {
+        super.stop(bender);
 
-        if (!entity.level().isClientSide()) {
-            ServerLevel level = (ServerLevel) entity.level();
+        if (!bender.getEntity().level().isClientSide()) {
+            ServerLevel level = (ServerLevel) bender.getEntity().level();
             if (VSGameUtilsKt.isBlockInShipyard(level, bender.blockPos)) {
                 LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, bender.blockPos);
                 if (serverShip != null) {
                     EarthController gtfa = EarthController.getOrCreate(serverShip, bender.getEntity());
                     if (gtfa != null) {
+                        System.out.println("STOPPING EARTH BLOCK SKILL");
                         gtfa.tickCount.set(0);
                     }
                 }
@@ -135,6 +124,15 @@ public class EarthBlockSkill extends EarthSkill {
     }
 
     private static void hoverBlock(LoadedServerShip ship, EarthController gtfa) {
+        double gravity = 10; // Acceleration due to gravity
+        double mass = ship.getInertiaData().getMass(); // Mass of the ship
+//        System.out.println("Mass: " + mass);
+        double requiredForce = (gravity * mass) * 10; // Force needed to counteract gravity
+        Vector3d v3d2 = new Vector3d(0, requiredForce, 0);
+        gtfa.applyInvariantForce(v3d2);
+    }
+
+    private static void raiseBlock(LoadedServerShip ship, EarthController gtfa) {
         double gravity = 10; // Acceleration due to gravity
         double mass = ship.getInertiaData().getMass(); // Mass of the ship
 //        System.out.println("Mass: " + mass);
