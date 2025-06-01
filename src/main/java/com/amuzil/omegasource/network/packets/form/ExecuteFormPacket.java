@@ -1,6 +1,5 @@
-package com.amuzil.omegasource.network.packets.forms;
+package com.amuzil.omegasource.network.packets.form;
 
-import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
 import com.amuzil.omegasource.events.FormActivatedEvent;
 import com.amuzil.omegasource.network.packets.api.AvatarPacket;
@@ -14,25 +13,32 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+import static com.amuzil.omegasource.bending.form.BendingForms.*;
 
-public class ReleaseFormPacket implements AvatarPacket {
+
+public class ExecuteFormPacket implements AvatarPacket {
     private final CompoundTag tag;
 
-    public ReleaseFormPacket(CompoundTag tag) {
+    public ExecuteFormPacket(CompoundTag tag) {
         this.tag = tag;
     }
 
     public static void handleServerSide(CompoundTag tag, ServerPlayer player) {
-        // Work that needs to be thread-safe (most work)
         assert player != null;
         ServerLevel level = player.serverLevel();
         ActiveForm activeForm = new ActiveForm(tag);
-//        Avatar.LOGGER.info("Form Released: {}", activeForm.form().name());
+//        Avatar.LOGGER.info("Form Executed: {}", activeForm.form().name());
 
-        MinecraftForge.EVENT_BUS.post(new FormActivatedEvent(activeForm, player, true));
+        MinecraftForge.EVENT_BUS.post(new FormActivatedEvent(activeForm, player, false));
+
+        // Extra case for step
+        if (activeForm.form().equals(STEP)) {
+            tag.putBoolean("Active", false);
+            ReleaseFormPacket.handleServerSide(tag, player);
+        }
     }
 
-    public static void handle(ReleaseFormPacket msg, Supplier<NetworkEvent.Context> ctx) {
+    public static void handle(ExecuteFormPacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             if (ctx.get().getDirection().getReceptionSide().isServer())
                 handleServerSide(msg.tag, Objects.requireNonNull(ctx.get().getSender()));
@@ -45,7 +51,7 @@ public class ReleaseFormPacket implements AvatarPacket {
         buffer.writeNbt(tag);
     }
 
-    public static ReleaseFormPacket fromBytes(FriendlyByteBuf buffer) {
-        return new ReleaseFormPacket(new ActiveForm(buffer.readNbt()).serializeNBT());
+    public static ExecuteFormPacket fromBytes(FriendlyByteBuf buffer) {
+        return new ExecuteFormPacket(new ActiveForm(buffer.readNbt()).serializeNBT());
     }
 }

@@ -6,7 +6,7 @@ import com.amuzil.omegasource.api.magus.skill.data.SkillCategoryData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.bending.BendingSelection;
 import com.amuzil.omegasource.bending.element.Element;
-import com.amuzil.omegasource.network.packets.client.SyncBenderPacket;
+import com.amuzil.omegasource.network.packets.sync.SyncBenderPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;

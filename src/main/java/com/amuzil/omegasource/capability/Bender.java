@@ -12,10 +12,10 @@ import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.events.FormActivatedEvent;
 import com.amuzil.omegasource.network.AvatarNetwork;
-import com.amuzil.omegasource.network.packets.client.SyncBenderPacket;
-import com.amuzil.omegasource.network.packets.client.SyncFormPathPacket;
-import com.amuzil.omegasource.network.packets.client.SyncMovementPacket;
-import com.amuzil.omegasource.network.packets.client.SyncSelectionPacket;
+import com.amuzil.omegasource.network.packets.sync.SyncBenderPacket;
+import com.amuzil.omegasource.network.packets.sync.SyncFormPathPacket;
+import com.amuzil.omegasource.network.packets.sync.SyncMovementPacket;
+import com.amuzil.omegasource.network.packets.sync.SyncSelectionPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -25,13 +25,13 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -45,7 +45,6 @@ public class Bender implements IBender {
     // Non-Persistent data
     private final LivingEntity entity;
     private final Consumer<FormActivatedEvent> formListener;
-    private final Consumer<TickEvent.ServerTickEvent> tickListener;
     private boolean isDirty = true; // Flag to indicate if data was changed
     private boolean active;
     private final int timeout = 5; // Adjust timeout time here
@@ -53,6 +52,7 @@ public class Bender implements IBender {
     public final FormPath formPath = new FormPath(); // in-sync
     private Vec3 lastDeltaMovement = Vec3.ZERO; // in-sync
     private BendingSelection selection = new BendingSelection(); // in-sync
+    private final HashMap<ResourceLocation, Boolean> shouldRuns = new HashMap<>(); // in-sync
 
     // Persistent data
     public BlockPos blockPos = new BlockPos(0, 0, 0);
@@ -64,12 +64,14 @@ public class Bender implements IBender {
     public Bender(LivingEntity entity) {
         this.entity = entity;
         this.formListener = this::onFormActivatedEvent;
-        this.tickListener = this::onServerTick;
 
         for (SkillCategory category : Registries.getSkillCategories())
             skillCategoryData.add(new SkillCategoryData(category));
-        for (Skill skill : Registries.getSkills())
+        for (Skill skill : Registries.getSkills()) {
             skillData.add(new SkillData(skill));
+            if (skill.getRunPaths() != null)
+                shouldRuns.put(skill.getId(), false); // Initialize shouldRuns map
+        }
         dataTraits.addAll(Registries.getTraits());
 
         // Allow use of all Elements & Skills for testing!
@@ -88,19 +90,20 @@ public class Bender implements IBender {
 
     public void tick() {
         if (entity instanceof Player) {
-            List<Skill> skills = Registries.getSkills();
-            for (Skill skill: skills) {
+            if (!entity.level().isClientSide())
+                serverTick();
+            for (Skill skill: Registries.getSkills()) {
                 if (canUseSkill(skill)) {
-                    skill.tick(entity, formPath);
+                    skill.executeRun(this, formPath);
                 }
             }
         }
     }
 
     private boolean canUseSkill(Skill skill) {
-        return getSkillData(skill).canUse()
-                && getSkillCategoryData(skill.getCategory().getId()).canUse()
-                && getElement() == skill.getCategory();
+        return getSkillCategoryData(skill.getCategory().getId()).canUse()
+                && getSkillData(skill).canUse()
+                && getElement() == skill.getCategory(); // Make SkillCategory part of Skill RadixTree
     }
 
     private void onFormActivatedEvent(FormActivatedEvent event) {
@@ -108,25 +111,28 @@ public class Bender implements IBender {
             active = !event.released();
             formPath.update(event.getActiveForm());
             this.syncFormPathToClient();
+            for (Skill skill: Registries.getSkills()) {
+                if (canUseSkill(skill)) {
+                    skill.execute(this, formPath);
+                }
+            }
             tick = timeout;
 //            LOGGER.info("Simple Forms: {}", formPath.simple());
 //            LOGGER.info("Complex Forms: {}", formPath.complex());
         }
     }
 
-    private void onServerTick(TickEvent.ServerTickEvent event) {
-        if (event.phase == TickEvent.Phase.START) {
-            if (!active) {
-                if (tick == 0) {
-                    if (!formPath.isActive()) {
-                        formPath.clear(); // Only clear when no Forms are active
-//                        LOGGER.info("Complex Forms Timed Out");
-                    }
-                    tick = timeout;
-                    active = true;
+    private void serverTick() {
+        if (!active) {
+            if (tick == 0) {
+                if (!formPath.isActive()) {
+                    formPath.clear(); // Only clear when no Forms are active
+//                    LOGGER.info("Complex Forms Timed Out");
                 }
-                tick--;
+                tick = timeout;
+                active = true;
             }
+            tick--;
         }
     }
 
@@ -143,13 +149,11 @@ public class Bender implements IBender {
     @Override
     public void register() {
         MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, formListener);
-        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, tickListener);
     }
 
     @Override
     public void unregister() {
         MinecraftForge.EVENT_BUS.unregister(formListener);
-        MinecraftForge.EVENT_BUS.unregister(tickListener);
     }
 
     @Override

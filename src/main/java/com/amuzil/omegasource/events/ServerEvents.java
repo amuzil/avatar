@@ -4,20 +4,15 @@ import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.capability.AvatarCapabilities;
 import com.amuzil.omegasource.capability.Bender;
-import com.amuzil.omegasource.network.AvatarNetwork;
-import com.amuzil.omegasource.network.packets.client.SyncBenderPacket;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
-import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.PacketDistributor;
 
 
 @Mod.EventBusSubscriber(modid = Avatar.MOD_ID)
@@ -76,12 +71,10 @@ public class ServerEvents {
 
     @SubscribeEvent
     public static void worldTick(LivingEvent.LivingTickEvent event) {
-        if (event.getEntity() instanceof Player) {
-            if (event.getEntity() != null && event.getEntity().isAlive()) {
-                Bender bender = (Bender) Bender.getBender(event.getEntity());
-                if (bender == null) return;
-                bender.tick();
-            }
-        }
+        if (!(event.getEntity() instanceof Player player)) return;
+        if (!player.isAlive()) return;
+        Bender bender = (Bender) Bender.getBender(event.getEntity());
+        if (bender == null) return;
+        bender.tick();
     }
 }

@@ -86,7 +86,10 @@ public final class EarthController implements ShipForcesInducer {
         double mag = velocity.length();
         boolean isMoving = mag > 0.1;
         boolean isMovingFast = mag > 2.0;
+        System.out.println(tickCount.get());
         if (isMoving) {
+            System.out.println("EarthController: ship is moving, mag: " + mag);
+            // TODO - Figure out how to properly reset when ship is not moving
             tickCount.incrementAndGet();
             if (isMovingFast)
                 checkShipShipCollisions(level, ship);
@@ -142,7 +145,7 @@ public final class EarthController implements ShipForcesInducer {
                 BlockPos blockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipYardPos));
                 level.destroyBlock(blockPos, false);
                 Vec3 motion = VectorConversionsMCKt.toMinecraft(ship.getVelocity());
-                entity.addDeltaMovement(motion.scale(0.06));
+                entity.addDeltaMovement(motion.scale(0.05));
                 entity.hasImpulse = true; entity.hurtMarked = true;
                 entity.hurt(entity.damageSources().thrown(entity, entity), 4f);
             }

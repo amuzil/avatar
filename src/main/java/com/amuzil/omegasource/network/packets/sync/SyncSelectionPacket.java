@@ -1,10 +1,8 @@
-package com.amuzil.omegasource.network.packets.client;
+package com.amuzil.omegasource.network.packets.sync;
 
 import com.amuzil.omegasource.bending.BendingSelection;
 import com.amuzil.omegasource.capability.AvatarCapabilities;
 import com.amuzil.omegasource.network.packets.api.AvatarPacket;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;

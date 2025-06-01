@@ -35,20 +35,20 @@ public class FireStrikeSkill extends FireSkill {
         addTrait(new TimedTrait(Constants.FIRE_TIME, 40));
         addTrait(new SpeedTrait(Constants.SPEED_FACTOR, 0.85d));
 
-        startPaths = SkillPathBuilder.getInstance().complex(new ActiveForm(STRIKE, true)).build();
+        startPaths = SkillPathBuilder.getInstance().simple(new ActiveForm(STRIKE, true)).build();
     }
 
     @Override
-    public boolean shouldStart(LivingEntity entity, FormPath formPath) {
-        return super.shouldStart(entity, formPath);
+    public boolean shouldStart(Bender bender, FormPath formPath) {
+        return formPath.simple().hashCode() == getStartPaths().simple().hashCode();
     }
 
     @Override
-    public void start(LivingEntity entity) {
-        super.start(entity);
+    public void start(Bender bender) {
+        super.start(bender);
 
-        Bender bender = (Bender) Bender.getBender(entity);
-        Level level = entity.level();
+        LivingEntity entity = bender.getEntity();
+        Level level = bender.getEntity().level();
         SkillData data = bender.getSkillData(this);
 
         int lifetime = data.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
@@ -104,13 +104,12 @@ public class FireStrikeSkill extends FireSkill {
 
         projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
         projectile.init();
-        if (bender != null) {
-            bender.formPath.clear();
-            data.setSkillState(SkillState.IDLE);
-        }
 
-        if (!entity.level().isClientSide) {
-            entity.level().addFreshEntity(projectile);
+        bender.formPath.clear();
+        data.setSkillState(SkillState.IDLE);
+
+        if (!bender.getEntity().level().isClientSide) {
+            bender.getEntity().level().addFreshEntity(projectile);
         }
     }
 }

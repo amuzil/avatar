@@ -2,14 +2,15 @@ package com.amuzil.omegasource.network;
 
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.network.packets.api.AvatarPacket;
-import com.amuzil.omegasource.network.packets.client.*;
-import com.amuzil.omegasource.network.packets.forms.ExecuteFormPacket;
-import com.amuzil.omegasource.network.packets.forms.ReleaseFormPacket;
+import com.amuzil.omegasource.network.packets.form.ActivatedFormPacket;
+import com.amuzil.omegasource.network.packets.skill.ActivatedSkillPacket;
+import com.amuzil.omegasource.network.packets.sync.*;
+import com.amuzil.omegasource.network.packets.form.ExecuteFormPacket;
+import com.amuzil.omegasource.network.packets.form.ReleaseFormPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
@@ -30,10 +31,16 @@ public class AvatarNetwork {
     }
 
     public static void register() {
-        CHANNEL.messageBuilder(FormActivatedPacket.class, nextID())
-                .encoder(FormActivatedPacket::toBytes)
-                .decoder(FormActivatedPacket::fromBytes)
-                .consumerMainThread(FormActivatedPacket::handle)
+        CHANNEL.messageBuilder(ActivatedSkillPacket.class, nextID())
+                .encoder(ActivatedSkillPacket::toBytes)
+                .decoder(ActivatedSkillPacket::fromBytes)
+                .consumerMainThread(ActivatedSkillPacket::handle)
+                .add();
+
+        CHANNEL.messageBuilder(ActivatedFormPacket.class, nextID())
+                .encoder(ActivatedFormPacket::toBytes)
+                .decoder(ActivatedFormPacket::fromBytes)
+                .consumerMainThread(ActivatedFormPacket::handle)
                 .add();
 
         CHANNEL.messageBuilder(ExecuteFormPacket.class, nextID())

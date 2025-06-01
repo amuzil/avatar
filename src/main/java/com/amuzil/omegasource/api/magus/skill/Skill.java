@@ -8,12 +8,17 @@ import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.UseTrait;
 import com.amuzil.omegasource.api.magus.registry.Registries;
 import com.amuzil.omegasource.capability.Bender;
+import com.amuzil.omegasource.network.AvatarNetwork;
+import com.amuzil.omegasource.network.packets.skill.ActivatedSkillPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.MinecraftForge;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Predicate;
 
 
 /**
@@ -94,34 +99,50 @@ public abstract class Skill {
         return this.skillTypes;
     }
 
-    public void tick(LivingEntity entity, FormPath formPath) {
-        // Run this asynchronously
+    public void shouldRun(Bender bender, boolean shouldRun) {
+        this.shouldRun = shouldRun;
+        if (shouldRun)
+            run(bender);
+    }
 
-        Bender bender = (Bender) Bender.getBender(entity);
-        // Remember, for some reason post only returns true upon the event being cancelled. Blame Forge.
-        if (bender != null) {
-            if (shouldStart(entity, formPath)) {
-                if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Start(entity, formPath, this))) return;
-
-                start(entity);
-            }
-
-            if (shouldRun(entity, formPath)) {
-                if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Run(entity, formPath, this))) return;
-
-                run(entity);
-            }
-
-            if (shouldStop(entity, formPath)) {
-                if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Stop(entity, formPath, this))) return;
-
-                SkillData skillData = bender.getSkillData(this);
-                skillData.setSkillState(SkillState.STOP);
-                stop(entity);
-            }
+    public void executeRun(Bender bender, FormPath formPath) {
+        if (shouldRun(bender, formPath)) {
+            if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Run(bender.getEntity(), formPath, this))) return;
+            run(bender);
         }
     }
 
+    public void execute(Bender bender, FormPath formPath) {
+
+        // Remember, for some reason post only returns true upon the event being cancelled. Blame Forge.
+        SkillData skillData = bender.getSkillData(this);
+        SkillState skillState = skillData.getSkillState();
+
+        if (shouldStart(bender, formPath)) {
+            if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Start(bender.getEntity(), formPath, this))) return;
+            skillState = SkillState.START;
+            start(bender);
+        }
+
+        if (shouldStop(bender, formPath)) {
+            if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Stop(bender.getEntity(), formPath, this))) return;
+            skillState = SkillState.STOP;
+            stop(bender);
+        }
+
+        if (!bender.getEntity().level().isClientSide() && skillState != SkillState.IDLE && skillState != SkillState.RUN) {
+            executeOnClient(bender.getEntity(), skillState);
+        }
+    }
+
+    public void executeOnClient(LivingEntity entity, SkillState skillState) {
+        ServerLevel level = (ServerLevel) entity.level();
+        ActivatedSkillPacket packet = new ActivatedSkillPacket(id, skillState.ordinal());
+        Predicate<ServerPlayer> predicate = (serverPlayer) -> entity.distanceToSqr(serverPlayer) < 2500;
+        for (ServerPlayer nearbyPlayer: level.getPlayers(predicate.and(LivingEntity::isAlive))) {
+            AvatarNetwork.sendToClient(packet, nearbyPlayer);
+        }
+    }
 
     public abstract FormPath getStartPaths();
 
@@ -129,17 +150,17 @@ public abstract class Skill {
 
     public abstract FormPath getStopPaths();
 
-    public abstract boolean shouldStart(LivingEntity entity, FormPath formPath);
+    public abstract boolean shouldStart(Bender bender, FormPath formPath);
 
-    public abstract boolean shouldRun(LivingEntity entity, FormPath formPath);
+    public abstract boolean shouldRun(Bender bender, FormPath formPath);
 
-    public abstract boolean shouldStop(LivingEntity entity, FormPath formPath);
+    public abstract boolean shouldStop(Bender bender, FormPath formPath);
 
-    public abstract void start(LivingEntity entity);
+    public abstract void start(Bender bender);
 
-    public abstract void run(LivingEntity entity);
+    public abstract void run(Bender bender);
 
-    public abstract void stop(LivingEntity entity);
+    public abstract void stop(Bender bender);
 
     // Resets the skill and any necessary skill data; should be called upon stopping execution.
     public abstract void reset(LivingEntity entity);

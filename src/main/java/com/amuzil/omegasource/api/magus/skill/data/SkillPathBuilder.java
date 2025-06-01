@@ -2,11 +2,12 @@ package com.amuzil.omegasource.api.magus.skill.data;
 
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
+import com.amuzil.omegasource.capability.Bender;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class SkillPathBuilder extends PathBuilder {
+public class SkillPathBuilder {
 
     private List<ActiveForm> complexForms;
     private List<ActiveForm> simpleForms;

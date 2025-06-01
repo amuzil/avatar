@@ -8,7 +8,7 @@ import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.form.BendingForms;
-import com.amuzil.omegasource.network.packets.client.FormActivatedPacket;
+import com.amuzil.omegasource.network.packets.form.ActivatedFormPacket;
 import com.lowdragmc.photon.client.fx.EntityEffect;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -291,7 +291,7 @@ public class FireProjectile extends ElementProjectile {
                     this.discard();
                     fireProjectile.hasElement = true;
 
-                    AvatarNetwork.sendToServer(new FormActivatedPacket(fireProjectile.getId()));
+                    AvatarNetwork.sendToServer(new ActivatedFormPacket(fireProjectile.getId()));
                 } else {
                     if (!this.getOwner().equals(fireProjectile.getOwner())) {
                         ElementCollision collisionEntity = new ElementCollision(this.getX(), this.getY(), this.getZ(), this.level());

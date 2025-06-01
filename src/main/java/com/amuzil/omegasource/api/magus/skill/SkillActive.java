@@ -28,41 +28,38 @@ public class SkillActive extends Skill {
     }
 
     @Override
-    public boolean shouldStart(LivingEntity entity, FormPath formPath) {
+    public boolean shouldStart(Bender bender, FormPath formPath) {
         return formPath.hashCode() == getStartPaths().hashCode();
     }
 
     @Override
-    public boolean shouldRun(LivingEntity entity, FormPath formPath) {
+    public boolean shouldRun(Bender bender, FormPath formPath) {
         if (getRunPaths() == null)
             return false;
         return formPath.hashCode() == getRunPaths().hashCode();
     }
 
     @Override
-    public boolean shouldStop(LivingEntity entity, FormPath formPath) {
+    public boolean shouldStop(Bender bender, FormPath formPath) {
         if (getStopPaths() == null)
             return false;
         return formPath.hashCode() == getStopPaths().hashCode();
     }
 
     @Override
-    public void start(LivingEntity entity) {
+    public void start(Bender bender) {
 
     }
 
     @Override
-    public void run(LivingEntity entity) {
+    public void run(Bender bender) {
 
     }
 
     @Override
-    public void stop(LivingEntity entity) {
-        Bender bender = (Bender) Bender.getBender(entity);
-        if (bender != null) {
-            SkillData data = bender.getSkillData(this);
-            data.setSkillState(SkillState.IDLE);
-        }
+    public void stop(Bender bender) {
+        SkillData data = bender.getSkillData(this);
+        data.setSkillState(SkillState.IDLE);
     }
 
     @Override

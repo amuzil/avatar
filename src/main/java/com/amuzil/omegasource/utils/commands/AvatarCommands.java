@@ -48,9 +48,8 @@ public class AvatarCommands {
         for (Skill skill : Registries.getSkills()) {
             builder.then(setCanUseSkillCommand(skill, "grant"));
             builder.then(setCanUseSkillCommand(skill, "take"));
-            builder.then(triggerSkillCommand(skill, "start"));
-            builder.then(triggerSkillCommand(skill, "run"));
-            builder.then(triggerSkillCommand(skill, "stop"));
+            for (Skill.SkillState state : Skill.SkillState.values())
+                builder.then(triggerSkillCommand(skill, state));
             builder.then(resetSkillCommand(skill));
         }
         builder.then(resetSkillCommand(null)); // Pass null to reset all
@@ -80,8 +79,8 @@ public class AvatarCommands {
                 ));
     }
 
-    private static LiteralArgumentBuilder<CommandSourceStack> triggerSkillCommand(Skill skill, String action) {
-        return Commands.literal("trigger").then(Commands.literal("skill").then(Commands.literal(action)
+    private static LiteralArgumentBuilder<CommandSourceStack> triggerSkillCommand(Skill skill, Skill.SkillState action) {
+        return Commands.literal("trigger").then(Commands.literal("skill").then(Commands.literal(action.name().toLowerCase())
                 .then(Commands.literal(skill.name())
                         .executes(c -> triggerSkill(c, skill, action, null))
                         .then(Commands.argument("target", EntityArgument.player())

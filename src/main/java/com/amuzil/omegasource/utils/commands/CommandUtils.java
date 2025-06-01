@@ -7,8 +7,8 @@ import com.amuzil.omegasource.bending.form.BendingForm;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.capability.AvatarCapabilities;
 import com.amuzil.omegasource.capability.Bender;
-import com.amuzil.omegasource.network.packets.forms.ExecuteFormPacket;
-import com.amuzil.omegasource.network.packets.forms.ReleaseFormPacket;
+import com.amuzil.omegasource.network.packets.form.ExecuteFormPacket;
+import com.amuzil.omegasource.network.packets.form.ReleaseFormPacket;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
@@ -41,15 +41,16 @@ class CommandUtils {
         return 1;
     }
 
-    static int triggerSkill(CommandContext<CommandSourceStack> ctx, Skill skill, String state, ServerPlayer player) throws CommandSyntaxException {
+    static int triggerSkill(CommandContext<CommandSourceStack> ctx, Skill skill, Skill.SkillState state, ServerPlayer player) throws CommandSyntaxException {
         if (player == null)
             player = ctx.getSource().getPlayerOrException();
-        ServerPlayer targetPlayer = player;
-        switch (state) {
-            case "start" -> skill.start(targetPlayer);
-            case "run" -> skill.run(targetPlayer);
-            case "stop" -> skill.stop(targetPlayer);
-        }
+        player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
+            switch (state) {
+                case START -> skill.start((Bender) bender);
+                case RUN -> skill.run((Bender) bender);
+                case STOP -> skill.stop((Bender) bender);
+            }
+        });
         return 1;
     }
 

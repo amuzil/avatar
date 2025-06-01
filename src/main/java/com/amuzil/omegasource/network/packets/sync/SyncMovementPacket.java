@@ -1,4 +1,4 @@
-package com.amuzil.omegasource.network.packets.client;
+package com.amuzil.omegasource.network.packets.sync;
 
 import com.amuzil.omegasource.capability.AvatarCapabilities;
 import com.amuzil.omegasource.network.packets.api.AvatarPacket;

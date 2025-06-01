@@ -37,26 +37,21 @@ public class EarthTossSkill extends EarthSkill {
         addTrait(new SizeTrait(Constants.SIZE, 1.0f));
 
         this.startPaths = SkillPathBuilder.getInstance()
-                .complex(new ActiveForm(STRIKE, true))
+                .simple(new ActiveForm(STRIKE, true))
                 .build();
-
-//        this.runPaths = SkillPathBuilder.getInstance()
-//                .simple(new ActiveForm(STRIKE, true))
-//                .build();
     }
 
     @Override
-    public boolean shouldStart(LivingEntity entity, FormPath formPath) {
-        return super.shouldStart(entity, formPath);
+    public boolean shouldStart(Bender bender, FormPath formPath) {
+        return formPath.simple().hashCode() == getStartPaths().simple().hashCode();
     }
 
     @Override
-    public void start(LivingEntity entity) {
-        super.start(entity);
+    public void start(Bender bender) {
+        super.start(bender);
 
-        Bender bender = (Bender) Bender.getBender(entity);
-        if (!entity.level().isClientSide()) {
-            ServerLevel level = (ServerLevel) entity.level();
+        if (!bender.getEntity().level().isClientSide()) {
+            ServerLevel level = (ServerLevel) bender.getEntity().level();
             if (bender.getSelection().target == BendingSelection.Target.BLOCK
                     && !bender.getSelection().blockPositions.isEmpty()
                     && !VSGameUtilsKt.isBlockInShipyard(level, bender.blockPos)
@@ -91,21 +86,23 @@ public class EarthTossSkill extends EarthSkill {
                 if (serverShip != null) {
                     GameTickForceApplier gtfa = serverShip.getAttachment(GameTickForceApplier.class);
                     if (gtfa != null) {
-                        tossBlock(entity, gtfa);
+                        tossBlock(bender.getEntity(), gtfa);
                     }
                 }
             }
         }
 
-        if (bender != null) {
-            SkillData data = bender.getSkillData(this);
-            data.setSkillState(SkillState.IDLE);
-        }
+        SkillData data = bender.getSkillData(this);
+        data.setSkillState(SkillState.IDLE);
     }
 
     private static void tossBlock(LivingEntity entity, GameTickForceApplier gtfa) {
+//        double gravity = 10; // Acceleration due to gravity
+//        double mass = ship.getInertiaData().getMass(); // Mass of the ship
+////        System.out.println("Mass: " + mass);
+//        double requiredForce = (gravity * mass) * 10; // Force needed to counteract gravity
         Vec3 vec3 = entity.getLookAngle().normalize()
-                .multiply(75000, 45000, 75000);
+                .multiply(175000, 100000, 175000);
         Vector3d v3d = VectorConversionsMCKt.toJOML(vec3);
         gtfa.applyInvariantForce(v3d);
     }

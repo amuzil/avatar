@@ -1,4 +1,4 @@
-package com.amuzil.omegasource.network.packets.client;
+package com.amuzil.omegasource.network.packets.form;
 
 import com.amuzil.omegasource.entity.AvatarProjectile;
 import com.amuzil.omegasource.network.AvatarNetwork;
@@ -22,11 +22,11 @@ import java.util.function.Supplier;
 import static com.amuzil.omegasource.bending.form.BendingForms.*;
 
 
-public class FormActivatedPacket implements AvatarPacket {
+public class ActivatedFormPacket implements AvatarPacket {
 
     private final int entityId; // Entity ID to send back to client for FX
 
-    public FormActivatedPacket(int entityId) {
+    public ActivatedFormPacket(int entityId) {
         this.entityId = entityId;
     }
 
@@ -34,16 +34,16 @@ public class FormActivatedPacket implements AvatarPacket {
         buf.writeInt(entityId);
     }
 
-    public static FormActivatedPacket fromBytes(FriendlyByteBuf buf) {
+    public static ActivatedFormPacket fromBytes(FriendlyByteBuf buf) {
         int entityId = buf.readInt();
-        return new FormActivatedPacket(entityId);
+        return new ActivatedFormPacket(entityId);
     }
 
     // Server-side handler
     public static void handleServerSide(int entityId, ServerPlayer player) {
         // Perform server-side entity spawning and updating logic and fire Form Event here
         ServerLevel level = player.serverLevel();
-        FormActivatedPacket packet = new FormActivatedPacket(entityId);
+        ActivatedFormPacket packet = new ActivatedFormPacket(entityId);
         Predicate<ServerPlayer> predicate = (serverPlayer) -> player.distanceToSqr(serverPlayer) < 2500;
         for (ServerPlayer nearbyPlayer: level.getPlayers(predicate.and(LivingEntity::isAlive))) {
             AvatarNetwork.sendToClient(packet, nearbyPlayer);
