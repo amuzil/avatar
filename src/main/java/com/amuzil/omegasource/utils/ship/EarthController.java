@@ -86,9 +86,7 @@ public final class EarthController implements ShipForcesInducer {
         double mag = velocity.length();
         boolean isMoving = mag > 0.1;
         boolean isMovingFast = mag > 2.0;
-        System.out.println(tickCount.get());
         if (isMoving) {
-            System.out.println("EarthController: ship is moving, mag: " + mag);
             // TODO - Figure out how to properly reset when ship is not moving
             tickCount.incrementAndGet();
             if (isMovingFast)

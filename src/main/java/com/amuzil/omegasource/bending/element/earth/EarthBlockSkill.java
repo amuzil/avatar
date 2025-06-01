@@ -20,7 +20,13 @@ import org.joml.Vector3dc;
 import org.joml.Vector3i;
 import org.valkyrienskies.core.api.ships.LoadedServerShip;
 import org.valkyrienskies.core.api.ships.ServerShip;
+import org.valkyrienskies.core.api.world.ServerShipWorld;
+import org.valkyrienskies.core.apigame.ShipTeleportData;
+import org.valkyrienskies.core.impl.game.ShipTeleportDataImpl;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
+import org.valkyrienskies.mod.common.ValkyrienSkiesMod;
+import org.valkyrienskies.mod.common.command.RelativeValue;
+import org.valkyrienskies.mod.common.command.RelativeVector3;
 import org.valkyrienskies.mod.common.util.VectorConversionsMCKt;
 import org.valkyrienskies.mod.util.RelocationUtilKt;
 
@@ -93,11 +99,29 @@ public class EarthBlockSkill extends EarthSkill {
             ServerLevel level = (ServerLevel) bender.getEntity().level();
             if (VSGameUtilsKt.isBlockInShipyard(level, bender.blockPos)) {
                 LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, bender.blockPos);
-                if (serverShip != null) {
-                    EarthController gtfa = EarthController.getOrCreate(serverShip, bender.getEntity());
-                    if (gtfa != null) {
-                        hoverBlock(serverShip, gtfa);
-                    }
+                ServerShipWorld serverShipWorld = (ServerShipWorld) VSGameUtilsKt.getVsCore().getHooks().getCurrentShipServerWorld();
+                if (serverShip != null && serverShipWorld != null) {
+                    int yvar;
+                    if(serverShip.getShipAABB()!=null)
+                        yvar = (int) Math.ceil((double) (serverShip.getShipAABB().maxY() - serverShip.getShipAABB().minY()) / 2);
+                    else
+                        yvar = 1;
+
+                    Vector3d pivot = bender.getEntity().getPosition(0).add(0, bender.getEntity().getEyeHeight() + yvar, 0).toVector3f().get(new Vector3d());
+                    RelativeValue value = new RelativeValue(0, true);
+                    RelativeVector3 relativeVector3 = new RelativeVector3(value, value, value);
+                    Vector3d c = new Vector3d();
+
+                    ShipTeleportData shipTeleportData = new ShipTeleportDataImpl(
+                            pivot,
+                            relativeVector3.toEulerRotationFromMCEntity(0, bender.getEntity().getYRot()),
+                            c, c, VSGameUtilsKt.getDimensionId(level), null, null);
+                    ValkyrienSkiesMod.getVsCore().teleportShip(serverShipWorld, serverShip, shipTeleportData);
+
+//                    EarthController gtfa = EarthController.getOrCreate(serverShip, bender.getEntity());
+//                    if (gtfa != null) {
+//                        hoverBlock(serverShip, gtfa);
+//                    }
                 }
             }
         }
@@ -114,7 +138,6 @@ public class EarthBlockSkill extends EarthSkill {
                 if (serverShip != null) {
                     EarthController gtfa = EarthController.getOrCreate(serverShip, bender.getEntity());
                     if (gtfa != null) {
-                        System.out.println("STOPPING EARTH BLOCK SKILL");
                         gtfa.tickCount.set(0);
                     }
                 }

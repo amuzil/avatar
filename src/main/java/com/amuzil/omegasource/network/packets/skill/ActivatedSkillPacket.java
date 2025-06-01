@@ -45,17 +45,6 @@ public class ActivatedSkillPacket implements AvatarPacket {
         return new ActivatedSkillPacket(buf.readResourceLocation(), buf.readInt());
     }
 
-    // Server-side handler
-    public static void handleServerSide(ResourceLocation skillId, int skillState, ServerPlayer player) {
-        // Perform server-side entity spawning and updating logic and fire Form Event here
-        ServerLevel level = player.serverLevel();
-        ActivatedSkillPacket packet = new ActivatedSkillPacket(skillId, skillState);
-        Predicate<ServerPlayer> predicate = (serverPlayer) -> player.distanceToSqr(serverPlayer) < 2500;
-        for (ServerPlayer nearbyPlayer: level.getPlayers(predicate.and(LivingEntity::isAlive))) {
-            AvatarNetwork.sendToClient(packet, nearbyPlayer);
-        }
-    }
-
     // Client-side handler
     @OnlyIn(Dist.CLIENT)
     private static void handleClientSide(ResourceLocation skillId, int skillState) {
@@ -76,10 +65,6 @@ public class ActivatedSkillPacket implements AvatarPacket {
         ctx.get().enqueueWork(() -> {
             if (ctx.get().getDirection().getReceptionSide().isClient()) {
                 DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> handleClientSide(skillId, skillState));
-            } else {
-                ServerPlayer player = ctx.get().getSender();
-                assert player != null;
-                handleServerSide(skillId, skillState, player);
             }
         });
         return true;
