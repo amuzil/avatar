@@ -108,6 +108,8 @@ public class Bender implements IBender {
 
     private void onFormActivatedEvent(FormActivatedEvent event) {
         if (event.getEntity().getId() == entity.getId()) {
+            // Bug: complexForm based Skills like FlameStepSkill will execute multiple times
+            // due to releasing key & auto-sending ReleaseFormPacket
             active = !event.released();
             formPath.update(event.getActiveForm());
 //            this.syncFormPathToClient();
