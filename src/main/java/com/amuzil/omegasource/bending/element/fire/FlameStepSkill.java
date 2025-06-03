@@ -9,6 +9,7 @@ import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.*;
 import com.amuzil.omegasource.bending.form.BendingForm;
 import com.amuzil.omegasource.bending.skill.FireSkill;
 import com.amuzil.omegasource.capability.Bender;
+import com.amuzil.omegasource.entity.AvatarProjectile;
 import com.amuzil.omegasource.utils.Constants;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
@@ -35,18 +36,17 @@ public class FlameStepSkill extends FireSkill {
     }
 
     @Override
-    public boolean shouldRun(Bender bender, FormPath formPath) {
-        SkillData skillData = bender.getSkillData(this);
-        return skillData.getSkillState().equals(SkillState.RUN);
-    }
-
-    @Override
     public void start(Bender bender) {
         super.start(bender);
 
         LivingEntity entity = bender.getEntity();
-        BendingForm.Type.Motion motion = bender.getFormPath().complex().get(0).direction();
+        BendingForm.Type.Motion motion;
+        if (!bender.getFormPath().complex().isEmpty())
+            motion = bender.getFormPath().complex().get(0).direction();
+        else
+            motion = BendingForm.Type.Motion.FORWARD; // Default to forward if no motion is specified
         SkillData data = bender.getSkillData(this);
+        AvatarProjectile projectile = new AvatarProjectile(entity.level());
 
         if (!bender.getEntity().level().isClientSide()) {
             float dashSpeed = (float) Objects.requireNonNull(data.getTrait(Constants.DASH_SPEED, SpeedTrait.class)).getSpeed();

@@ -58,12 +58,6 @@ public class EarthBlockSkill extends EarthSkill {
     }
 
     @Override
-    public boolean shouldRun(Bender bender, FormPath formPath) {
-        SkillData skillData = bender.getSkillData(this);
-        return skillData.getSkillState().equals(SkillState.RUN);
-    }
-
-    @Override
     public boolean shouldStop(Bender bender, FormPath formPath) {
         return formPath.simple().hashCode() == getStopPaths().simple().hashCode();
     }
