@@ -99,14 +99,8 @@ public abstract class Skill {
         return this.skillTypes;
     }
 
-    public void shouldRun(Bender bender, boolean shouldRun) {
-        this.shouldRun = shouldRun;
-        if (shouldRun)
-            run(bender);
-    }
-
-    public void executeRun(Bender bender, FormPath formPath) {
-        if (shouldRun(bender, formPath)) {
+    public void tick(Bender bender, FormPath formPath) {
+        if (bender.getSkillData(this).getSkillState().equals(SkillState.RUN)) {
             if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Run(bender.getEntity(), formPath, this))) return;
             run(bender);
         }
@@ -116,31 +110,39 @@ public abstract class Skill {
 
         // Remember, for some reason post only returns true upon the event being cancelled. Blame Forge.
         SkillData skillData = bender.getSkillData(this);
-        SkillState skillState = skillData.getSkillState();
 
         if (shouldStart(bender, formPath)) {
             if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Start(bender.getEntity(), formPath, this))) return;
-            skillState = SkillState.START;
+            skillData.setSkillState(SkillState.START);
+            executeOnClient(bender.getEntity(), SkillState.START);
             start(bender);
+        }
+
+        if (shouldRun(bender, formPath)) {
+            if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Run(bender.getEntity(), formPath, this))) return;
+            skillData.setSkillState(SkillState.RUN);
+            executeOnClient(bender.getEntity(), SkillState.RUN);
+            run(bender);
         }
 
         if (shouldStop(bender, formPath)) {
             if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Stop(bender.getEntity(), formPath, this))) return;
-            skillState = SkillState.STOP;
+            skillData.setSkillState(SkillState.STOP);
+            executeOnClient(bender.getEntity(), SkillState.STOP);
             stop(bender);
-        }
-
-        if (!bender.getEntity().level().isClientSide() && skillState != SkillState.IDLE && skillState != SkillState.RUN) {
-            executeOnClient(bender.getEntity(), skillState);
         }
     }
 
+    // Execute Skill on client(s) and sync SkillState
     public void executeOnClient(LivingEntity entity, SkillState skillState) {
-        ServerLevel level = (ServerLevel) entity.level();
-        ActivatedSkillPacket packet = new ActivatedSkillPacket(id, skillState.ordinal());
-        Predicate<ServerPlayer> predicate = (serverPlayer) -> entity.distanceToSqr(serverPlayer) < 2500;
-        for (ServerPlayer nearbyPlayer: level.getPlayers(predicate.and(LivingEntity::isAlive))) {
-            AvatarNetwork.sendToClient(packet, nearbyPlayer);
+        // Handle which player clients should receive the packet based on Skill
+        if (!entity.level().isClientSide()) {
+            ServerLevel level = (ServerLevel) entity.level();
+            ActivatedSkillPacket packet = new ActivatedSkillPacket(id, skillState.ordinal());
+            Predicate<ServerPlayer> predicate = (serverPlayer) -> entity.distanceToSqr(serverPlayer) < 2500;
+            for (ServerPlayer nearbyPlayer : level.getPlayers(predicate.and(LivingEntity::isAlive))) {
+                AvatarNetwork.sendToClient(packet, nearbyPlayer);
+            }
         }
     }
 

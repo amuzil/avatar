@@ -2,6 +2,7 @@ package com.amuzil.omegasource.network.packets.skill;
 
 import com.amuzil.omegasource.api.magus.registry.Registries;
 import com.amuzil.omegasource.api.magus.skill.Skill;
+import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.network.packets.api.AvatarPacket;
 import net.minecraft.client.Minecraft;
@@ -35,15 +36,14 @@ public class ActivatedSkillPacket implements AvatarPacket {
         return new ActivatedSkillPacket(buf.readResourceLocation(), buf.readInt());
     }
 
-    // Client-side handler
     @OnlyIn(Dist.CLIENT)
     private static void handleClientSide(ResourceLocation skillId, int skillState) {
-        // Perform client-side particle effect or other rendering logic here
         Player player = Minecraft.getInstance().player;
         assert player != null;
         Bender bender = (Bender) Bender.getBender(player);
         Skill skill = Registries.SKILLS.get().getValue(skillId);
         assert skill != null;
+        bender.getSkillData(skill).setSkillState(Skill.SkillState.values()[skillState]); // Sync SkillState to client
         switch (Skill.SkillState.values()[skillState]) {
             case START -> skill.start(bender);
             case RUN -> skill.run(bender);

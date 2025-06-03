@@ -94,7 +94,7 @@ public class Bender implements IBender {
                 serverTick();
             for (Skill skill: Registries.getSkills()) {
                 if (canUseSkill(skill)) {
-                    skill.executeRun(this, formPath);
+                    skill.tick(this, formPath);
                 }
             }
         }
