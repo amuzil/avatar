@@ -6,6 +6,7 @@ import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.*;
+import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.form.BendingForm;
 import com.amuzil.omegasource.bending.skill.FireSkill;
 import com.amuzil.omegasource.capability.Bender;
@@ -46,9 +47,18 @@ public class FlameStepSkill extends FireSkill {
         else
             motion = BendingForm.Type.Motion.FORWARD; // Default to forward if no motion is specified
         SkillData data = bender.getSkillData(this);
+        int lifetime = data.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime();
         AvatarProjectile projectile = new AvatarProjectile(entity.level());
+        projectile.setElement(Elements.FIRE);
+        projectile.setOwner(entity);
+        projectile.setMaxLifetime(lifetime);
+        projectile.setPos(entity.position());
+        projectile.init();
+        if (!bender.getEntity().level().isClientSide)
+            bender.getEntity().level().addFreshEntity(projectile);
 
         if (!bender.getEntity().level().isClientSide()) {
+            System.out.println("MAX TIME: " + lifetime);
             float dashSpeed = (float) Objects.requireNonNull(data.getTrait(Constants.DASH_SPEED, SpeedTrait.class)).getSpeed();
             Vec3 dashVec = Vec3.ZERO;
             switch (motion) {

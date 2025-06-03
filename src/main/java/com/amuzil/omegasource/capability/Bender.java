@@ -110,7 +110,7 @@ public class Bender implements IBender {
         if (event.getEntity().getId() == entity.getId()) {
             active = !event.released();
             formPath.update(event.getActiveForm());
-            this.syncFormPathToClient();
+//            this.syncFormPathToClient();
             for (Skill skill: Registries.getSkills()) {
                 if (canUseSkill(skill)) {
                     skill.execute(this, formPath);
