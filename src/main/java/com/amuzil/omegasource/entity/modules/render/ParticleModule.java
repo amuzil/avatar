@@ -1,6 +1,7 @@
 package com.amuzil.omegasource.entity.modules.render;
 
 import com.amuzil.omegasource.Avatar;
+import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.BooleanTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.StringTrait;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.form.BendingForms;
@@ -44,16 +45,17 @@ public class ParticleModule implements IRenderModule {
     @Override
     public void tick(AvatarEntity entity) {
         // For starting effects per tick
-//        Entity owner = entity.owner();
-//        StringTrait fxName = entity.getTrait("fx", StringTrait.class);
-//
-//        if (entity.level().isClientSide && fxName != null) {
-//            FX fx = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, fxName.getInfo()));
-//            if (fx != null) {
-//                EntityEffect entityEffect = new EntityEffect(fx, owner.level(), owner);
-//                entityEffect.start();
-//            }
-//        }
+        Entity owner = entity.owner();
+        StringTrait fxName = entity.getTrait("tick_fx", StringTrait.class);
+        BooleanTrait booleanTrait = entity.getTrait("tick", BooleanTrait.class);
+
+        if (entity.level().isClientSide && fxName != null && booleanTrait != null && booleanTrait.isEnabled()) {
+            FX fx = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, fxName.getInfo()));
+            if (fx != null) {
+                EntityEffect entityEffect = new EntityEffect(fx, owner.level(), owner);
+                entityEffect.start();
+            }
+        }
     }
 
     @Override
