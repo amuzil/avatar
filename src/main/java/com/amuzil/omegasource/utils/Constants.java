@@ -23,6 +23,7 @@ public final class Constants {
     public static final String KNOCKBACK_DIRECTION = "knockback_direction";
     public static final String RUNTIME = "runtime";
     public static final String MAX_RUNTIME = "max_runtime";
+    public static final String FX = "fx";
 
     private Constants() {
         // Private constructor to prevent instantiation

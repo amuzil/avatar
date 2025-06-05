@@ -9,6 +9,7 @@ import com.amuzil.omegasource.entity.modules.entity.GrowModule;
 import com.amuzil.omegasource.entity.modules.entity.TimeoutModule;
 import com.amuzil.omegasource.entity.modules.force.ChangeSpeedModule;
 import com.amuzil.omegasource.entity.modules.force.MoveModule;
+import com.amuzil.omegasource.entity.modules.render.ParticleModule;
 import com.amuzil.omegasource.input.InputModule;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.api.magus.registry.Registries;
@@ -79,6 +80,7 @@ public class Avatar {
         ModuleRegistry.register("FireTime", FireModule::new);
         ModuleRegistry.register("SimpleDamage", SimpleDamageModule::new);
         ModuleRegistry.register("ChangeSpeed", ChangeSpeedModule::new);
+        ModuleRegistry.register("Particle", ParticleModule::new);
     }
 
     private void setupClient(final FMLClientSetupEvent event) {

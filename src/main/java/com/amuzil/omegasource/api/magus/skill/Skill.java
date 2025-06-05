@@ -106,6 +106,7 @@ public abstract class Skill {
         }
     }
 
+    // Execute Skill on server
     public void execute(Bender bender, FormPath formPath) {
 
         // Remember, for some reason post only returns true upon the event being cancelled. Blame Forge.
@@ -113,30 +114,28 @@ public abstract class Skill {
 
         if (shouldStart(bender, formPath)) {
             if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Start(bender.getEntity(), formPath, this))) return;
-            skillData.setSkillState(SkillState.START);
-            executeOnClient(bender.getEntity(), SkillState.START);
+            executeOnClient(bender.getEntity(), skillData, SkillState.START);
             start(bender);
         }
 
         if (shouldRun(bender, formPath)) {
             if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Run(bender.getEntity(), formPath, this))) return;
-            skillData.setSkillState(SkillState.RUN);
-            executeOnClient(bender.getEntity(), SkillState.RUN);
+            executeOnClient(bender.getEntity(), skillData, SkillState.RUN);
             run(bender);
         }
 
         if (shouldStop(bender, formPath)) {
             if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Stop(bender.getEntity(), formPath, this))) return;
-            skillData.setSkillState(SkillState.STOP);
-            executeOnClient(bender.getEntity(), SkillState.STOP);
+            executeOnClient(bender.getEntity(), skillData, SkillState.STOP);
             stop(bender);
         }
     }
 
     // Execute Skill on client(s) and sync SkillState
-    public void executeOnClient(LivingEntity entity, SkillState skillState) {
+    public void executeOnClient(LivingEntity entity, SkillData skillData, SkillState skillState) {
         // Handle which player clients should receive the packet based on Skill
         if (!entity.level().isClientSide()) {
+            skillData.setSkillState(skillState); // Set SkillState on server
             ServerLevel level = (ServerLevel) entity.level();
             ActivatedSkillPacket packet = new ActivatedSkillPacket(id, skillState.ordinal());
             Predicate<ServerPlayer> predicate = (serverPlayer) -> entity.distanceToSqr(serverPlayer) < 2500;

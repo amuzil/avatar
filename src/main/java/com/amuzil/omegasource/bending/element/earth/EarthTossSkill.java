@@ -86,7 +86,7 @@ public class EarthTossSkill extends EarthSkill {
                 if (serverShip != null) {
                     GameTickForceApplier gtfa = serverShip.getAttachment(GameTickForceApplier.class);
                     if (gtfa != null) {
-                        tossBlock(bender.getEntity(), gtfa);
+                        tossBlock(bender.getEntity(), gtfa, serverShip);
                     }
                 }
             }
@@ -96,13 +96,10 @@ public class EarthTossSkill extends EarthSkill {
         data.setSkillState(SkillState.IDLE);
     }
 
-    private static void tossBlock(LivingEntity entity, GameTickForceApplier gtfa) {
-//        double gravity = 10; // Acceleration due to gravity
-//        double mass = ship.getInertiaData().getMass(); // Mass of the ship
-////        System.out.println("Mass: " + mass);
-//        double requiredForce = (gravity * mass) * 10; // Force needed to counteract gravity
+    private static void tossBlock(LivingEntity entity, GameTickForceApplier gtfa, LoadedServerShip ship) {
+        double mass = ship.getInertiaData().getMass();
         Vec3 vec3 = entity.getLookAngle().normalize()
-                .multiply(175000, 100000, 175000);
+                .multiply(1500*mass, 1000*mass, 1500*mass);
         Vector3d v3d = VectorConversionsMCKt.toJOML(vec3);
         gtfa.applyInvariantForce(v3d);
     }

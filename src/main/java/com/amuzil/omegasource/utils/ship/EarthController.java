@@ -85,7 +85,6 @@ public final class EarthController implements ShipForcesInducer {
         boolean isMoving = mag > 0.1;
         boolean isMovingFast = mag > 2.0;
         if (isMoving) {
-            // TODO - Figure out how to properly reset when ship is not moving
             tickCount.incrementAndGet();
             if (isMovingFast)
                 checkShipShipCollisions(level, ship);

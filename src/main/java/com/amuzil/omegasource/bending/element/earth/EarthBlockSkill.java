@@ -15,6 +15,7 @@ import com.amuzil.omegasource.utils.ship.EarthController;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
 import org.joml.Vector3i;
@@ -90,32 +91,16 @@ public class EarthBlockSkill extends EarthSkill {
     public void run(Bender bender) {
         super.run(bender);
         if (!bender.getEntity().level().isClientSide()) {
-            ServerLevel level = (ServerLevel) bender.getEntity().level();
-            if (VSGameUtilsKt.isBlockInShipyard(level, bender.blockPos)) {
-                LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, bender.blockPos);
+            ServerLevel serverLevel = (ServerLevel) bender.getEntity().level();
+            if (VSGameUtilsKt.isBlockInShipyard(serverLevel, bender.blockPos)) {
+                LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(serverLevel, bender.blockPos);
                 ServerShipWorld serverShipWorld = (ServerShipWorld) VSGameUtilsKt.getVsCore().getHooks().getCurrentShipServerWorld();
                 if (serverShip != null && serverShipWorld != null) {
-                    int yvar;
-                    if(serverShip.getShipAABB()!=null)
-                        yvar = (int) Math.ceil((double) (serverShip.getShipAABB().maxY() - serverShip.getShipAABB().minY()) / 2);
-                    else
-                        yvar = 1;
-
-                    Vector3d pivot = bender.getEntity().getPosition(0).add(0, bender.getEntity().getEyeHeight() + yvar, 0).toVector3f().get(new Vector3d());
-                    RelativeValue value = new RelativeValue(0, true);
-                    RelativeVector3 relativeVector3 = new RelativeVector3(value, value, value);
-                    Vector3d c = new Vector3d();
-
-                    ShipTeleportData shipTeleportData = new ShipTeleportDataImpl(
-                            pivot,
-                            relativeVector3.toEulerRotationFromMCEntity(0, bender.getEntity().getYRot()),
-                            c, c, VSGameUtilsKt.getDimensionId(level), null, null);
-                    ValkyrienSkiesMod.getVsCore().teleportShip(serverShipWorld, serverShip, shipTeleportData);
-
-//                    EarthController gtfa = EarthController.getOrCreate(serverShip, bender.getEntity());
-//                    if (gtfa != null) {
-//                        hoverBlock(serverShip, gtfa);
-//                    }
+                    EarthController gtfa = EarthController.getOrCreate(serverShip, bender.getEntity());
+                    if (gtfa != null)
+                        raiseBlock(serverShip, gtfa);
+                    
+                    controlBlock(serverShip, serverShipWorld, serverLevel, bender);
                 }
             }
         }
@@ -139,13 +124,27 @@ public class EarthBlockSkill extends EarthSkill {
         }
     }
 
-    private static void hoverBlock(LoadedServerShip ship, EarthController gtfa) {
-        double gravity = 10; // Acceleration due to gravity
-        double mass = ship.getInertiaData().getMass(); // Mass of the ship
-//        System.out.println("Mass: " + mass);
-        double requiredForce = (gravity * mass) * 10; // Force needed to counteract gravity
-        Vector3d v3d2 = new Vector3d(0, requiredForce, 0);
-        gtfa.applyInvariantForce(v3d2);
+    private static void controlBlock(LoadedServerShip serverShip, ServerShipWorld serverShipWorld, ServerLevel level, Bender bender) {
+//        int yVal;
+//        if (serverShip.getShipAABB() != null)
+//            yVal = (int) Math.ceil((double) (serverShip.getShipAABB().maxY() - serverShip.getShipAABB().minY()) / 2);
+//        else
+//            yVal = 1;
+//        Vector3d pivot = bender.getEntity().position().add(0, bender.getEntity().getEyeHeight() + yVal, 0).toVector3f().get(new Vector3d());
+        RelativeValue value = new RelativeValue(0, true);
+        RelativeVector3 relativeVector3 = new RelativeVector3(value, value, value);
+        Vector3d c = new Vector3d();
+
+        Vec3[] pose = new Vec3[]{bender.getEntity().position(), bender.getEntity().getLookAngle()};
+        pose[1] = pose[1].scale((1.5)).add((0), (bender.getEntity().getEyeHeight()), (0));
+        Vec3 newPos = pose[1].add(pose[0]);
+        Vector3d pivot = new Vector3d(newPos.x, newPos.y, newPos.z);
+
+        ShipTeleportData shipTeleportData = new ShipTeleportDataImpl(
+                pivot,
+                relativeVector3.toEulerRotationFromMCEntity(0, bender.getEntity().getYRot()),
+                c, c, VSGameUtilsKt.getDimensionId(level), null, null);
+        ValkyrienSkiesMod.getVsCore().teleportShip(serverShipWorld, serverShip, shipTeleportData);
     }
 
     private static void raiseBlock(LoadedServerShip ship, EarthController gtfa) {

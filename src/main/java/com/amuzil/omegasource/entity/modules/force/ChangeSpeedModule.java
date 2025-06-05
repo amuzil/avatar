@@ -4,6 +4,7 @@ import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SpeedTrait;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.modules.IForceModule;
+import com.amuzil.omegasource.utils.Constants;
 import net.minecraft.nbt.CompoundTag;
 
 public class ChangeSpeedModule implements IForceModule {
@@ -22,7 +23,7 @@ public class ChangeSpeedModule implements IForceModule {
 
     @Override
     public void tick(AvatarEntity entity) {
-        SpeedTrait speedTrait = entity.getTrait("speed_factor", SpeedTrait.class);
+        SpeedTrait speedTrait = entity.getTrait(Constants.SPEED_FACTOR, SpeedTrait.class);
         if (speedTrait == null) {
             Avatar.LOGGER.warn("No speed trait for a speed change module. Please add the module or remove the trait.");
             return;

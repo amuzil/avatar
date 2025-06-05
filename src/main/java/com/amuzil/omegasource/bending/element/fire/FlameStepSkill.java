@@ -10,7 +10,11 @@ import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.form.BendingForm;
 import com.amuzil.omegasource.bending.skill.FireSkill;
 import com.amuzil.omegasource.capability.Bender;
+import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.AvatarProjectile;
+import com.amuzil.omegasource.entity.modules.IRenderModule;
+import com.amuzil.omegasource.entity.modules.ModuleRegistry;
+import com.amuzil.omegasource.entity.modules.render.ParticleModule;
 import com.amuzil.omegasource.utils.Constants;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
@@ -30,6 +34,7 @@ public class FlameStepSkill extends FireSkill {
         addTrait(new ColourTrait(0, 0, 0, Constants.FIRE_COLOUR));
         addTrait(new TimedTrait(Constants.MAX_RUNTIME, 60));
         addTrait(new TimedTrait(Constants.RUNTIME, 0));
+        addTrait(new StringTrait(Constants.FX, "fire_bloom"));
 
         this.startPaths = SkillPathBuilder.getInstance()
                 .complex(new ActiveForm(STEP, true))
@@ -48,17 +53,18 @@ public class FlameStepSkill extends FireSkill {
             motion = BendingForm.Type.Motion.FORWARD; // Default to forward if no motion is specified
         SkillData data = bender.getSkillData(this);
         int lifetime = data.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime();
-        AvatarProjectile projectile = new AvatarProjectile(entity.level());
+        AvatarEntity projectile = new AvatarProjectile(entity.level());
         projectile.setElement(Elements.FIRE);
         projectile.setOwner(entity);
         projectile.setMaxLifetime(lifetime);
         projectile.setPos(entity.position());
+        projectile.addTraits(data.getTrait("fx", StringTrait.class));
+        projectile.addRenderModule((IRenderModule) ModuleRegistry.create("Particle"));
         projectile.init();
         if (!bender.getEntity().level().isClientSide)
             bender.getEntity().level().addFreshEntity(projectile);
 
         if (!bender.getEntity().level().isClientSide()) {
-            System.out.println("MAX TIME: " + lifetime);
             float dashSpeed = (float) Objects.requireNonNull(data.getTrait(Constants.DASH_SPEED, SpeedTrait.class)).getSpeed();
             Vec3 dashVec = Vec3.ZERO;
             switch (motion) {
