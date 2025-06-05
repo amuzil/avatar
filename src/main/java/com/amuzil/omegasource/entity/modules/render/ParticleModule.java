@@ -31,7 +31,7 @@ public class ParticleModule implements IRenderModule {
     public void init(AvatarEntity entity) {
         Element element = entity.element();
         Entity owner = entity.owner();
-        StringTrait fxName = entity.getTrait("fx", StringTrait.class);
+        StringTrait fxName = entity.getTrait(Constants.FX, StringTrait.class);
 
         if (entity.level().isClientSide && fxName != null) {
             FX fx = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, fxName.getInfo()));
@@ -46,8 +46,8 @@ public class ParticleModule implements IRenderModule {
     public void tick(AvatarEntity entity) {
         // For starting effects per tick
         Entity owner = entity.owner();
-        StringTrait fxName = entity.getTrait("tick_fx", StringTrait.class);
-        BooleanTrait booleanTrait = entity.getTrait("tick", BooleanTrait.class);
+        StringTrait fxName = entity.getTrait(Constants.TICK_FX, StringTrait.class);
+        BooleanTrait booleanTrait = entity.getTrait(Constants.TICK, BooleanTrait.class);
 
         if (entity.level().isClientSide && fxName != null && booleanTrait != null && booleanTrait.isEnabled()) {
             FX fx = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, fxName.getInfo()));
