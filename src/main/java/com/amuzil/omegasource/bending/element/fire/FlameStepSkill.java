@@ -58,7 +58,7 @@ public class FlameStepSkill extends FireSkill {
         projectile.setOwner(entity);
         projectile.setMaxLifetime(lifetime);
         projectile.setPos(entity.position());
-        projectile.addTraits(data.getTrait("fx", StringTrait.class));
+        projectile.addTraits(data.getTrait(Constants.FX, StringTrait.class));
         projectile.addRenderModule((IRenderModule) ModuleRegistry.create("Particle"));
         projectile.init();
 

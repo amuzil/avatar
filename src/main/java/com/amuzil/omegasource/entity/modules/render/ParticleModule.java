@@ -52,7 +52,7 @@ public class ParticleModule implements IRenderModule {
         if (entity.level().isClientSide && fxName != null && booleanTrait != null && booleanTrait.isEnabled()) {
             FX fx = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, fxName.getInfo()));
             if (fx != null) {
-                EntityEffect entityEffect = new EntityEffect(fx, owner.level(), owner);
+                EntityEffect entityEffect = new EntityEffect(fx, owner.level(), entity);
                 entityEffect.start();
             }
         }
