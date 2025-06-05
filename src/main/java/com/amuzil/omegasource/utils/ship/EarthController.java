@@ -29,6 +29,7 @@ public final class EarthController implements ShipForcesInducer {
     private final ConcurrentLinkedQueue<Vector3dc> rotTorques = new ConcurrentLinkedQueue<>();
     private final ConcurrentLinkedQueue<InvForceAtPos> invPosForces = new ConcurrentLinkedQueue<>();
 
+    private volatile boolean isControlled = false;
     private volatile boolean toBeStatic = false;
     private volatile boolean toBeStaticUpdated = false;
     private ServerShip ship;
@@ -84,7 +85,7 @@ public final class EarthController implements ShipForcesInducer {
         double mag = velocity.length();
         boolean isMoving = mag > 0.1;
         boolean isMovingFast = mag > 2.0;
-        if (isMoving) {
+        if (isMoving || isControlled) {
             tickCount.incrementAndGet();
             if (isMovingFast)
                 checkShipShipCollisions(level, ship);
@@ -115,6 +116,10 @@ public final class EarthController implements ShipForcesInducer {
     public void setStatic(boolean b) {
         toBeStatic = b;
         toBeStaticUpdated = true;
+    }
+
+    public void setControlled(boolean controlled) {
+        isControlled = controlled;
     }
 
     private record InvForceAtPos(Vector3dc force, Vector3dc pos) {}

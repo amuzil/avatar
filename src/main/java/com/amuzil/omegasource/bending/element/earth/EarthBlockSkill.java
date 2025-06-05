@@ -97,9 +97,7 @@ public class EarthBlockSkill extends EarthSkill {
                 ServerShipWorld serverShipWorld = (ServerShipWorld) VSGameUtilsKt.getVsCore().getHooks().getCurrentShipServerWorld();
                 if (serverShip != null && serverShipWorld != null) {
                     EarthController gtfa = EarthController.getOrCreate(serverShip, bender.getEntity());
-                    if (gtfa != null)
-                        raiseBlock(serverShip, gtfa);
-                    
+                    gtfa.setControlled(true);
                     controlBlock(serverShip, serverShipWorld, serverLevel, bender);
                 }
             }
@@ -118,6 +116,7 @@ public class EarthBlockSkill extends EarthSkill {
                     EarthController gtfa = EarthController.getOrCreate(serverShip, bender.getEntity());
                     if (gtfa != null) {
                         gtfa.tickCount.set(0);
+                        gtfa.setControlled(false);
                     }
                 }
             }
@@ -136,7 +135,7 @@ public class EarthBlockSkill extends EarthSkill {
         Vector3d c = new Vector3d();
 
         Vec3[] pose = new Vec3[]{bender.getEntity().position(), bender.getEntity().getLookAngle()};
-        pose[1] = pose[1].scale((1.5)).add((0), (bender.getEntity().getEyeHeight()), (0));
+        pose[1] = pose[1].scale((1.7)).add((0), (bender.getEntity().getEyeHeight()), (0));
         Vec3 newPos = pose[1].add(pose[0]);
         Vector3d pivot = new Vector3d(newPos.x, newPos.y, newPos.z);
 

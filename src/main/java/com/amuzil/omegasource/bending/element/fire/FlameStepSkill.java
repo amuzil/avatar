@@ -61,6 +61,7 @@ public class FlameStepSkill extends FireSkill {
         projectile.addTraits(data.getTrait("fx", StringTrait.class));
         projectile.addRenderModule((IRenderModule) ModuleRegistry.create("Particle"));
         projectile.init();
+
         if (!bender.getEntity().level().isClientSide)
             bender.getEntity().level().addFreshEntity(projectile);
 
