@@ -61,8 +61,7 @@ public class EarthTossSkill extends EarthSkill {
                 BlockPos centerPos = VectorConversionsMCKt.toBlockPos(ship.getChunkClaim().getCenterBlockCoordinates(VSGameUtilsKt.getYRange(level),new Vector3i()));
                 BlockPos selectedCentre = null;
                 int deltaX, deltaY, deltaZ;
-                for (BlockPos selectedBlock :
-                        bender.getSelection().blockPositions) {
+                for (BlockPos selectedBlock: bender.getSelection().blockPositions) {
                     if(selectedCentre == null) {
                         selectedCentre = selectedBlock;
                         RelocationUtilKt.relocateBlock(level, selectedCentre, centerPos, true, ship, Rotation.NONE);

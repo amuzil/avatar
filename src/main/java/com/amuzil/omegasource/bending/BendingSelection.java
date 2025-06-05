@@ -58,8 +58,19 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
             skillIds = new ArrayList<>();
             target = Target.BLOCK;
         }
-        if (!blockPositions.contains(pos))
+        if (!blockPositions.contains(pos)) {
             blockPositions.add(pos);
+        } else {
+            // If the position already exists, we can remove it to toggle selection off
+            if (!blockPositions.contains(pos.north()))
+                blockPositions.add(pos.north());
+            if (!blockPositions.contains(pos.south()))
+                blockPositions.add(pos.south());
+            if (!blockPositions.contains(pos.east()))
+                blockPositions.add(pos.east());
+            if (!blockPositions.contains(pos.west()))
+                blockPositions.add(pos.west());
+        }
     }
 
     public void addSkillId(String skillId) {

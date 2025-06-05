@@ -144,6 +144,11 @@ public final class EarthController implements ShipForcesInducer {
                 Vector3dc shipYardPos = ship.getTransform().getPositionInShip();
                 BlockPos blockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipYardPos));
                 level.destroyBlock(blockPos, false);
+                level.destroyBlock(blockPos.north(), false);
+                level.destroyBlock(blockPos.south(), false);
+                level.destroyBlock(blockPos.east(), false);
+                level.destroyBlock(blockPos.west(), false);
+                System.out.println("EarthController: COLLIDED WITH ENTITY " + blockPos);
                 Vec3 motion = VectorConversionsMCKt.toMinecraft(ship.getVelocity());
                 entity.addDeltaMovement(motion.scale(0.05));
                 entity.hasImpulse = true; entity.hurtMarked = true;
