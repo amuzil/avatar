@@ -34,7 +34,8 @@ public class ParticleModule implements IRenderModule {
         StringTrait fxName = entity.getTrait(Constants.FX, StringTrait.class);
 
         if (entity.level().isClientSide && fxName != null) {
-            FX fx = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, fxName.getInfo()));
+//            FX fx = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, fxName.getInfo()));
+            FX fx = fire_bloom;
             if (fx != null) {
                 EntityEffect entityEffect = new EntityEffect(fx, owner.level(), owner);
                 entityEffect.start();
