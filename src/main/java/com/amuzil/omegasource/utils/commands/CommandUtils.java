@@ -3,6 +3,7 @@ package com.amuzil.omegasource.utils.commands;
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
 import com.amuzil.omegasource.api.magus.form.Form;
 import com.amuzil.omegasource.api.magus.skill.Skill;
+import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.bending.form.BendingForm;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.capability.AvatarCapabilities;
@@ -45,6 +46,8 @@ class CommandUtils {
         if (player == null)
             player = ctx.getSource().getPlayerOrException();
         player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
+            SkillData skillData = bender.getSkillData(skill);
+            skill.executeOnClient(bender.getEntity(), skillData, state);
             switch (state) {
                 case START -> skill.start((Bender) bender);
                 case RUN -> skill.run((Bender) bender);
