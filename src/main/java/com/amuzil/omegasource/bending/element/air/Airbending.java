@@ -7,6 +7,8 @@ import org.checkerframework.checker.units.qual.A;
 
 public class Airbending extends Element {
     // Class for registering Airbending skills
+    public static final AirGustSkill AIR_GUST_SKILL = new AirGustSkill();
+
     public Airbending() {
         super(Avatar.MOD_ID, "airbending");
     }

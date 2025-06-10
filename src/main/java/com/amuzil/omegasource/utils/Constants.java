@@ -24,8 +24,9 @@ public final class Constants {
     public static final String RUNTIME = "runtime";
     public static final String MAX_RUNTIME = "max_runtime";
     public static final String FX = "fx";
-    public static final String TICK = "tick";
+    public static final String ONE_SHOT = "tick";
     public static final String TICK_FX = "tick_fx";
+    public static final String ENTITY_ID = "entity_id";
 
     private Constants() {
         // Private constructor to prevent instantiation

@@ -7,6 +7,7 @@ import com.amuzil.omegasource.entity.modules.collision.SimpleDamageModule;
 import com.amuzil.omegasource.entity.modules.collision.SimpleKnockbackModule;
 import com.amuzil.omegasource.entity.modules.entity.GrowModule;
 import com.amuzil.omegasource.entity.modules.entity.TimeoutModule;
+import com.amuzil.omegasource.entity.modules.force.BindModule;
 import com.amuzil.omegasource.entity.modules.force.ChangeSpeedModule;
 import com.amuzil.omegasource.entity.modules.force.MoveModule;
 import com.amuzil.omegasource.entity.modules.render.ParticleModule;
@@ -44,6 +45,7 @@ public class Avatar {
 
     public static FX fire_bloom;
     public static FX fire_bloom_perma;
+    public static FX air_perma;
     public static FX blue_fire;
     public static FX blue_fire_perma;
     public static FX orb_bloom;
@@ -81,6 +83,7 @@ public class Avatar {
         ModuleRegistry.register("SimpleDamage", SimpleDamageModule::new);
         ModuleRegistry.register("ChangeSpeed", ChangeSpeedModule::new);
         ModuleRegistry.register("Particle", ParticleModule::new);
+        ModuleRegistry.register("Bind", BindModule::new);
     }
 
     private void setupClient(final FMLClientSetupEvent event) {
@@ -118,7 +121,8 @@ public class Avatar {
 
     public static void reloadFX() {
         fire_bloom = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "fire_bloom"));
-        fire_bloom_perma = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "fire_bloom_perma6"));
+        fire_bloom_perma = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "fires_bloom_perma5"));
+        air_perma = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "airs_perma8"));
         blue_fire = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "blue_fire"));
         blue_fire_perma = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "fire_bloom_perma5"));
         orb_bloom = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "orb_bloom"));
