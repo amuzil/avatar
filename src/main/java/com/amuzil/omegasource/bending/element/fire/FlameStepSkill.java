@@ -52,7 +52,7 @@ public class FlameStepSkill extends FireSkill {
         else
             motion = BendingForm.Type.Motion.FORWARD; // Default to forward if no motion is specified
         SkillData data = bender.getSkillData(this);
-        int lifetime = data.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime();
+        int lifetime = data.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime() / 2;
         AvatarEntity projectile = new AvatarProjectile(entity.level());
         projectile.setElement(Elements.FIRE);
         projectile.setOwner(entity);
@@ -62,10 +62,8 @@ public class FlameStepSkill extends FireSkill {
         projectile.addRenderModule((IRenderModule) ModuleRegistry.create("Particle"));
         projectile.init();
 
-        if (!bender.getEntity().level().isClientSide)
-            bender.getEntity().level().addFreshEntity(projectile);
-
         if (!bender.getEntity().level().isClientSide()) {
+            bender.getEntity().level().addFreshEntity(projectile);
             float dashSpeed = (float) Objects.requireNonNull(data.getTrait(Constants.DASH_SPEED, SpeedTrait.class)).getSpeed();
             Vec3 dashVec = Vec3.ZERO;
             switch (motion) {
