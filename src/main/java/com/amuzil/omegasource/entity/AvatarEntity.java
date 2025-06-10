@@ -235,7 +235,10 @@ public abstract class AvatarEntity extends Entity {
     public Entity owner() {
         if (this.owner == null) {
             Optional<UUID> uid = this.entityData.get(OWNER_ID);
-            uid.ifPresent(value -> this.owner = ((ServerLevel) this.level()).getEntity(value));
+            uid.ifPresent(value -> {
+                if (!level().isClientSide())
+                    this.owner = ((ServerLevel) this.level()).getEntity(value);
+            });
         }
         return this.owner;
     }
