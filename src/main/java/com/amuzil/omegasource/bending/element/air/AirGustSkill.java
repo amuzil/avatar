@@ -29,7 +29,7 @@ public class AirGustSkill extends AirSkill {
         addTrait(new DamageTrait(Constants.DAMAGE, 1.5f));
         addTrait(new SizeTrait(Constants.SIZE, 0.125F));
         addTrait(new SizeTrait(Constants.MAX_SIZE, 1.25f));
-        addTrait(new KnockbackTrait(Constants.KNOCKBACK, 0.5f));
+        addTrait(new KnockbackTrait(Constants.KNOCKBACK, 0.6f));
         addTrait(new SpeedTrait(Constants.SPEED, 0.875d));
         addTrait(new TimedTrait(Constants.LIFETIME, 15)); // Ticks not seconds...
         addTrait(new SpeedTrait(Constants.SPEED_FACTOR, 0.85d));
