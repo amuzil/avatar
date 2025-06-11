@@ -17,7 +17,11 @@ import com.amuzil.omegasource.api.magus.registry.Registries;
 import com.amuzil.omegasource.utils.commands.AvatarCommands;
 import com.lowdragmc.photon.client.fx.FX;
 import com.lowdragmc.photon.client.fx.FXHelper;
+import dev.kosmx.playerAnim.api.layered.IAnimation;
+import dev.kosmx.playerAnim.api.layered.ModifierLayer;
+import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationFactory;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -116,6 +120,10 @@ public class Avatar {
             // Change later
             EntityRenderers.register(AvatarEntities.AVATAR_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+
+            PlayerAnimationFactory.ANIMATION_DATA_FACTORY.registerFactory(
+                    ResourceLocation.fromNamespaceAndPath(MOD_ID, "animation"),
+                    42, Avatar::registerPlayerAnimation);
         }
     }
 
@@ -128,5 +136,10 @@ public class Avatar {
         orb_bloom = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "orb_bloom"));
         water = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "water"));
         steam = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "steam"));
+    }
+
+    private static IAnimation registerPlayerAnimation(AbstractClientPlayer player) {
+        // This will be invoked for every new player
+        return new ModifierLayer<>();
     }
 }
