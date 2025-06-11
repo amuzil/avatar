@@ -3,6 +3,7 @@ package com.amuzil.omegasource.entity;
 import com.amuzil.omegasource.bending.form.BendingForm;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.entity.modules.IForceModule;
+import com.amuzil.omegasource.entity.modules.IRenderModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import com.lowdragmc.photon.client.fx.EntityEffect;
 import com.lowdragmc.photon.client.fx.FX;
@@ -31,9 +32,9 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile,
     public AvatarProjectile(EntityType<AvatarProjectile> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
         addForceModule((IForceModule) ModuleRegistry.create("Move"));
+        addRenderModule((IRenderModule) ModuleRegistry.create("Particle"));
 //        addCollisionModule((ICollisionModule) ModuleRegistry.create("Knockback"));
         addModule(ModuleRegistry.create("Timeout"));
-
     }
 
     public void startEffect(BendingForm form) {

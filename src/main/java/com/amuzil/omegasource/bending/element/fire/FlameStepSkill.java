@@ -12,6 +12,7 @@ import com.amuzil.omegasource.bending.skill.FireSkill;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.AvatarProjectile;
+import com.amuzil.omegasource.entity.modules.IForceModule;
 import com.amuzil.omegasource.entity.modules.IRenderModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import com.amuzil.omegasource.entity.modules.render.ParticleModule;
@@ -28,13 +29,12 @@ public class FlameStepSkill extends FireSkill {
 
     public FlameStepSkill() {
         super(Avatar.MOD_ID, "flame_step");
-        addTrait(new KnockbackTrait(Constants.KNOCKBACK, 1.5f));
-        addTrait(new SpeedTrait(Constants.DASH_SPEED, 1.5f));
+        addTrait(new SpeedTrait(Constants.DASH_SPEED, 1.25f));
         addTrait(new SizeTrait(Constants.SIZE, 1.0f));
         addTrait(new ColourTrait(0, 0, 0, Constants.FIRE_COLOUR));
         addTrait(new TimedTrait(Constants.MAX_RUNTIME, 60));
         addTrait(new TimedTrait(Constants.RUNTIME, 0));
-        addTrait(new StringTrait(Constants.FX, "fire_bloom"));
+        addTrait(new StringTrait(Constants.FX, "fire_bloom_perma5"));
 
         this.startPaths = SkillPathBuilder.getInstance()
                 .complex(new ActiveForm(STEP, true))
@@ -52,14 +52,14 @@ public class FlameStepSkill extends FireSkill {
         else
             motion = BendingForm.Type.Motion.FORWARD; // Default to forward if no motion is specified
         SkillData data = bender.getSkillData(this);
-        int lifetime = data.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime() / 2;
+        int lifetime = data.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime();
         AvatarEntity projectile = new AvatarProjectile(entity.level());
         projectile.setElement(Elements.FIRE);
         projectile.setOwner(entity);
         projectile.setMaxLifetime(lifetime);
         projectile.setPos(entity.position());
+//        projectile.addForceModule((IForceModule) ModuleRegistry.create("Bind"));
         projectile.addTraits(data.getTrait(Constants.FX, StringTrait.class));
-        projectile.addRenderModule((IRenderModule) ModuleRegistry.create("Particle"));
         projectile.init();
 
         if (!bender.getEntity().level().isClientSide()) {
@@ -77,6 +77,8 @@ public class FlameStepSkill extends FireSkill {
                         dashVec = entity.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(dashSpeed); // D
                 case UPWARD ->
                     dashVec = bender.getDeltaMovement().add(0, dashSpeed / 3, 0).multiply(4, 1, 4); // SPACE
+                case DOWNWARD ->
+                    dashVec = bender.getDeltaMovement().add(0, dashSpeed / 3, 0).multiply(-2, -1, -2);
             }
             dashVec = dashVec.add(0, 0.3D, 0); // Add a little hop for better dash
 //                System.out.println("Dash Vec: " + dashVec);

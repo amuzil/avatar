@@ -7,6 +7,7 @@ import com.amuzil.omegasource.entity.modules.IForceModule;
 import com.amuzil.omegasource.utils.Constants;
 import net.minecraft.nbt.CompoundTag;
 
+
 public class ChangeSpeedModule implements IForceModule {
 
     String id = "change_speed";

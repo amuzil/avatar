@@ -11,6 +11,7 @@ import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.skill.FireSkill;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.entity.AvatarProjectile;
+import com.amuzil.omegasource.entity.modules.IRenderModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.maths.Point;
@@ -34,6 +35,7 @@ public class FireStrikeSkill extends FireSkill {
         addTrait(new TimedTrait(Constants.LIFETIME, 15)); // Ticks not seconds...
         addTrait(new TimedTrait(Constants.FIRE_TIME, 40));
         addTrait(new SpeedTrait(Constants.SPEED_FACTOR, 0.85d));
+        addTrait(new StringTrait(Constants.FX, "fires_bloom_perma5"));
 
         startPaths = SkillPathBuilder.getInstance().simple(new ActiveForm(STRIKE, true)).build();
     }
@@ -101,6 +103,9 @@ public class FireStrikeSkill extends FireSkill {
         // Slow down over time
         projectile.addTraits(data.getTrait(Constants.SPEED_FACTOR, SpeedTrait.class));
         projectile.addModule(ModuleRegistry.create("ChangeSpeed"));
+
+        // Particle FX
+        projectile.addTraits(data.getTrait(Constants.FX, StringTrait.class));
 
         projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
         projectile.init();

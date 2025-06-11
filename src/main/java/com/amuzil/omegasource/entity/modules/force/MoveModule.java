@@ -27,12 +27,6 @@ public class MoveModule implements IForceModule {
     @Override
     public void tick(AvatarEntity entity) {
 
-        if (entity.level().isClientSide) {
-            if (entity instanceof AvatarProjectile projectile) {
-                projectile.startEffect(BendingForms.STRIKE);
-            }
-        }
-
         boolean flag = entity.physics();
         Vec3 deltaMovement = entity.getDeltaMovement();
         if (entity.xRotO == 0.0F && entity.yRotO == 0.0F) {
@@ -57,7 +51,6 @@ public class MoveModule implements IForceModule {
                 }
             }
         }
-
 
 //        Vec3 pos = entity.position();
 //        Vec3 delta = pos.add(deltaMovement);
