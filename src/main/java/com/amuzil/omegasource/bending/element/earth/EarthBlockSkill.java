@@ -83,7 +83,7 @@ public class EarthBlockSkill extends EarthSkill {
             var animation = (ModifierLayer<IAnimation>) PlayerAnimationAccess.getPlayerAssociatedData(benderPlayer).get(
                     ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "animation"));
             if (animation != null) {
-                animation.setAnimation(new KeyframeAnimationPlayer(PlayerAnimationRegistry.getAnimation(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "waving"))));
+                animation.setAnimation(new KeyframeAnimationPlayer(PlayerAnimationRegistry.getAnimation(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "earth_block"))));
                 // You might use  animation.replaceAnimationWithFade(); to create fade effect instead of sudden change
                 // See javadoc for details
             }
