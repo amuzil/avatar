@@ -88,4 +88,9 @@ public class ForceCloud extends PhysicsElement {
             module.postSolve(this);
         }
     }
+
+    // 3D Vector Field based on ForcePoints. Used for sampling?
+    public int[][][] cloud() {
+        return null;
+    }
 }
