@@ -59,6 +59,7 @@ public class FireStrikeSkill extends FireSkill {
 
         AvatarProjectile projectile = new AvatarProjectile(level);
         projectile.setElement(Elements.FIRE);
+        projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
         projectile.setOwner(entity);
         projectile.setMaxLifetime(lifetime);
         projectile.setWidth((float) size);
@@ -105,7 +106,6 @@ public class FireStrikeSkill extends FireSkill {
         projectile.addModule(ModuleRegistry.create("ChangeSpeed"));
 
         // Particle FX
-        projectile.addTraits(data.getTrait(Constants.FX, StringTrait.class));
 
         projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
         projectile.init();

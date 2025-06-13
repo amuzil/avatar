@@ -138,6 +138,10 @@ public class Avatar {
         steam = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "steam"));
     }
 
+    public static String isClientOrServer(boolean isClient) {
+        return isClient ? "Client-Side" : "Server-Side";
+    }
+
     private static IAnimation registerPlayerAnimation(AbstractClientPlayer player) {
         // This will be invoked for every new player
         return new ModifierLayer<>();

@@ -1,5 +1,6 @@
 package com.amuzil.omegasource.entity;
 
+import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.skill.traits.DataTrait;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
@@ -29,10 +30,13 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.amuzil.omegasource.Avatar.isClientOrServer;
+
 public abstract class AvatarEntity extends Entity {
 
     private static final EntityDataAccessor<Optional<UUID>> OWNER_ID = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.OPTIONAL_UUID);
     private static final EntityDataAccessor<String> ELEMENT = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> FX = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> COLLIDABLE = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DAMAGEABLE = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> PHYSICS = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
@@ -47,6 +51,7 @@ public abstract class AvatarEntity extends Entity {
     private final List<DataTrait> traits = new LinkedList<>();
     private Entity owner;
     private Element element;
+    private String fxName;
     private boolean hittable = false;
     private boolean damageable = false;
 
@@ -94,7 +99,7 @@ public abstract class AvatarEntity extends Entity {
 
     // --- Module Management ---
     public void printModules() {
-        System.out.println("Server-Side: " + this.level().isClientSide() + " " + this.getUUID() + " has the following modules:");
+        System.out.println(isClientOrServer(this.level().isClientSide()) + " " + this.getId() + " has the following modules:");
         modules.forEach(m -> System.out.print(m.id() + ", "));
         System.out.println();
     }
@@ -252,6 +257,16 @@ public abstract class AvatarEntity extends Entity {
         return Elements.get(ResourceLocation.parse(this.entityData.get(ELEMENT)));
     }
 
+    public void setFX(String fxName) {
+        this.entityData.set(FX, fxName);
+        this.fxName = this.entityData.get(FX); // Doesn't live to see the next tick
+    }
+
+    public ResourceLocation fxLocation() {
+        return ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, this.entityData.get(FX));
+    }
+
+
     public void setPhysics(boolean physics) {
         this.entityData.set(PHYSICS, physics);
     }
@@ -264,6 +279,7 @@ public abstract class AvatarEntity extends Entity {
     protected void defineSynchedData() {
         this.entityData.define(OWNER_ID, Optional.empty());
         this.entityData.define(ELEMENT, Elements.FIRE.getId().toString());
+        this.entityData.define(FX, "");
         this.entityData.define(COLLIDABLE, false);
         this.entityData.define(DAMAGEABLE, false);
         this.entityData.define(PHYSICS, false);
@@ -325,6 +341,8 @@ public abstract class AvatarEntity extends Entity {
     }
 
     private <T> void readModuleList(CompoundTag parent, String key, List<T> list) {
+        // Clears the list before re-adding whatever modules it needs toAdd commentMore actions
+        list.clear();
         ListTag mods = parent.getList(key, Tag.TAG_COMPOUND);
         for (Tag t : mods) {
             CompoundTag mTag = (CompoundTag) t;
@@ -352,9 +370,9 @@ public abstract class AvatarEntity extends Entity {
     private void writeTraits(CompoundTag parent) {
         ListTag list = new ListTag();
         for (DataTrait trait : traits) {
-            CompoundTag tTag = trait.serializeNBT();
-            // ensure ID is included
-            tTag.putString("Trait ID", trait.name());
+            CompoundTag tTag = new CompoundTag();
+            // TODO: check whether ensuring ID is included is necessary
+            tTag.put("Trait Data", trait.serializeNBT());
             list.add(tTag);
         }
         parent.put("DataTraits", list);
@@ -366,7 +384,7 @@ public abstract class AvatarEntity extends Entity {
         int limit = Math.min(list.size(), traits.size());
         for (int i = 0; i < limit; i++) {
             CompoundTag tTag = list.getCompound(i);
-            traits.get(i).deserializeNBT(tTag);
+            traits.get(i).deserializeNBT(tTag.getCompound("Trait Data"));
         }
     }
 
