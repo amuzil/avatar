@@ -170,7 +170,6 @@ dependencies {
     // If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-//    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor' // TODO - Might not need
     implementation fg.deobf("com.lowdragmc.photon:photon-forge-1.20.1:1.0.7.a") { transitive = false }
     implementation fg.deobf("com.lowdragmc.ldlib:ldlib-forge-1.20.1:1.0.21.a") { transitive = false }
     testImplementation(platform('org.junit:junit-bom:5.11.2'))
@@ -181,7 +180,7 @@ dependencies {
     implementation("org.valkyrienskies.core:api:${vs_core_version}")
     implementation "thedarkcolour:kotlinforforge:4.11.0"
     implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${player_anim_version}")
-    implementation fg.deobf("dev.kosmx.player-anim:bendy-lib-forge:${bendylib_version}")
+//    implementation fg.deobf(files('libs/bendy-lib-4.1.0-forge.jar'))
 
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
