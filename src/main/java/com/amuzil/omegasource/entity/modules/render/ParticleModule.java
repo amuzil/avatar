@@ -21,8 +21,7 @@ public class ParticleModule implements IRenderModule {
 
     @Override
     public void init(AvatarEntity entity) {
-        Element element = entity.element();
-
+//        Element element = entity.element();
 //        if (entity.level().isClientSide && entity.fxLocation() != null) {
 //            FX fx = FXHelper.getFX(entity.fxLocation());
 //            if (fx != null) {
