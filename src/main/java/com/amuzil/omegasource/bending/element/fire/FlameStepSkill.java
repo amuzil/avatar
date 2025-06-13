@@ -55,6 +55,7 @@ public class FlameStepSkill extends FireSkill {
         int lifetime = data.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime();
         AvatarEntity projectile = new AvatarProjectile(entity.level());
         projectile.setElement(Elements.FIRE);
+        projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
         projectile.setOwner(entity);
         projectile.setMaxLifetime(lifetime);
         projectile.setPos(entity.position());
