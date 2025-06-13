@@ -37,6 +37,7 @@ public class FlameStepSkill extends FireSkill {
         addTrait(new StringTrait(Constants.FX, "fire_bloom_perma5"));
 
         this.startPaths = SkillPathBuilder.getInstance()
+                .simple(new ActiveForm(STEP, true))
                 .complex(new ActiveForm(STEP, true))
                 .build();
     }
