@@ -58,9 +58,8 @@ public class FlameStepSkill extends FireSkill {
         projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
         projectile.setOwner(entity);
         projectile.setMaxLifetime(lifetime);
+        projectile.setNoGravity(true);
         projectile.setPos(entity.position());
-//        projectile.addForceModule((IForceModule) ModuleRegistry.create("Bind"));
-        projectile.addTraits(data.getTrait(Constants.FX, StringTrait.class));
         projectile.init();
 
         if (!bender.getEntity().level().isClientSide()) {
