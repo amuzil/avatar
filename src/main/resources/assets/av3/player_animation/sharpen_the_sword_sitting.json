@@ -3,7 +3,7 @@
   "valid": true,
   "name": {
     "translate": "mineeemotes.emote.name.MIEMsharpenaswordsit",
-    "fallback": "Sharpen the sword sitting"
+    "fallback": "sharpen_the_sword_sitting"
   },
   "description": {
     "translate": "mineeemotes.emote.description.MIEMsharpenaswordsit",
