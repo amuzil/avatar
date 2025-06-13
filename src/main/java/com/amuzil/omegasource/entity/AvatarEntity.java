@@ -325,6 +325,8 @@ public abstract class AvatarEntity extends Entity {
     }
 
     private <T> void readModuleList(CompoundTag parent, String key, List<T> list) {
+        // Clears the list before re-adding whatever modules it needs to
+        list.clear();
         ListTag mods = parent.getList(key, Tag.TAG_COMPOUND);
         for (Tag t : mods) {
             CompoundTag mTag = (CompoundTag) t;
@@ -352,9 +354,9 @@ public abstract class AvatarEntity extends Entity {
     private void writeTraits(CompoundTag parent) {
         ListTag list = new ListTag();
         for (DataTrait trait : traits) {
-            CompoundTag tTag = trait.serializeNBT();
-            // ensure ID is included
-            tTag.putString("Trait ID", trait.name());
+            CompoundTag tTag = new CompoundTag();
+            // TODO: check whether ensuring ID is included is necessary
+            tTag.put("Trait Data", trait.serializeNBT());
             list.add(tTag);
         }
         parent.put("DataTraits", list);
@@ -366,7 +368,7 @@ public abstract class AvatarEntity extends Entity {
         int limit = Math.min(list.size(), traits.size());
         for (int i = 0; i < limit; i++) {
             CompoundTag tTag = list.getCompound(i);
-            traits.get(i).deserializeNBT(tTag);
+            traits.get(i).deserializeNBT(tTag.getCompound("Trait Data"));
         }
     }
 
