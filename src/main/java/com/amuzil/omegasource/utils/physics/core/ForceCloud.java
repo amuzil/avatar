@@ -1,6 +1,7 @@
 package com.amuzil.omegasource.utils.physics.core;
 
 import com.amuzil.omegasource.utils.physics.modules.IPhysicsModule;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Quaterniond;
 
 import java.util.ArrayList;
@@ -13,6 +14,8 @@ public class ForceCloud extends PhysicsElement {
     private double[] rotation;
 
     private final List<IPhysicsModule> modules;
+    private double cellSize;
+    private ForceGrid spaceGrid;
 
 
     public ForceCloud(int type) {
@@ -20,6 +23,7 @@ public class ForceCloud extends PhysicsElement {
         this.rotation = new double[4];
         this.points = new ArrayList<>();
         this.modules = new ArrayList<>();
+        this.cellSize = 0.10;
     }
 
     public void addPoints(ForcePoint... points) {
@@ -89,8 +93,78 @@ public class ForceCloud extends PhysicsElement {
         }
     }
 
-    // 3D Vector Field based on ForcePoints. Used for sampling?
-    public int[][][] cloud() {
-        return null;
+    /**
+     * Build a uniform voxel grid of sampled vectors.
+     *
+     * @param centreX    world-space centre X
+     * @param centreY    world-space centre Y
+     * @param centreZ    world-space centre Z
+     * @param sizeX   number of cells along X
+     * @param sizeY   number of cells along Y
+     * @param sizeZ   number of cells along Z
+     * @param cellDim world-space cell edge length
+     * @return        3D array of Vec3 field samples
+     */
+    public Vec3[][][] buildVectorField(double centreX, double centreY, double centreZ,
+                                       int sizeX, int sizeY, int sizeZ,
+                                       double cellDim) {
+        Vec3[][][] field = new Vec3[sizeX][sizeY][sizeZ];
+
+        // ensure our grid is up-to-date
+        rebuildSpatialGrid();
+
+        // half-cell offset for sampling at cell centers
+        double half = cellDim * 0.5;
+
+        double halfGridX = (sizeX * cellDim) * 0.5;
+        double halfGridY = (sizeY * cellDim) * 0.5;
+        double halfGridZ = (sizeZ * cellDim) * 0.5;
+
+        double minX   = centreX - halfGridX;
+        double minY   = centreY - halfGridY;
+        double minZ   = centreZ - halfGridZ;
+
+        for (int ix = 0; ix < sizeX; ix++) {
+            double x = minX + ix * cellDim + half;
+            for (int iy = 0; iy < sizeY; iy++) {
+                double y = minY + iy * cellDim + half;
+                for (int iz = 0; iz < sizeZ; iz++) {
+                    double z = minZ + iz * cellDim + half;
+                    Vec3 samplePos = new Vec3(x, y, z);
+
+                    // grab only points in the neighboring cell block
+                    List<ForcePoint> neighbors = spaceGrid.queryNeighbors(samplePos);
+
+                    if (neighbors.isEmpty()) {
+                        field[ix][iy][iz] = Vec3.ZERO;
+                    } else {
+                        // average their velocity (or force) vectors
+                        Vec3 accum = Vec3.ZERO;
+                        for (ForcePoint p : neighbors) {
+                            accum = accum.add(p.vel());    // or p.force()
+                        }
+                        field[ix][iy][iz] = accum.scale(1.0 / neighbors.size());
+                    }
+                }
+            }
+        }
+        return field;
+    }
+
+    public  Vec3[][][] buildVectorField(Vec3 pos,
+                                        int sizeX, int sizeY, int sizeZ,
+                                        double cellDim) {
+        return buildVectorField(pos.x, pos.y, pos.z, sizeX, sizeY, sizeZ, cellDim);
+    }
+
+    public Vec3[][][] buildVectorField(int sizeX, int sizeY, int sizeZ, double cellDim) {
+        return buildVectorField(pos(), sizeX, sizeY, sizeZ, cellDim);
+    }
+
+    public void rebuildSpatialGrid() {
+        spaceGrid.clear();
+        for (ForcePoint p : points) {
+            spaceGrid.insert(p);               // uses p.pos() internally
+        }
     }
 }
