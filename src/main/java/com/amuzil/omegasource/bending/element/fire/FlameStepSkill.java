@@ -11,6 +11,8 @@ import com.amuzil.omegasource.bending.skill.FireSkill;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.AvatarProjectile;
+import com.amuzil.omegasource.entity.modules.IRenderModule;
+import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import com.amuzil.omegasource.utils.Constants;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
@@ -56,6 +58,7 @@ public class FlameStepSkill extends FireSkill {
         projectile.setMaxLifetime(lifetime);
         projectile.setNoGravity(true);
         projectile.setPos(entity.position());
+        projectile.addRenderModule((IRenderModule) ModuleRegistry.create("Particle"));
         projectile.init();
 
         if (!bender.getEntity().level().isClientSide()) {

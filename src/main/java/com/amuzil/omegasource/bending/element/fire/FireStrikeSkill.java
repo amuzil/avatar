@@ -67,6 +67,7 @@ public class FireStrikeSkill extends FireSkill {
         projectile.setNoGravity(true);
         projectile.setDamageable(false);
         projectile.setHittable(true);
+        projectile.addRenderModule((IRenderModule) ModuleRegistry.create("Particle"));
 
         projectile.addTraits(data.getTrait(Constants.MAX_SIZE, SizeTrait.class));
 
