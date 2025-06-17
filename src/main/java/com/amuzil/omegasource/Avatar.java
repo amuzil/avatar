@@ -10,18 +10,14 @@ import com.amuzil.omegasource.entity.modules.entity.TimeoutModule;
 import com.amuzil.omegasource.entity.modules.force.BindModule;
 import com.amuzil.omegasource.entity.modules.force.ChangeSpeedModule;
 import com.amuzil.omegasource.entity.modules.force.MoveModule;
-import com.amuzil.omegasource.entity.modules.render.ParticleModule;
+import com.amuzil.omegasource.entity.modules.render.PhotonModule;
 import com.amuzil.omegasource.input.InputModule;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.api.magus.registry.Registries;
 import com.amuzil.omegasource.utils.commands.AvatarCommands;
 import com.lowdragmc.photon.client.fx.FX;
 import com.lowdragmc.photon.client.fx.FXHelper;
-import dev.kosmx.playerAnim.api.layered.IAnimation;
-import dev.kosmx.playerAnim.api.layered.ModifierLayer;
-import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationFactory;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -86,7 +82,7 @@ public class Avatar {
         ModuleRegistry.register("FireTime", FireModule::new);
         ModuleRegistry.register("SimpleDamage", SimpleDamageModule::new);
         ModuleRegistry.register("ChangeSpeed", ChangeSpeedModule::new);
-        ModuleRegistry.register("Particle", ParticleModule::new);
+        ModuleRegistry.register("Photon", PhotonModule::new);
         ModuleRegistry.register("Bind", BindModule::new);
     }
 
@@ -117,13 +113,14 @@ public class Avatar {
             EntityRenderers.register(AvatarEntities.WATER_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
             EntityRenderers.register(AvatarEntities.EARTH_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
             EntityRenderers.register(AvatarEntities.FIRE_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
-            // Change later
+
             EntityRenderers.register(AvatarEntities.AVATAR_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
+            EntityRenderers.register(AvatarEntities.AVATAR_BIND_ENTITY_TYPE.get(), ThrownItemRenderer::new);
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
 
-            PlayerAnimationFactory.ANIMATION_DATA_FACTORY.registerFactory(
-                    ResourceLocation.fromNamespaceAndPath(MOD_ID, "animation"),
-                    42, Avatar::registerPlayerAnimation);
+//            PlayerAnimationFactory.ANIMATION_DATA_FACTORY.registerFactory(
+//                    ResourceLocation.fromNamespaceAndPath(MOD_ID, "animation"),
+//                    42, Avatar::registerPlayerAnimation);
         }
     }
 
@@ -142,8 +139,8 @@ public class Avatar {
         return isClient ? "Client-Side" : "Server-Side";
     }
 
-    private static IAnimation registerPlayerAnimation(AbstractClientPlayer player) {
-        // This will be invoked for every new player
-        return new ModifierLayer<>();
-    }
+//    private static IAnimation registerPlayerAnimation(AbstractClientPlayer player) {
+//        // This will be invoked for every new player
+//        return new ModifierLayer<>();
+//    }
 }

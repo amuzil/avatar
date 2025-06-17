@@ -21,8 +21,7 @@ public class BindModule implements IForceModule {
 
     @Override
     public void tick(AvatarEntity entity) {
-        entity.setDeltaMovement(entity.owner().position());
-        System.out.println("BindModule.tick: " + entity.getId() + " at " + entity.position());
+        entity.setPos(entity.owner().position());
     }
 
     @Override

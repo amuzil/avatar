@@ -12,15 +12,7 @@ import com.amuzil.omegasource.bending.skill.EarthSkill;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.ship.EarthController;
-import dev.kosmx.playerAnim.api.layered.AnimationStack;
-import dev.kosmx.playerAnim.api.layered.IAnimation;
-import dev.kosmx.playerAnim.api.layered.KeyframeAnimationPlayer;
-import dev.kosmx.playerAnim.api.layered.ModifierLayer;
-import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationAccess;
-import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationRegistry;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.phys.Vec3;
@@ -77,17 +69,18 @@ public class EarthBlockSkill extends EarthSkill {
 
         if (!bender.getEntity().level().isClientSide()) {
             assembleEarthShip(bender);
-        } else if (bender.getEntity() instanceof AbstractClientPlayer benderPlayer) {
-            AnimationStack animationStack = PlayerAnimationAccess.getPlayerAnimLayer(benderPlayer);
-//            animationStack.addAnimLayer(null, true);
-            var animation = (ModifierLayer<IAnimation>) PlayerAnimationAccess.getPlayerAssociatedData(benderPlayer).get(
-                    ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "animation"));
-            if (animation != null) {
-                animation.setAnimation(new KeyframeAnimationPlayer(PlayerAnimationRegistry.getAnimation(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "earth_block"))));
-                // You might use  animation.replaceAnimationWithFade(); to create fade effect instead of sudden change
-                // See javadoc for details
-            }
         }
+//        else if (bender.getEntity() instanceof AbstractClientPlayer benderPlayer) {
+//            AnimationStack animationStack = PlayerAnimationAccess.getPlayerAnimLayer(benderPlayer);
+////            animationStack.addAnimLayer(null, true);
+//            var animation = (ModifierLayer<IAnimation>) PlayerAnimationAccess.getPlayerAssociatedData(benderPlayer).get(
+//                    ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "animation"));
+//            if (animation != null) {
+//                animation.setAnimation(new KeyframeAnimationPlayer(PlayerAnimationRegistry.getAnimation(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "earth_block"))));
+//                // You might use  animation.replaceAnimationWithFade(); to create fade effect instead of sudden change
+//                // See javadoc for details
+//            }
+//        }
 
         SkillData data = bender.getSkillData(this);
         data.setSkillState(SkillState.RUN);

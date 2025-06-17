@@ -9,8 +9,10 @@ import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.form.BendingForm;
 import com.amuzil.omegasource.bending.skill.FireSkill;
 import com.amuzil.omegasource.capability.Bender;
+import com.amuzil.omegasource.entity.AvatarBind;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.AvatarProjectile;
+import com.amuzil.omegasource.entity.modules.IForceModule;
 import com.amuzil.omegasource.entity.modules.IRenderModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import com.amuzil.omegasource.utils.Constants;
@@ -51,18 +53,17 @@ public class FlameStepSkill extends FireSkill {
             motion = BendingForm.Type.Motion.FORWARD; // Default to forward if no motion is specified
         SkillData data = bender.getSkillData(this);
         int lifetime = data.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime();
-        AvatarEntity projectile = new AvatarProjectile(entity.level());
-        projectile.setElement(Elements.FIRE);
-        projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
-        projectile.setOwner(entity);
-        projectile.setMaxLifetime(lifetime);
-        projectile.setNoGravity(true);
-        projectile.setPos(entity.position());
-        projectile.addRenderModule((IRenderModule) ModuleRegistry.create("Particle"));
-        projectile.init();
+        AvatarEntity bound = new AvatarBind(entity.level());
+        bound.setElement(Elements.FIRE);
+        bound.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
+        bound.setOwner(entity);
+        bound.setMaxLifetime(lifetime);
+        bound.setNoGravity(true);
+        bound.setPos(entity.position());
+        bound.init();
 
         if (!bender.getEntity().level().isClientSide()) {
-            bender.getEntity().level().addFreshEntity(projectile);
+            bender.getEntity().level().addFreshEntity(bound);
             float dashSpeed = (float) Objects.requireNonNull(data.getTrait(Constants.DASH_SPEED, SpeedTrait.class)).getSpeed();
             Vec3 dashVec = Vec3.ZERO;
             switch (motion) {
@@ -75,7 +76,7 @@ public class FlameStepSkill extends FireSkill {
                 case RIGHTWARD ->
                         dashVec = entity.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(dashSpeed); // D
                 case UPWARD ->
-                    dashVec = bender.getDeltaMovement().add(0, dashSpeed / 3, 0).multiply(4, 1, 4); // SPACE
+                    dashVec = bender.getDeltaMovement().add(0, dashSpeed / 2, 0).multiply(4, 1, 4); // SPACE
                 case DOWNWARD ->
                     dashVec = bender.getDeltaMovement().add(0, dashSpeed / 3, 0).multiply(-2, -1, -2);
             }

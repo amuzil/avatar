@@ -1,8 +1,6 @@
 package com.amuzil.omegasource.entity.modules.force;
 
-import com.amuzil.omegasource.bending.form.BendingForms;
 import com.amuzil.omegasource.entity.AvatarEntity;
-import com.amuzil.omegasource.entity.AvatarProjectile;
 import com.amuzil.omegasource.entity.modules.IForceModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
