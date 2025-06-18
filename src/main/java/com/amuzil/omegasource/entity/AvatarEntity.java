@@ -37,6 +37,7 @@ public abstract class AvatarEntity extends Entity {
     private static final EntityDataAccessor<Optional<UUID>> OWNER_ID = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.OPTIONAL_UUID);
     private static final EntityDataAccessor<String> ELEMENT = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<String> FX = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<Boolean> ONE_SHOT_FX = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> COLLIDABLE = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DAMAGEABLE = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> PHYSICS = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
@@ -52,6 +53,7 @@ public abstract class AvatarEntity extends Entity {
     private Entity owner;
     private Element element;
     private String fxName;
+    private boolean fxOneShot = true;
     private boolean hittable = false;
     private boolean damageable = false;
 
@@ -266,6 +268,15 @@ public abstract class AvatarEntity extends Entity {
         return ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, this.entityData.get(FX));
     }
 
+    public void setFXOneShot(boolean fxOneShot) {
+        this.entityData.set(ONE_SHOT_FX, fxOneShot);
+        this.fxOneShot = this.entityData.get(ONE_SHOT_FX); // Doesn't live to see the next tick
+    }
+
+    public boolean oneShotFX() {
+        return this.entityData.get(ONE_SHOT_FX);
+    }
+
 
     public void setPhysics(boolean physics) {
         this.entityData.set(PHYSICS, physics);
@@ -280,6 +291,7 @@ public abstract class AvatarEntity extends Entity {
         this.entityData.define(OWNER_ID, Optional.empty());
         this.entityData.define(ELEMENT, Elements.FIRE.getId().toString());
         this.entityData.define(FX, "");
+        this.entityData.define(ONE_SHOT_FX, true);
         this.entityData.define(COLLIDABLE, false);
         this.entityData.define(DAMAGEABLE, false);
         this.entityData.define(PHYSICS, false);

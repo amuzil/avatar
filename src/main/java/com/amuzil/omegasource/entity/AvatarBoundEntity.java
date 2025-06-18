@@ -13,16 +13,16 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
 
-public class AvatarBind extends AvatarEntity implements ItemSupplier {
+public class AvatarBoundEntity extends AvatarEntity implements ItemSupplier {
 
-    private static final EntityDataAccessor<Float> WIDTH = SynchedEntityData.defineId(AvatarBind.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> HEIGHT = SynchedEntityData.defineId(AvatarBind.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> WIDTH = SynchedEntityData.defineId(AvatarBoundEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> HEIGHT = SynchedEntityData.defineId(AvatarBoundEntity.class, EntityDataSerializers.FLOAT);
 
-    public AvatarBind(Level pLevel) {
+    public AvatarBoundEntity(Level pLevel) {
         this(AvatarEntities.AVATAR_BIND_ENTITY_TYPE.get(), pLevel);
     }
 
-    public AvatarBind(EntityType<AvatarBind> pEntityType, Level pLevel) {
+    public AvatarBoundEntity(EntityType<AvatarBoundEntity> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
         addForceModule((IForceModule) ModuleRegistry.create("Bind"));
         addRenderModule((IRenderModule) ModuleRegistry.create("Photon"));

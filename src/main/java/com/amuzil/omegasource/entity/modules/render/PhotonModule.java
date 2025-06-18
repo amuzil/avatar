@@ -6,6 +6,7 @@ import com.lowdragmc.photon.client.fx.EntityEffect;
 import com.lowdragmc.photon.client.fx.FX;
 import com.lowdragmc.photon.client.fx.FXHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
 
 
 public class PhotonModule implements IRenderModule {
@@ -24,10 +25,12 @@ public class PhotonModule implements IRenderModule {
     public void tick(AvatarEntity entity) {
         // For starting effects per tick
         if (entity.level().isClientSide && entity.fxLocation() != null) {
-            FX fx = FXHelper.getFX(entity.fxLocation());
-            if (fx != null) {
-                EntityEffect entityEffect = new EntityEffect(fx, entity.level(), entity);
-                entityEffect.start();
+            if (entity.oneShotFX()) {
+                if (entity.tickCount <= 1) {
+                    startEntityEffect(FXHelper.getFX(entity.fxLocation()), entity);
+                }
+            } else {
+                startEntityEffect(FXHelper.getFX(entity.fxLocation()), entity);
             }
         }
     }
@@ -40,5 +43,12 @@ public class PhotonModule implements IRenderModule {
     @Override
     public void load(CompoundTag nbt) {
         this.id = nbt.getString("ID");
+    }
+
+    public static void startEntityEffect(FX fx, Entity entity) {
+        if (fx != null) {
+            EntityEffect entityEffect = new EntityEffect(fx, entity.level(), entity);
+            entityEffect.start();
+        }
     }
 }

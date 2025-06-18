@@ -9,12 +9,8 @@ import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.form.BendingForm;
 import com.amuzil.omegasource.bending.skill.FireSkill;
 import com.amuzil.omegasource.capability.Bender;
-import com.amuzil.omegasource.entity.AvatarBind;
+import com.amuzil.omegasource.entity.AvatarBoundEntity;
 import com.amuzil.omegasource.entity.AvatarEntity;
-import com.amuzil.omegasource.entity.AvatarProjectile;
-import com.amuzil.omegasource.entity.modules.IForceModule;
-import com.amuzil.omegasource.entity.modules.IRenderModule;
-import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import com.amuzil.omegasource.utils.Constants;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
@@ -28,7 +24,7 @@ public class FlameStepSkill extends FireSkill {
 
     public FlameStepSkill() {
         super(Avatar.MOD_ID, "flame_step");
-        addTrait(new SpeedTrait(Constants.DASH_SPEED, 1.25f));
+        addTrait(new SpeedTrait(Constants.DASH_SPEED, 1.4f));
         addTrait(new SizeTrait(Constants.SIZE, 1.0f));
         addTrait(new ColourTrait(0, 0, 0, Constants.FIRE_COLOUR));
         addTrait(new TimedTrait(Constants.MAX_RUNTIME, 60));
@@ -53,7 +49,7 @@ public class FlameStepSkill extends FireSkill {
             motion = BendingForm.Type.Motion.FORWARD; // Default to forward if no motion is specified
         SkillData data = bender.getSkillData(this);
         int lifetime = data.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime();
-        AvatarEntity bound = new AvatarBind(entity.level());
+        AvatarEntity bound = new AvatarBoundEntity(entity.level());
         bound.setElement(Elements.FIRE);
         bound.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
         bound.setOwner(entity);
