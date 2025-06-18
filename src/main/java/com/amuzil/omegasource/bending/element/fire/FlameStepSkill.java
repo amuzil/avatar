@@ -24,7 +24,7 @@ public class FlameStepSkill extends FireSkill {
 
     public FlameStepSkill() {
         super(Avatar.MOD_ID, "flame_step");
-        addTrait(new SpeedTrait(Constants.DASH_SPEED, 1.4f));
+        addTrait(new SpeedTrait(Constants.DASH_SPEED, 1.5f));
         addTrait(new SizeTrait(Constants.SIZE, 1.0f));
         addTrait(new ColourTrait(0, 0, 0, Constants.FIRE_COLOUR));
         addTrait(new TimedTrait(Constants.MAX_RUNTIME, 60));
@@ -49,11 +49,13 @@ public class FlameStepSkill extends FireSkill {
             motion = BendingForm.Type.Motion.FORWARD; // Default to forward if no motion is specified
         SkillData data = bender.getSkillData(this);
         int lifetime = data.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime();
+        TimedTrait time = data.getTrait(Constants.RUNTIME, TimedTrait.class);
+        time.setTime(0); // Reset fall damage nullification timer
         AvatarEntity bound = new AvatarBoundEntity(entity.level());
         bound.setElement(Elements.FIRE);
         bound.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
         bound.setOwner(entity);
-        bound.setMaxLifetime(lifetime);
+        bound.setMaxLifetime(lifetime / 3);
         bound.setNoGravity(true);
         bound.setPos(entity.position());
         bound.init();
@@ -74,14 +76,15 @@ public class FlameStepSkill extends FireSkill {
                 case UPWARD ->
                     dashVec = bender.getDeltaMovement().add(0, dashSpeed / 2, 0).multiply(4, 1, 4); // SPACE
                 case DOWNWARD ->
-                    dashVec = bender.getDeltaMovement().add(0, dashSpeed / 3, 0).multiply(-2, -1, -2);
+                    dashVec = bender.getDeltaMovement().add(0, -(dashSpeed / 3), 0);
             }
-            dashVec = dashVec.add(0, 0.3D, 0); // Add a little hop for better dash
-//                System.out.println("Dash Vec: " + dashVec);
-                entity.setDeltaMovement(dashVec);
-                entity.hurtMarked = true;
-                entity.hasImpulse = true;
-            }
+            if (motion != BendingForm.Type.Motion.DOWNWARD)
+                dashVec = dashVec.add(0, 0.3D, 0); // Add a little hop for better dash
+//            System.out.println("Dash Vec: " + dashVec);
+            entity.setDeltaMovement(dashVec);
+            entity.hurtMarked = true;
+            entity.hasImpulse = true;
+        }
 
         data.setSkillState(SkillState.RUN);
     }
