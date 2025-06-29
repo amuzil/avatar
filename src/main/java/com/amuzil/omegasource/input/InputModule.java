@@ -9,6 +9,7 @@ import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.form.ExecuteFormPacket;
 import com.amuzil.omegasource.network.packets.form.ReleaseFormPacket;
 import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
@@ -42,7 +43,7 @@ public class InputModule {
     private boolean isBending = true;
     private BendingForm.Type.Motion motion = BendingForm.Type.Motion.NONE;
     private final long DOUBLE_TAP_THRESHOLD = 250; // milliseconds
-    private final HashMap<BendingForm, Long> lastPressedForm = new HashMap<>();
+    private final HashMap<BendingForm.Type.Motion, Long> lastPressedForm = new HashMap<>();
     private final HashMap<Integer, Integer> glfwKeysDown = new HashMap<>();
     private Bender bender;
 
@@ -113,6 +114,23 @@ public class InputModule {
             }
         });
 
+        DASH_KEY_MAPPINGS.forEach((direction, key) -> {
+            if (key.isDown()) {
+                int heldTicks = glfwKeysDown.getOrDefault(key.getKey().getValue(), 0);
+                // Check <= 1 to account for FORM_KEY_MAPPINGS using default MC keys (W, A, S, D, SPACE)
+                if (heldTicks <= 1)
+                    if (isDoubleTap(direction)) {
+                        bender.setDeltaMovement(bender.getEntity().getDeltaMovement());
+                        bender.syncDeltaMovementToServer();
+                        sendFormPacket(BendingForms.STEP, false);
+                    }
+            } else {
+                if (glfwKeysDown.containsKey(key.getKey().getValue())) {
+                    releaseForm(BendingForms.STEP, key.getKey().getValue());
+                }
+            }
+        });
+
         MOUSE_FORM_MAPPINGS.forEach((key, form) -> {
             if (glfwKeysDown.containsKey(key)) {
                 int heldTicks = glfwKeysDown.getOrDefault(key, 0);
@@ -133,13 +151,8 @@ public class InputModule {
     private void checkForm(BendingForm form) { // Check if the form met the conditions before sending the packet
         if (isBending) {
             if (!(isHoldingCtrl || isHoldingAlt)) {
-                if (form.equals(BendingForms.STRIKE) || form.equals(BendingForms.BLOCK)) {
+                if (form.equals(BendingForms.STRIKE) || form.equals(BendingForms.BLOCK))
                     sendFormPacket(form, false);
-                } else if (isDoubleTap(form)) {
-                    bender.setDeltaMovement(bender.getEntity().getDeltaMovement());
-                    bender.syncDeltaMovementToServer();
-                    sendFormPacket(BendingForms.STEP, false);
-                }
             } else if (isHoldingCtrl && form.type().equals(BendingForm.Type.MOTION)) {
                 sendFormPacket(form, false);
             } else if (isHoldingAlt && form.type().equals(BendingForm.Type.SHAPE)) {
@@ -176,6 +189,7 @@ public class InputModule {
     private void trackBlockResult(BlockHitResult result) {
         BendingSelection selection = bender.getSelection();
         selection.addBlockPosition(result.getBlockPos());
+        System.out.println("Selected BlockPos: " + selection.blockPositions);
         bender.setSelection(selection);
         bender.setBlockPos(result.getBlockPos());
     }
@@ -205,17 +219,15 @@ public class InputModule {
         }
     }
 
-    private boolean isDoubleTap(BendingForm form) {
-        if (form.type().equals(BendingForm.Type.MOTION)) {
-            long currentTime = System.currentTimeMillis();
-            long lastTime = lastPressedForm.getOrDefault(form, 0L);
-            if (currentTime - lastTime < DOUBLE_TAP_THRESHOLD) {
-                lastPressedForm.put(form, 0L); // Reset to avoid triple tap
-                motion = form.direction();
-                return true;
-            }
-            lastPressedForm.put(form, currentTime);
+    private boolean isDoubleTap(BendingForm.Type.Motion dashDirection) {
+        long currentTime = System.currentTimeMillis();
+        long lastTime = lastPressedForm.getOrDefault(dashDirection, 0L);
+        if (currentTime - lastTime < DOUBLE_TAP_THRESHOLD) {
+            lastPressedForm.put(dashDirection, 0L); // Reset to avoid triple tap
+            motion = dashDirection;
+            return true;
         }
+        lastPressedForm.put(dashDirection, currentTime);
         motion = BendingForm.Type.Motion.NONE;
         return false;
     }

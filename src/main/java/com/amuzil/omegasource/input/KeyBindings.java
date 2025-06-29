@@ -18,6 +18,7 @@ import java.util.HashMap;
 @Mod.EventBusSubscriber(modid = Avatar.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class KeyBindings {
     static final HashMap<Integer, BendingForm> MOUSE_FORM_MAPPINGS = new HashMap<>();
+    static final HashMap<BendingForm.Type.Motion, KeyMapping> DASH_KEY_MAPPINGS = new HashMap<>();
     static final HashMap<BendingForm, KeyMapping> FORM_KEY_MAPPINGS = new HashMap<>();
     private static final KeyMapping toggleBendingKey = new KeyMapping(
             "key.av3.bending_toggle",
@@ -45,6 +46,7 @@ public class KeyBindings {
         createKeyMapping(BendingForms.COMBINE, InputConstants.KEY_B);
         createKeyMapping(BendingForms.ARC, InputConstants.KEY_LCONTROL);
         createKeyMapping(BendingForms.SHAPE, InputConstants.KEY_LALT);
+        createDashKeyMappings();
         // Add more mappings as needed
     }
 
@@ -58,6 +60,23 @@ public class KeyBindings {
         } else {
             MOUSE_FORM_MAPPINGS.put(defaultKey, form);
         }
+    }
+
+    private static void createDashKeyMappings() {
+        Minecraft mci = Minecraft.getInstance();
+
+        KeyMapping keyUp = mci.options.keyUp;
+        KeyMapping keyDown = mci.options.keyDown;
+        KeyMapping keyLeft = mci.options.keyLeft;
+        KeyMapping keyRight = mci.options.keyRight;
+        KeyMapping keyJump = mci.options.keyJump;
+
+        DASH_KEY_MAPPINGS.put(BendingForm.Type.Motion.FORWARD, keyUp);
+        DASH_KEY_MAPPINGS.put(BendingForm.Type.Motion.BACKWARD, keyDown);
+        DASH_KEY_MAPPINGS.put(BendingForm.Type.Motion.LEFTWARD, keyLeft);
+        DASH_KEY_MAPPINGS.put(BendingForm.Type.Motion.RIGHTWARD, keyRight);
+        DASH_KEY_MAPPINGS.put(BendingForm.Type.Motion.UPWARD, keyJump);
+        DASH_KEY_MAPPINGS.put(BendingForm.Type.Motion.DOWNWARD, FORM_KEY_MAPPINGS.get(BendingForms.LOWER));
     }
 
     public static KeyMapping getKeyMapping(BendingForm form) {
