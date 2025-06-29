@@ -119,11 +119,7 @@ public class InputModule {
                 int heldTicks = glfwKeysDown.getOrDefault(key.getKey().getValue(), 0);
                 // Check <= 1 to account for FORM_KEY_MAPPINGS using default MC keys (W, A, S, D, SPACE)
                 if (heldTicks <= 1)
-                    if (isDoubleTap(direction)) {
-                        bender.setDeltaMovement(bender.getEntity().getDeltaMovement());
-                        bender.syncDeltaMovementToServer();
-                        sendFormPacket(BendingForms.STEP, false);
-                    }
+                    checkDash(direction);
             } else {
                 if (glfwKeysDown.containsKey(key.getKey().getValue())) {
                     releaseForm(BendingForms.STEP, key.getKey().getValue());
@@ -218,16 +214,24 @@ public class InputModule {
             currentForm = BendingForms.NULL;
         }
     }
+    
+    private void checkDash(BendingForm.Type.Motion dashDirection) {
+        if (isDoubleTap(dashDirection)) {
+            bender.setDeltaMovement(bender.getEntity().getDeltaMovement());
+            bender.syncDeltaMovementToServer();
+            sendFormPacket(BendingForms.STEP, false);
+        }
+    }
 
-    private boolean isDoubleTap(BendingForm.Type.Motion dashDirection) {
+    private boolean isDoubleTap(BendingForm.Type.Motion direction) {
         long currentTime = System.currentTimeMillis();
-        long lastTime = lastPressedForm.getOrDefault(dashDirection, 0L);
+        long lastTime = lastPressedForm.getOrDefault(direction, 0L);
         if (currentTime - lastTime < DOUBLE_TAP_THRESHOLD) {
-            lastPressedForm.put(dashDirection, 0L); // Reset to avoid triple tap
-            motion = dashDirection;
+            lastPressedForm.put(direction, 0L); // Reset to avoid triple tap
+            motion = direction;
             return true;
         }
-        lastPressedForm.put(dashDirection, currentTime);
+        lastPressedForm.put(direction, currentTime);
         motion = BendingForm.Type.Motion.NONE;
         return false;
     }
