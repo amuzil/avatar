@@ -214,7 +214,7 @@ public class InputModule {
             currentForm = BendingForms.NULL;
         }
     }
-    
+
     private void checkDash(BendingForm.Type.Motion dashDirection) {
         if (isDoubleTap(dashDirection)) {
             bender.setDeltaMovement(bender.getEntity().getDeltaMovement());
