@@ -57,6 +57,7 @@ public class AirGustSkill extends AirSkill {
 
         AvatarProjectile projectile = new AvatarProjectile(level);
         projectile.setElement(Elements.AIR);
+        projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
         projectile.setOwner(entity);
         projectile.setMaxLifetime(lifetime);
         projectile.setWidth((float) size);
