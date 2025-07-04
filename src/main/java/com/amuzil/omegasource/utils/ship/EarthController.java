@@ -36,6 +36,7 @@ public final class EarthController implements ShipForcesInducer {
     private ServerShip ship;
     private LivingEntity entity;
     private Bender bender;
+    private List<OriginalBlock> originalBlocks;
     public final AtomicInteger tickCount = new AtomicInteger(0);
     public final AtomicInteger idleTickCount = new AtomicInteger(0);
 
@@ -82,15 +83,7 @@ public final class EarthController implements ShipForcesInducer {
         checkCollision();
 
         if (idleTickCount.get() >= 200) {
-            bender.getSelection().originalBlockPositions().forEach(block -> {
-                // TODO - Only restore block(s) from the associated ship
-//                System.out.println("EarthController: Restoring original block at " + block.pos());
-                ServerLevel level = (ServerLevel) entity.level();
-                Vector3dc shipYardPos = ship.getTransform().getPositionInShip();
-                BlockPos shipBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipYardPos));
-                level.destroyBlock(shipBlockPos, false);
-                level.setBlock(block.pos(), block.state(), 3);
-            });
+            cleanUpShip();
         }
     }
 
@@ -107,6 +100,17 @@ public final class EarthController implements ShipForcesInducer {
                 checkShipShipCollisions(level, ship);
             checkShipEntityCollisions(level, ship);
         }
+    }
+
+    private void cleanUpShip() {
+        originalBlocks.forEach(block -> {
+            ServerLevel level = (ServerLevel) entity.level();
+            Vector3dc shipYardPos = ship.getTransform().getPositionInShip();
+            BlockPos shipBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipYardPos));
+            level.destroyBlock(shipBlockPos, false);
+            level.setBlock(block.pos(), block.state(), 3);
+        });
+        bender.getSelection().originalBlocksMap().remove(ship.getId());
     }
 
     public void applyInvariantForce(Vector3dc force) {
@@ -193,6 +197,7 @@ public final class EarthController implements ShipForcesInducer {
             control.ship = ship;
             control.bender = bender;
             control.entity = bender.getEntity();
+            control.originalBlocks = bender.getSelection().originalBlocksMap().get(ship.getId());
             ship.setAttachment(EarthController.class, control);
             return control;
         }

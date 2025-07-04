@@ -70,20 +70,21 @@ public class VSUtils {
     public static void assembleEarthShip(Bender bender) {
         ServerLevel level = (ServerLevel) bender.getEntity().level();
         BlockPos blockPos = bender.getSelection().blockPos();
-        BlockState blockState = level.getBlockState(blockPos);
-        if (bender.getSelection().target() == BendingSelection.Target.BLOCK
-                && blockPos != null
-                && !VSGameUtilsKt.isBlockInShipyard(level, blockPos)
-                && !blockState.isAir()) {
-            String dimensionId = VSGameUtilsKt.getDimensionId(level);
-            ServerShip ship = VSGameUtilsKt.getShipObjectWorld(level).createNewShipAtBlock(VectorConversionsMCKt.toJOML(blockPos), false, 1, dimensionId);
-            BlockPos centerPos = VectorConversionsMCKt.toBlockPos(ship.getChunkClaim().getCenterBlockCoordinates(VSGameUtilsKt.getYRange(level), new Vector3i()));
+        if (blockPos != null) {
+            BlockState blockState = level.getBlockState(blockPos);
+            if (bender.getSelection().target() == BendingSelection.Target.BLOCK
+                    && !VSGameUtilsKt.isBlockInShipyard(level, blockPos)
+                    && !blockState.isAir()) {
+                String dimensionId = VSGameUtilsKt.getDimensionId(level);
+                ServerShip ship = VSGameUtilsKt.getShipObjectWorld(level).createNewShipAtBlock(VectorConversionsMCKt.toJOML(blockPos), false, 1, dimensionId);
+                BlockPos centerPos = VectorConversionsMCKt.toBlockPos(ship.getChunkClaim().getCenterBlockCoordinates(VSGameUtilsKt.getYRange(level), new Vector3i()));
 //                RelocationUtilKt.relocateBlock(level, blockPos, centerPos, true, ship, Rotation.NONE);
-            bender.getSelection().setOriginalBlockPositions(blockPos, blockState);
-            RelocationUtilKt.relocateBlock(level, blockPos, centerPos, true, ship, Rotation.NONE);
-            Vector3dc shipyardPos = ship.getTransform().getPositionInShip();
-            BlockPos shipyardBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipyardPos));
-            bender.getSelection().setBlockPos(shipyardBlockPos); // Important: Update BlockPos to the shipyard position
+                bender.getSelection().addOriginalBlocks(ship.getId(), blockPos, blockState);
+                RelocationUtilKt.relocateBlock(level, blockPos, centerPos, true, ship, Rotation.NONE);
+                Vector3dc shipyardPos = ship.getTransform().getPositionInShip();
+                BlockPos shipyardBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipyardPos));
+                bender.getSelection().setBlockPos(shipyardBlockPos); // Important: Update BlockPos to the shipyard position
+            }
         }
     }
 }

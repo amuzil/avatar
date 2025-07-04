@@ -6,13 +6,11 @@ import net.minecraft.nbt.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.INBTSerializable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 
 public class BendingSelection implements INBTSerializable<CompoundTag> {
-    public List<OriginalBlock> ogBlockPositions = new ArrayList<>();
+    private final Map<Long, List<OriginalBlock>> originalBlocksMap = new HashMap<>();
     private BlockPos blockPos;
     private List<UUID> entityIds = new ArrayList<>();
     private List<String> skillIds = new ArrayList<>();
@@ -42,20 +40,20 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
         target = Target.NONE;
     }
 
-    public void resetOriginalBlockPositions() {
-        ogBlockPositions.clear();
+    public void resetOriginalBlocks() {
+        originalBlocksMap.clear();
     }
 
-    public List<OriginalBlock> originalBlockPositions() {
-        return ogBlockPositions;
+    public Map<Long, List<OriginalBlock>> originalBlocksMap() {
+        return originalBlocksMap;
     }
 
-    public void setOriginalBlockPositions(BlockPos blockPos, BlockState blockState) {
-        ogBlockPositions.add(new OriginalBlock(blockPos, blockState));
+    public void addOriginalBlocks(long id, BlockPos blockPos, BlockState blockState) {
+        originalBlocksMap.put(id, Collections.singletonList(new OriginalBlock(blockPos, blockState)));
     }
 
-    public void setOriginalBlockPositions(List<OriginalBlock> originalBlockPositions) {
-        ogBlockPositions.addAll(originalBlockPositions);
+    public void addOriginalBlocks(long id, List<OriginalBlock> originalBlocks) {
+        originalBlocksMap.put(id, originalBlocks);
     }
 
     public void setSelf() {
