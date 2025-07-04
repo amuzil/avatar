@@ -1,5 +1,6 @@
 package com.amuzil.omegasource.utils.ship;
 
+import com.amuzil.omegasource.capability.Bender;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
@@ -34,7 +35,9 @@ public final class EarthController implements ShipForcesInducer {
     private volatile boolean toBeStaticUpdated = false;
     private ServerShip ship;
     private LivingEntity entity;
+    private Bender bender;
     public final AtomicInteger tickCount = new AtomicInteger(0);
+    public final AtomicInteger idleTickCount = new AtomicInteger(0);
 
     @Override
     public void applyForces(@NotNull PhysShip physShip) {
@@ -77,6 +80,18 @@ public final class EarthController implements ShipForcesInducer {
         }
 
         checkCollision();
+
+        if (idleTickCount.get() >= 200) {
+            bender.getSelection().originalBlockPositions().forEach(block -> {
+                // TODO - Only restore block(s) from the associated ship
+//                System.out.println("EarthController: Restoring original block at " + block.pos());
+                ServerLevel level = (ServerLevel) entity.level();
+                Vector3dc shipYardPos = ship.getTransform().getPositionInShip();
+                BlockPos shipBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipYardPos));
+                level.destroyBlock(shipBlockPos, false);
+                level.setBlock(block.pos(), block.state(), 3);
+            });
+        }
     }
 
     private void checkCollision() {
@@ -85,8 +100,9 @@ public final class EarthController implements ShipForcesInducer {
         double mag = velocity.length();
         boolean isMoving = mag > 0.1;
         boolean isMovingFast = mag > 2.0;
+        idleTickCount.incrementAndGet();
         if (isMoving || isControlled) {
-            tickCount.incrementAndGet();
+            tickCount.incrementAndGet(); idleTickCount.set(0);
             if (isMovingFast)
                 checkShipShipCollisions(level, ship);
             checkShipEntityCollisions(level, ship);
@@ -168,14 +184,15 @@ public final class EarthController implements ShipForcesInducer {
                 jomlAABB.maxX(), jomlAABB.maxY(), jomlAABB.maxZ());
     }
 
-    public static EarthController getOrCreate(LoadedServerShip ship, LivingEntity entity) {
+    public static EarthController getOrCreate(LoadedServerShip ship, Bender bender) {
         EarthController existing = ship.getAttachment(EarthController.class);
         if (existing != null) {
             return existing;
         } else {
             EarthController control = new EarthController();
             control.ship = ship;
-            control.entity = entity;
+            control.bender = bender;
+            control.entity = bender.getEntity();
             ship.setAttachment(EarthController.class, control);
             return control;
         }

@@ -92,6 +92,4 @@ public interface IBender extends INBTSerializable<CompoundTag> {
 
     // Load data
     void deserializeNBT(CompoundTag tag);
-
-    void setBlockPos(BlockPos blockPos);
 }

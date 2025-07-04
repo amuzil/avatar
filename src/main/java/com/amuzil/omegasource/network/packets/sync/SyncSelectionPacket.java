@@ -17,22 +17,19 @@ import java.util.function.Supplier;
 public class SyncSelectionPacket implements AvatarPacket {
     private final CompoundTag tag; // The NBT data to sync
     private final UUID playerUUID; // The UUID of the player
-    private final BlockPos blockPos; // The position of the block
 
-    public SyncSelectionPacket(CompoundTag tag, UUID playerUUID, BlockPos blockPos) {
+    public SyncSelectionPacket(CompoundTag tag, UUID playerUUID) {
         this.tag = tag;
         this.playerUUID = playerUUID;
-        this.blockPos = blockPos;
     }
 
     public static SyncSelectionPacket fromBytes(FriendlyByteBuf buf) {
-        return new SyncSelectionPacket(buf.readNbt(), buf.readUUID(), buf.readBlockPos());
+        return new SyncSelectionPacket(buf.readNbt(), buf.readUUID());
     }
 
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeNbt(tag);
         buf.writeUUID(playerUUID);
-        buf.writeBlockPos(blockPos);
     }
 
     public static boolean handle(SyncSelectionPacket msg, Supplier<NetworkEvent.Context> ctxSupplier) {
@@ -44,7 +41,6 @@ public class SyncSelectionPacket implements AvatarPacket {
                 assert player != null;
                 player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
                     bender.setSelection(new BendingSelection(msg.tag));
-                    bender.setBlockPos(msg.blockPos);
                     bender.markClean();
                 });
             }

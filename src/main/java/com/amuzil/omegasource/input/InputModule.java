@@ -9,7 +9,6 @@ import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.form.ExecuteFormPacket;
 import com.amuzil.omegasource.network.packets.form.ReleaseFormPacket;
 import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
@@ -161,16 +160,15 @@ public class InputModule {
 
     private void handleSelectRaycast() {
         if (isHoldingShift) {
-            // set selection type to self
-            bender.setSelection(new BendingSelection(SELF));
+            bender.getSelection().setSelf();
         } else {
             Minecraft mc = Minecraft.getInstance();
             double distance = 15; // TODO - Create Bender DataTrait
             assert mc.player != null;
             HitResult result = ProjectileUtil.getHitResultOnViewVector(mc.player, entity -> true, distance);
             switch (result.getType()) {
-                case ENTITY -> trackEntityResult((EntityHitResult)result);
-                case BLOCK -> trackBlockResult((BlockHitResult)result);
+                case ENTITY -> trackEntityResult((EntityHitResult) result);
+                case BLOCK -> trackBlockResult((BlockHitResult) result);
                 case MISS -> handleMiss();
             }
         }
@@ -179,15 +177,12 @@ public class InputModule {
 
     private void handleMiss() {
         // set selection type to none
-        bender.setSelection(new BendingSelection());
+        bender.getSelection().reset();
     }
 
     private void trackBlockResult(BlockHitResult result) {
-        BendingSelection selection = bender.getSelection();
-        selection.addBlockPosition(result.getBlockPos());
-        System.out.println("Selected BlockPos: " + selection.blockPositions);
-        bender.setSelection(selection);
-        bender.setBlockPos(result.getBlockPos());
+//        System.out.println("Selected BlockPos: " + result.getBlockPos());
+        bender.getSelection().setBlockPos(result.getBlockPos());
     }
 
     private void trackEntityResult(EntityHitResult result) {

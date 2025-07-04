@@ -27,6 +27,7 @@ import org.valkyrienskies.mod.common.util.VectorConversionsMCKt;
 import org.valkyrienskies.mod.util.RelocationUtilKt;
 
 import static com.amuzil.omegasource.bending.form.BendingForms.STRIKE;
+import static com.amuzil.omegasource.utils.ship.VSUtils.tossBlock;
 
 
 public class EarthTossSkill extends EarthSkill {
@@ -52,36 +53,38 @@ public class EarthTossSkill extends EarthSkill {
 
         if (!bender.getEntity().level().isClientSide()) {
             ServerLevel level = (ServerLevel) bender.getEntity().level();
-            if (bender.getSelection().target == BendingSelection.Target.BLOCK
-                    && !bender.getSelection().blockPositions.isEmpty()
-                    && !VSGameUtilsKt.isBlockInShipyard(level, bender.blockPos)
-                    && !level.getBlockState(bender.blockPos).isAir()) {
+            BlockPos blockPos = bender.getSelection().blockPos();
+            if (bender.getSelection().target() == BendingSelection.Target.BLOCK
+                    && blockPos != null
+                    && !VSGameUtilsKt.isBlockInShipyard(level, blockPos)
+                    && !level.getBlockState(blockPos).isAir()) {
                 String dimensionId = VSGameUtilsKt.getDimensionId(level);
-                ServerShip ship = VSGameUtilsKt.getShipObjectWorld(level).createNewShipAtBlock(VectorConversionsMCKt.toJOML(bender.blockPos), false, 1, dimensionId);
+                ServerShip ship = VSGameUtilsKt.getShipObjectWorld(level).createNewShipAtBlock(VectorConversionsMCKt.toJOML(blockPos), false, 1, dimensionId);
                 BlockPos centerPos = VectorConversionsMCKt.toBlockPos(ship.getChunkClaim().getCenterBlockCoordinates(VSGameUtilsKt.getYRange(level),new Vector3i()));
-                BlockPos selectedCentre = null;
-                int deltaX, deltaY, deltaZ;
-                for (BlockPos selectedBlock: bender.getSelection().blockPositions) {
-                    if(selectedCentre == null) {
-                        selectedCentre = selectedBlock;
-                        RelocationUtilKt.relocateBlock(level, selectedCentre, centerPos, true, ship, Rotation.NONE);
-                    } else {
-                        deltaX = selectedCentre.getX() - selectedBlock.getX();
-                        deltaY = selectedCentre.getY() - selectedBlock.getY();
-                        deltaZ = selectedCentre.getZ() - selectedBlock.getZ();
-
-                        RelocationUtilKt.relocateBlock(level, selectedBlock, centerPos.offset(deltaX, deltaY, deltaZ), true, ship, Rotation.NONE);
-                    }
-                }
+                RelocationUtilKt.relocateBlock(level, blockPos, centerPos, true, ship, Rotation.NONE);
+//                BlockPos selectedCentre = null;
+//                int deltaX, deltaY, deltaZ;
+//                for (BlockPos selectedBlock: bender.getSelection().blockPos()) {
+//                    if(selectedCentre == null) {
+//                        selectedCentre = selectedBlock;
+//                        RelocationUtilKt.relocateBlock(level, selectedCentre, centerPos, true, ship, Rotation.NONE);
+//                    } else {
+//                        deltaX = selectedCentre.getX() - selectedBlock.getX();
+//                        deltaY = selectedCentre.getY() - selectedBlock.getY();
+//                        deltaZ = selectedCentre.getZ() - selectedBlock.getZ();
+//
+//                        RelocationUtilKt.relocateBlock(level, selectedBlock, centerPos.offset(deltaX, deltaY, deltaZ), true, ship, Rotation.NONE);
+//                    }
+//                }
                 Vector3dc shipyardPos = ship.getTransform().getPositionInShip();
                 BlockPos shipyardBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipyardPos));
-                bender.setBlockPos(shipyardBlockPos);
+                bender.getSelection().setBlockPos(shipyardBlockPos);
                 if (ship != null) {
-                    System.out.println("Ship created: " + ship.getId() + " " + bender.blockPos);
+                    System.out.println("Ship created: " + ship.getId() + " " + bender.getSelection().blockPos());
                 }
             }
-            if (VSGameUtilsKt.isBlockInShipyard(level, bender.blockPos)) {
-                LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, bender.blockPos);
+            if (blockPos != null && VSGameUtilsKt.isBlockInShipyard(level, blockPos)) {
+                LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, blockPos);
                 if (serverShip != null) {
                     GameTickForceApplier gtfa = serverShip.getAttachment(GameTickForceApplier.class);
                     if (gtfa != null) {
@@ -93,13 +96,5 @@ public class EarthTossSkill extends EarthSkill {
 
         SkillData data = bender.getSkillData(this);
         data.setSkillState(SkillState.IDLE);
-    }
-
-    private static void tossBlock(LivingEntity entity, GameTickForceApplier gtfa, LoadedServerShip ship) {
-        double mass = ship.getInertiaData().getMass();
-        Vec3 vec3 = entity.getLookAngle().normalize()
-                .multiply(1500*mass, 1000*mass, 1500*mass);
-        Vector3d v3d = VectorConversionsMCKt.toJOML(vec3);
-        gtfa.applyInvariantForce(v3d);
     }
 }
