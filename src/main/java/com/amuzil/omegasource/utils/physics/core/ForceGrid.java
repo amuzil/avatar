@@ -99,7 +99,7 @@ public class ForceGrid {
                 for (long dz = -cellRadius; dz <= cellRadius; dz++) {
                     long key = (((xi + dx) & 0xFFFFF) << 40)
                             | (((yi + dy) & 0xFFFFF) << 20)
-                            |  ((zi + dz) & 0xFFFFF);
+                            |  ((zi + dz) & 0xFFFFF) + identifierHash;
                     List<ForcePoint> bucket = cells.get(key);
                     if (bucket != null) {
                         result.addAll(bucket);
@@ -109,7 +109,7 @@ public class ForceGrid {
         }
         return result;
     }
-
+    
     /**
      * Clear all cells (call each frame before re-inserting if needed).
      */

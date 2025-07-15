@@ -6,16 +6,13 @@ import org.joml.Quaterniond;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class ForceCloud extends PhysicsElement {
 
     private final List<ForcePoint> points;
-
-    private double[] rotation;
-
     private final List<IPhysicsModule> modules;
-    private double cellSize;
+    private double[] rotation;
+    private final double cellSize;
     private ForceGrid spaceGrid;
 
 
@@ -97,14 +94,14 @@ public class ForceCloud extends PhysicsElement {
     /**
      * Build a uniform voxel grid of sampled vectors.
      *
-     * @param centreX    world-space centre X
-     * @param centreY    world-space centre Y
-     * @param centreZ    world-space centre Z
+     * @param centreX world-space centre X
+     * @param centreY world-space centre Y
+     * @param centreZ world-space centre Z
      * @param sizeX   number of cells along X
      * @param sizeY   number of cells along Y
      * @param sizeZ   number of cells along Z
      * @param cellDim world-space cell edge length
-     * @return        3D array of Vec3 field samples
+     * @return 3D array of Vec3 field samples
      */
     public Vec3[][][] buildVectorField(double centreX, double centreY, double centreZ,
                                        int sizeX, int sizeY, int sizeZ,
@@ -121,9 +118,9 @@ public class ForceCloud extends PhysicsElement {
         double halfGridY = (sizeY * cellDim) * 0.5;
         double halfGridZ = (sizeZ * cellDim) * 0.5;
 
-        double minX   = centreX - halfGridX;
-        double minY   = centreY - halfGridY;
-        double minZ   = centreZ - halfGridZ;
+        double minX = centreX - halfGridX;
+        double minY = centreY - halfGridY;
+        double minZ = centreZ - halfGridZ;
 
         for (int ix = 0; ix < sizeX; ix++) {
             double x = minX + ix * cellDim + half;
@@ -152,9 +149,9 @@ public class ForceCloud extends PhysicsElement {
         return field;
     }
 
-    public  Vec3[][][] buildVectorField(Vec3 pos,
-                                        int sizeX, int sizeY, int sizeZ,
-                                        double cellDim) {
+    public Vec3[][][] buildVectorField(Vec3 pos,
+                                       int sizeX, int sizeY, int sizeZ,
+                                       double cellDim) {
         return buildVectorField(pos.x, pos.y, pos.z, sizeX, sizeY, sizeZ, cellDim);
     }
 
@@ -165,7 +162,8 @@ public class ForceCloud extends PhysicsElement {
     public void rebuildSpatialGrid() {
         // Build grid...
         if (spaceGrid == null)
-            spaceGrid = new ForceGrid(cellSize, id() + hashCode());
+            // Hash is hashed id + hashed pos
+            spaceGrid = new ForceGrid(cellSize, hashCode());
         spaceGrid.clear();
         for (ForcePoint p : points) {
             spaceGrid.insert(p);               // uses p.pos() internally
