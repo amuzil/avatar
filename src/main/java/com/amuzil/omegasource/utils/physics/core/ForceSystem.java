@@ -17,8 +17,9 @@ public class ForceSystem {
 
     private List<ForceEmitter> emitters;
 
-    public void tick() {
-        emitters.forEach(ForceEmitter::tick);
+    public void tick(double dt) {
+        for (ForceEmitter e : emitters) {
+            e.tick(dt);
+        }
     }
-
 }
