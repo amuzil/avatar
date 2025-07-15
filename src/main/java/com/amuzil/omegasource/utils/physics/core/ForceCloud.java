@@ -6,6 +6,7 @@ import org.joml.Quaterniond;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ForceCloud extends PhysicsElement {
 
@@ -162,6 +163,9 @@ public class ForceCloud extends PhysicsElement {
     }
 
     public void rebuildSpatialGrid() {
+        // Build grid...
+        if (spaceGrid == null)
+            spaceGrid = new ForceGrid(cellSize, id() + hashCode());
         spaceGrid.clear();
         for (ForcePoint p : points) {
             spaceGrid.insert(p);               // uses p.pos() internally

@@ -12,11 +12,20 @@ public class ForceGrid {
     private final double cellSize;
     private final Map<Long, List<ForcePoint>> cells = new HashMap<>();
 
+    // Hash made from whatever; used to identify where each point came from.
+    // Usually going to be id + hashed owner id.
+    private long identifierHash;
+
     /**
      * @param cellSize edge length of each cubic cell in world units
      */
     public ForceGrid(double cellSize) {
         this.cellSize = cellSize;
+    }
+
+    public ForceGrid(double cellSize, long identifierHash) {
+        this(cellSize);
+        this.identifierHash = identifierHash;
     }
 
     /**
@@ -29,7 +38,7 @@ public class ForceGrid {
         // pack into 20 bits each (mask for safety if world is large)
         return ((xi & 0xFFFFF) << 40)
                 | ((yi & 0xFFFFF) << 20)
-                |  (zi & 0xFFFFF);
+                |  (zi & 0xFFFFF) + identifierHash;
     }
 
     /**
