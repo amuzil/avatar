@@ -36,7 +36,7 @@ public final class EarthController implements ShipForcesInducer {
     private ServerShip ship;
     private LivingEntity entity;
     private Bender bender;
-    private List<OriginalBlock> originalBlocks;
+    private OriginalBlocks originalBlocks;
     public final AtomicInteger tickCount = new AtomicInteger(0);
     public final AtomicInteger idleTickCount = new AtomicInteger(0);
 
@@ -82,7 +82,7 @@ public final class EarthController implements ShipForcesInducer {
 
         checkCollision();
 
-        if (idleTickCount.get() >= 200) {
+        if (idleTickCount.get() > 400) {
             cleanUpShip();
         }
     }
@@ -103,7 +103,7 @@ public final class EarthController implements ShipForcesInducer {
     }
 
     private void cleanUpShip() {
-        originalBlocks.forEach(block -> {
+        originalBlocks.get().forEach(block -> {
             ServerLevel level = (ServerLevel) entity.level();
             Vector3dc shipYardPos = ship.getTransform().getPositionInShip();
             BlockPos shipBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipYardPos));
@@ -154,6 +154,7 @@ public final class EarthController implements ShipForcesInducer {
                 Vector3dc shipYardPos = serverShip.getTransform().getPositionInShip();
                 BlockPos blockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipYardPos));
                 level.destroyBlock(blockPos, false);
+                bender.startTickingOriginalBlocks(ship.getId());
             }
         });
     }
@@ -173,6 +174,7 @@ public final class EarthController implements ShipForcesInducer {
                 entity.addDeltaMovement(motion.scale(0.05));
                 entity.hasImpulse = true; entity.hurtMarked = true;
                 entity.hurt(entity.damageSources().thrown(entity, entity), 4f);
+                bender.startTickingOriginalBlocks(ship.getId());
             }
         });
     }

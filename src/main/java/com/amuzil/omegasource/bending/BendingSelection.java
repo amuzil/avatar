@@ -1,6 +1,7 @@
 package com.amuzil.omegasource.bending;
 
 import com.amuzil.omegasource.utils.ship.OriginalBlock;
+import com.amuzil.omegasource.utils.ship.OriginalBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.*;
 import net.minecraft.world.level.block.state.BlockState;
@@ -10,7 +11,7 @@ import java.util.*;
 
 
 public class BendingSelection implements INBTSerializable<CompoundTag> {
-    private final Map<Long, List<OriginalBlock>> originalBlocksMap = new HashMap<>();
+    private final Map<Long, OriginalBlocks> originalBlocksMap = new HashMap<>();
     private BlockPos blockPos;
     private List<UUID> entityIds = new ArrayList<>();
     private List<String> skillIds = new ArrayList<>();
@@ -44,16 +45,18 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
         originalBlocksMap.clear();
     }
 
-    public Map<Long, List<OriginalBlock>> originalBlocksMap() {
+    public Map<Long, OriginalBlocks> originalBlocksMap() {
         return originalBlocksMap;
     }
 
     public void addOriginalBlocks(long id, BlockPos blockPos, BlockState blockState) {
-        originalBlocksMap.put(id, Collections.singletonList(new OriginalBlock(blockPos, blockState)));
+        originalBlocksMap.put(id, new OriginalBlocks(
+                Collections.singletonList(new OriginalBlock(blockPos, blockState)))
+        );
     }
 
     public void addOriginalBlocks(long id, List<OriginalBlock> originalBlocks) {
-        originalBlocksMap.put(id, originalBlocks);
+        originalBlocksMap.put(id, new OriginalBlocks(originalBlocks));
     }
 
     public void setSelf() {

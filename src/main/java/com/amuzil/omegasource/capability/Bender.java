@@ -16,9 +16,11 @@ import com.amuzil.omegasource.network.packets.sync.SyncBenderPacket;
 import com.amuzil.omegasource.network.packets.sync.SyncFormPathPacket;
 import com.amuzil.omegasource.network.packets.sync.SyncMovementPacket;
 import com.amuzil.omegasource.network.packets.sync.SyncSelectionPacket;
+import com.amuzil.omegasource.utils.ship.OriginalBlocks;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -29,10 +31,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 
 
@@ -133,6 +132,27 @@ public class Bender implements IBender {
                 active = true;
             }
             tick--;
+        }
+        restoreOriginalBlocks();
+    }
+
+    public void startTickingOriginalBlocks(Long shipId) {
+        OriginalBlocks originalBlocks = selection.originalBlocksMap().get(shipId);
+        if (originalBlocks != null)
+            originalBlocks.startTicking(true);
+    }
+
+    private void restoreOriginalBlocks() {
+        Iterator<Map.Entry<Long, OriginalBlocks>> iterator = selection.originalBlocksMap().entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Long, OriginalBlocks> entry = iterator.next();
+            OriginalBlocks originalBlocks = entry.getValue();
+            if (originalBlocks.startedTicking() && entity.level() instanceof ServerLevel level) {
+                if (originalBlocks.incrementAndGetTickCount() > 200) {
+                    originalBlocks.restore(level);
+                    iterator.remove();
+                }
+            }
         }
     }
 

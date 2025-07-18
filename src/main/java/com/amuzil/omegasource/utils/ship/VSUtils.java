@@ -68,6 +68,7 @@ public class VSUtils {
     }
 
     public static void assembleEarthShip(Bender bender) {
+        // TODO - Make way to customize ship assembly
         ServerLevel level = (ServerLevel) bender.getEntity().level();
         BlockPos blockPos = bender.getSelection().blockPos();
         if (blockPos != null) {
