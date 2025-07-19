@@ -32,15 +32,36 @@ public class ForceGrid<T extends IPhysicsElement> {
      * Compute a 64-bit key from world coordinates.
      */
     private long hashKey(double x, double y, double z) {
-        long xi = (long) Math.floor(x / cellSize);
-        long yi = (long) Math.floor(y / cellSize);
-        long zi = (long) Math.floor(z / cellSize);
-        // pack into 20 bits each (mask for safety if world is large)
+        long[] coords = normalCoords(x, y, z);
+        return computeKey(coords[0], coords[1], coords[2]);
+    }
+
+    /**
+     * @param x
+     * @param y
+     * @param z
+     * @return Normalised array of world to hash coordinates before the actual key is computed.
+     */
+    private long[] normalCoords(double x, double y, double z) {
+        return new long[]{
+                (long) Math.floor(x / cellSize),
+                (long) Math.floor(y / cellSize),
+                (long) Math.floor(z / cellSize),
+        };
+    }
+
+    private long[] normalCoords(Vec3 pos) {
+        return normalCoords(pos.x, pos.y, pos.z);
+    }
+
+    private long computeKey(long xi, long yi, long zi) {
+        // pack into 20 bits each (mask for safety if the world is large)
         long key = ((xi & 0xFFFFF) << 40)
                 | ((yi & 0xFFFFF) << 20)
                 | (zi & 0xFFFFF);
         return key ^ identifierHash;
     }
+
 
     /**
      * Insert a point using its own position.
@@ -69,10 +90,10 @@ public class ForceGrid<T extends IPhysicsElement> {
      */
     public void remove(T p, Vec3 pos) {
         long key = hashKey(pos.x, pos.y, pos.z);
-        List<T> list = cells.get(key);
-        if (list != null) {
-            list.remove(p);
-            if (list.isEmpty()) {
+        List<T> bucket = cells.get(key);
+        if (bucket != null) {
+            bucket.remove(p);
+            if (bucket.isEmpty()) {
                 cells.remove(key);
             }
         }
@@ -92,16 +113,12 @@ public class ForceGrid<T extends IPhysicsElement> {
      * @param cellRadius how many cells to extend in each axis (>=0)
      */
     public List<T> queryNeighbors(Vec3 pos, int cellRadius) {
+        long[] coords = normalCoords(pos);
         List<T> result = new ArrayList<>();
-        long xi = (long) Math.floor(pos.x / cellSize);
-        long yi = (long) Math.floor(pos.y / cellSize);
-        long zi = (long) Math.floor(pos.z / cellSize);
         for (long dx = -cellRadius; dx <= cellRadius; dx++) {
             for (long dy = -cellRadius; dy <= cellRadius; dy++) {
                 for (long dz = -cellRadius; dz <= cellRadius; dz++) {
-                    long key = (((xi + dx) & 0xFFFFF) << 40)
-                            | (((yi + dy) & 0xFFFFF) << 20)
-                            | ((zi + dz) & 0xFFFFF) + identifierHash;
+                    long key = computeKey(coords[0] + dx, coords[1] + dy, coords[2] + dz);
                     List<T> bucket = cells.get(key);
                     if (bucket != null) {
                         result.addAll(bucket);
@@ -117,5 +134,9 @@ public class ForceGrid<T extends IPhysicsElement> {
      */
     public void clear() {
         cells.clear();
+    }
+
+    public long idHash() {
+        return this.identifierHash;
     }
 }
