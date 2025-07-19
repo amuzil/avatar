@@ -13,7 +13,7 @@ public class ForceCloud extends PhysicsElement {
     private final List<IPhysicsModule> modules;
     private double[] rotation;
     private final double cellSize;
-    private ForceGrid spaceGrid;
+    private ForceGrid<ForcePoint> spaceGrid;
 
 
     public ForceCloud(int type) {

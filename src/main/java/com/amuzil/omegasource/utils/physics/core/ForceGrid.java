@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Map;
 
 // A spatially hashed grid of forcepoints to prevent per-point neighbour checking. Yay!
-public class ForceGrid {
+public class ForceGrid<T extends IPhysicsElement> {
     private final double cellSize;
-    private final Map<Long, List<ForcePoint>> cells = new HashMap<>();
+    private final Map<Long, List<T>> cells = new HashMap<>();
 
     // Hash made from whatever; used to identify where each point came from.
     // Usually going to be id + hashed owner id.
@@ -36,22 +36,23 @@ public class ForceGrid {
         long yi = (long) Math.floor(y / cellSize);
         long zi = (long) Math.floor(z / cellSize);
         // pack into 20 bits each (mask for safety if world is large)
-        return ((xi & 0xFFFFF) << 40)
+        long key = ((xi & 0xFFFFF) << 40)
                 | ((yi & 0xFFFFF) << 20)
-                |  (zi & 0xFFFFF) + identifierHash;
+                | (zi & 0xFFFFF);
+        return key ^ identifierHash;
     }
 
     /**
      * Insert a point using its own position.
      */
-    public void insert(ForcePoint p) {
+    public void insert(T p) {
         insert(p, p.pos());
     }
 
     /**
      * Insert a point into its corresponding cell based on position.
      */
-    public void insert(ForcePoint p, Vec3 pos) {
+    public void insert(T p, Vec3 pos) {
         long key = hashKey(pos.x, pos.y, pos.z);
         cells.computeIfAbsent(key, k -> new ArrayList<>()).add(p);
     }
@@ -59,16 +60,16 @@ public class ForceGrid {
     /**
      * Remove a point by reading its stored previous position.
      */
-    public void remove(ForcePoint p) {
+    public void remove(T p) {
         remove(p, p.pos());
     }
 
     /**
      * Remove a point from the cell corresponding to the given position.
      */
-    public void remove(ForcePoint p, Vec3 pos) {
+    public void remove(T p, Vec3 pos) {
         long key = hashKey(pos.x, pos.y, pos.z);
-        List<ForcePoint> list = cells.get(key);
+        List<T> list = cells.get(key);
         if (list != null) {
             list.remove(p);
             if (list.isEmpty()) {
@@ -80,17 +81,18 @@ public class ForceGrid {
     /**
      * Query all points in the 27-cell neighborhood (radius=1) around a given position.
      */
-    public List<ForcePoint> queryNeighbors(Vec3 pos) {
+    public List<T> queryNeighbors(Vec3 pos) {
         return queryNeighbors(pos, 1);
     }
 
     /**
      * Query all points within a cubic neighborhood of given radius (in cells).
+     *
      * @param pos        world-space sample position
      * @param cellRadius how many cells to extend in each axis (>=0)
      */
-    public List<ForcePoint> queryNeighbors(Vec3 pos, int cellRadius) {
-        List<ForcePoint> result = new ArrayList<>();
+    public List<T> queryNeighbors(Vec3 pos, int cellRadius) {
+        List<T> result = new ArrayList<>();
         long xi = (long) Math.floor(pos.x / cellSize);
         long yi = (long) Math.floor(pos.y / cellSize);
         long zi = (long) Math.floor(pos.z / cellSize);
@@ -99,8 +101,8 @@ public class ForceGrid {
                 for (long dz = -cellRadius; dz <= cellRadius; dz++) {
                     long key = (((xi + dx) & 0xFFFFF) << 40)
                             | (((yi + dy) & 0xFFFFF) << 20)
-                            |  ((zi + dz) & 0xFFFFF) + identifierHash;
-                    List<ForcePoint> bucket = cells.get(key);
+                            | ((zi + dz) & 0xFFFFF) + identifierHash;
+                    List<T> bucket = cells.get(key);
                     if (bucket != null) {
                         result.addAll(bucket);
                     }
@@ -109,7 +111,7 @@ public class ForceGrid {
         }
         return result;
     }
-    
+
     /**
      * Clear all cells (call each frame before re-inserting if needed).
      */
