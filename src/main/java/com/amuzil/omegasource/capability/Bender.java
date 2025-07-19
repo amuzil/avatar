@@ -148,7 +148,7 @@ public class Bender implements IBender {
             Map.Entry<Long, OriginalBlocks> entry = iterator.next();
             OriginalBlocks originalBlocks = entry.getValue();
             if (originalBlocks.startedTicking() && entity.level() instanceof ServerLevel level) {
-                if (originalBlocks.incrementAndGetTickCount() > 200) {
+                if (originalBlocks.incrementAndGetTickCount() > 400) {
                     originalBlocks.restore(level);
                     iterator.remove();
                 }

@@ -59,6 +59,10 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
         originalBlocksMap.put(id, new OriginalBlocks(originalBlocks));
     }
 
+    public void setOriginalBlocksMap(Map<Long, OriginalBlocks> originalBlocksMap) {
+        this.originalBlocksMap.putAll(originalBlocksMap);
+    }
+
     public void setSelf() {
         if (target != Target.SELF) {
             this.reset();

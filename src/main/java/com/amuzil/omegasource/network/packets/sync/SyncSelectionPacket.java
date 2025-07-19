@@ -40,7 +40,9 @@ public class SyncSelectionPacket implements AvatarPacket {
                 ServerPlayer player = Objects.requireNonNull(ctx.getSender()).server.getPlayerList().getPlayer(msg.playerUUID);
                 assert player != null;
                 player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
-                    bender.setSelection(new BendingSelection(msg.tag));
+                    BendingSelection newBendingSelection = new BendingSelection(msg.tag);
+                    newBendingSelection.setOriginalBlocksMap(bender.getSelection().originalBlocksMap());
+                    bender.setSelection(newBendingSelection);
                     bender.markClean();
                 });
             }

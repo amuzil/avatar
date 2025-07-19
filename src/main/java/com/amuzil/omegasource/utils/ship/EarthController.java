@@ -151,10 +151,10 @@ public final class EarthController implements ShipForcesInducer {
                 dimensionId
         ).forEach(serverShip -> {
             if (serverShip.getId() != ship.getId()) {
+                bender.startTickingOriginalBlocks(serverShip.getId());
                 Vector3dc shipYardPos = serverShip.getTransform().getPositionInShip();
                 BlockPos blockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipYardPos));
                 level.destroyBlock(blockPos, false);
-                bender.startTickingOriginalBlocks(ship.getId());
             }
         });
     }
@@ -162,6 +162,7 @@ public final class EarthController implements ShipForcesInducer {
     public void checkShipEntityCollisions(ServerLevel level, ServerShip ship) {
         getShipEntityCollisions(level, ship.getWorldAABB()).forEach(entity -> {
             if (entity != null && entity != this.entity) {
+                bender.startTickingOriginalBlocks(ship.getId());
                 Vector3dc shipYardPos = ship.getTransform().getPositionInShip();
                 BlockPos blockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipYardPos));
                 level.destroyBlock(blockPos, false);
@@ -174,7 +175,6 @@ public final class EarthController implements ShipForcesInducer {
                 entity.addDeltaMovement(motion.scale(0.05));
                 entity.hasImpulse = true; entity.hurtMarked = true;
                 entity.hurt(entity.damageSources().thrown(entity, entity), 4f);
-                bender.startTickingOriginalBlocks(ship.getId());
             }
         });
     }
