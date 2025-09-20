@@ -126,8 +126,8 @@ public class FireProjectile extends ElementProjectile {
             }
 
             if (hitresult != null && hitresult.getType() != HitResult.Type.MISS && !flag) {
-                if (net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult))
-                    break;
+//                if (net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult))
+//                    break;
                 this.onHit(hitresult);
                 this.hasImpulse = true;
                 break;
