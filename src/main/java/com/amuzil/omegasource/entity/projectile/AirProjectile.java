@@ -114,8 +114,8 @@ public class AirProjectile extends ElementProjectile {
             }
 
             if (hitresult != null && hitresult.getType() != HitResult.Type.MISS && !flag) {
-                if (net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult))
-                    break;
+//                if (net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult))
+//                    break;
                 this.onHit(hitresult);
                 this.hasImpulse = true;
                 break;
@@ -204,7 +204,7 @@ public class AirProjectile extends ElementProjectile {
         this.ttk = ticks;
     }
 
-    protected void tickDespawn() {
+    public void tickDespawn() {
         ++this.life;
         if (this.life >= ttk) {
 //            System.out.println("BYE BYE BBY");

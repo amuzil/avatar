@@ -35,7 +35,7 @@ import java.util.function.Predicate;
 import static com.amuzil.omegasource.Avatar.*;
 
 
-public abstract class ElementProjectile extends Projectile implements ItemSupplier {
+public abstract class ElementProjectile extends AvatarProjectile implements ItemSupplier {
     public static final ItemStack PROJECTILE_ITEM = new ItemStack(Blocks.AIR);
     private static final EntityDataAccessor<Byte> ID_FLAGS = SynchedEntityData.defineId(ElementProjectile.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Byte> PIERCE_LEVEL = SynchedEntityData.defineId(ElementProjectile.class, EntityDataSerializers.BYTE);
@@ -126,7 +126,7 @@ public abstract class ElementProjectile extends Projectile implements ItemSuppli
         this.ttk = ticks;
     }
 
-    protected void tickDespawn() {
+    public void tickDespawn() {
         ++life;
         if (life >= ttk) {
 //            System.out.println("BYE BYE BBY " + life + " / " + ttk);

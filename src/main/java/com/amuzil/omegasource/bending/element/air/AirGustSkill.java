@@ -11,8 +11,10 @@ import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.skill.AirSkill;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.entity.AvatarProjectile;
+import com.amuzil.omegasource.entity.ElementProjectile;
 import com.amuzil.omegasource.entity.modules.IRenderModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
+import com.amuzil.omegasource.entity.projectile.AirProjectile;
 import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.maths.Point;
 import net.minecraft.world.entity.LivingEntity;
@@ -55,7 +57,7 @@ public class AirGustSkill extends AirSkill {
         double speed = data.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
         double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
-        AvatarProjectile projectile = new AvatarProjectile(level);
+        ElementProjectile projectile = new AirProjectile(entity, level);
         projectile.setElement(Elements.AIR);
         projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
         projectile.setOwner(entity);

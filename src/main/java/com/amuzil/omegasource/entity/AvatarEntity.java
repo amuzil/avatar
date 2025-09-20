@@ -87,18 +87,6 @@ public abstract class AvatarEntity extends Entity {
         }
     }
 
-    public static float lerpRotation(float pCurrentRotation, float pTargetRotation) {
-        while (pTargetRotation - pCurrentRotation < -180.0F) {
-            pCurrentRotation -= 360.0F;
-        }
-
-        while (pTargetRotation - pCurrentRotation >= 180.0F) {
-            pCurrentRotation += 360.0F;
-        }
-
-        return Mth.lerp(0.2F, pCurrentRotation, pTargetRotation);
-    }
-
     // --- Module Management ---
     public void printModules() {
         System.out.println(isClientOrServer(this.level().isClientSide()) + " " + this.getId() + " has the following modules:");
@@ -421,13 +409,6 @@ public abstract class AvatarEntity extends Entity {
     @Override
     public boolean isInvulnerable() {
         return damageable;
-    }
-
-    public void updateRotation() {
-        Vec3 vec3 = this.getDeltaMovement();
-        double d0 = vec3.horizontalDistance();
-        this.setXRot(lerpRotation(this.xRotO, (float) (Mth.atan2(vec3.y, d0) * (double) (180F / (float) Math.PI))));
-        this.setYRot(lerpRotation(this.yRotO, (float) (Mth.atan2(vec3.x, vec3.z) * (double) (180F / (float) Math.PI))));
     }
 
     //  TODO - These were copied from the projectile class. Need to update these to account for the other data
