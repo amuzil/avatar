@@ -149,14 +149,6 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile,
 
 
 
-    public void setOwner(@Nullable Entity pOwner) {
-        if (pOwner != null) {
-            this.ownerUUID = pOwner.getUUID();
-            this.cachedOwner = pOwner;
-        }
-
-    }
-
     /**
      * Returns null or the entityliving it was ignited by
      */
@@ -165,7 +157,11 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile,
         if (this.cachedOwner != null && !this.cachedOwner.isRemoved()) {
             return this.cachedOwner;
         } else if (this.ownerUUID != null && this.level() instanceof ServerLevel) {
-            this.cachedOwner = ((ServerLevel)this.level()).getEntity(this.ownerUUID);
+            this.cachedOwner = ((ServerLevel) this.level()).getEntity(this.ownerUUID);
+            return this.cachedOwner;
+        } else if (this.owner() != null) {
+            this.cachedOwner = this.owner();
+            this.ownerUUID = this.cachedOwner.getUUID();
             return this.cachedOwner;
         } else {
             return null;

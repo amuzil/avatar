@@ -141,6 +141,7 @@ public abstract class ElementProjectile extends AvatarProjectile implements Item
 
     @Override
     protected void defineSynchedData() {
+        super.defineSynchedData();
         this.entityData.define(ID_FLAGS, (byte)0);
         this.entityData.define(PIERCE_LEVEL, (byte)0);
     }
@@ -175,8 +176,6 @@ public abstract class ElementProjectile extends AvatarProjectile implements Item
 //            }
 //        }
 //    }
-
-    protected abstract void onHitEntity(EntityHitResult entityHitResult);
 
     protected void onHitBlock(BlockHitResult blockHitResult) {
 //        super.onHitBlock(blockHitResult);

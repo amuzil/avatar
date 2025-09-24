@@ -252,6 +252,7 @@ public class FireProjectile extends ElementProjectile {
 
     @Override
     protected void defineSynchedData() {
+        super.defineSynchedData();
         this.entityData.define(ID_FLAGS, (byte)0);
         this.entityData.define(PIERCE_LEVEL, (byte)0);
     }
@@ -279,8 +280,9 @@ public class FireProjectile extends ElementProjectile {
             if (this.getOwner() != null) {
 //                this.setNoGravity(false);
                 this.setOwner(entity);
-                this.shoot(entity.getViewVector(1).x, entity.getViewVector(1).y, entity.getViewVector(1).z, 0.75F, 1);
+                this.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), 0.75F, 0);
                 this.leftOwner = true;
+                System.out.println("Hit blaze, deflect!!!");
             }
         } else if (entity instanceof FireProjectile fireProjectile) {
             if (this.getOwner() != null && this.level().isClientSide) {
