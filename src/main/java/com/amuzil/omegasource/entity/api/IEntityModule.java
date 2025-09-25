@@ -1,9 +1,7 @@
-package com.amuzil.omegasource.entity.modules;
+package com.amuzil.omegasource.entity.api;
 
 import com.amuzil.omegasource.entity.AvatarEntity;
 import net.minecraft.nbt.CompoundTag;
-
-import javax.swing.text.html.parser.Entity;
 
 public interface IEntityModule {
 

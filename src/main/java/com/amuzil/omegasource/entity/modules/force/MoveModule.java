@@ -1,7 +1,7 @@
 package com.amuzil.omegasource.entity.modules.force;
 
 import com.amuzil.omegasource.entity.AvatarEntity;
-import com.amuzil.omegasource.entity.modules.IForceModule;
+import com.amuzil.omegasource.entity.api.IForceModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;

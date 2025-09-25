@@ -1,7 +1,7 @@
 package com.amuzil.omegasource.entity.modules.render;
 
 import com.amuzil.omegasource.entity.AvatarEntity;
-import com.amuzil.omegasource.entity.modules.IRenderModule;
+import com.amuzil.omegasource.entity.api.IRenderModule;
 import com.lowdragmc.photon.client.fx.EntityEffect;
 import com.lowdragmc.photon.client.fx.FX;
 import com.lowdragmc.photon.client.fx.FXHelper;

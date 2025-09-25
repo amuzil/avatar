@@ -1,5 +1,6 @@
 package com.amuzil.omegasource.entity.modules;
 
+import com.amuzil.omegasource.entity.api.IEntityModule;
 import net.minecraft.nbt.CompoundTag;
 
 import java.util.HashMap;

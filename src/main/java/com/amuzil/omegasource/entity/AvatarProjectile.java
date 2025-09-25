@@ -2,8 +2,8 @@ package com.amuzil.omegasource.entity;
 
 import com.amuzil.omegasource.bending.form.BendingForm;
 import com.amuzil.omegasource.bending.element.Elements;
-import com.amuzil.omegasource.entity.modules.IForceModule;
-import com.amuzil.omegasource.entity.modules.IRenderModule;
+import com.amuzil.omegasource.entity.api.IForceModule;
+import com.amuzil.omegasource.entity.api.IRenderModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import com.google.common.base.MoreObjects;
 import com.lowdragmc.photon.client.fx.EntityEffect;
@@ -23,7 +23,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.TraceableEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ItemSupplier;
-import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;

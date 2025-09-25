@@ -1,4 +1,4 @@
-package com.amuzil.omegasource.entity.modules;
+package com.amuzil.omegasource.entity.api;
 
 public interface ICollisionModule extends IEntityModule {
 }

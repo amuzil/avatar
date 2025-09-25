@@ -1,7 +1,7 @@
 package com.amuzil.omegasource.entity.modules.entity;
 
 import com.amuzil.omegasource.entity.AvatarEntity;
-import com.amuzil.omegasource.entity.modules.IEntityModule;
+import com.amuzil.omegasource.entity.api.IEntityModule;
 import net.minecraft.nbt.CompoundTag;
 
 public class TimeoutModule implements IEntityModule {

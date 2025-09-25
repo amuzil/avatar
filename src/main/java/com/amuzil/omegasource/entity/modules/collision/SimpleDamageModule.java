@@ -3,15 +3,15 @@ package com.amuzil.omegasource.entity.modules.collision;
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.DamageTrait;
 import com.amuzil.omegasource.entity.AvatarEntity;
-import com.amuzil.omegasource.entity.modules.IEntityModule;
+import com.amuzil.omegasource.entity.api.ICollisionModule;
 import com.amuzil.omegasource.utils.HitDetection;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.List;
 
-public class SimpleDamageModule implements IEntityModule {
+
+public class SimpleDamageModule implements ICollisionModule {
 
     String id = "simple_damage";
 

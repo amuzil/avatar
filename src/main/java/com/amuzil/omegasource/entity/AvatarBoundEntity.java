@@ -1,7 +1,7 @@
 package com.amuzil.omegasource.entity;
 
-import com.amuzil.omegasource.entity.modules.IForceModule;
-import com.amuzil.omegasource.entity.modules.IRenderModule;
+import com.amuzil.omegasource.entity.api.IForceModule;
+import com.amuzil.omegasource.entity.api.IRenderModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
