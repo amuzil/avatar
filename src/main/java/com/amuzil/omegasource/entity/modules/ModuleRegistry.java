@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+
 public class ModuleRegistry {
     private static final Map<String, Supplier<IEntityModule>> FACTORIES = new HashMap<>();
 

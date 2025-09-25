@@ -262,17 +262,17 @@ public class FireProjectile extends AvatarProjectile {
 //        }
 //    }
 
-    protected void onHitEntity(EntityHitResult entityHitResult) {
-        Entity entity = entityHitResult.getEntity();
-        if (entity instanceof Blaze) {
-            if (this.getOwner() != null) {
+//    protected void onHitEntity(EntityHitResult entityHitResult) {
+//        Entity entity = entityHitResult.getEntity();
+//        if (entity instanceof Blaze) {
+//            if (this.getOwner() != null) {
 //                this.setNoGravity(false);
-                this.setOwner(entity);
-                this.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), 0.75F, 0);
-                this.leftOwner = true;
-                System.out.println("Hit blaze, deflect!!!");
-            }
-        }
+//                this.setOwner(entity);
+//                this.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), 0.75F, 0);
+//                this.leftOwner = true;
+//                System.out.println("Hit blaze, deflect!!!");
+//            }
+//        }
 //        else if (entity instanceof FireProjectile fireProjectile) {
 //            if (this.getOwner() != null && this.level().isClientSide) {
 //                if (fireProjectile.arcActive && !fireProjectile.hasElement && this.checkLeftOwner()) {
@@ -309,20 +309,20 @@ public class FireProjectile extends AvatarProjectile {
 //                }
 //            }
 //        }
-        else if (entity instanceof Fireball fireBall) {
-            if (!this.getOwner().equals(fireBall.getOwner())) {
-                fireBall.discard();
-            }
-        } else if (entity instanceof AbstractArrow arrow) {
-            if (!this.getOwner().equals(arrow.getOwner())) {
-                arrow.discard();
-            }
-        } else {
-            float i = 10; // Deal 10 damage
-            entity.hurt(this.damageSources().thrown(this, this.getOwner()), i);
+//        else if (entity instanceof Fireball fireBall) {
+//            if (!this.getOwner().equals(fireBall.getOwner())) {
+//                fireBall.discard();
+//            }
+//        } else if (entity instanceof AbstractArrow arrow) {
+//            if (!this.getOwner().equals(arrow.getOwner())) {
+//                arrow.discard();
+//            }
+//        } else {
+//            float i = 10; // Deal 10 damage
+//            entity.hurt(this.damageSources().thrown(this, this.getOwner()), i);
 //            this.discard();
-        }
-    }
+//        }
+//    }
 
     protected void onHitBlock(BlockHitResult blockHitResult) {
 //        super.onHitBlock(blockHitResult);

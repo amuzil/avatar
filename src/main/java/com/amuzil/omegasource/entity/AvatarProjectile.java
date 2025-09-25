@@ -42,15 +42,11 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile,
     private UUID ownerUUID;
     @Nullable
     private Entity cachedOwner;
-    protected boolean leftOwner;
+    public boolean leftOwner;
     private boolean hasBeenShot;
 
     private static final EntityDataAccessor<Float> WIDTH = SynchedEntityData.defineId(AvatarProjectile.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> HEIGHT = SynchedEntityData.defineId(AvatarProjectile.class, EntityDataSerializers.FLOAT);
-
-//    public AvatarProjectile(Level pLevel) {
-//        this(AvatarEntities.AVATAR_PROJECTILE_ENTITY_TYPE.get(), pLevel);
-//    }
 
     public AvatarProjectile(EntityType<? extends AvatarProjectile> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);

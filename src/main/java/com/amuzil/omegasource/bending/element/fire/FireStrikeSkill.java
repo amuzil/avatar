@@ -11,6 +11,7 @@ import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.skill.FireSkill;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.entity.AvatarProjectile;
+import com.amuzil.omegasource.entity.api.ICollisionModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import com.amuzil.omegasource.entity.projectile.FireProjectile;
 import com.amuzil.omegasource.utils.Constants;
@@ -99,7 +100,8 @@ public class FireStrikeSkill extends FireSkill {
 
         // Damage module
         projectile.addTraits(data.getTrait(Constants.DAMAGE, DamageTrait.class));
-        projectile.addModule(ModuleRegistry.create("SimpleDamage"));
+//        projectile.addModule(ModuleRegistry.create("SimpleDamage"));
+        projectile.addCollisionModule((ICollisionModule) ModuleRegistry.create("FireCollision"));
 
         // Slow down over time
         projectile.addTraits(data.getTrait(Constants.SPEED_FACTOR, SpeedTrait.class));

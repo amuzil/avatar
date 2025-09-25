@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 
 import static com.amuzil.omegasource.Avatar.isClientOrServer;
 
+
 public abstract class AvatarEntity extends Entity {
 
     private static final EntityDataAccessor<Optional<UUID>> OWNER_ID = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.OPTIONAL_UUID);
