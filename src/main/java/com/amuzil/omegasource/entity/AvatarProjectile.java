@@ -54,6 +54,7 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile,
 
     public AvatarProjectile(EntityType<? extends AvatarProjectile> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
+        // TODO - NOTE: Modules are not synced between client and server unless added to the entity's constructor!
         addForceModule((IForceModule) ModuleRegistry.create("Move"));
         addRenderModule((IRenderModule) ModuleRegistry.create("Photon"));
 //        addCollisionModule((ICollisionModule) ModuleRegistry.create("Knockback"));

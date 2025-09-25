@@ -15,7 +15,8 @@ public class ModuleRegistry {
         FACTORIES.put(id, (Supplier<IEntityModule>) factory);
     }
 
-    /** Instantiate a fresh module by ID (for JSON defaults). */
+    /** Instantiate a fresh module by ID (for JSON defaults).
+     * NOTE: Modules are not synced between client and server unless added to the entity's constructor!*/
     public static IEntityModule create(String id) {
         Supplier<IEntityModule> sup = FACTORIES.get(id);
         return sup != null ? sup.get() : null;
