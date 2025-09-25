@@ -1,6 +1,7 @@
 package com.amuzil.omegasource.entity.collision;
 
 import com.amuzil.omegasource.entity.AvatarEntities;
+import com.amuzil.omegasource.entity.AvatarProjectile;
 import com.amuzil.omegasource.entity.ElementProjectile;
 import com.amuzil.omegasource.bending.element.Element;
 import net.minecraft.core.BlockPos;
@@ -24,30 +25,26 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 
-public class ElementCollision extends ElementProjectile {
+public class ElementCollision extends AvatarProjectile {
     private static final EntityDataAccessor<Byte> ID_FLAGS = SynchedEntityData.defineId(ElementCollision.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Byte> PIERCE_LEVEL = SynchedEntityData.defineId(ElementCollision.class, EntityDataSerializers.BYTE);
     private int life;
     private int ttk = 10;
 
-    public ElementCollision(EntityType<ElementCollision> type, Level level) {
+    public ElementCollision(EntityType<AvatarProjectile> type, Level level) {
         super(type, level);
     }
 
-    public ElementCollision(double x, double y, double z, Level level) {
-        this(AvatarEntities.COLLISION_ENTITY_TYPE.get(), level);
-        this.setPos(x, y, z);
-    }
+//    public ElementCollision(double x, double y, double z, Level level) {
+//        this(AvatarEntities.COLLISION_ENTITY_TYPE.get(), level);
+//        this.setPos(x, y, z);
+//    }
 
     public ElementCollision(LivingEntity livingEntity, Level level) {
-        this(livingEntity.getX(), livingEntity.getEyeY(), livingEntity.getZ(), level);
+        this(AvatarEntities.AVATAR_PROJECTILE_ENTITY_TYPE.get(), level);
+        this.setPos(livingEntity.getX(), livingEntity.getEyeY(), livingEntity.getZ());
         this.setOwner(livingEntity);
         this.setNoGravity(true);
-    }
-
-    @Override
-    public Element getElement() {
-        return null;
     }
 
     public void tick() {

@@ -1,6 +1,7 @@
 package com.amuzil.omegasource.entity.projectile;
 
 import com.amuzil.omegasource.entity.AvatarEntities;
+import com.amuzil.omegasource.entity.AvatarProjectile;
 import com.amuzil.omegasource.entity.ElementProjectile;
 import com.amuzil.omegasource.entity.collision.ElementCollision;
 import com.amuzil.omegasource.events.FormActivatedEvent;
@@ -35,29 +36,25 @@ import static com.amuzil.omegasource.Avatar.orb_bloom;
 import static com.amuzil.omegasource.Avatar.steam;
 
 
-public class FireProjectile extends ElementProjectile {
+public class FireProjectile extends AvatarProjectile {
     private static final EntityDataAccessor<Byte> ID_FLAGS = SynchedEntityData.defineId(FireProjectile.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Byte> PIERCE_LEVEL = SynchedEntityData.defineId(FireProjectile.class, EntityDataSerializers.BYTE);
 
-    public FireProjectile(EntityType<FireProjectile> type, Level level) {
+    public FireProjectile(EntityType<AvatarProjectile> type, Level level) {
         super(type, level);
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    public FireProjectile(double x, double y, double z, Level level) {
-        this(AvatarEntities.FIRE_PROJECTILE_ENTITY_TYPE.get(), level);
-        this.setPos(x, y, z);
-    }
+//    public FireProjectile(double x, double y, double z, Level level) {
+//        this(AvatarEntities.FIRE_PROJECTILE_ENTITY_TYPE.get(), level);
+//        this.setPos(x, y, z);
+//    }
 
     public FireProjectile(LivingEntity livingEntity, Level level) {
-        this(livingEntity.getX(), livingEntity.getEyeY(), livingEntity.getZ(), level);
+        this(AvatarEntities.AVATAR_PROJECTILE_ENTITY_TYPE.get(), level);
+        this.setPos(livingEntity.getX(), livingEntity.getEyeY(), livingEntity.getZ());
         this.setOwner(livingEntity);
         this.setNoGravity(true);
-    }
-
-    @Override
-    public Element getElement() {
-        return Elements.FIRE;
     }
 
     @Override
@@ -166,22 +163,13 @@ public class FireProjectile extends ElementProjectile {
         }
 
         Entity owner = this.getOwner();
-        if (arcActive) {
-            if (owner != null) {
-                Vec3[] pose = new Vec3[]{owner.position(), this.getOwner().getLookAngle()};
-                pose[1] = pose[1].scale((1.5)).add((0), (this.getOwner().getEyeHeight()), (0));
-                Vec3 newPos = pose[1].add(pose[0]);
-                this.setPos(newPos.x, newPos.y, newPos.z);
-            }
-        } else {
-            if (owner != null) {
-                Vec3 vec34 = this.getDeltaMovement();
-                double rateOfControl = 0.4; // Control/curve the shot projectile
-                Vec3 aim = this.getOwner().getLookAngle().multiply(rateOfControl, rateOfControl, rateOfControl);
-                this.setDeltaMovement(vec34.add(aim));
-            }
-            this.setPos(finalX, finalY, finalZ);
+        if (owner != null) {
+            Vec3 vec34 = this.getDeltaMovement();
+            double rateOfControl = 0.4; // Control/curve the shot projectile
+            Vec3 aim = this.getOwner().getLookAngle().multiply(rateOfControl, rateOfControl, rateOfControl);
+            this.setDeltaMovement(vec34.add(aim));
         }
+        this.setPos(finalX, finalY, finalZ);
 
         this.checkInsideBlocks();
     }
@@ -190,10 +178,10 @@ public class FireProjectile extends ElementProjectile {
     public void onFormEvent(FormActivatedEvent event) {
         Entity owner = this.getOwner();
         if (owner != null && event.getEntity().getId() == owner.getId()) {
-            if (event.getActiveForm().equals(BendingForms.STRIKE) && this.arcActive && this.hasElement) {
+            if (event.getActiveForm().equals(BendingForms.STRIKE)) {
                 // If LivingEntity owns this entity and has activated strike form, shoot held element
-                this.arcActive = false;
-                this.setTimeToKill(100);
+//                this.arcActive = false;
+//                this.setTimeToKill(100);
                 if (!this.level().isClientSide()) {
                     this.shoot(owner.getViewVector(1).x, owner.getViewVector(1).y, owner.getViewVector(1).z, 0.75F, 1);
                     this.discard();
@@ -284,41 +272,44 @@ public class FireProjectile extends ElementProjectile {
                 this.leftOwner = true;
                 System.out.println("Hit blaze, deflect!!!");
             }
-        } else if (entity instanceof FireProjectile fireProjectile) {
-            if (this.getOwner() != null && this.level().isClientSide) {
-                if (fireProjectile.arcActive && !fireProjectile.hasElement && this.checkLeftOwner()) {
+        }
+//        else if (entity instanceof FireProjectile fireProjectile) {
+//            if (this.getOwner() != null && this.level().isClientSide) {
+//                if (fireProjectile.arcActive && !fireProjectile.hasElement && this.checkLeftOwner()) {
 //                    this.setOwner(elementProjectile.getOwner()); // Give control to receiver
 //                    this.setDeltaMovement(0,0,0); // Full stop
 //                    this.arcActive = true; // Enable control of this shot projectile
-                    this.discard();
-                    fireProjectile.hasElement = true;
-
-                    AvatarNetwork.sendToServer(new ActivatedFormPacket(fireProjectile.getId()));
-                } else {
-                    if (!this.getOwner().equals(fireProjectile.getOwner())) {
-                        ElementCollision collisionEntity = new ElementCollision(this.getX(), this.getY(), this.getZ(), this.level());
-                        collisionEntity.setTimeToKill(5);
-                        this.level().addFreshEntity(collisionEntity);
-                        EntityEffect entityEffect = new EntityEffect(orb_bloom, this.level(), collisionEntity);
-                        entityEffect.start();
-                        this.discard();
-                        fireProjectile.discard();
-                    }
-                }
-            }
-        } else if (entity instanceof WaterProjectile waterProjectile) {
-            if (this.getOwner() != null && this.level().isClientSide) {
-                if (!this.getOwner().equals(waterProjectile.getOwner())) {
-                    ElementCollision collisionEntity = new ElementCollision(this.getX(), this.getY(), this.getZ(), this.level());
-                    collisionEntity.setTimeToKill(5);
-                    this.level().addFreshEntity(collisionEntity);
-                    EntityEffect entityEffect = new EntityEffect(steam, this.level(), collisionEntity);
-                    entityEffect.start();
-                    this.discard();
-                    waterProjectile.discard();
-                }
-            }
-        } else if (entity instanceof Fireball fireBall) {
+//                    this.discard();
+//                    fireProjectile.hasElement = true;
+//
+//                    AvatarNetwork.sendToServer(new ActivatedFormPacket(fireProjectile.getId()));
+//                } else {
+//                    if (!this.getOwner().equals(fireProjectile.getOwner())) {
+//                        ElementCollision collisionEntity = new ElementCollision(this.getX(), this.getY(), this.getZ(), this.level());
+//                        collisionEntity.setTimeToKill(5);
+//                        this.level().addFreshEntity(collisionEntity);
+//                        EntityEffect entityEffect = new EntityEffect(orb_bloom, this.level(), collisionEntity);
+//                        entityEffect.start();
+//                        this.discard();
+//                        fireProjectile.discard();
+//                    }
+//                }
+//            }
+//        }
+//        else if (entity instanceof WaterProjectile waterProjectile) {
+//            if (this.getOwner() != null && this.level().isClientSide) {
+//                if (!this.getOwner().equals(waterProjectile.getOwner())) {
+//                    ElementCollision collisionEntity = new ElementCollision(this.getX(), this.getY(), this.getZ(), this.level());
+//                    collisionEntity.setTimeToKill(5);
+//                    this.level().addFreshEntity(collisionEntity);
+//                    EntityEffect entityEffect = new EntityEffect(steam, this.level(), collisionEntity);
+//                    entityEffect.start();
+//                    this.discard();
+//                    waterProjectile.discard();
+//                }
+//            }
+//        }
+        else if (entity instanceof Fireball fireBall) {
             if (!this.getOwner().equals(fireBall.getOwner())) {
                 fireBall.discard();
             }

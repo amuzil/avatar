@@ -57,7 +57,7 @@ public class AirGustSkill extends AirSkill {
         double speed = data.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
         double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
-        ElementProjectile projectile = new AirProjectile(entity, level);
+        AvatarProjectile projectile = new AirProjectile(entity, level);
         projectile.setElement(Elements.AIR);
         projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
         projectile.setOwner(entity);

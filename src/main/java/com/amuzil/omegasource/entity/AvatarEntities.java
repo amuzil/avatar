@@ -18,25 +18,25 @@ public class AvatarEntities {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
             DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, Avatar.MOD_ID);
 
-    public static final RegistryObject<EntityType<AirProjectile>> AIR_PROJECTILE_ENTITY_TYPE =
-            ENTITY_TYPES.register("air_projectile", () -> EntityType.Builder.<AirProjectile>of(AirProjectile::new, MobCategory.MISC)
-                    .sized(0.5f, 0.5f).build("air_projectile"));
-
-    public static final RegistryObject<EntityType<WaterProjectile>> WATER_PROJECTILE_ENTITY_TYPE =
-            ENTITY_TYPES.register("water_projectile", () -> EntityType.Builder.<WaterProjectile>of(WaterProjectile::new, MobCategory.MISC)
-                    .sized(0.5f, 0.5f).build("water_projectile"));
-
-    public static final RegistryObject<EntityType<EarthProjectile>> EARTH_PROJECTILE_ENTITY_TYPE =
-            ENTITY_TYPES.register("earth_projectile", () -> EntityType.Builder.<EarthProjectile>of(EarthProjectile::new, MobCategory.MISC)
-                    .sized(0.5f, 0.5f).build("earth_projectile"));
-
-    public static final RegistryObject<EntityType<FireProjectile>> FIRE_PROJECTILE_ENTITY_TYPE =
-            ENTITY_TYPES.register("fire_projectile", () -> EntityType.Builder.<FireProjectile>of(FireProjectile::new, MobCategory.MISC)
-                    .sized(0.5f, 0.5f).build("fire_projectile"));
-
-    public static final RegistryObject<EntityType<ElementCollision>> COLLISION_ENTITY_TYPE =
-            ENTITY_TYPES.register("element_collision", () -> EntityType.Builder.<ElementCollision>of(ElementCollision::new, MobCategory.MISC)
-                    .sized(0.5f, 0.5f).build("element_collision"));
+//    public static final RegistryObject<EntityType<AirProjectile>> AIR_PROJECTILE_ENTITY_TYPE =
+//            ENTITY_TYPES.register("air_projectile", () -> EntityType.Builder.<AirProjectile>of(AirProjectile::new, MobCategory.MISC)
+//                    .sized(0.5f, 0.5f).build("air_projectile"));
+//
+//    public static final RegistryObject<EntityType<WaterProjectile>> WATER_PROJECTILE_ENTITY_TYPE =
+//            ENTITY_TYPES.register("water_projectile", () -> EntityType.Builder.<WaterProjectile>of(WaterProjectile::new, MobCategory.MISC)
+//                    .sized(0.5f, 0.5f).build("water_projectile"));
+//
+//    public static final RegistryObject<EntityType<EarthProjectile>> EARTH_PROJECTILE_ENTITY_TYPE =
+//            ENTITY_TYPES.register("earth_projectile", () -> EntityType.Builder.<EarthProjectile>of(EarthProjectile::new, MobCategory.MISC)
+//                    .sized(0.5f, 0.5f).build("earth_projectile"));
+//
+//    public static final RegistryObject<EntityType<FireProjectile>> FIRE_PROJECTILE_ENTITY_TYPE =
+//            ENTITY_TYPES.register("fire_projectile", () -> EntityType.Builder.<FireProjectile>of(FireProjectile::new, MobCategory.MISC)
+//                    .sized(0.5f, 0.5f).build("fire_projectile"));
+//
+//    public static final RegistryObject<EntityType<ElementCollision>> COLLISION_ENTITY_TYPE =
+//            ENTITY_TYPES.register("element_collision", () -> EntityType.Builder.<ElementCollision>of(ElementCollision::new, MobCategory.MISC)
+//                    .sized(0.5f, 0.5f).build("element_collision"));
 
     public static final  RegistryObject<EntityType<AvatarProjectile>> AVATAR_PROJECTILE_ENTITY_TYPE =
             ENTITY_TYPES.register("avatar_projectile", () -> EntityType.Builder.<AvatarProjectile>of(AvatarProjectile::new, MobCategory.MISC)

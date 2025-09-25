@@ -65,19 +65,6 @@ public abstract class ElementProjectile extends AvatarProjectile implements Item
 
     public abstract Element getElement();
 
-    public void tick() {
-        if (!this.hasBeenShot) {
-            this.gameEvent(GameEvent.PROJECTILE_SHOOT, this.getOwner());
-            this.hasBeenShot = true;
-        }
-
-        if (!this.leftOwner) {
-            this.leftOwner = this.checkLeftOwner();
-        }
-
-        super.tick();
-    }
-
     @Nullable
     protected EntityHitResult findHitEntity(Vec3 pos, Vec3 delta) {
         return getEntityHitResult(this.level(), this, pos, delta,
@@ -113,7 +100,6 @@ public abstract class ElementProjectile extends AvatarProjectile implements Item
             Entity entity = this.getOwner();
             if (entity != null) {
                 if (otherEntity instanceof ElementProjectile other) {
-//                    System.out.println("arcActive: " + other.arcActive);
                     if (other.arcActive)
                         return true;
                 }
@@ -186,91 +172,90 @@ public abstract class ElementProjectile extends AvatarProjectile implements Item
         super.onHit(hitResult);
         if (!this.level().isClientSide) {
             this.level().broadcastEntityEvent(this, (byte)3);
-//            this.discard();
         }
     }
 
-    public void control(float scale, BendingForm form) {
-        this.arcActive = true;
-        if (form == BendingForms.NULL) {
-            this.hasElement = true;
-            this.setTimeToKill(2400);
-        }
-        Entity owner = this.getOwner();
-        assert owner != null;
-        Vec3[] pose = new Vec3[]{owner.position(), owner.getLookAngle()};
-        pose[1] = pose[1].scale((scale)).add((0), (owner.getEyeHeight()), (0));
-        Vec3 newPos = pose[1].add(pose[0]);
-        this.setPos(newPos.x, newPos.y, newPos.z);
-    }
+//    public void control(float scale, BendingForm form) {
+//        this.arcActive = true;
+//        if (form == BendingForms.NULL) {
+//            this.hasElement = true;
+//            this.setTimeToKill(2400);
+//        }
+//        Entity owner = this.getOwner();
+//        assert owner != null;
+//        Vec3[] pose = new Vec3[]{owner.position(), owner.getLookAngle()};
+//        pose[1] = pose[1].scale((scale)).add((0), (owner.getEyeHeight()), (0));
+//        Vec3 newPos = pose[1].add(pose[0]);
+//        this.setPos(newPos.x, newPos.y, newPos.z);
+//    }
 
     @Override
     public ItemStack getItem() {
         return PROJECTILE_ITEM;
     }
 
-    public static ElementProjectile createElementEntity(BendingForm form, Element element, ServerPlayer player, ServerLevel level) {
-        if (element == Elements.AIR) {
-            return new AirProjectile(player, level);
-        } else if (element == Elements.WATER) {
-            return new WaterProjectile(player, level);
-        } else if (element == Elements.EARTH) {
-            return new EarthProjectile(player, level);
-        } else if (element == Elements.FIRE) {
-            return new FireProjectile(player, level);
-        } else {
-            return null;
-        }
-    }
+//    public static ElementProjectile createElementEntity(BendingForm form, Element element, ServerPlayer player, ServerLevel level) {
+//        if (element == Elements.AIR) {
+//            return new AirProjectile(player, level);
+//        } else if (element == Elements.WATER) {
+//            return new WaterProjectile(player, level);
+//        } else if (element == Elements.EARTH) {
+//            return new EarthProjectile(player, level);
+//        } else if (element == Elements.FIRE) {
+//            return new FireProjectile(player, level);
+//        } else {
+//            return null;
+//        }
+//    }
 
 //     Method to start initial visual effect
-    public void startEffect(BendingForm form, LivingEntity player) {
-        this.form = form; // NOTE: Need this to ensure form is set client-side before onHit event
-        FX fx = null;
-        if (getElement().equals(Elements.FIRE)) {
-            if (form.name().equals("strike"))
-                fx = fire_bloom_perma;
-            if (form.name().equals("block"))
-                fx = blue_fire_perma;
-            if (form.name().equals("arc")) {
-                fx = null;
-                arcActive = true;
-            }
-            if (form.name().equals("null")) {
-                fx = fire_bloom_perma;
-                arcActive = true;
-                hasElement = true;
-                this.setTimeToKill(2400);
-            }
-            if (form.name().equals("step"))
-                fx = blue_fire_perma;
-        } else if (getElement().equals(Elements.WATER)) {
-            if (form.name().equals("strike"))
-                fx = water;
-            if (form.name().equals("block"))
-                fx = water;
-            if (form.name().equals("arc")) {
-                fx = water;
-                arcActive = true;
-            }
-            if (form.name().equals("null")) {
-                fx = water;
-                arcActive = true;
-                hasElement = true;
-                this.setTimeToKill(2400);
-            }
-            if (form.name().equals("step"))
-                fx = blue_fire_perma;
-        }
-        if (fx != null) {
-            EntityEffect entityEffect = new EntityEffect(fx, this.level(), this);
-            entityEffect.start();
-        }
-    }
-
-    public static List<Entity> getNearbyEntities(Entity entity, double blocksRadius) {
-        AABB aabb = entity.getBoundingBox().expandTowards(entity.getDeltaMovement()).inflate(blocksRadius);
-        assert Minecraft.getInstance().level != null;
-        return Minecraft.getInstance().level.getEntities(entity, aabb).stream().toList();
-    }
+//    public void startEffect(BendingForm form, LivingEntity player) {
+//        this.form = form; // NOTE: Need this to ensure form is set client-side before onHit event
+//        FX fx = null;
+//        if (getElement().equals(Elements.FIRE)) {
+//            if (form.name().equals("strike"))
+//                fx = fire_bloom_perma;
+//            if (form.name().equals("block"))
+//                fx = blue_fire_perma;
+//            if (form.name().equals("arc")) {
+//                fx = null;
+//                arcActive = true;
+//            }
+//            if (form.name().equals("null")) {
+//                fx = fire_bloom_perma;
+//                arcActive = true;
+//                hasElement = true;
+//                this.setTimeToKill(2400);
+//            }
+//            if (form.name().equals("step"))
+//                fx = blue_fire_perma;
+//        } else if (getElement().equals(Elements.WATER)) {
+//            if (form.name().equals("strike"))
+//                fx = water;
+//            if (form.name().equals("block"))
+//                fx = water;
+//            if (form.name().equals("arc")) {
+//                fx = water;
+//                arcActive = true;
+//            }
+//            if (form.name().equals("null")) {
+//                fx = water;
+//                arcActive = true;
+//                hasElement = true;
+//                this.setTimeToKill(2400);
+//            }
+//            if (form.name().equals("step"))
+//                fx = blue_fire_perma;
+//        }
+//        if (fx != null) {
+//            EntityEffect entityEffect = new EntityEffect(fx, this.level(), this);
+//            entityEffect.start();
+//        }
+//    }
+//
+//    public static List<Entity> getNearbyEntities(Entity entity, double blocksRadius) {
+//        AABB aabb = entity.getBoundingBox().expandTowards(entity.getDeltaMovement()).inflate(blocksRadius);
+//        assert Minecraft.getInstance().level != null;
+//        return Minecraft.getInstance().level.getEntities(entity, aabb).stream().toList();
+//    }
 }

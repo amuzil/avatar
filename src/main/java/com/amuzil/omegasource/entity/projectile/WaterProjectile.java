@@ -1,6 +1,7 @@
 package com.amuzil.omegasource.entity.projectile;
 
 import com.amuzil.omegasource.entity.AvatarEntities;
+import com.amuzil.omegasource.entity.AvatarProjectile;
 import com.amuzil.omegasource.entity.ElementProjectile;
 import com.amuzil.omegasource.entity.collision.ElementCollision;
 import com.amuzil.omegasource.bending.element.Element;
@@ -30,28 +31,24 @@ import java.util.function.Predicate;
 import static com.amuzil.omegasource.Avatar.steam;
 
 
-public class WaterProjectile extends ElementProjectile {
+public class WaterProjectile extends AvatarProjectile {
     private static final EntityDataAccessor<Byte> ID_FLAGS = SynchedEntityData.defineId(WaterProjectile.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Byte> PIERCE_LEVEL = SynchedEntityData.defineId(WaterProjectile.class, EntityDataSerializers.BYTE);
 
-    public WaterProjectile(EntityType<WaterProjectile> type, Level level) {
+    public WaterProjectile(EntityType<AvatarProjectile> type, Level level) {
         super(type, level);
     }
 
-    public WaterProjectile(double x, double y, double z, Level level) {
-        this(AvatarEntities.WATER_PROJECTILE_ENTITY_TYPE.get(), level);
-        this.setPos(x, y, z);
-    }
+//    public WaterProjectile(double x, double y, double z, Level level) {
+//        this(AvatarEntities.WATER_PROJECTILE_ENTITY_TYPE.get(), level);
+//        this.setPos(x, y, z);
+//    }
 
     public WaterProjectile(LivingEntity livingEntity, Level level) {
-        this(livingEntity.getX(), livingEntity.getEyeY(), livingEntity.getZ(), level);
+        this(AvatarEntities.AVATAR_PROJECTILE_ENTITY_TYPE.get(), level);
+        this.setPos(livingEntity.getX(), livingEntity.getEyeY(), livingEntity.getZ());
         this.setOwner(livingEntity);
         this.setNoGravity(true);
-    }
-
-    @Override
-    public Element getElement() {
-        return Elements.WATER;
     }
 
     public void tick() {
@@ -152,7 +149,7 @@ public class WaterProjectile extends ElementProjectile {
         }
 
         Entity owner = this.getOwner();
-        if (arcActive) {
+        if (true) {
             if (owner != null) {
                 Vec3[] pose = new Vec3[]{owner.position(), this.getOwner().getLookAngle()};
                 pose[1] = pose[1].scale((1.5)).add((0), (this.getOwner().getEyeHeight()), (0));
@@ -236,17 +233,19 @@ public class WaterProjectile extends ElementProjectile {
             float i = 20; // Deal 20 damage
             entity.hurt(this.damageSources().thrown(this, this.getOwner()), i);
             this.discard();
-        } else if (entity instanceof FireProjectile fireProjectile) {
-            if (this.getOwner() != null && this.level().isClientSide) {
-                ElementCollision collisionEntity = new ElementCollision(this.getX(), this.getY(), this.getZ(), this.level());
-                collisionEntity.setTimeToKill(5);
-                this.level().addFreshEntity(collisionEntity);
-                EntityEffect entityEffect = new EntityEffect(steam, this.level(), collisionEntity);
-                entityEffect.start();
-                this.discard();
-                fireProjectile.discard();
-            }
-        }  else {
+        }
+//        else if (entity instanceof FireProjectile fireProjectile) {
+//            if (this.getOwner() != null && this.level().isClientSide) {
+//                ElementCollision collisionEntity = new ElementCollision(this.getX(), this.getY(), this.getZ(), this.level());
+//                collisionEntity.setTimeToKill(5);
+//                this.level().addFreshEntity(collisionEntity);
+//                EntityEffect entityEffect = new EntityEffect(steam, this.level(), collisionEntity);
+//                entityEffect.start();
+//                this.discard();
+//                fireProjectile.discard();
+//            }
+//        }
+        else {
             float i = 10; // Deal 10 damage
             entity.hurt(this.damageSources().thrown(this, this.getOwner()), i);
             this.discard();

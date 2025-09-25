@@ -31,7 +31,9 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.*;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 import static com.amuzil.omegasource.Avatar.*;
 
@@ -41,7 +43,7 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile,
     private UUID ownerUUID;
     @Nullable
     private Entity cachedOwner;
-    private boolean leftOwner;
+    protected boolean leftOwner;
     private boolean hasBeenShot;
 
     private static final EntityDataAccessor<Float> WIDTH = SynchedEntityData.defineId(AvatarProjectile.class, EntityDataSerializers.FLOAT);
@@ -230,6 +232,33 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile,
         }
 
         return true;
+    }
+
+    @Nullable
+    protected EntityHitResult findHitEntity(Vec3 pos, Vec3 delta) {
+        return getEntityHitResult(this.level(), this, pos, delta,
+                this.getBoundingBox().expandTowards(this.getDeltaMovement()).inflate(2.0D),
+                this::canHitEntity, 0.3F);
+    }
+
+    @Nullable
+    public static EntityHitResult getEntityHitResult(Level level, Entity thisEntity, Vec3 pos, Vec3 delta, AABB thisAABB, Predicate<Entity> canBeHit, float scale) {
+        double maxDist = Double.MAX_VALUE;
+        Entity entity = null;
+
+        for(Entity otherEntity : level.getEntities(thisEntity, thisAABB, canBeHit)) {
+            AABB aabb = otherEntity.getBoundingBox().inflate(scale);
+            Optional<Vec3> optional = aabb.clip(pos, delta);
+            if (optional.isPresent()) {
+                double dist = pos.distanceToSqr(optional.get());
+                if (dist < maxDist) {
+                    entity = otherEntity;
+                    maxDist = dist;
+                }
+            }
+        }
+
+        return entity == null ? null : new EntityHitResult(entity);
     }
 
     /**

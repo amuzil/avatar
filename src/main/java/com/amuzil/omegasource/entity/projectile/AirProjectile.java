@@ -1,6 +1,7 @@
 package com.amuzil.omegasource.entity.projectile;
 
 import com.amuzil.omegasource.entity.AvatarEntities;
+import com.amuzil.omegasource.entity.AvatarProjectile;
 import com.amuzil.omegasource.entity.ElementProjectile;
 import com.amuzil.omegasource.entity.collision.ElementCollision;
 import com.amuzil.omegasource.bending.element.Element;
@@ -30,30 +31,26 @@ import java.util.function.Predicate;
 import static com.amuzil.omegasource.Avatar.orb_bloom;
 
 
-public class AirProjectile extends ElementProjectile {
+public class AirProjectile extends AvatarProjectile {
     private static final EntityDataAccessor<Byte> ID_FLAGS = SynchedEntityData.defineId(AirProjectile.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Byte> PIERCE_LEVEL = SynchedEntityData.defineId(AirProjectile.class, EntityDataSerializers.BYTE);
     private int life;
     private int ttk = 100;
 
-    public AirProjectile(EntityType<AirProjectile> type, Level level) {
+    public AirProjectile(EntityType<AvatarProjectile> type, Level level) {
         super(type, level);
     }
 
-    public AirProjectile(double x, double y, double z, Level level) {
-        this(AvatarEntities.AIR_PROJECTILE_ENTITY_TYPE.get(), level);
-        this.setPos(x, y, z);
-    }
+//    public AirProjectile(double x, double y, double z, Level level) {
+//        this(AvatarEntities.AIR_PROJECTILE_ENTITY_TYPE.get(), level);
+//        this.setPos(x, y, z);
+//    }
 
     public AirProjectile(LivingEntity livingEntity, Level level) {
-        this(livingEntity.getX(), livingEntity.getEyeY(), livingEntity.getZ(), level);
+        this(AvatarEntities.AVATAR_PROJECTILE_ENTITY_TYPE.get(), level);
+        this.setPos(livingEntity.getX(), livingEntity.getEyeY(), livingEntity.getZ());
         this.setOwner(livingEntity);
         this.setNoGravity(true);
-    }
-
-    @Override
-    public Element getElement() {
-        return Elements.AIR;
     }
 
     public void tick() {
@@ -233,18 +230,20 @@ public class AirProjectile extends ElementProjectile {
             if (this.getOwner() != null) {
                 this.shoot(entity.getViewVector(1).x, entity.getViewVector(1).y+0.5, entity.getViewVector(1).z, 0.75F, 1);
             }
-        } else if (entity instanceof ElementProjectile elementProjectile) {
-            if (this.getOwner() != null && this.level().isClientSide) {
-                ElementCollision collisionEntity = new ElementCollision(this.getX(), this.getY(), this.getZ(), this.level());
-                collisionEntity.setTimeToKill(5);
-                this.level().addFreshEntity(collisionEntity);
-                EntityEffect entityEffect = new EntityEffect(orb_bloom, this.level(), collisionEntity);
-                entityEffect.start();
-                System.out.println("SUCCESS COLLISION!!!");
-                this.discard();
-                elementProjectile.discard();
-            }
-        }  else {
+        }
+//        else if (entity instanceof ElementProjectile elementProjectile) {
+//            if (this.getOwner() != null && this.level().isClientSide) {
+//                ElementCollision collisionEntity = new ElementCollision(this.getX(), this.getY(), this.getZ(), this.level());
+//                collisionEntity.setTimeToKill(5);
+//                this.level().addFreshEntity(collisionEntity);
+//                EntityEffect entityEffect = new EntityEffect(orb_bloom, this.level(), collisionEntity);
+//                entityEffect.start();
+//                System.out.println("SUCCESS COLLISION!!!");
+//                this.discard();
+//                elementProjectile.discard();
+//            }
+//        }
+        else {
             int i = 10; // Deal 10 damage
             entity.hurt(this.damageSources().thrown(this, this.getOwner()), (float)i);
             this.discard();
