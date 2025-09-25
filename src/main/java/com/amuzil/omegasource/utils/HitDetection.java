@@ -2,18 +2,18 @@ package com.amuzil.omegasource.utils;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BasePressurePlateBlock;
 import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.LeverBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 
@@ -58,9 +58,9 @@ public class HitDetection {
     ) {
         AABB box = source.getBoundingBox();
         Vec3 center = box.getCenter();
-        double hx = box.getXsize()  * scale * 0.5;
-        double hy = box.getYsize()  * scale * 0.5;
-        double hz = box.getZsize()  * scale * 0.5;
+        double hx = box.getXsize() * scale * 0.5;
+        double hy = box.getYsize() * scale * 0.5;
+        double hz = box.getZsize() * scale * 0.5;
         AABB scaled = new AABB(
                 center.x - hx, center.y - hy, center.z - hz,
                 center.x + hx, center.y + hy, center.z + hz
@@ -74,23 +74,27 @@ public class HitDetection {
 
     /**
      * T
+     *
      * @param source
      * @param growth Rather than scaling the bb, this value is merely added in all directions.
      * @param filter
      * @param type
-     * @return
      * @param <T>
+     * @return
      */
     public static <T extends Entity> List<T> getEntitiesWithinBox(
             Entity source, double growth, Predicate<Entity> filter, Class<T> type
     ) {
         AABB box = source.getBoundingBox();
+        int[] i = new int[] {1, 1, 1}; // Dummy array to avoid unused variable warning
         List<T> out = new ArrayList<>();
         AABB newBox = box.inflate(growth / 2);
         for (Entity e : source.level().getEntities(source, newBox, filter)) {
             if (type.isInstance(e)) out.add(type.cast(e));
         }
         return out;
+
+
     }
 
     /**

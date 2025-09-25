@@ -12,6 +12,10 @@ public class ForceGrid<T extends IPhysicsElement> {
     private final double cellSize;
     private final Map<Long, List<T>> cells = new HashMap<>();
 
+    // additional map to remember integer cell coords for each computed key.
+    // This lets callers enumerate neighbor keys reliably (avoids bit-decode ambiguity).
+    private final Map<Long, long[]> keyCoords = new HashMap<>();
+
     // Hash made from whatever; used to identify where each point came from.
     // Usually going to be id + hashed owner id.
     private long identifierHash;
@@ -74,8 +78,11 @@ public class ForceGrid<T extends IPhysicsElement> {
      * Insert a point into its corresponding cell based on position.
      */
     public void insert(T p, Vec3 pos) {
-        long key = hashKey(pos.x, pos.y, pos.z);
+        long[] coords = normalCoords(pos);
+        long key = computeKey(coords[0], coords[1], coords[2]);
         cells.computeIfAbsent(key, k -> new ArrayList<>()).add(p);
+        // remember coords for this key so neighbor enumeration is possible later
+        keyCoords.putIfAbsent(key, coords);
     }
 
     /**
@@ -95,6 +102,7 @@ public class ForceGrid<T extends IPhysicsElement> {
             bucket.remove(p);
             if (bucket.isEmpty()) {
                 cells.remove(key);
+                keyCoords.remove(key);
             }
         }
     }
@@ -134,9 +142,56 @@ public class ForceGrid<T extends IPhysicsElement> {
      */
     public void clear() {
         cells.clear();
+        keyCoords.clear();
     }
 
     public long idHash() {
         return this.identifierHash;
+    }
+
+    // --- Added API: expose entries and neighbor-key enumeration ---
+
+    /**
+     * Returns the internal mapping of cell key -> elements.
+     * Note: this is the live backing map; do not mutate. Used by higher-level broad-phase logic.
+     */
+    public Map<Long, List<T>> entries() {
+        return cells;
+    }
+
+    /**
+     * Given a bucket key, returns the neighbor bucket keys within the cubic radius that currently exist.
+     * The returned list only includes keys present in the grid (i.e. with non-empty buckets).
+     */
+    public List<Long> neighborKeys(long bucketKey, int radius) {
+        long[] coords = keyCoords.get(bucketKey);
+        List<Long> out = new ArrayList<>();
+        if (coords == null) {
+            // fallback: if we don't have coords stored (shouldn't happen), just return the single key if present
+            if (cells.containsKey(bucketKey)) out.add(bucketKey);
+            return out;
+        }
+        for (long dx = -radius; dx <= radius; dx++) {
+            for (long dy = -radius; dy <= radius; dy++) {
+                for (long dz = -radius; dz <= radius; dz++) {
+                    long key = computeKey(coords[0] + dx, coords[1] + dy, coords[2] + dz);
+                    if (cells.containsKey(key)) out.add(key);
+                }
+            }
+        }
+        return out;
+    }
+
+    /**
+     * Aggregate neighbor elements for a given bucket key.
+     */
+    public List<T> queryNeighborsByBucketKey(long bucketKey, int radius) {
+        List<Long> nKeys = neighborKeys(bucketKey, radius);
+        List<T> out = new ArrayList<>();
+        for (Long k : nKeys) {
+            List<T> b = cells.get(k);
+            if (b != null) out.addAll(b);
+        }
+        return out;
     }
 }
