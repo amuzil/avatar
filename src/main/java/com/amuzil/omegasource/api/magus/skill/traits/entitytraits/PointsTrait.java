@@ -13,8 +13,8 @@ import java.util.List;
 
 
 /**
- * Generic pointholder class. Could be used for anything:
- * Pathing, bezier curve interpolation, coordinates for spawning objects, data storage, etc
+ * Generic point holder class. Could be used for anything:
+ * Pathing, Bézier curve interpolation, coordinates for spawning objects, data storage, etc
  */
 public class PointsTrait implements DataTrait {
     private String name;

@@ -4,7 +4,7 @@ import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.DirectionTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.KnockbackTrait;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.api.ICollisionModule;
-import com.amuzil.omegasource.utils.HitDetection;
+import com.amuzil.omegasource.utils.modules.HitDetection;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;

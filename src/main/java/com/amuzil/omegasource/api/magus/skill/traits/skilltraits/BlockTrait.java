@@ -12,14 +12,14 @@ import net.minecraftforge.common.extensions.IForgeBlockState;
 /**
  * Huge trait class, stores the source block of the Skill.
  */
-public class SourceTrait extends SkillTrait {
+public class BlockTrait extends SkillTrait {
 
     private IForgeBlockState state;
     private BlockPos pos;
 
     // Note: If you want to know how long a usable BlockState has been selected, use another
     // TimedTrait.
-    public SourceTrait(String name, IForgeBlockState state, BlockPos pos) {
+    public BlockTrait(String name, IForgeBlockState state, BlockPos pos) {
         super(name);
         this.state = state;
         this.pos = pos;

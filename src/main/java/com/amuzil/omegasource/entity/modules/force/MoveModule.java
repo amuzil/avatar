@@ -50,43 +50,6 @@ public class MoveModule implements IForceModule {
             }
         }
 
-//        Vec3 pos = entity.position();
-//        Vec3 delta = pos.add(deltaMovement);
-//        HitResult hitresult = entity.level().clip(new ClipContext(pos, delta, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
-//        if (hitresult.getType() != HitResult.Type.MISS) {
-//            delta = hitresult.getLocation();
-//        }
-
-//        while (!entity.isRemoved()) {
-//            EntityHitResult entityhitresult = entity.findHitEntity(pos, delta);
-//            if (entityhitresult != null) {
-//                hitresult = entityhitresult;
-//            }
-//
-//            if (hitresult != null && hitresult.getType() == HitResult.Type.ENTITY) {
-//                assert hitresult instanceof EntityHitResult;
-//                Entity entity = ((EntityHitResult)hitresult).getEntity();
-//                Entity owner = this.getOwner();
-//                if (entity instanceof Player && owner instanceof Player && !((Player)owner).canHarmPlayer((Player)entity)) {
-//                    hitresult = null;
-//                    entityhitresult = null;
-//                }
-//            }
-//
-//            if (hitresult != null && hitresult.getType() != HitResult.Type.MISS && !flag) {
-//                if (net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult))
-//                    break;
-//                this.onHit(hitresult);
-//                this.hasImpulse = true;
-//                break;
-//            }
-//
-//            if (entityhitresult == null) {
-//                break;
-//            }
-//
-//            hitresult = null;
-//        }
         deltaMovement = entity.getDeltaMovement();
         double d5 = deltaMovement.x;
         double d6 = deltaMovement.y;
@@ -96,15 +59,6 @@ public class MoveModule implements IForceModule {
         double d2 = entity.getY() + d6;
         double d3 = entity.getZ() + d1;
         double d4 = deltaMovement.horizontalDistance();
-//        if (flag) {
-//            entity.setYRot((float) (Mth.atan2(-d5, -d1) * (double) (180F / (float) Math.PI)));
-//        } else {
-//            entity.setYRot((float) (Mth.atan2(d5, d1) * (double) (180F / (float) Math.PI)));
-//        }
-//
-//        entity.setXRot((float) (Mth.atan2(d6, d4) * (double) (180F / (float) Math.PI)));
-//        entity.setXRot(AvatarEntity.lerpRotation(entity.xRotO, entity.getXRot()));
-//        entity.setYRot(AvatarEntity.lerpRotation(entity.yRotO, entity.getYRot()));
 
         if (!entity.isNoGravity() && !flag) {
             Vec3 vec34 = entity.getDeltaMovement();
