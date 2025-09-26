@@ -77,7 +77,7 @@ public class FireCollisionModule implements ICollisionModule {
         if (targets.isEmpty())
             return;
         float damage = (float) dmg.getDamage();
-        entity.getFilteredTraits()
+
         for (Entity target : targets) {
             for (var entry: PROJECTILE_HANDLERS.entrySet()) {
                 if (entry.getKey().isInstance(target)) {
