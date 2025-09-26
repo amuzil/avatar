@@ -2,6 +2,7 @@ package com.amuzil.omegasource;
 
 import com.amuzil.omegasource.entity.AvatarEntities;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
+import com.amuzil.omegasource.entity.modules.collision.FireCollisionModule;
 import com.amuzil.omegasource.entity.modules.collision.FireModule;
 import com.amuzil.omegasource.entity.modules.collision.SimpleDamageModule;
 import com.amuzil.omegasource.entity.modules.collision.SimpleKnockbackModule;
@@ -84,6 +85,7 @@ public class Avatar {
         ModuleRegistry.register("ChangeSpeed", ChangeSpeedModule::new);
         ModuleRegistry.register("Photon", PhotonModule::new);
         ModuleRegistry.register("Bind", BindModule::new);
+        ModuleRegistry.register("FireCollision", FireCollisionModule::new);
     }
 
     private void setupClient(final FMLClientSetupEvent event) {
