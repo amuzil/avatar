@@ -32,7 +32,6 @@ public class WaterCollisionModule implements ICollisionModule {
     static {
         WATER_PROJECTILE_HANDLERS.put(Blaze.class, (proj, entity, damage, size) -> {
             entity.hurt(proj.damageSources().dragonBreath(), damage * 1.5f);
-
         });
 
         WATER_PROJECTILE_HANDLERS.put(Fireball.class, (proj, entity, damage, size) -> {
