@@ -106,13 +106,12 @@ public class FireCollisionModule implements ICollisionModule {
         if (targets.isEmpty()) {
             Vec3 pos = entity.position();
             Vec3 delta = pos.add(entity.getDeltaMovement());
-            HitResult hitResult = entity.level().clip(new ClipContext(pos, delta, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, entity));
+            BlockHitResult hitResult = entity.level().clip(new ClipContext(pos, delta, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, entity));
             if (hitResult.getType() == HitResult.Type.BLOCK) {
-                BlockHitResult blockhitresult = (BlockHitResult) hitResult;
                 entity.discard();
-                BlockPos blockpos = blockhitresult.getBlockPos();
+                BlockPos blockpos = hitResult.getBlockPos();
                 BlockState blockstate = entity.level().getBlockState(blockpos);
-                System.out.println("FireCollisionModule: Collided with " + blockstate.getBlock().getDescriptionId() + " at " + blockpos);
+//                System.out.println("FireCollisionModule: Collided with " + blockstate.getBlock().getDescriptionId() + " at " + blockpos);
                 entity.level().gameEvent(GameEvent.PROJECTILE_LAND, blockpos, GameEvent.Context.of(entity, entity.level().getBlockState(blockpos)));
             }
             return;
