@@ -5,9 +5,12 @@ import com.amuzil.omegasource.entity.api.IEntityModule;
 import net.minecraft.nbt.CompoundTag;
 
 public class TimeoutModule implements IEntityModule {
+
+    public static String id = TimeoutModule.class.getSimpleName();
+
     @Override
     public String id() {
-        return "timeout";
+        return id;
     }
 
     @Override

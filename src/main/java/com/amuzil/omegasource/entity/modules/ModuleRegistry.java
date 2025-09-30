@@ -12,8 +12,8 @@ public class ModuleRegistry {
     private static final Map<String, Supplier<IEntityModule>> FACTORIES = new HashMap<>();
 
     /** Register a module factory under a unique ID. */
-    public static <T extends IEntityModule> void register(String id, Supplier<T> factory) {
-        FACTORIES.put(id, (Supplier<IEntityModule>) factory);
+    public static <T extends IEntityModule> void register(Supplier<T> factory) {
+        FACTORIES.put(factory.get().id(), factory::get);
     }
 
     /** Instantiate a fresh module by ID (for JSON defaults).

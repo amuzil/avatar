@@ -12,7 +12,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 
 public class MoveModule implements IForceModule {
-    String id = "move";
+
+public static String id = MoveModule.class.getSimpleName();
 
     @Override
     public String id() {

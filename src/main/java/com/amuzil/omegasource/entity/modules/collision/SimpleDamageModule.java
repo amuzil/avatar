@@ -4,6 +4,7 @@ import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.DamageTrait;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.api.ICollisionModule;
+import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.modules.HitDetection;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
@@ -13,7 +14,7 @@ import java.util.List;
 
 public class SimpleDamageModule implements ICollisionModule {
 
-    String id = "simple_damage";
+    public static String id = SimpleDamageModule.class.getSimpleName();
 
     @Override
     public String id() {
@@ -30,7 +31,7 @@ public class SimpleDamageModule implements ICollisionModule {
         List<LivingEntity> targets = HitDetection.getEntitiesWithinBox(entity, 0.75f, hit ->
                         hit != entity.owner() && (!(hit instanceof AvatarEntity) || ((AvatarEntity) hit).owner() != entity.owner())
                 , LivingEntity.class);
-        DamageTrait dmg = entity.getTrait("damage", DamageTrait.class);
+        DamageTrait dmg = entity.getTrait(Constants.DAMAGE, DamageTrait.class);
         if (dmg == null) {
             Avatar.LOGGER.warn("No damage trait set for SimpleDamage module. Please remove the module or add the trait to the entity.");
             return;

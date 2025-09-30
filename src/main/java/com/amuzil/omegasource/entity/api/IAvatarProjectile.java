@@ -1,4 +1,4 @@
-package com.amuzil.omegasource.entity;
+package com.amuzil.omegasource.entity.api;
 
 import net.minecraft.world.phys.Vec3;
 

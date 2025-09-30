@@ -12,6 +12,10 @@ import com.amuzil.omegasource.bending.skill.AirSkill;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.entity.AvatarProjectile;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
+import com.amuzil.omegasource.entity.modules.collision.SimpleDamageModule;
+import com.amuzil.omegasource.entity.modules.collision.SimpleKnockbackModule;
+import com.amuzil.omegasource.entity.modules.entity.GrowModule;
+import com.amuzil.omegasource.entity.modules.force.ChangeSpeedModule;
 import com.amuzil.omegasource.entity.projectile.AirProjectile;
 import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.maths.Point;
@@ -84,19 +88,19 @@ public class AirGustSkill extends AirSkill {
                 new Point(1.00, 0.00)   // die out completely
         ));
 
-        projectile.addModule(ModuleRegistry.create("Grow"));
+        projectile.addModule(ModuleRegistry.create(GrowModule.id));
 
         projectile.addTraits(data.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
         projectile.addTraits(new DirectionTrait("knockback_direction", new Vec3(0, 0.45, 0)));
-        projectile.addModule(ModuleRegistry.create("SimpleKnockback"));
+        projectile.addModule(ModuleRegistry.create(SimpleKnockbackModule.id));
 
         // Damage module
         projectile.addTraits(data.getTrait(Constants.DAMAGE, DamageTrait.class));
-        projectile.addModule(ModuleRegistry.create("SimpleDamage"));
+        projectile.addModule(ModuleRegistry.create(SimpleDamageModule.id));
 
         // Slow down over time
         projectile.addTraits(data.getTrait(Constants.SPEED_FACTOR, SpeedTrait.class));
-        projectile.addModule(ModuleRegistry.create("ChangeSpeed"));
+        projectile.addModule(ModuleRegistry.create(ChangeSpeedModule.id));
 
         // Particle FX module
         projectile.addTraits(data.getTrait(Constants.FX, StringTrait.class));

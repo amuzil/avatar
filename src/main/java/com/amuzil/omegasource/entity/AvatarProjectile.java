@@ -2,9 +2,13 @@ package com.amuzil.omegasource.entity;
 
 import com.amuzil.omegasource.bending.form.BendingForm;
 import com.amuzil.omegasource.bending.element.Elements;
+import com.amuzil.omegasource.entity.api.IAvatarProjectile;
 import com.amuzil.omegasource.entity.api.IForceModule;
 import com.amuzil.omegasource.entity.api.IRenderModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
+import com.amuzil.omegasource.entity.modules.entity.TimeoutModule;
+import com.amuzil.omegasource.entity.modules.force.MoveModule;
+import com.amuzil.omegasource.entity.modules.render.PhotonModule;
 import com.google.common.base.MoreObjects;
 import com.lowdragmc.photon.client.fx.EntityEffect;
 import com.lowdragmc.photon.client.fx.FX;
@@ -51,10 +55,10 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile,
     public AvatarProjectile(EntityType<? extends AvatarProjectile> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
         // TODO - NOTE: Modules are not synced between client and server unless added to the entity's constructor!
-        addForceModule((IForceModule) ModuleRegistry.create("Move"));
-        addRenderModule((IRenderModule) ModuleRegistry.create("Photon"));
-//        addCollisionModule((ICollisionModule) ModuleRegistry.create("Knockback"));
-        addModule(ModuleRegistry.create("Timeout"));
+        addForceModule((IForceModule) ModuleRegistry.create(MoveModule.id));
+        addRenderModule((IRenderModule) ModuleRegistry.create(PhotonModule.id));
+//        addCollisionModule((ICollisionModule) ModuleRegistry.create(KnockbackModule.id));
+        addModule(ModuleRegistry.create(TimeoutModule.id));
     }
 
     public void startEffect(BendingForm form) {

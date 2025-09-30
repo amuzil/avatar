@@ -13,6 +13,10 @@ import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.entity.AvatarProjectile;
 import com.amuzil.omegasource.entity.api.ICollisionModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
+import com.amuzil.omegasource.entity.modules.collision.FireCollisionModule;
+import com.amuzil.omegasource.entity.modules.collision.FireModule;
+import com.amuzil.omegasource.entity.modules.collision.SimpleKnockbackModule;
+import com.amuzil.omegasource.entity.modules.entity.GrowModule;
 import com.amuzil.omegasource.entity.projectile.FireProjectile;
 import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.maths.Point;
@@ -33,7 +37,7 @@ public class FireStrikeSkill extends FireSkill {
         addTrait(new KnockbackTrait(Constants.KNOCKBACK, 0.5f));
         addTrait(new ColourTrait(0, 0, 0, Constants.FIRE_COLOUR));
         addTrait(new SpeedTrait(Constants.SPEED, 0.875d));
-        addTrait(new TimedTrait(Constants.LIFETIME, 15)); // Ticks not seconds...
+        addTrait(new TimedTrait(Constants.LIFETIME, 15));
         addTrait(new TimedTrait(Constants.FIRE_TIME, 40));
         addTrait(new SpeedTrait(Constants.SPEED_FACTOR, 0.85d));
         addTrait(new StringTrait(Constants.FX, "fires_bloom_perma5"));
@@ -87,25 +91,27 @@ public class FireStrikeSkill extends FireSkill {
                 new Point(1.00, 0.00)   // die out completely
         ));
 
-        projectile.addModule(ModuleRegistry.create("Grow"));
+        projectile.addModule(ModuleRegistry.create(GrowModule.id));
 
         // TODO: make more advanced knockback calculator that uses the entity's current size as well as speed (mass * velocity!!!!)
         projectile.addTraits(data.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
         projectile.addTraits(new DirectionTrait("knockback_direction", new Vec3(0, 0.45, 0)));
-        projectile.addModule(ModuleRegistry.create("SimpleKnockback"));
+        projectile.addModule(ModuleRegistry.create(SimpleKnockbackModule.id));
 
         // Set Fire module
         projectile.addTraits(data.getTrait(Constants.FIRE_TIME, TimedTrait.class));
-        projectile.addModule(ModuleRegistry.create("FireTime"));
+        projectile.addModule(ModuleRegistry.create(FireModule.id));
 
         // Damage module
         projectile.addTraits(data.getTrait(Constants.DAMAGE, DamageTrait.class));
-//        projectile.addModule(ModuleRegistry.create("SimpleDamage"));
-        projectile.addCollisionModule((ICollisionModule) ModuleRegistry.create("FireCollision"));
+        projectile.addTraits(data.getTrait(Constants.SIZE, SizeTrait.class));
+//        projectile.addModule(ModuleRegistry.create(SimpleDamageModule.id));
+        projectile.addTraits(new CollisionTrait("collision", "Blaze", "Fireball", "AbstractArrow", "FireProjectile"));
+        projectile.addCollisionModule((ICollisionModule) ModuleRegistry.create(FireCollisionModule.id));
 
         // Slow down over time
         projectile.addTraits(data.getTrait(Constants.SPEED_FACTOR, SpeedTrait.class));
-        projectile.addModule(ModuleRegistry.create("ChangeSpeed"));
+//        projectile.addModule(ModuleRegistry.create(ChangeSpeedModule.id));
 
         // Particle FX
         projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);

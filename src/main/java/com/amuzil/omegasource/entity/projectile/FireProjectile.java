@@ -65,114 +65,114 @@ public class FireProjectile extends AvatarProjectile {
         MinecraftForge.EVENT_BUS.unregister(this);
     }
 
-    public void tick() {
-        super.tick();
-        boolean flag = this.isNoPhysics();
-        Vec3 deltaMovement = this.getDeltaMovement();
-        if (this.xRotO == 0.0F && this.yRotO == 0.0F) {
-            double distance = deltaMovement.horizontalDistance();
-            this.setYRot((float)(Mth.atan2(deltaMovement.x, deltaMovement.z) * (double)(180F / (float)Math.PI)));
-            this.setXRot((float)(Mth.atan2(deltaMovement.y, distance) * (double)(180F / (float)Math.PI)));
-            this.yRotO = this.getYRot();
-            this.xRotO = this.getXRot();
-        }
-
-        BlockPos blockpos = this.blockPosition();
-        BlockState blockstate = this.level().getBlockState(blockpos);
-        if (!blockstate.isAir() && !flag) {
-            VoxelShape voxelshape = blockstate.getCollisionShape(this.level(), blockpos);
-            if (!voxelshape.isEmpty()) {
-                Vec3 vec31 = this.position();
-
-                for(AABB aabb : voxelshape.toAabbs()) {
-                    if (aabb.move(blockpos).contains(vec31)) {
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (this.isInWaterOrRain() || blockstate.is(Blocks.POWDER_SNOW) || this.isInFluidType((fluidType, height) -> this.canFluidExtinguish(fluidType))) {
-            this.clearFire();
-        }
-
-        Vec3 pos = this.position();
-        Vec3 delta = pos.add(deltaMovement);
-        HitResult hitresult = this.level().clip(new ClipContext(pos, delta, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
-        if (hitresult.getType() != HitResult.Type.MISS) {
-            delta = hitresult.getLocation();
-        }
-
-        while(!this.isRemoved()) {
-            if (!this.level().isClientSide) {
-                this.tickDespawn();
-            }
-            EntityHitResult entityhitresult = this.findHitEntity(pos, delta);
-            if (entityhitresult != null) {
-                hitresult = entityhitresult;
-            }
-
-            if (hitresult != null && hitresult.getType() == HitResult.Type.ENTITY) {
-                assert hitresult instanceof EntityHitResult;
-                Entity entity = ((EntityHitResult)hitresult).getEntity();
-                Entity owner = this.getOwner();
-                if (entity instanceof Player && owner instanceof Player && !((Player)owner).canHarmPlayer((Player)entity)) {
-                    hitresult = null;
-                    entityhitresult = null;
-                }
-            }
-
-            if (hitresult != null && hitresult.getType() != HitResult.Type.MISS && !flag) {
-//                if (net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult))
-//                    break;
-                this.onHit(hitresult);
-                this.hasImpulse = true;
-                break;
-            }
-
-            if (entityhitresult == null) {
-                break;
-            }
-
-            hitresult = null;
-        }
-        deltaMovement = this.getDeltaMovement();
-        double x = deltaMovement.x;
-        double y = deltaMovement.y;
-        double z = deltaMovement.z;
-
-        double finalX = this.getX() + x;
-        double finalY = this.getY() + y;
-        double finalZ = this.getZ() + z;
-        double d4 = deltaMovement.horizontalDistance();
-        if (flag) {
-            this.setYRot((float)(Mth.atan2(-x, -z) * (double)(180F / (float)Math.PI)));
-        } else {
-            this.setYRot((float)(Mth.atan2(x, z) * (double)(180F / (float)Math.PI)));
-        }
-
-        this.setXRot((float)(Mth.atan2(y, d4) * (double)(180F / (float)Math.PI)));
-        this.setXRot(lerpRotation(this.xRotO, this.getXRot()));
-        this.setYRot(lerpRotation(this.yRotO, this.getYRot()));
-
-        float f = 0.49F; // Scale speed
-        this.setDeltaMovement(deltaMovement.scale(f));
-        if (!this.isNoGravity() && !flag) { // Apply gravity
-            Vec3 vec34 = this.getDeltaMovement();
-            this.setDeltaMovement(vec34.x, vec34.y - (double)0.05F, vec34.z);
-        }
-
-        Entity owner = this.getOwner();
-        if (owner != null) {
-            Vec3 vec34 = this.getDeltaMovement();
-            double rateOfControl = 0.4; // Control/curve the shot projectile
-            Vec3 aim = this.getOwner().getLookAngle().multiply(rateOfControl, rateOfControl, rateOfControl);
-            this.setDeltaMovement(vec34.add(aim));
-        }
-        this.setPos(finalX, finalY, finalZ);
-
-        this.checkInsideBlocks();
-    }
+//    public void tick() {
+//        super.tick();
+//        boolean flag = this.isNoPhysics();
+//        Vec3 deltaMovement = this.getDeltaMovement();
+//        if (this.xRotO == 0.0F && this.yRotO == 0.0F) {
+//            double distance = deltaMovement.horizontalDistance();
+//            this.setYRot((float)(Mth.atan2(deltaMovement.x, deltaMovement.z) * (double)(180F / (float)Math.PI)));
+//            this.setXRot((float)(Mth.atan2(deltaMovement.y, distance) * (double)(180F / (float)Math.PI)));
+//            this.yRotO = this.getYRot();
+//            this.xRotO = this.getXRot();
+//        }
+//
+//        BlockPos blockpos = this.blockPosition();
+//        BlockState blockstate = this.level().getBlockState(blockpos);
+//        if (!blockstate.isAir() && !flag) {
+//            VoxelShape voxelshape = blockstate.getCollisionShape(this.level(), blockpos);
+//            if (!voxelshape.isEmpty()) {
+//                Vec3 vec31 = this.position();
+//
+//                for(AABB aabb : voxelshape.toAabbs()) {
+//                    if (aabb.move(blockpos).contains(vec31)) {
+//                        break;
+//                    }
+//                }
+//            }
+//        }
+//
+//        if (this.isInWaterOrRain() || blockstate.is(Blocks.POWDER_SNOW) || this.isInFluidType((fluidType, height) -> this.canFluidExtinguish(fluidType))) {
+//            this.clearFire();
+//        }
+//
+//        Vec3 pos = this.position();
+//        Vec3 delta = pos.add(deltaMovement);
+//        HitResult hitresult = this.level().clip(new ClipContext(pos, delta, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
+//        if (hitresult.getType() != HitResult.Type.MISS) {
+//            delta = hitresult.getLocation();
+//        }
+//
+//        while(!this.isRemoved()) {
+//            if (!this.level().isClientSide) {
+//                this.tickDespawn();
+//            }
+//            EntityHitResult entityhitresult = this.findHitEntity(pos, delta);
+//            if (entityhitresult != null) {
+//                hitresult = entityhitresult;
+//            }
+//
+//            if (hitresult != null && hitresult.getType() == HitResult.Type.ENTITY) {
+//                assert hitresult instanceof EntityHitResult;
+//                Entity entity = ((EntityHitResult)hitresult).getEntity();
+//                Entity owner = this.getOwner();
+//                if (entity instanceof Player && owner instanceof Player && !((Player)owner).canHarmPlayer((Player)entity)) {
+//                    hitresult = null;
+//                    entityhitresult = null;
+//                }
+//            }
+//
+//            if (hitresult != null && hitresult.getType() != HitResult.Type.MISS && !flag) {
+////                if (net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult))
+////                    break;
+//                this.onHit(hitresult);
+//                this.hasImpulse = true;
+//                break;
+//            }
+//
+//            if (entityhitresult == null) {
+//                break;
+//            }
+//
+//            hitresult = null;
+//        }
+//        deltaMovement = this.getDeltaMovement();
+//        double x = deltaMovement.x;
+//        double y = deltaMovement.y;
+//        double z = deltaMovement.z;
+//
+//        double finalX = this.getX() + x;
+//        double finalY = this.getY() + y;
+//        double finalZ = this.getZ() + z;
+//        double d4 = deltaMovement.horizontalDistance();
+//        if (flag) {
+//            this.setYRot((float)(Mth.atan2(-x, -z) * (double)(180F / (float)Math.PI)));
+//        } else {
+//            this.setYRot((float)(Mth.atan2(x, z) * (double)(180F / (float)Math.PI)));
+//        }
+//
+//        this.setXRot((float)(Mth.atan2(y, d4) * (double)(180F / (float)Math.PI)));
+//        this.setXRot(lerpRotation(this.xRotO, this.getXRot()));
+//        this.setYRot(lerpRotation(this.yRotO, this.getYRot()));
+//
+//        float f = 0.49F; // Scale speed
+//        this.setDeltaMovement(deltaMovement.scale(f));
+//        if (!this.isNoGravity() && !flag) { // Apply gravity
+//            Vec3 vec34 = this.getDeltaMovement();
+//            this.setDeltaMovement(vec34.x, vec34.y - (double)0.05F, vec34.z);
+//        }
+//
+//        Entity owner = this.getOwner();
+//        if (owner != null) {
+//            Vec3 vec34 = this.getDeltaMovement();
+//            double rateOfControl = 0.4; // Control/curve the shot projectile
+//            Vec3 aim = this.getOwner().getLookAngle().multiply(rateOfControl, rateOfControl, rateOfControl);
+//            this.setDeltaMovement(vec34.add(aim));
+//        }
+//        this.setPos(finalX, finalY, finalZ);
+//
+//        this.checkInsideBlocks();
+//    }
 
     @SubscribeEvent
     public void onFormEvent(FormActivatedEvent event) {

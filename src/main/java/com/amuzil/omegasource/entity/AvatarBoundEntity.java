@@ -3,6 +3,9 @@ package com.amuzil.omegasource.entity;
 import com.amuzil.omegasource.entity.api.IForceModule;
 import com.amuzil.omegasource.entity.api.IRenderModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
+import com.amuzil.omegasource.entity.modules.entity.TimeoutModule;
+import com.amuzil.omegasource.entity.modules.force.BindModule;
+import com.amuzil.omegasource.entity.modules.render.PhotonModule;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -24,9 +27,9 @@ public class AvatarBoundEntity extends AvatarEntity implements ItemSupplier {
 
     public AvatarBoundEntity(EntityType<AvatarBoundEntity> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
-        addForceModule((IForceModule) ModuleRegistry.create("Bind"));
-        addRenderModule((IRenderModule) ModuleRegistry.create("Photon"));
-        addModule(ModuleRegistry.create("Timeout"));
+        addForceModule((IForceModule) ModuleRegistry.create(BindModule.id));
+        addRenderModule((IRenderModule) ModuleRegistry.create(PhotonModule.id));
+        addModule(ModuleRegistry.create(TimeoutModule.id));
     }
 
     public void setWidth(float width) {

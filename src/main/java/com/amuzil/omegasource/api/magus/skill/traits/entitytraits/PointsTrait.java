@@ -23,13 +23,13 @@ public class PointsTrait implements DataTrait {
     private final List<Point> points;
 
     public PointsTrait(String name, Point... points) {
-        this.points = List.of(points);
         this.name = name;
+        this.points = List.of(points);
     }
 
     public PointsTrait(String name) {
-        this.points = new ArrayList<>();
         this.name = name;
+        this.points = new ArrayList<>();
     }
 
     public PointsTrait(String name, List<Point> points) {

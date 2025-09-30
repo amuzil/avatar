@@ -18,7 +18,8 @@ import java.util.List;
  */
 public class SimpleKnockbackModule implements ICollisionModule {
 
-    String id = "simple_knockback";
+public static String id = SimpleKnockbackModule.class.getSimpleName();
+
     @Override
     public String id() {
         return id;
@@ -36,7 +37,6 @@ public class SimpleKnockbackModule implements ICollisionModule {
             hit != entity.owner() && (!(hit instanceof AvatarEntity) || ((AvatarEntity) hit).owner() != entity.owner())
         , LivingEntity.class);
 
-//        Avatar.LOGGER.info("Knockback ticking");
         Vec3 knockback = entity.getTrait("knockback_direction", DirectionTrait.class).direction();
         float scale = (float) entity.getTrait("knockback", KnockbackTrait.class).getKnockback();
         Vec3 motion = entity.getDeltaMovement();

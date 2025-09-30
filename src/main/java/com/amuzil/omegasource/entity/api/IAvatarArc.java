@@ -1,4 +1,4 @@
-package com.amuzil.omegasource.entity;
+package com.amuzil.omegasource.entity.api;
 
 /**
  * Design for entities that account for their beam/arc-like rendering, ensuring a smooth motion for themselves

@@ -12,10 +12,12 @@ import java.util.List;
 
 // Sets an entity on fire.
 public class FireModule implements ICollisionModule {
-    String name = "fire";
+
+public static String id = FireModule.class.getSimpleName();
+
     @Override
     public String id() {
-        return name;
+        return id;
     }
 
     @Override

@@ -1,11 +1,15 @@
 package com.amuzil.omegasource.entity.modules.collision;
 
 import com.amuzil.omegasource.Avatar;
+import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.CollisionTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.DamageTrait;
+import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SizeTrait;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.AvatarProjectile;
 import com.amuzil.omegasource.entity.api.ICollisionModule;
 import com.amuzil.omegasource.entity.projectile.FireProjectile;
+import com.amuzil.omegasource.entity.projectile.WaterProjectile;
+import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.modules.HitDetection;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
@@ -21,10 +25,10 @@ import static com.amuzil.omegasource.entity.api.ICollisionModule.*;
 
 public class FireCollisionModule implements ICollisionModule {
 
-    String id = "fire_collision";
+    public static String id = FireCollisionModule.class.getSimpleName();
 
     static {
-        PROJECTILE_HANDLERS.put(Blaze.class, (proj, entity) -> {
+        PROJECTILE_HANDLERS.put(Blaze.class, (proj, entity, damage, size) -> {
             Entity owner = proj.getOwner();
             if (owner != null) {
                 proj.setOwner(entity);
@@ -34,25 +38,31 @@ public class FireCollisionModule implements ICollisionModule {
             }
         });
 
-        PROJECTILE_HANDLERS.put(Fireball.class, (proj, entity) -> {
+        PROJECTILE_HANDLERS.put(Fireball.class, (proj, entity, damage, size) -> {
             if (!proj.getOwner().equals(((Fireball) entity).getOwner())) {
                 entity.discard();
             }
         });
 
-        PROJECTILE_HANDLERS.put(AbstractArrow.class, (proj, entity) -> {
+        PROJECTILE_HANDLERS.put(AbstractArrow.class, (proj, entity, damage, size) -> {
             if (!proj.getOwner().equals(((AbstractArrow) entity).getOwner())) {
                 entity.discard();
             }
         });
 
-        registerProjectileHandler(FireProjectile.class, (proj, entity) -> {
+        registerProjectileHandler(FireProjectile.class, (proj, entity, damage, size) -> {
             if (!proj.getOwner().equals(((AvatarProjectile) entity).getOwner())) {
                 entity.discard();
             }
         });
-    }
 
+        registerProjectileHandler(WaterProjectile.class, (proj, entity, damage, size) -> {
+            if (!proj.getOwner().equals(((AvatarProjectile) entity).getOwner())) {
+                proj.discard();
+                entity.discard();
+            }
+        });
+    }
 
     @Override
     public String id() {
@@ -69,19 +79,23 @@ public class FireCollisionModule implements ICollisionModule {
         List<Entity> targets = HitDetection.getEntitiesWithinBox(entity, 0.75f,
                 hit -> hit != entity.owner() && (!(hit instanceof AvatarEntity) || ((AvatarEntity) hit).owner() != entity.owner()),
                 Entity.class);
-        DamageTrait dmg = entity.getTrait("damage", DamageTrait.class);
-        if (dmg == null) {
-            Avatar.LOGGER.warn("No damage trait set for SimpleDamage module. Please remove the module or add the trait to the entity.");
+        DamageTrait damageTrait = entity.getTrait(Constants.DAMAGE, DamageTrait.class);
+        SizeTrait sizeTrait = entity.getTrait(Constants.SIZE, SizeTrait.class);
+        CollisionTrait collisions = entity.getTrait("collision", CollisionTrait.class);
+        if (damageTrait == null || sizeTrait == null || collisions == null) {
+            Avatar.LOGGER.warn("Either damage, size or collision trait was not set for Collision module. Please remove the module or add the trait(s) to the entity.");
             return;
         }
         if (targets.isEmpty())
             return;
-        float damage = (float) dmg.getDamage();
+        float damage = (float) damageTrait.getDamage();
+        float size = (float) sizeTrait.getSize();
 
-        for (Entity target : targets) {
+        for (Entity target: targets) {
             for (var entry: PROJECTILE_HANDLERS.entrySet()) {
+//                ProjectileHandler handler = PROJECTILE_HANDLERS.get(collision);
                 if (entry.getKey().isInstance(target)) {
-                    entry.getValue().handle((AvatarProjectile) entity, target);
+                    entry.getValue().handle((AvatarProjectile) entity, target, damage, size);
                     return;
                 }
             }

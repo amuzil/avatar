@@ -76,16 +76,16 @@ public class Avatar {
         Registries.init();
         AvatarNetwork.register();
 
-        ModuleRegistry.register("Move", MoveModule::new);
-        ModuleRegistry.register("Timeout", TimeoutModule::new);
-        ModuleRegistry.register("Grow", GrowModule::new);
-        ModuleRegistry.register("SimpleKnockback", SimpleKnockbackModule::new);
-        ModuleRegistry.register("FireTime", FireModule::new);
-        ModuleRegistry.register("SimpleDamage", SimpleDamageModule::new);
-        ModuleRegistry.register("ChangeSpeed", ChangeSpeedModule::new);
-        ModuleRegistry.register("Photon", PhotonModule::new);
-        ModuleRegistry.register("Bind", BindModule::new);
-        ModuleRegistry.register("FireCollision", FireCollisionModule::new);
+        ModuleRegistry.register(MoveModule::new);
+        ModuleRegistry.register(TimeoutModule::new);
+        ModuleRegistry.register(GrowModule::new);
+        ModuleRegistry.register(SimpleKnockbackModule::new);
+        ModuleRegistry.register(FireModule::new);
+        ModuleRegistry.register(SimpleDamageModule::new);
+        ModuleRegistry.register(ChangeSpeedModule::new);
+        ModuleRegistry.register(PhotonModule::new);
+        ModuleRegistry.register(BindModule::new);
+        ModuleRegistry.register(FireCollisionModule::new);
     }
 
     private void setupClient(final FMLClientSetupEvent event) {

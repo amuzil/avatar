@@ -10,7 +10,8 @@ import net.minecraft.world.entity.Entity;
 
 
 public class PhotonModule implements IRenderModule {
-    String id = "photon";
+
+public static String id = PhotonModule.class.getSimpleName();
 
     @Override
     public String id() {

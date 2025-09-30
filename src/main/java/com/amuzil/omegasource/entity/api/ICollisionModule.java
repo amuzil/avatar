@@ -21,7 +21,7 @@ public interface ICollisionModule extends IEntityModule {
 
     @FunctionalInterface
     interface ProjectileHandler {
-        void handle(AvatarProjectile entity, Entity hitEntity);
+        void handle(AvatarProjectile entity, Entity hitEntity, float damage, float size);
     }
 
     @FunctionalInterface

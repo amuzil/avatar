@@ -3,6 +3,10 @@ package com.amuzil.omegasource.api.magus.skill.traits.skilltraits;
 import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
 import net.minecraft.nbt.CompoundTag;
 
+
+/**
+ * Simple string storage trait
+ */
 public class StringTrait extends SkillTrait {
 
     private String info;
