@@ -13,6 +13,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 
 
@@ -54,7 +55,7 @@ public class AvatarBoundEntity extends AvatarEntity implements ItemSupplier {
 
     @Override
     public ItemStack getItem() {
-        return ElementProjectile.PROJECTILE_ITEM;
+        return new ItemStack(Blocks.AIR);
     }
 
     @Override

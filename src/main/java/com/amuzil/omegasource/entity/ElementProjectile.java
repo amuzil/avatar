@@ -35,7 +35,7 @@ import java.util.function.Predicate;
 import static com.amuzil.omegasource.Avatar.*;
 
 
-public abstract class ElementProjectile extends AvatarProjectile implements ItemSupplier {
+public abstract class ElementProjectile extends Projectile implements ItemSupplier {
     public static final ItemStack PROJECTILE_ITEM = new ItemStack(Blocks.AIR);
     private static final EntityDataAccessor<Byte> ID_FLAGS = SynchedEntityData.defineId(ElementProjectile.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Byte> PIERCE_LEVEL = SynchedEntityData.defineId(ElementProjectile.class, EntityDataSerializers.BYTE);
@@ -127,7 +127,6 @@ public abstract class ElementProjectile extends AvatarProjectile implements Item
 
     @Override
     protected void defineSynchedData() {
-        super.defineSynchedData();
         this.entityData.define(ID_FLAGS, (byte)0);
         this.entityData.define(PIERCE_LEVEL, (byte)0);
     }

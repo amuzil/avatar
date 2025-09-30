@@ -12,67 +12,49 @@ import com.amuzil.omegasource.entity.projectile.FireProjectile;
 import com.amuzil.omegasource.entity.projectile.WaterProjectile;
 import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.modules.HitDetection;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Fireball;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.amuzil.omegasource.entity.api.ICollisionModule.*;
 
+public class AirCollisionModule implements ICollisionModule {
 
-public class FireCollisionModule implements ICollisionModule {
-
-    public static String id = FireCollisionModule.class.getSimpleName();
-    public static Map<Class<?>, ProjectileHandler> FIRE_PROJECTILE_HANDLERS = new HashMap<>();
+    public static String id = AirCollisionModule.class.getSimpleName();
+    public static Map<Class<?>, ProjectileHandler> AIR_PROJECTILE_HANDLERS = new HashMap<>();
 
     static {
-        FIRE_PROJECTILE_HANDLERS.put(Blaze.class, (proj, entity, damage, size) -> {
-            Entity owner = proj.getOwner();
-            if (owner != null) {
-                proj.setOwner(entity);
-                Vec3 dir = entity.getViewVector(1);
-                proj.shoot(dir.x, dir.y, dir.z, 0.75F, 0);
-                proj.leftOwner = true;
-            }
-        });
-
-        FIRE_PROJECTILE_HANDLERS.put(Fireball.class, (proj, entity, damage, size) -> {
+        AIR_PROJECTILE_HANDLERS.put(Fireball.class, (proj, entity, damage, size) -> {
             if (!proj.getOwner().equals(((Fireball) entity).getOwner())) {
                 entity.discard();
             }
         });
 
-        FIRE_PROJECTILE_HANDLERS.put(AbstractArrow.class, (proj, entity, damage, size) -> {
+        AIR_PROJECTILE_HANDLERS.put(AbstractArrow.class, (proj, entity, damage, size) -> {
             if (!proj.getOwner().equals(((AbstractArrow) entity).getOwner())) {
                 entity.discard();
             }
         });
 
-        FIRE_PROJECTILE_HANDLERS.put(AirProjectile.class, (proj, entity, damage, size) -> {
+        AIR_PROJECTILE_HANDLERS.put(AirProjectile.class, (proj, entity, damage, size) -> {
             if (!proj.getOwner().equals(((AvatarProjectile) entity).getOwner())) {
                 proj.discard();
             }
         });
 
-        FIRE_PROJECTILE_HANDLERS.put(FireProjectile.class, (proj, entity, damage, size) -> {
+        AIR_PROJECTILE_HANDLERS.put(FireProjectile.class, (proj, entity, damage, size) -> {
             if (!proj.getOwner().equals(((AvatarProjectile) entity).getOwner())) {
-                proj.discard();
+                entity.discard();
             }
         });
 
-        FIRE_PROJECTILE_HANDLERS.put(WaterProjectile.class, (proj, entity, damage, size) -> {
+        AIR_PROJECTILE_HANDLERS.put(WaterProjectile.class, (proj, entity, damage, size) -> {
             if (!proj.getOwner().equals(((AvatarProjectile) entity).getOwner())) {
                 proj.discard();
             }
@@ -102,26 +84,13 @@ public class FireCollisionModule implements ICollisionModule {
             Avatar.LOGGER.warn("Either damage, size or collision trait was not set for Collision module. Please remove the module or add the trait(s) to the entity.");
             return;
         }
-
-        if (targets.isEmpty()) {
-            Vec3 pos = entity.position();
-            Vec3 delta = pos.add(entity.getDeltaMovement());
-            HitResult hitResult = entity.level().clip(new ClipContext(pos, delta, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, entity));
-            if (hitResult.getType() == HitResult.Type.BLOCK) {
-                BlockHitResult blockhitresult = (BlockHitResult) hitResult;
-                entity.discard();
-                BlockPos blockpos = blockhitresult.getBlockPos();
-                BlockState blockstate = entity.level().getBlockState(blockpos);
-                System.out.println("FireCollisionModule: Collided with " + blockstate.getBlock().getDescriptionId() + " at " + blockpos);
-                entity.level().gameEvent(GameEvent.PROJECTILE_LAND, blockpos, GameEvent.Context.of(entity, entity.level().getBlockState(blockpos)));
-            }
+        if (targets.isEmpty())
             return;
-        }
         float damage = (float) damageTrait.getDamage();
         float size = (float) sizeTrait.getSize();
 
         for (Entity target: targets) {
-            for (var entry: FIRE_PROJECTILE_HANDLERS.entrySet()) {
+            for (var entry: AIR_PROJECTILE_HANDLERS.entrySet()) {
                 if (entry.getKey().isInstance(target)) {
                     entry.getValue().handle((AvatarProjectile) entity, target, damage, size);
                     return;

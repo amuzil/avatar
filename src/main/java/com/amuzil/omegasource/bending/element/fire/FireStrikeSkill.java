@@ -106,7 +106,7 @@ public class FireStrikeSkill extends FireSkill {
         projectile.addTraits(data.getTrait(Constants.DAMAGE, DamageTrait.class));
         projectile.addTraits(data.getTrait(Constants.SIZE, SizeTrait.class));
 //        projectile.addModule(ModuleRegistry.create(SimpleDamageModule.id));
-        projectile.addTraits(new CollisionTrait("collision", "Blaze", "Fireball", "AbstractArrow", "FireProjectile"));
+        projectile.addTraits(new CollisionTrait(Constants.COLLISION_TYPE, "Blaze", "Fireball", "AbstractArrow", "FireProjectile"));
         projectile.addCollisionModule((ICollisionModule) ModuleRegistry.create(FireCollisionModule.id));
 
         // Slow down over time

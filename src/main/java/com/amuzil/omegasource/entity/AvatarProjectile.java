@@ -29,6 +29,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.*;
@@ -121,7 +122,7 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile,
 
     @Override
     public ItemStack getItem() {
-        return ElementProjectile.PROJECTILE_ITEM;
+        return new ItemStack(Blocks.AIR);
     }
 
     @Override
