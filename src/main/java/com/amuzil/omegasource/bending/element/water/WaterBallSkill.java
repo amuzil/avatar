@@ -10,16 +10,12 @@ import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.*;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.skill.WaterSkill;
 import com.amuzil.omegasource.capability.Bender;
-import com.amuzil.omegasource.entity.AvatarProjectile;
+import com.amuzil.omegasource.entity.AvatarCurveProjectile;
 import com.amuzil.omegasource.entity.api.ICollisionModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
-import com.amuzil.omegasource.entity.modules.collision.SimpleDamageModule;
 import com.amuzil.omegasource.entity.modules.collision.SimpleKnockbackModule;
 import com.amuzil.omegasource.entity.modules.collision.WaterCollisionModule;
 import com.amuzil.omegasource.entity.modules.entity.GrowModule;
-import com.amuzil.omegasource.entity.modules.force.ChangeSpeedModule;
-import com.amuzil.omegasource.entity.projectile.AirProjectile;
-import com.amuzil.omegasource.entity.projectile.WaterProjectile;
 import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.maths.Point;
 import net.minecraft.world.entity.LivingEntity;
@@ -62,8 +58,8 @@ public class WaterBallSkill extends WaterSkill {
         double speed = data.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
         double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
-        AvatarProjectile projectile = new WaterProjectile(entity, level);
-        projectile.setElement(Elements.AIR);
+        AvatarCurveProjectile projectile = new AvatarCurveProjectile(level);
+        projectile.setElement(Elements.WATER);
         projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
         projectile.setOwner(entity);
         projectile.setMaxLifetime(lifetime);
@@ -72,26 +68,6 @@ public class WaterBallSkill extends WaterSkill {
         projectile.setNoGravity(true);
         projectile.setDamageable(false);
         projectile.setHittable(true);
-
-        projectile.addTraits(data.getTrait(Constants.MAX_SIZE, SizeTrait.class));
-
-        // Copied from the fire easing constant
-        projectile.addTraits(new PointsTrait("height_curve", new Point(0.00, 0.5),  // t=0: zero width
-                new Point(0.20, 0.75),  // rise slowly
-                new Point(0.40, 2.5),  // flare to 150%
-                new Point(0.70, 0.40),  // rapid taper
-                new Point(1.00, 0.00)   // die out completely
-        ));
-
-        // Used for bezier curving
-        projectile.addTraits(new PointsTrait("width_curve", new Point(0.00, 0.5),  // t=0: zero width
-                new Point(0.20, 0.75),  // rise slowly
-                new Point(0.40, 1.75),  // flare to 150%
-                new Point(0.70, 0.40),  // rapid taper
-                new Point(1.00, 0.00)   // die out completely
-        ));
-
-        projectile.addModule(ModuleRegistry.create(GrowModule.id));
 
         projectile.addTraits(data.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
         projectile.addTraits(new DirectionTrait("knockback_direction", new Vec3(0, 0.45, 0)));
@@ -106,7 +82,7 @@ public class WaterBallSkill extends WaterSkill {
 
         // Slow down over time
         projectile.addTraits(data.getTrait(Constants.SPEED_FACTOR, SpeedTrait.class));
-        projectile.addModule(ModuleRegistry.create(ChangeSpeedModule.id));
+//        projectile.addModule(ModuleRegistry.create(ChangeSpeedModule.id));
 
         // Particle FX module
         projectile.addTraits(data.getTrait(Constants.FX, StringTrait.class));

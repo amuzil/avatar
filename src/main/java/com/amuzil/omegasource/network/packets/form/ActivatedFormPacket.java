@@ -21,7 +21,7 @@ import java.util.function.Supplier;
 
 import static com.amuzil.omegasource.bending.form.BendingForms.*;
 
-
+@Deprecated
 public class ActivatedFormPacket implements AvatarPacket {
 
     private final int entityId; // Entity ID to send back to client for FX
@@ -68,8 +68,8 @@ public class ActivatedFormPacket implements AvatarPacket {
          @see AvatarProjectile#AvatarProjectile(EntityType, Level) This gets called first and server-side only.
          Can't change this default constructor because it's needed to register entities. Add/use any extra args to Packet.
          */
-        assert projectile != null;
-        projectile.startEffect(STRIKE);
+//        assert projectile != null;
+//        projectile.startEffect(STRIKE);
     }
 
     public boolean handle(Supplier<NetworkEvent.Context> ctx) {

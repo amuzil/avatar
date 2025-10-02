@@ -1,21 +1,10 @@
 package com.amuzil.omegasource.entity;
 
 import com.amuzil.omegasource.bending.form.BendingForm;
-import com.amuzil.omegasource.entity.projectile.AirProjectile;
-import com.amuzil.omegasource.entity.projectile.EarthProjectile;
-import com.amuzil.omegasource.entity.projectile.FireProjectile;
-import com.amuzil.omegasource.entity.projectile.WaterProjectile;
 import com.amuzil.omegasource.bending.element.Element;
-import com.amuzil.omegasource.bending.element.Elements;
-import com.amuzil.omegasource.bending.form.BendingForms;
-import com.lowdragmc.photon.client.fx.EntityEffect;
-import com.lowdragmc.photon.client.fx.FX;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -24,15 +13,11 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.*;
 
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-
-import static com.amuzil.omegasource.Avatar.*;
 
 @Deprecated
 public abstract class ElementProjectile extends Projectile implements ItemSupplier {

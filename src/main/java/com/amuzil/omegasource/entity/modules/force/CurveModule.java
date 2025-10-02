@@ -11,9 +11,9 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 
-public class MoveModule implements IForceModule {
+public class CurveModule implements IForceModule {
 
-public static String id = MoveModule.class.getSimpleName();
+public static String id = CurveModule.class.getSimpleName();
 
     @Override
     public String id() {
@@ -52,12 +52,24 @@ public static String id = MoveModule.class.getSimpleName();
         }
 
         delta = entity.getDeltaMovement();
-        double finalX = entity.getX() + delta.x;
-        double finalY = entity.getY() + delta.y;
-        double finalZ = entity.getZ() + delta.z;
+        double x = delta.x;
+        double y = delta.y;
+        double z = delta.z;
+
+        double finalX = entity.getX() + x;
+        double finalY = entity.getY() + y;
+        double finalZ = entity.getZ() + z;
 
         if (!entity.isNoGravity() && !flag)
             entity.setDeltaMovement(delta.x, delta.y - (double) 0.05F, delta.z);
+
+        // Curving logic
+        if (entity.owner() != null) {
+            delta = entity.getDeltaMovement();
+            double rateOfControl = 0.4; // Control/curve the shot projectile
+            Vec3 aim = entity.owner().getLookAngle().multiply(rateOfControl, rateOfControl, rateOfControl);
+            entity.setDeltaMovement(delta.add(aim));
+        }
 
         entity.setPos(finalX, finalY, finalZ);
         entity.checkBlocks();

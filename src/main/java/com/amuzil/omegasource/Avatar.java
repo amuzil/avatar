@@ -7,6 +7,7 @@ import com.amuzil.omegasource.entity.modules.entity.GrowModule;
 import com.amuzil.omegasource.entity.modules.entity.TimeoutModule;
 import com.amuzil.omegasource.entity.modules.force.BindModule;
 import com.amuzil.omegasource.entity.modules.force.ChangeSpeedModule;
+import com.amuzil.omegasource.entity.modules.force.CurveModule;
 import com.amuzil.omegasource.entity.modules.force.MoveModule;
 import com.amuzil.omegasource.entity.modules.render.PhotonModule;
 import com.amuzil.omegasource.input.InputModule;
@@ -74,6 +75,7 @@ public class Avatar {
         AvatarNetwork.register();
 
         ModuleRegistry.register(MoveModule::new);
+        ModuleRegistry.register(CurveModule::new);
         ModuleRegistry.register(TimeoutModule::new);
         ModuleRegistry.register(GrowModule::new);
         ModuleRegistry.register(SimpleKnockbackModule::new);
@@ -110,12 +112,8 @@ public class Avatar {
         public static void onClientSetup(FMLClientSetupEvent event) {
             // Some client setup code
             LOGGER.info("HELLO FROM CLIENT SETUP");
-//            EntityRenderers.register(AvatarEntities.AIR_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
-//            EntityRenderers.register(AvatarEntities.WATER_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
-//            EntityRenderers.register(AvatarEntities.EARTH_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
-//            EntityRenderers.register(AvatarEntities.FIRE_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
-
             EntityRenderers.register(AvatarEntities.AVATAR_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
+            EntityRenderers.register(AvatarEntities.AVATAR_CURVE_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
             EntityRenderers.register(AvatarEntities.AVATAR_BIND_ENTITY_TYPE.get(), ThrownItemRenderer::new);
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
 
@@ -125,6 +123,7 @@ public class Avatar {
         }
     }
 
+    @Deprecated
     public static void reloadFX() {
         fire_bloom = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "fire_bloom"));
         fire_bloom_perma = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "fires_bloom_perma5"));

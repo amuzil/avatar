@@ -10,7 +10,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.*;
 
-
+@Deprecated
 public class EarthProjectile extends AvatarProjectile {
     private static final EntityDataAccessor<Byte> ID_FLAGS = SynchedEntityData.defineId(EarthProjectile.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Byte> PIERCE_LEVEL = SynchedEntityData.defineId(EarthProjectile.class, EntityDataSerializers.BYTE);

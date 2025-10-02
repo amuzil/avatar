@@ -5,6 +5,7 @@ import com.amuzil.omegasource.entity.api.IForceModule;
 import com.amuzil.omegasource.entity.api.IRenderModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import com.amuzil.omegasource.entity.modules.entity.TimeoutModule;
+import com.amuzil.omegasource.entity.modules.force.CurveModule;
 import com.amuzil.omegasource.entity.modules.force.MoveModule;
 import com.amuzil.omegasource.entity.modules.render.PhotonModule;
 import com.google.common.base.MoreObjects;
@@ -36,7 +37,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 
-public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile, TraceableEntity, ItemSupplier {
+public class AvatarCurveProjectile extends AvatarEntity implements IAvatarProjectile, TraceableEntity, ItemSupplier {
     @Nullable
     private UUID ownerUUID;
     @Nullable
@@ -44,47 +45,19 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile,
     public boolean leftOwner;
     private boolean hasBeenShot;
 
-    private static final EntityDataAccessor<Float> WIDTH = SynchedEntityData.defineId(AvatarProjectile.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> HEIGHT = SynchedEntityData.defineId(AvatarProjectile.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> WIDTH = SynchedEntityData.defineId(AvatarCurveProjectile.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> HEIGHT = SynchedEntityData.defineId(AvatarCurveProjectile.class, EntityDataSerializers.FLOAT);
 
-    public AvatarProjectile(EntityType<? extends AvatarProjectile> pEntityType, Level pLevel) {
+    public AvatarCurveProjectile(EntityType<? extends AvatarCurveProjectile> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
-        // TODO - NOTE: Modules are not synced between client and server unless added to the entity's constructor!
-        addForceModule((IForceModule) ModuleRegistry.create(MoveModule.id));
+        addForceModule((IForceModule) ModuleRegistry.create(CurveModule.id));
         addRenderModule((IRenderModule) ModuleRegistry.create(PhotonModule.id));
         addModule(ModuleRegistry.create(TimeoutModule.id));
     }
 
-    public AvatarProjectile(Level pLevel) {
-        this(AvatarEntities.AVATAR_PROJECTILE_ENTITY_TYPE.get(), pLevel);
+    public AvatarCurveProjectile(Level pLevel) {
+        this(AvatarEntities.AVATAR_CURVE_PROJECTILE_ENTITY_TYPE.get(), pLevel);
     }
-
-//    public void startEffect(BendingForm form) {
-//        FX fx = null;
-//        if (element() != null) {
-//            if (element().equals(Elements.FIRE)) {
-//                if (form.name().equals("strike"))
-//                    fx = fire_bloom_perma;
-//                if (form.name().equals("block"))
-//                    fx = blue_fire_perma;
-//                if (form.name().equals("arc"))
-//                    fx = null;
-//                if (form.name().equals("null"))
-//                    fx = fire_bloom_perma;
-//                if (form.name().equals("step"))
-//                    fx = blue_fire_perma;
-//            } else if (element().equals(Elements.WATER)) {
-//                if (form.name().equals("strike"))
-//                    fx = water;
-//                if (form.name().equals("block"))
-//                    fx = water;
-//            }
-//        }
-//        if (fx != null) {
-//            EntityEffect entityEffect = new EntityEffect(fx, this.level(), this);
-//            entityEffect.start();
-//        }
-//    }
 
     public void setWidth(float width) {
         entityData.set(WIDTH, width);
@@ -281,6 +254,9 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile,
         this.setDeltaMovement(this.getDeltaMovement().add(vec3.x, pShooter.onGround() ? 0.0D : vec3.y, vec3.z));
     }
 
+    /**
+     * Called when this EntityFireball hits a block or entity.
+     */
     protected void onHit(HitResult pResult) {
         HitResult.Type hitresult$type = pResult.getType();
         if (hitresult$type == HitResult.Type.ENTITY) {
@@ -292,8 +268,7 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile,
             BlockPos blockpos = blockhitresult.getBlockPos();
             this.level().gameEvent(GameEvent.PROJECTILE_LAND, blockpos, GameEvent.Context.of(this, this.level().getBlockState(blockpos)));
         }
-        if (!this.level().isClientSide)
-            this.level().broadcastEntityEvent(this, (byte)3);
+
     }
 
     /**

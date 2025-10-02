@@ -12,6 +12,7 @@ import com.amuzil.omegasource.entity.projectile.FireProjectile;
 import com.amuzil.omegasource.entity.projectile.WaterProjectile;
 import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.modules.HitDetection;
+import com.lowdragmc.photon.client.fx.EntityEffect;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Blaze;
@@ -23,6 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.amuzil.omegasource.Avatar.steam;
+
 
 public class WaterCollisionModule implements ICollisionModule {
 
@@ -31,8 +34,10 @@ public class WaterCollisionModule implements ICollisionModule {
 
     static {
         WATER_PROJECTILE_HANDLERS.put(Blaze.class, (proj, entity, damage, size) -> {
-            entity.hurt(proj.damageSources().dragonBreath(), damage * 3f);
-            System.out.println("Blaze hit for " + damage * 3f + " damage");
+            entity.hurt(proj.damageSources().dragonBreath(), damage * 4f);
+            EntityEffect entityEffect = new EntityEffect(steam, entity.level(), proj);
+            entityEffect.start();
+            System.out.println("Blaze hit for " + damage * 4f + " damage");
         });
 
         WATER_PROJECTILE_HANDLERS.put(Fireball.class, (proj, entity, damage, size) -> {

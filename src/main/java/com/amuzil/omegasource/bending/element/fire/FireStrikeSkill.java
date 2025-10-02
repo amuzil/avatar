@@ -62,7 +62,7 @@ public class FireStrikeSkill extends FireSkill {
         double speed = data.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
         double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
-        AvatarProjectile projectile = new FireProjectile(entity, level);
+        AvatarProjectile projectile = new AvatarProjectile(level);
         projectile.setElement(Elements.FIRE);
         projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo()); // TODO - Figure out why DataTrait won't sync
         projectile.setOwner(entity);

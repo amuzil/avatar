@@ -15,7 +15,7 @@ import net.minecraft.world.phys.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-
+@Deprecated
 public class FireProjectile extends AvatarProjectile {
     private static final EntityDataAccessor<Byte> ID_FLAGS = SynchedEntityData.defineId(FireProjectile.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Byte> PIERCE_LEVEL = SynchedEntityData.defineId(FireProjectile.class, EntityDataSerializers.BYTE);
@@ -35,14 +35,6 @@ public class FireProjectile extends AvatarProjectile {
         this.setPos(livingEntity.getX(), livingEntity.getEyeY(), livingEntity.getZ());
         this.setOwner(livingEntity);
         this.setNoGravity(true);
-    }
-
-    @Override
-    public void remove(RemovalReason reason) {
-        super.remove(reason);
-
-        // Unregister from the event bus
-        MinecraftForge.EVENT_BUS.unregister(this);
     }
 
 //    public void tick() {

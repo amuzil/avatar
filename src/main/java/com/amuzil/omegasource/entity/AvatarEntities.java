@@ -1,11 +1,6 @@
 package com.amuzil.omegasource.entity;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.entity.collision.ElementCollision;
-import com.amuzil.omegasource.entity.projectile.AirProjectile;
-import com.amuzil.omegasource.entity.projectile.EarthProjectile;
-import com.amuzil.omegasource.entity.projectile.FireProjectile;
-import com.amuzil.omegasource.entity.projectile.WaterProjectile;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -40,11 +35,15 @@ public class AvatarEntities {
 
     public static final  RegistryObject<EntityType<AvatarProjectile>> AVATAR_PROJECTILE_ENTITY_TYPE =
             ENTITY_TYPES.register("avatar_projectile", () -> EntityType.Builder.<AvatarProjectile>of(AvatarProjectile::new, MobCategory.MISC)
-                    .sized(0.5f, 0.5f).build("avatar_projectile")) ;
+                    .sized(0.5f, 0.5f).build("avatar_projectile"));
+
+    public static final RegistryObject<EntityType<AvatarCurveProjectile>> AVATAR_CURVE_PROJECTILE_ENTITY_TYPE =
+            ENTITY_TYPES.register("avatar_curve_projectile", () -> EntityType.Builder.<AvatarCurveProjectile>of(AvatarCurveProjectile::new, MobCategory.MISC)
+                    .sized(0.5f, 0.5f).build("avatar_curve_projectile"));
 
     public static final  RegistryObject<EntityType<AvatarBoundEntity>> AVATAR_BIND_ENTITY_TYPE =
             ENTITY_TYPES.register("avatar_bind", () -> EntityType.Builder.<AvatarBoundEntity>of(AvatarBoundEntity::new, MobCategory.MISC)
-                    .sized(0.5f, 0.5f).build("avatar_bind")) ;
+                    .sized(0.5f, 0.5f).build("avatar_bind"));
 
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
