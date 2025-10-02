@@ -36,7 +36,7 @@ public class AirGustSkill extends AirSkill {
         addTrait(new KnockbackTrait(Constants.KNOCKBACK, 0.6f));
         addTrait(new SpeedTrait(Constants.SPEED, 0.875d));
         addTrait(new TimedTrait(Constants.LIFETIME, 15)); // Ticks not seconds...
-        addTrait(new SpeedTrait(Constants.SPEED_FACTOR, 0.85d));
+        addTrait(new SpeedTrait(Constants.SPEED_FACTOR, 1.0d));
         addTrait(new StringTrait(Constants.FX, "airs_perma8"));
 
         startPaths = SkillPathBuilder.getInstance().simple(new ActiveForm(STRIKE, true)).build();

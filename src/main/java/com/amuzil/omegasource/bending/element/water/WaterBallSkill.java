@@ -29,7 +29,7 @@ public class WaterBallSkill extends WaterSkill {
     public WaterBallSkill() {
         super(Avatar.MOD_ID, "water_ball");
         addTrait(new DamageTrait(Constants.DAMAGE, 1.5f));
-        addTrait(new SizeTrait(Constants.SIZE, 0.125F));
+        addTrait(new SizeTrait(Constants.SIZE, 0.3F));
         addTrait(new SizeTrait(Constants.MAX_SIZE, 1.25f));
         addTrait(new KnockbackTrait(Constants.KNOCKBACK, 0.2f));
         addTrait(new SpeedTrait(Constants.SPEED, 0.475d));

@@ -35,7 +35,6 @@ public class WaterCollisionModule implements ICollisionModule {
             entity.hurt(proj.damageSources().dragonBreath(), damage * 4f);
             EntityEffect entityEffect = new EntityEffect(steam, entity.level(), proj);
             entityEffect.start();
-            System.out.println("Blaze hit for " + damage * 4f + " damage");
         });
 
         WATER_PROJECTILE_HANDLERS.put(Fireball.class, (proj, entity, damage, size) -> {
