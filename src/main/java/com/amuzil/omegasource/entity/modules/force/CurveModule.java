@@ -60,6 +60,8 @@ public static String id = CurveModule.class.getSimpleName();
         double finalY = entity.getY() + y;
         double finalZ = entity.getZ() + z;
 
+        // Scale down speed slightly
+        entity.setDeltaMovement(delta.scale(0.49F));
         if (!entity.isNoGravity() && !flag)
             entity.setDeltaMovement(delta.x, delta.y - (double) 0.05F, delta.z);
 
