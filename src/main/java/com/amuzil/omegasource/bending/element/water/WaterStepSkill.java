@@ -24,12 +24,12 @@ public class WaterStepSkill extends WaterSkill {
 
     public WaterStepSkill() {
         super(Avatar.MOD_ID, "water_step");
-        addTrait(new SpeedTrait(Constants.DASH_SPEED, 1.5f));
+        addTrait(new SpeedTrait(Constants.DASH_SPEED, 1.4f));
         addTrait(new SizeTrait(Constants.SIZE, 1.0f));
         addTrait(new ColourTrait(0, 0, 255, "water_colour"));
         addTrait(new TimedTrait(Constants.MAX_RUNTIME, 60));
         addTrait(new TimedTrait(Constants.RUNTIME, 0));
-        addTrait(new StringTrait(Constants.FX, "water_bloom_perma5"));
+        addTrait(new StringTrait(Constants.FX, "water1"));
         this.startPaths = SkillPathBuilder.getInstance()
                 .simple(new ActiveForm(STEP, true))
                 .complex(new ActiveForm(STEP, true))

@@ -7,6 +7,7 @@ import com.amuzil.omegasource.bending.element.earth.EarthStepSkill;
 
 public class Waterbending extends Element {
     // Class for registering Waterbending skills
+    public static final WaterBallSkill WATER_BALL_SKILL = new WaterBallSkill();
     public static final WaterStepSkill WATER_STEP_SKILL = new WaterStepSkill();
 
     public Waterbending() {

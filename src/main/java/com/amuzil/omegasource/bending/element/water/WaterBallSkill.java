@@ -1,4 +1,4 @@
-package com.amuzil.omegasource.bending.element.fire;
+package com.amuzil.omegasource.bending.element.water;
 
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
@@ -8,16 +8,17 @@ import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.traits.entitytraits.PointsTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.*;
 import com.amuzil.omegasource.bending.element.Elements;
-import com.amuzil.omegasource.bending.skill.FireSkill;
+import com.amuzil.omegasource.bending.skill.WaterSkill;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.entity.AvatarProjectile;
 import com.amuzil.omegasource.entity.api.ICollisionModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import com.amuzil.omegasource.entity.modules.collision.FireCollisionModule;
-import com.amuzil.omegasource.entity.modules.collision.FireModule;
+import com.amuzil.omegasource.entity.modules.collision.SimpleDamageModule;
 import com.amuzil.omegasource.entity.modules.collision.SimpleKnockbackModule;
 import com.amuzil.omegasource.entity.modules.entity.GrowModule;
-import com.amuzil.omegasource.entity.projectile.FireProjectile;
+import com.amuzil.omegasource.entity.modules.force.ChangeSpeedModule;
+import com.amuzil.omegasource.entity.projectile.AirProjectile;
 import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.maths.Point;
 import net.minecraft.world.entity.LivingEntity;
@@ -27,20 +28,18 @@ import net.minecraft.world.phys.Vec3;
 import static com.amuzil.omegasource.bending.form.BendingForms.STRIKE;
 
 
-public class FireStrikeSkill extends FireSkill {
+public class WaterBallSkill extends WaterSkill {
 
-    public FireStrikeSkill() {
-        super(Avatar.MOD_ID, "fire_strike");
-        addTrait(new DamageTrait(Constants.DAMAGE, 2.5f));
+    public WaterBallSkill() {
+        super(Avatar.MOD_ID, "water_ball");
+        addTrait(new DamageTrait(Constants.DAMAGE, 1.5f));
         addTrait(new SizeTrait(Constants.SIZE, 0.125F));
         addTrait(new SizeTrait(Constants.MAX_SIZE, 1.25f));
-        addTrait(new KnockbackTrait(Constants.KNOCKBACK, 0.4f));
-        addTrait(new ColourTrait(0, 0, 0, Constants.FIRE_COLOUR));
-        addTrait(new SpeedTrait(Constants.SPEED, 0.875d));
-        addTrait(new TimedTrait(Constants.LIFETIME, 15));
-        addTrait(new TimedTrait(Constants.FIRE_TIME, 40));
+        addTrait(new KnockbackTrait(Constants.KNOCKBACK, 0.2f));
+        addTrait(new SpeedTrait(Constants.SPEED, 0.475d));
+        addTrait(new TimedTrait(Constants.LIFETIME, 15)); // Ticks not seconds...
         addTrait(new SpeedTrait(Constants.SPEED_FACTOR, 0.85d));
-        addTrait(new StringTrait(Constants.FX, "fires_bloom_perma5"));
+        addTrait(new StringTrait(Constants.FX, "water1"));
 
         startPaths = SkillPathBuilder.getInstance().simple(new ActiveForm(STRIKE, true)).build();
     }
@@ -62,9 +61,9 @@ public class FireStrikeSkill extends FireSkill {
         double speed = data.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
         double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
-        AvatarProjectile projectile = new FireProjectile(entity, level);
-        projectile.setElement(Elements.FIRE);
-        projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo()); // TODO - Figure out why DataTrait won't sync
+        AvatarProjectile projectile = new AirProjectile(entity, level);
+        projectile.setElement(Elements.AIR);
+        projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
         projectile.setOwner(entity);
         projectile.setMaxLifetime(lifetime);
         projectile.setWidth((float) size);
@@ -93,14 +92,9 @@ public class FireStrikeSkill extends FireSkill {
 
         projectile.addModule(ModuleRegistry.create(GrowModule.id));
 
-        // TODO: make more advanced knockback calculator that uses the entity's current size as well as speed (mass * velocity!!!!)
         projectile.addTraits(data.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
         projectile.addTraits(new DirectionTrait("knockback_direction", new Vec3(0, 0.45, 0)));
         projectile.addModule(ModuleRegistry.create(SimpleKnockbackModule.id));
-
-        // Set Fire module
-        projectile.addTraits(data.getTrait(Constants.FIRE_TIME, TimedTrait.class));
-        projectile.addModule(ModuleRegistry.create(FireModule.id));
 
         // Damage module
         projectile.addTraits(data.getTrait(Constants.DAMAGE, DamageTrait.class));
@@ -111,9 +105,11 @@ public class FireStrikeSkill extends FireSkill {
 
         // Slow down over time
         projectile.addTraits(data.getTrait(Constants.SPEED_FACTOR, SpeedTrait.class));
-//        projectile.addModule(ModuleRegistry.create(ChangeSpeedModule.id));
+        projectile.addModule(ModuleRegistry.create(ChangeSpeedModule.id));
 
-        // Particle FX
+        // Particle FX module
+        projectile.addTraits(data.getTrait(Constants.FX, StringTrait.class));
+
         projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
         projectile.init();
 
