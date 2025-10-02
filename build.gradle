@@ -124,11 +124,13 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 mixin {
-    add sourceSets.main, "av3.mixins.json"
+    add sourceSets.main, "av3.refmap.json"
+    config "av3.mixins.json"
 }
 
 repositories {
     mavenCentral()
+    maven { url "https://repo.spongepowered.org/maven" }
     // Put repositories for dependencies here
     // ForgeGradle automatically adds the Forge maven and Maven Central for you
     maven { url = "https://maven.firstdarkdev.xyz/snapshots" } // LDLib, Photon
@@ -174,13 +176,14 @@ dependencies {
     implementation fg.deobf("com.lowdragmc.ldlib:ldlib-forge-1.20.1:1.0.21.a") { transitive = false }
     testImplementation(platform('org.junit:junit-bom:5.11.2'))
     testImplementation('org.junit.jupiter:junit-jupiter')
-    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${minecraft_version}:${geckolib_version}")
-    implementation("com.eliotlash.mclib:mclib:20")
+//    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${minecraft_version}:${geckolib_version}")
+//    implementation("com.eliotlash.mclib:mclib:20")
     implementation fg.deobf("org.valkyrienskies:valkyrienskies-120-forge:${vs2_version}")
     implementation("org.valkyrienskies.core:api:${vs_core_version}")
     implementation "thedarkcolour:kotlinforforge:4.11.0"
     implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${player_anim_version}")
 //    implementation fg.deobf(files('libs/bendy-lib-4.1.0-forge.jar'))
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
