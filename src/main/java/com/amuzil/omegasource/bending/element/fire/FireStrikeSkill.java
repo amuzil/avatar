@@ -10,14 +10,13 @@ import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.*;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.skill.FireSkill;
 import com.amuzil.omegasource.capability.Bender;
-import com.amuzil.omegasource.entity.AvatarProjectile;
+import com.amuzil.omegasource.entity.projectile.AvatarDirectProjectile;
 import com.amuzil.omegasource.entity.api.ICollisionModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import com.amuzil.omegasource.entity.modules.collision.FireCollisionModule;
 import com.amuzil.omegasource.entity.modules.collision.FireModule;
 import com.amuzil.omegasource.entity.modules.collision.SimpleKnockbackModule;
 import com.amuzil.omegasource.entity.modules.entity.GrowModule;
-import com.amuzil.omegasource.entity.projectile.FireProjectile;
 import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.maths.Point;
 import net.minecraft.world.entity.LivingEntity;
@@ -62,7 +61,7 @@ public class FireStrikeSkill extends FireSkill {
         double speed = data.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
         double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
-        AvatarProjectile projectile = new AvatarProjectile(level);
+        AvatarDirectProjectile projectile = new AvatarDirectProjectile(level);
         projectile.setElement(Elements.FIRE);
         projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo()); // TODO - Figure out why DataTrait won't sync
         projectile.setOwner(entity);

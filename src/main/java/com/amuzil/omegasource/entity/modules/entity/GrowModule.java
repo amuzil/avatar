@@ -4,7 +4,7 @@ import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.skill.traits.entitytraits.PointsTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SizeTrait;
 import com.amuzil.omegasource.entity.AvatarEntity;
-import com.amuzil.omegasource.entity.AvatarProjectile;
+import com.amuzil.omegasource.entity.projectile.AvatarProjectile;
 import com.amuzil.omegasource.entity.api.IEntityModule;
 import com.amuzil.omegasource.utils.Constants;
 import net.minecraft.nbt.CompoundTag;

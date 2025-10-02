@@ -1,7 +1,7 @@
 package com.amuzil.omegasource.entity.api;
 
 import com.amuzil.omegasource.entity.AvatarEntity;
-import com.amuzil.omegasource.entity.AvatarProjectile;
+import com.amuzil.omegasource.entity.projectile.AvatarProjectile;
 import net.minecraft.world.entity.Entity;
 
 import java.util.HashMap;

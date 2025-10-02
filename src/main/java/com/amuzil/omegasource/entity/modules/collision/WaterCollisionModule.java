@@ -5,7 +5,7 @@ import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.CollisionTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.DamageTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SizeTrait;
 import com.amuzil.omegasource.entity.AvatarEntity;
-import com.amuzil.omegasource.entity.AvatarProjectile;
+import com.amuzil.omegasource.entity.projectile.AvatarProjectile;
 import com.amuzil.omegasource.entity.api.ICollisionModule;
 import com.amuzil.omegasource.entity.projectile.AirProjectile;
 import com.amuzil.omegasource.entity.projectile.FireProjectile;
@@ -16,9 +16,7 @@ import com.lowdragmc.photon.client.fx.EntityEffect;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Blaze;
-import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Fireball;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
 import java.util.List;

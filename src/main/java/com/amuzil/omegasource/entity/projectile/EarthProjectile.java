@@ -1,7 +1,6 @@
 package com.amuzil.omegasource.entity.projectile;
 
 import com.amuzil.omegasource.entity.AvatarEntities;
-import com.amuzil.omegasource.entity.AvatarProjectile;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;

@@ -1,6 +1,6 @@
 package com.amuzil.omegasource.network.packets.form;
 
-import com.amuzil.omegasource.entity.AvatarProjectile;
+import com.amuzil.omegasource.entity.projectile.AvatarProjectile;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.api.AvatarPacket;
 import net.minecraft.client.Minecraft;
@@ -18,8 +18,6 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-
-import static com.amuzil.omegasource.bending.form.BendingForms.*;
 
 @Deprecated
 public class ActivatedFormPacket implements AvatarPacket {

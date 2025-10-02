@@ -5,7 +5,7 @@ import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.CollisionTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.DamageTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SizeTrait;
 import com.amuzil.omegasource.entity.AvatarEntity;
-import com.amuzil.omegasource.entity.AvatarProjectile;
+import com.amuzil.omegasource.entity.projectile.AvatarProjectile;
 import com.amuzil.omegasource.entity.api.ICollisionModule;
 import com.amuzil.omegasource.entity.projectile.AirProjectile;
 import com.amuzil.omegasource.entity.projectile.FireProjectile;
@@ -29,8 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.amuzil.omegasource.entity.api.ICollisionModule.*;
-
 
 public class FireCollisionModule implements ICollisionModule {
 
@@ -44,7 +42,6 @@ public class FireCollisionModule implements ICollisionModule {
                 proj.setOwner(entity);
                 Vec3 dir = entity.getViewVector(1);
                 proj.shoot(dir.x, dir.y, dir.z, 0.75F, 0);
-                proj.leftOwner = true;
             }
         });
 

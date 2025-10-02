@@ -1,11 +1,11 @@
-package com.amuzil.omegasource.entity;
+package com.amuzil.omegasource.entity.projectile;
 
+import com.amuzil.omegasource.entity.AvatarEntities;
+import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.api.IAvatarProjectile;
-import com.amuzil.omegasource.entity.api.IForceModule;
 import com.amuzil.omegasource.entity.api.IRenderModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import com.amuzil.omegasource.entity.modules.entity.TimeoutModule;
-import com.amuzil.omegasource.entity.modules.force.MoveModule;
 import com.amuzil.omegasource.entity.modules.render.PhotonModule;
 import com.google.common.base.MoreObjects;
 import net.minecraft.core.BlockPos;
@@ -50,7 +50,6 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile,
     public AvatarProjectile(EntityType<? extends AvatarProjectile> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
         // TODO - NOTE: Modules are not synced between client and server unless added to the entity's constructor!
-        addForceModule((IForceModule) ModuleRegistry.create(MoveModule.id));
         addRenderModule((IRenderModule) ModuleRegistry.create(PhotonModule.id));
         addModule(ModuleRegistry.create(TimeoutModule.id));
     }
@@ -58,33 +57,6 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile,
     public AvatarProjectile(Level pLevel) {
         this(AvatarEntities.AVATAR_PROJECTILE_ENTITY_TYPE.get(), pLevel);
     }
-
-//    public void startEffect(BendingForm form) {
-//        FX fx = null;
-//        if (element() != null) {
-//            if (element().equals(Elements.FIRE)) {
-//                if (form.name().equals("strike"))
-//                    fx = fire_bloom_perma;
-//                if (form.name().equals("block"))
-//                    fx = blue_fire_perma;
-//                if (form.name().equals("arc"))
-//                    fx = null;
-//                if (form.name().equals("null"))
-//                    fx = fire_bloom_perma;
-//                if (form.name().equals("step"))
-//                    fx = blue_fire_perma;
-//            } else if (element().equals(Elements.WATER)) {
-//                if (form.name().equals("strike"))
-//                    fx = water;
-//                if (form.name().equals("block"))
-//                    fx = water;
-//            }
-//        }
-//        if (fx != null) {
-//            EntityEffect entityEffect = new EntityEffect(fx, this.level(), this);
-//            entityEffect.start();
-//        }
-//    }
 
     public void setWidth(float width) {
         entityData.set(WIDTH, width);

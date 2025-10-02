@@ -1,7 +1,6 @@
 package com.amuzil.omegasource.entity.projectile;
 
 import com.amuzil.omegasource.entity.AvatarEntities;
-import com.amuzil.omegasource.entity.AvatarProjectile;
 import com.amuzil.omegasource.events.FormActivatedEvent;
 import com.amuzil.omegasource.bending.form.BendingForms;
 import net.minecraft.network.syncher.EntityDataAccessor;

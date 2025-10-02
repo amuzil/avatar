@@ -52,13 +52,9 @@ public static String id = CurveModule.class.getSimpleName();
         }
 
         delta = entity.getDeltaMovement();
-        double x = delta.x;
-        double y = delta.y;
-        double z = delta.z;
-
-        double finalX = entity.getX() + x;
-        double finalY = entity.getY() + y;
-        double finalZ = entity.getZ() + z;
+        double finalX = entity.getX() + delta.x;
+        double finalY = entity.getY() + delta.y;
+        double finalZ = entity.getZ() + delta.z;
 
         // Scale down speed slightly
         entity.setDeltaMovement(delta.scale(0.49F));

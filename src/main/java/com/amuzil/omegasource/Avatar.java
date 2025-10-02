@@ -113,6 +113,7 @@ public class Avatar {
             // Some client setup code
             LOGGER.info("HELLO FROM CLIENT SETUP");
             EntityRenderers.register(AvatarEntities.AVATAR_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
+            EntityRenderers.register(AvatarEntities.AVATAR_DIRECT_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
             EntityRenderers.register(AvatarEntities.AVATAR_CURVE_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
             EntityRenderers.register(AvatarEntities.AVATAR_BIND_ENTITY_TYPE.get(), ThrownItemRenderer::new);
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());

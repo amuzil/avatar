@@ -66,6 +66,16 @@ public abstract class AvatarEntity extends Entity {
         super(pEntityType, pLevel);
     }
 
+    /** Call this after adding it to a world.
+     */
+    public void init() {
+        modules.forEach(mod -> mod.init(this));
+        controlModules.forEach(mod -> mod.init(this));
+        forceModules.forEach(mod -> mod.init(this));
+        collisionModules.forEach(mod -> mod.init(this));
+        renderModules.forEach(mod -> mod.init(this));
+    }
+
     /**
      * Called to update the entity's position/logic.
      */
@@ -212,19 +222,13 @@ public abstract class AvatarEntity extends Entity {
         return null;
     }
 
-    /** Call this after adding it to a world.
-     */
-    public void init() {
-        modules.forEach(mod -> mod.init(this));
-        controlModules.forEach(mod -> mod.init(this));
-        forceModules.forEach(mod -> mod.init(this));
-        collisionModules.forEach(mod -> mod.init(this));
-        renderModules.forEach(mod -> mod.init(this));
-    }
-
     public void setOwner(Entity owner) {
         this.owner = owner;
         this.entityData.set(OWNER_ID, Optional.of(owner.getUUID()));
+    }
+
+    public Entity getOwner() {
+        return owner();
     }
 
     public Entity owner() {
