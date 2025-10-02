@@ -13,12 +13,13 @@ import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.entity.AvatarProjectile;
 import com.amuzil.omegasource.entity.api.ICollisionModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
-import com.amuzil.omegasource.entity.modules.collision.FireCollisionModule;
 import com.amuzil.omegasource.entity.modules.collision.SimpleDamageModule;
 import com.amuzil.omegasource.entity.modules.collision.SimpleKnockbackModule;
+import com.amuzil.omegasource.entity.modules.collision.WaterCollisionModule;
 import com.amuzil.omegasource.entity.modules.entity.GrowModule;
 import com.amuzil.omegasource.entity.modules.force.ChangeSpeedModule;
 import com.amuzil.omegasource.entity.projectile.AirProjectile;
+import com.amuzil.omegasource.entity.projectile.WaterProjectile;
 import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.maths.Point;
 import net.minecraft.world.entity.LivingEntity;
@@ -61,7 +62,7 @@ public class WaterBallSkill extends WaterSkill {
         double speed = data.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
         double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
-        AvatarProjectile projectile = new AirProjectile(entity, level);
+        AvatarProjectile projectile = new WaterProjectile(entity, level);
         projectile.setElement(Elements.AIR);
         projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
         projectile.setOwner(entity);
@@ -101,7 +102,7 @@ public class WaterBallSkill extends WaterSkill {
         projectile.addTraits(data.getTrait(Constants.SIZE, SizeTrait.class));
 //        projectile.addModule(ModuleRegistry.create(SimpleDamageModule.id));
         projectile.addTraits(new CollisionTrait(Constants.COLLISION_TYPE, "Blaze", "Fireball", "AbstractArrow", "FireProjectile"));
-        projectile.addCollisionModule((ICollisionModule) ModuleRegistry.create(FireCollisionModule.id));
+        projectile.addCollisionModule((ICollisionModule) ModuleRegistry.create(WaterCollisionModule.id));
 
         // Slow down over time
         projectile.addTraits(data.getTrait(Constants.SPEED_FACTOR, SpeedTrait.class));

@@ -2,38 +2,18 @@ package com.amuzil.omegasource.entity.projectile;
 
 import com.amuzil.omegasource.entity.AvatarEntities;
 import com.amuzil.omegasource.entity.AvatarProjectile;
-import com.amuzil.omegasource.entity.ElementProjectile;
-import com.amuzil.omegasource.entity.collision.ElementCollision;
 import com.amuzil.omegasource.events.FormActivatedEvent;
-import com.amuzil.omegasource.network.AvatarNetwork;
-import com.amuzil.omegasource.bending.element.Element;
-import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.form.BendingForms;
-import com.amuzil.omegasource.network.packets.form.ActivatedFormPacket;
-import com.lowdragmc.photon.client.fx.EntityEffect;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.monster.Blaze;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.entity.projectile.Fireball;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.*;
-import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-
-import static com.amuzil.omegasource.Avatar.orb_bloom;
-import static com.amuzil.omegasource.Avatar.steam;
 
 
 public class FireProjectile extends AvatarProjectile {

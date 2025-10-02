@@ -11,7 +11,9 @@ import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.skill.AirSkill;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.entity.AvatarProjectile;
+import com.amuzil.omegasource.entity.api.ICollisionModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
+import com.amuzil.omegasource.entity.modules.collision.AirCollisionModule;
 import com.amuzil.omegasource.entity.modules.collision.SimpleDamageModule;
 import com.amuzil.omegasource.entity.modules.collision.SimpleKnockbackModule;
 import com.amuzil.omegasource.entity.modules.entity.GrowModule;
@@ -96,7 +98,10 @@ public class AirGustSkill extends AirSkill {
 
         // Damage module
         projectile.addTraits(data.getTrait(Constants.DAMAGE, DamageTrait.class));
-        projectile.addModule(ModuleRegistry.create(SimpleDamageModule.id));
+        projectile.addTraits(data.getTrait(Constants.SIZE, SizeTrait.class));
+//        projectile.addModule(ModuleRegistry.create(SimpleDamageModule.id));
+        projectile.addTraits(new CollisionTrait(Constants.COLLISION_TYPE, "Blaze", "Fireball", "AbstractArrow", "FireProjectile"));
+        projectile.addCollisionModule((ICollisionModule) ModuleRegistry.create(AirCollisionModule.id));
 
         // Slow down over time
         projectile.addTraits(data.getTrait(Constants.SPEED_FACTOR, SpeedTrait.class));

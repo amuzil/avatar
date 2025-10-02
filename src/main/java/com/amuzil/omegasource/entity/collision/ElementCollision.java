@@ -2,8 +2,6 @@ package com.amuzil.omegasource.entity.collision;
 
 import com.amuzil.omegasource.entity.AvatarEntities;
 import com.amuzil.omegasource.entity.AvatarProjectile;
-import com.amuzil.omegasource.entity.ElementProjectile;
-import com.amuzil.omegasource.bending.element.Element;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;

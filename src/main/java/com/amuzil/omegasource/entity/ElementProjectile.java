@@ -34,7 +34,7 @@ import java.util.function.Predicate;
 
 import static com.amuzil.omegasource.Avatar.*;
 
-
+@Deprecated
 public abstract class ElementProjectile extends Projectile implements ItemSupplier {
     public static final ItemStack PROJECTILE_ITEM = new ItemStack(Blocks.AIR);
     private static final EntityDataAccessor<Byte> ID_FLAGS = SynchedEntityData.defineId(ElementProjectile.class, EntityDataSerializers.BYTE);
