@@ -4,12 +4,11 @@ import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.CollisionTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.DamageTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SizeTrait;
+import com.amuzil.omegasource.bending.element.Element;
+import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.entity.AvatarEntity;
-import com.amuzil.omegasource.entity.projectile.AvatarProjectile;
+import com.amuzil.omegasource.entity.projectile.*;
 import com.amuzil.omegasource.entity.api.ICollisionModule;
-import com.amuzil.omegasource.entity.projectile.AirProjectile;
-import com.amuzil.omegasource.entity.projectile.FireProjectile;
-import com.amuzil.omegasource.entity.projectile.WaterProjectile;
 import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.modules.HitDetection;
 import com.lowdragmc.photon.client.fx.EntityEffect;
@@ -23,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.amuzil.omegasource.Avatar.steam;
+import static com.amuzil.omegasource.bending.element.Elements.*;
 
 
 public class WaterCollisionModule implements ICollisionModule {
@@ -43,21 +43,13 @@ public class WaterCollisionModule implements ICollisionModule {
             }
         });
 
-        WATER_PROJECTILE_HANDLERS.put(AirProjectile.class, (proj, entity, damage, size) -> {
-            if (!proj.getOwner().equals(((AvatarProjectile) entity).getOwner())) {
-                proj.discard();
-            }
-        });
-
-        WATER_PROJECTILE_HANDLERS.put(FireProjectile.class, (proj, entity, damage, size) -> {
-            if (!proj.getOwner().equals(((AvatarProjectile) entity).getOwner())) {
-                proj.discard();
-            }
-        });
-
-        WATER_PROJECTILE_HANDLERS.put(WaterProjectile.class, (proj, entity, damage, size) -> {
-            if (!proj.getOwner().equals(((AvatarProjectile) entity).getOwner())) {
-                proj.discard();
+        WATER_PROJECTILE_HANDLERS.put(AvatarProjectile.class, (proj, entity, damage, size) -> {
+            if (!proj.getOwner().equals(((AvatarProjectile) entity).getOwner()) && entity.canBeCollidedWith()) {
+                Element element = ((AvatarProjectile) entity).element();
+                switch (element.type()) {
+                    case AIR, EARTH, FIRE, WATER -> proj.discard();
+                    default -> entity.hurt(proj.damageSources().magic(), damage);
+                }
             }
         });
 

@@ -11,7 +11,7 @@ public class Earthbending extends Element {
     public static final EarthStepSkill EARTH_STEP_SKILL = new EarthStepSkill();
 
     public Earthbending() {
-        super(Avatar.MOD_ID, "earthbending");
+        super(Avatar.MOD_ID, "earthbending", Type.EARTH);
     }
 
     public static void init() {}

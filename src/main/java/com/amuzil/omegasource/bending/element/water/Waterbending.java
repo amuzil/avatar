@@ -11,7 +11,7 @@ public class Waterbending extends Element {
     public static final WaterStepSkill WATER_STEP_SKILL = new WaterStepSkill();
 
     public Waterbending() {
-        super(Avatar.MOD_ID, "waterbending");
+        super(Avatar.MOD_ID, "waterbending", Type.WATER);
     }
 
     public static void init() {}

@@ -4,6 +4,7 @@ import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.CollisionTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.DamageTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SizeTrait;
+import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.projectile.AvatarProjectile;
 import com.amuzil.omegasource.entity.api.ICollisionModule;
@@ -57,21 +58,13 @@ public class FireCollisionModule implements ICollisionModule {
             }
         });
 
-        FIRE_PROJECTILE_HANDLERS.put(AirProjectile.class, (proj, entity, damage, size) -> {
-            if (!proj.getOwner().equals(((AvatarProjectile) entity).getOwner())) {
-                proj.discard();
-            }
-        });
-
-        FIRE_PROJECTILE_HANDLERS.put(FireProjectile.class, (proj, entity, damage, size) -> {
-            if (!proj.getOwner().equals(((AvatarProjectile) entity).getOwner())) {
-                proj.discard();
-            }
-        });
-
-        FIRE_PROJECTILE_HANDLERS.put(WaterProjectile.class, (proj, entity, damage, size) -> {
-            if (!proj.getOwner().equals(((AvatarProjectile) entity).getOwner())) {
-                proj.discard();
+        FIRE_PROJECTILE_HANDLERS.put(AvatarProjectile.class, (proj, entity, damage, size) -> {
+            if (!proj.getOwner().equals(((AvatarProjectile) entity).getOwner()) && entity.canBeCollidedWith()) {
+                Element element = ((AvatarProjectile) entity).element();
+                switch (element.type()) {
+                    case AIR, EARTH, FIRE, WATER -> proj.discard();
+                    default -> entity.hurt(proj.damageSources().magic(), damage);
+                }
             }
         });
 

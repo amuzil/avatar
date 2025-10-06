@@ -11,7 +11,7 @@ public class Airbending extends Element {
     public static final AirStepSkill AIR_STEP_SKILL = new AirStepSkill();
 
     public Airbending() {
-        super(Avatar.MOD_ID, "airbending");
+        super(Avatar.MOD_ID, "airbending", Type.AIR);
     }
 
     public static void init() {}

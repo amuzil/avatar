@@ -13,7 +13,7 @@ public class Firebending extends Element {
     public static final FireStrikeSkill FIRE_STRIKE_SKILL = new FireStrikeSkill();
 
     public Firebending() {
-        super(Avatar.MOD_ID, "firebending");
+        super(Avatar.MOD_ID, "firebending", Type.FIRE);
     }
 
     public static void init() {}

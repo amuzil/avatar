@@ -115,7 +115,7 @@ public class Avatar {
             EntityRenderers.register(AvatarEntities.AVATAR_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
             EntityRenderers.register(AvatarEntities.AVATAR_DIRECT_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
             EntityRenderers.register(AvatarEntities.AVATAR_CURVE_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
-            EntityRenderers.register(AvatarEntities.AVATAR_BIND_ENTITY_TYPE.get(), ThrownItemRenderer::new);
+            EntityRenderers.register(AvatarEntities.AVATAR_BOUND_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
 
 //            PlayerAnimationFactory.ANIMATION_DATA_FACTORY.registerFactory(

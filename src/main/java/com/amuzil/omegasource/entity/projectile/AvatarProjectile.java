@@ -29,6 +29,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.*;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -36,7 +37,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 
-public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile, TraceableEntity, ItemSupplier {
+public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile {
     @Nullable
     private UUID ownerUUID;
     @Nullable
@@ -90,7 +91,7 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile,
     }
 
     @Override
-    public ItemStack getItem() {
+    public @NotNull ItemStack getItem() {
         return new ItemStack(Blocks.AIR);
     }
 

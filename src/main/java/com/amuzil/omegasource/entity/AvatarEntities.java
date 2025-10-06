@@ -1,6 +1,7 @@
 package com.amuzil.omegasource.entity;
 
 import com.amuzil.omegasource.Avatar;
+import com.amuzil.omegasource.entity.projectile.AvatarBoundProjectile;
 import com.amuzil.omegasource.entity.projectile.AvatarCurveProjectile;
 import com.amuzil.omegasource.entity.projectile.AvatarDirectProjectile;
 import com.amuzil.omegasource.entity.projectile.AvatarProjectile;
@@ -29,8 +30,8 @@ public class AvatarEntities {
             ENTITY_TYPES.register("avatar_curve_projectile", () -> EntityType.Builder.<AvatarCurveProjectile>of(AvatarCurveProjectile::new, MobCategory.MISC)
                     .sized(0.5f, 0.5f).build("avatar_curve_projectile"));
 
-    public static final  RegistryObject<EntityType<AvatarBoundEntity>> AVATAR_BIND_ENTITY_TYPE =
-            ENTITY_TYPES.register("avatar_bind", () -> EntityType.Builder.<AvatarBoundEntity>of(AvatarBoundEntity::new, MobCategory.MISC)
+    public static final  RegistryObject<EntityType<AvatarBoundProjectile>> AVATAR_BOUND_PROJECTILE_ENTITY_TYPE =
+            ENTITY_TYPES.register("avatar_bind", () -> EntityType.Builder.<AvatarBoundProjectile>of(AvatarBoundProjectile::new, MobCategory.MISC)
                     .sized(0.5f, 0.5f).build("avatar_bind"));
 
     public static void register(IEventBus eventBus) {

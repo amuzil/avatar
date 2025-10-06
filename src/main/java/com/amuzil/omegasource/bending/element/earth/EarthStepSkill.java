@@ -9,7 +9,7 @@ import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.form.BendingForm;
 import com.amuzil.omegasource.bending.skill.EarthSkill;
 import com.amuzil.omegasource.capability.Bender;
-import com.amuzil.omegasource.entity.AvatarBoundEntity;
+import com.amuzil.omegasource.entity.projectile.AvatarBoundProjectile;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.utils.Constants;
 import net.minecraft.world.entity.LivingEntity;
@@ -51,7 +51,7 @@ public class EarthStepSkill extends EarthSkill {
         TimedTrait time = data.getTrait(Constants.RUNTIME, TimedTrait.class);
         time.setTime(0);
 
-        AvatarEntity bound = new AvatarBoundEntity(entity.level());
+        AvatarEntity bound = new AvatarBoundProjectile(entity.level());
         bound.setElement(Elements.EARTH);
         bound.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
         bound.setOwner(entity);

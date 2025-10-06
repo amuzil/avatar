@@ -20,20 +20,18 @@ public class BendingMaterialUtil {
     public static List<TagKey<Block>> getBendableMaterialsForElement(Element element) {
         List<TagKey<Block>> toReturn = new ArrayList<>();
 
-        switch (element.name()) {
-            case "air":
-                //add nothing
+        switch (element.type()) {
+            case AIR:
                 toReturn.add(AIRBENDING_MATERIAL);
                 break;
-            case "water":
-                toReturn.add(WATERBENDING_MATERIAL);
-                break;
-            case "earth":
+            case EARTH:
                 toReturn.add(EARTHBENDING_MATERIAL);
                 break;
-            case "fire":
+            case FIRE:
                 toReturn.add(FIREBENDING_MATERIAL);
-                //add fire block?
+                break;
+            case WATER:
+                toReturn.add(WATERBENDING_MATERIAL);
                 break;
             default: return toReturn;
         }

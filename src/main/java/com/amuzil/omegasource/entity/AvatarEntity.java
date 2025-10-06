@@ -45,7 +45,6 @@ public abstract class AvatarEntity extends Entity {
     private static final EntityDataAccessor<Integer> MAX_LIFETIME = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.INT);
 
     private final List<IEntityModule> modules = new ArrayList<>();
-    private final List<IControlModule> controlModules = new ArrayList<>();
     private final List<IForceModule> forceModules = new ArrayList<>();
     private final List<ICollisionModule> collisionModules = new ArrayList<>();
     private final List<IRenderModule> renderModules = new ArrayList<>();
@@ -70,7 +69,6 @@ public abstract class AvatarEntity extends Entity {
      */
     public void init() {
         modules.forEach(mod -> mod.init(this));
-        controlModules.forEach(mod -> mod.init(this));
         forceModules.forEach(mod -> mod.init(this));
         collisionModules.forEach(mod -> mod.init(this));
         renderModules.forEach(mod -> mod.init(this));
@@ -85,7 +83,6 @@ public abstract class AvatarEntity extends Entity {
 
         // Tick appropriate modules in each order
         modules.forEach(mod -> mod.tick(this));
-        controlModules.forEach(mod -> mod.tick(this));
         forceModules.forEach(mod -> mod.tick(this));
         collisionModules.forEach(mod -> mod.tick(this));
         renderModules.forEach(mod -> mod.tick(this));
@@ -118,23 +115,6 @@ public abstract class AvatarEntity extends Entity {
 
     public List<IEntityModule> genericModules() {
         return Collections.unmodifiableList(modules);
-    }
-
-    // Control modules
-    public void addControlModule(IControlModule mod) {
-        controlModules.add(mod);
-    }
-
-    public boolean removeControlModule(IControlModule mod) {
-        return removeControlModule(mod.id());
-    }
-
-    public boolean removeControlModule(String id) {
-        return controlModules.removeIf(m -> m.id().equals(id));
-    }
-
-    public List<IControlModule> controlModules() {
-        return Collections.unmodifiableList(controlModules);
     }
 
     // Force modules
@@ -222,7 +202,7 @@ public abstract class AvatarEntity extends Entity {
         return null;
     }
 
-    public void setOwner(Entity owner) {
+    public void setOwner(@NotNull Entity owner) {
         this.owner = owner;
         this.entityData.set(OWNER_ID, Optional.of(owner.getUUID()));
     }
@@ -313,7 +293,6 @@ public abstract class AvatarEntity extends Entity {
 
         readTraits(pCompound);
         readModuleList(pCompound, "GenericModules", modules);
-        readModuleList(pCompound, "ControlModules", controlModules);
         readModuleList(pCompound, "ForceModules", forceModules);
         readModuleList(pCompound, "CollisionModules", collisionModules);
         readModuleList(pCompound, "RenderModules", renderModules);
@@ -333,7 +312,6 @@ public abstract class AvatarEntity extends Entity {
 
         writeTraits(pCompound);
         writeModuleList(pCompound, "GenericModules", modules);
-        writeModuleList(pCompound, "ControlModules", controlModules);
         writeModuleList(pCompound, "ForceModules", forceModules);
         writeModuleList(pCompound, "CollisionModules", collisionModules);
         writeModuleList(pCompound, "RenderModules", renderModules);
