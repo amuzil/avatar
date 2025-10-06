@@ -46,7 +46,7 @@ public static String id = OrbitModule.class.getSimpleName();
         // Compute offset
         double offsetX = Math.cos(angle) * orbitRadius;
         double offsetZ = Math.sin(angle) * orbitRadius;
-        double offsetY = 0;  // or some constant height above/below owner if desired
+        double offsetY = 1.5;  // or some constant height above/below owner if desired
 
         // New position = center + offset
         double newX = center.x + offsetX;
