@@ -116,8 +116,10 @@ public class InputModule {
         DASH_KEY_MAPPINGS.forEach((direction, key) -> {
             if (key.isDown()) {
                 int heldTicks = glfwKeysDown.getOrDefault(key.getKey().getValue(), 0);
-                // Check <= 1 to account for FORM_KEY_MAPPINGS using default MC keys (W, A, S, D, SPACE)
-                if (heldTicks <= 1)
+                if (key.getKey().getValue() == InputConstants.KEY_SPACE)
+                    glfwKeysDown.put(key.getKey().getValue(), heldTicks + 1);
+                // Check == 1 to account for FORM_KEY_MAPPINGS using default MC keys (W, A, S, D, SPACE)
+                if (heldTicks == 1)
                     checkDash(direction);
             } else {
                 if (glfwKeysDown.containsKey(key.getKey().getValue())) {
