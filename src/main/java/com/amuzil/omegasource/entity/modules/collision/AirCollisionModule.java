@@ -8,9 +8,6 @@ import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.projectile.AvatarProjectile;
 import com.amuzil.omegasource.entity.api.ICollisionModule;
-import com.amuzil.omegasource.entity.projectile.AirProjectile;
-import com.amuzil.omegasource.entity.projectile.FireProjectile;
-import com.amuzil.omegasource.entity.projectile.WaterProjectile;
 import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.modules.HitDetection;
 import net.minecraft.nbt.CompoundTag;
@@ -48,24 +45,6 @@ public class AirCollisionModule implements ICollisionModule {
                     case AIR, EARTH, FIRE, WATER -> proj.discard();
                     default -> entity.hurt(proj.damageSources().magic(), damage);
                 }
-            }
-        });
-
-        AIR_PROJECTILE_HANDLERS.put(AirProjectile.class, (proj, entity, damage, size) -> {
-            if (!proj.getOwner().equals(((AvatarProjectile) entity).getOwner())) {
-                proj.discard();
-            }
-        });
-
-        AIR_PROJECTILE_HANDLERS.put(FireProjectile.class, (proj, entity, damage, size) -> {
-            if (!proj.getOwner().equals(((AvatarProjectile) entity).getOwner())) {
-                entity.discard();
-            }
-        });
-
-        AIR_PROJECTILE_HANDLERS.put(WaterProjectile.class, (proj, entity, damage, size) -> {
-            if (!proj.getOwner().equals(((AvatarProjectile) entity).getOwner())) {
-                proj.discard();
             }
         });
 
