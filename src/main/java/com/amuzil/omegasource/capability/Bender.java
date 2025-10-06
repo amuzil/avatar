@@ -114,8 +114,8 @@ public class Bender implements IBender {
                 }
             }
             tick = timeout;
-            LOGGER.info("Simple Forms: {}", formPath.simple());
-            LOGGER.info("Complex Forms: {}", formPath.complex());
+//            LOGGER.info("Simple Forms: {}", formPath.simple());
+//            LOGGER.info("Complex Forms: {}", formPath.complex());
         }
     }
 
