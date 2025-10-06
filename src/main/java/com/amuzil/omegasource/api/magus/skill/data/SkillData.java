@@ -7,6 +7,8 @@ import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
 import com.amuzil.omegasource.api.magus.registry.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
@@ -16,10 +18,11 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
-//TODO: Make this an implementation rather than a class.
-//E.g SizeTrait vs ElementTrait or something are both SkillTraits but....
+// TODO - Make this an implementation rather than a class.
+//  E.g SizeTrait vs ElementTrait or something are both SkillTraits but....
 public class SkillData implements DataTrait {
 
+    private static final Logger LOGGER = LogManager.getLogger();
     protected List<SkillTrait> skillTraits;
     // Types should not need serialisation as they do not change
     //The reason we're using a resource location and not the actual Skill object is because
@@ -119,7 +122,7 @@ public class SkillData implements DataTrait {
                     skillTrait.markClean();
                 });
         } catch (NullPointerException e) {
-            RadixTree.getLogger().error("Something has gone seriously wrong, a skill trait hasn't been carried over from the registry.");
+            LOGGER.error("Something has gone wrong, a skill trait hasn't been carried over from the registry.");
             e.printStackTrace();
         }
         markClean();

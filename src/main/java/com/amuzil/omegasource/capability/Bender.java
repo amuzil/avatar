@@ -45,7 +45,7 @@ public class Bender implements IBender {
     private final Consumer<FormActivatedEvent> formListener;
     private boolean isDirty = true; // Flag to indicate if data was changed
     private boolean active;
-    private final int timeout = 5; // Adjust timeout time here
+    private final int timeout = 5; // Adjust clear BendingForm cache timeout here
     private int tick = timeout;
     public final FormPath formPath = new FormPath(); // in-sync
     private Vec3 lastDeltaMovement = Vec3.ZERO; // in-sync

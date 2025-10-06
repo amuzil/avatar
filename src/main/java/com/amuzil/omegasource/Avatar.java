@@ -5,10 +5,7 @@ import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import com.amuzil.omegasource.entity.modules.collision.*;
 import com.amuzil.omegasource.entity.modules.entity.GrowModule;
 import com.amuzil.omegasource.entity.modules.entity.TimeoutModule;
-import com.amuzil.omegasource.entity.modules.force.BindModule;
-import com.amuzil.omegasource.entity.modules.force.ChangeSpeedModule;
-import com.amuzil.omegasource.entity.modules.force.CurveModule;
-import com.amuzil.omegasource.entity.modules.force.MoveModule;
+import com.amuzil.omegasource.entity.modules.force.*;
 import com.amuzil.omegasource.entity.modules.render.PhotonModule;
 import com.amuzil.omegasource.input.InputModule;
 import com.amuzil.omegasource.network.AvatarNetwork;
@@ -84,6 +81,7 @@ public class Avatar {
         ModuleRegistry.register(ChangeSpeedModule::new);
         ModuleRegistry.register(PhotonModule::new);
         ModuleRegistry.register(BindModule::new);
+        ModuleRegistry.register(OrbitModule::new);
         ModuleRegistry.register(AirCollisionModule::new);
         ModuleRegistry.register(FireCollisionModule::new);
         ModuleRegistry.register(WaterCollisionModule::new);
@@ -116,6 +114,7 @@ public class Avatar {
             EntityRenderers.register(AvatarEntities.AVATAR_DIRECT_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
             EntityRenderers.register(AvatarEntities.AVATAR_CURVE_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
             EntityRenderers.register(AvatarEntities.AVATAR_BOUND_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
+            EntityRenderers.register(AvatarEntities.AVATAR_ORBIT_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
 
 //            PlayerAnimationFactory.ANIMATION_DATA_FACTORY.registerFactory(

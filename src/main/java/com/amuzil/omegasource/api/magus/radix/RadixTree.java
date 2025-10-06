@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 
 public class RadixTree {
-    private static final Logger logger = LogManager.getLogger(RadixTree.class);
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final int NO_MISMATCH = -1;
     private final Node root;
     private Node active;
@@ -30,7 +30,7 @@ public class RadixTree {
     }
 
     public static Logger getLogger() {
-        return logger;
+        return LOGGER;
     }
 
     public static void registerConditions(List<Condition> conditions) {
