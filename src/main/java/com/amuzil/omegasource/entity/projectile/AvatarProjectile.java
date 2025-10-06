@@ -125,21 +125,21 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
     /**
      * Returns null or the entityliving it was ignited by
      */
-    @Nullable
-    public Entity getOwner() {
-        if (this.cachedOwner != null && !this.cachedOwner.isRemoved()) {
-            return this.cachedOwner;
-        } else if (this.ownerUUID != null && this.level() instanceof ServerLevel) {
-            this.cachedOwner = ((ServerLevel) this.level()).getEntity(this.ownerUUID);
-            return this.cachedOwner;
-        } else if (this.owner() != null) {
-            this.cachedOwner = this.owner();
-            this.ownerUUID = this.cachedOwner.getUUID();
-            return this.cachedOwner;
-        } else {
-            return null;
-        }
-    }
+//    @Override @Nullable
+//    public Entity getOwner() {
+//        if (this.cachedOwner != null && !this.cachedOwner.isRemoved()) {
+//            return this.cachedOwner;
+//        } else if (this.ownerUUID != null && this.level() instanceof ServerLevel) {
+//            this.cachedOwner = ((ServerLevel) this.level()).getEntity(this.ownerUUID);
+//            return this.cachedOwner;
+//        } else if (this.owner() != null) {
+//            this.cachedOwner = this.owner();
+//            this.ownerUUID = this.cachedOwner.getUUID();
+//            return this.cachedOwner;
+//        } else {
+//            return null;
+//        }
+//    }
 
     public Entity getEffectSource() {
         return MoreObjects.firstNonNull(this.getOwner(), this);
