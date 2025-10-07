@@ -101,7 +101,6 @@ public class FireCollisionModule implements ICollisionModule {
 //                entity.discard();
                 BlockPos blockpos = hitResult.getBlockPos();
                 BlockState blockstate = entity.level().getBlockState(blockpos);
-//                System.out.println("FireCollisionModule: Collided with " + blockstate.getBlock().getDescriptionId() + " at " + blockpos);
                 entity.level().gameEvent(GameEvent.PROJECTILE_LAND, blockpos, GameEvent.Context.of(entity, entity.level().getBlockState(blockpos)));
             }
             return;

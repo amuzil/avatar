@@ -54,6 +54,7 @@ public class BlazingRingsSkill extends FireSkill {
 
     @Override
     public void start(Bender bender) {
+        System.out.println("Starting Blazing Rings Skill");
         super.start(bender);
 
         LivingEntity entity = bender.getEntity();

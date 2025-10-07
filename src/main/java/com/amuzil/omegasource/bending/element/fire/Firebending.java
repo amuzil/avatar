@@ -11,6 +11,7 @@ public class Firebending extends Element {
     // Class for registering Firebending skills
     public static final FlameStepSkill FLAME_STEP_SKILL = new FlameStepSkill();
     public static final FireStrikeSkill FIRE_STRIKE_SKILL = new FireStrikeSkill();
+    public static final FlameStreamSkill FLAME_STREAM_SKILL = new FlameStreamSkill();
     public static final BlazingRingsSkill BLAZING_RINGS_SKILL = new BlazingRingsSkill();
 
     public Firebending() {
