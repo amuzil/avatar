@@ -54,7 +54,6 @@ public class BlazingRingsSkill extends FireSkill {
 
     @Override
     public void start(Bender bender) {
-        System.out.println("Starting Blazing Rings Skill");
         super.start(bender);
 
         LivingEntity entity = bender.getEntity();
@@ -77,6 +76,8 @@ public class BlazingRingsSkill extends FireSkill {
 
         projectile.addTraits(data.getTrait(Constants.MAX_SIZE, SizeTrait.class));
         projectile.addTraits(data.getTrait(Constants.ANGLE, AngleTrait.class));
+        projectile.addTraits(data.getTrait(Constants.SPEED, SpeedTrait.class));
+        projectile.addTraits(data.getTrait(Constants.RANGE, RangeTrait.class));
 
         // Copied from the fire easing constant
         projectile.addTraits(new PointsTrait("height_curve", new Point(0.00, 0.5),  // t=0: zero width
@@ -96,7 +97,6 @@ public class BlazingRingsSkill extends FireSkill {
 
         projectile.addModule(ModuleRegistry.create(GrowModule.id));
 
-        // TODO: make more advanced knockback calculator that uses the entity's current size as well as speed (mass * velocity!!!!)
         projectile.addTraits(data.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
         projectile.addTraits(new DirectionTrait("knockback_direction", new Vec3(0, 0.45, 0)));
         projectile.addModule(ModuleRegistry.create(SimpleKnockbackModule.id));

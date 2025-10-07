@@ -32,7 +32,10 @@ public static String id = OrbitModule.class.getSimpleName();
         AngleTrait angleTrait = entity.getTrait(Constants.ANGLE, AngleTrait.class);
         SpeedTrait speedTrait = entity.getTrait(Constants.SPEED, SpeedTrait.class);
         RangeTrait rangeTrait = entity.getTrait(Constants.RANGE, RangeTrait.class);
-        if (angleTrait == null || speedTrait == null || rangeTrait == null) return;
+        if (angleTrait == null || speedTrait == null || rangeTrait == null)  {
+//            Avatar.LOGGER.warn("OrbitModule missing required traits on entity " + entity);
+            return;
+        }
         double angle = angleTrait.getDegrees(); // current angle along the circle (start at 0)
         double orbitSpeed = speedTrait.getSpeed(); // in radians per tick (ex: 0.5)
         double orbitRadius = rangeTrait.getRange(); // how far from the owner (ex: 2.0)
