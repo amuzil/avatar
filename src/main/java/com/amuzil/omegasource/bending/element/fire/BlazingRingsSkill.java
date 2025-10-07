@@ -16,7 +16,7 @@ import com.amuzil.omegasource.entity.modules.collision.FireCollisionModule;
 import com.amuzil.omegasource.entity.modules.collision.FireModule;
 import com.amuzil.omegasource.entity.modules.collision.SimpleKnockbackModule;
 import com.amuzil.omegasource.entity.modules.entity.GrowModule;
-import com.amuzil.omegasource.entity.projectile.AvatarDirectProjectile;
+import com.amuzil.omegasource.entity.projectile.AvatarOrbitProjectile;
 import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.maths.Point;
 import net.minecraft.world.entity.LivingEntity;
@@ -26,10 +26,10 @@ import net.minecraft.world.phys.Vec3;
 import static com.amuzil.omegasource.bending.form.BendingForms.STRIKE;
 
 
-public class FireStrikeSkill extends FireSkill {
+public class BlazingRingsSkill extends FireSkill {
 
-    public FireStrikeSkill() {
-        super(Avatar.MOD_ID, "fire_strike");
+    public BlazingRingsSkill() {
+        super(Avatar.MOD_ID, "blazing_rings");
         addTrait(new DamageTrait(Constants.DAMAGE, 2.5f));
         addTrait(new SizeTrait(Constants.SIZE, 0.125F));
         addTrait(new SizeTrait(Constants.MAX_SIZE, 1.25f));
@@ -40,6 +40,7 @@ public class FireStrikeSkill extends FireSkill {
         addTrait(new TimedTrait(Constants.FIRE_TIME, 40));
         addTrait(new SpeedTrait(Constants.SPEED_FACTOR, 0.85d));
         addTrait(new StringTrait(Constants.FX, "fires_bloom_perma5"));
+        addTrait(new AngleTrait(Constants.ANGLE, 0));
 
         startPaths = SkillPathBuilder.getInstance().simple(new ActiveForm(STRIKE, true)).build();
     }
@@ -61,7 +62,7 @@ public class FireStrikeSkill extends FireSkill {
         double speed = data.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
         double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
-        AvatarDirectProjectile projectile = new AvatarDirectProjectile(level);
+        AvatarOrbitProjectile projectile = new AvatarOrbitProjectile(level);
         projectile.setElement(Elements.FIRE);
         projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo()); // TODO - Figure out why DataTrait won't sync
         projectile.setOwner(entity);
@@ -73,6 +74,7 @@ public class FireStrikeSkill extends FireSkill {
         projectile.setHittable(true);
 
         projectile.addTraits(data.getTrait(Constants.MAX_SIZE, SizeTrait.class));
+        projectile.addTraits(data.getTrait(Constants.ANGLE, AngleTrait.class));
 
         // Copied from the fire easing constant
         projectile.addTraits(new PointsTrait("height_curve", new Point(0.00, 0.5),  // t=0: zero width
