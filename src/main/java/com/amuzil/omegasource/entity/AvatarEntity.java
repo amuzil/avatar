@@ -249,7 +249,6 @@ public abstract class AvatarEntity extends Entity {
         return this.entityData.get(ONE_SHOT_FX);
     }
 
-
     public void setPhysics(boolean physics) {
         this.entityData.set(PHYSICS, physics);
     }
@@ -372,7 +371,7 @@ public abstract class AvatarEntity extends Entity {
 
     @Override
     public boolean canBeCollidedWith() {
-        return hittable;
+        return entityData.get(COLLIDABLE);
     }
 
     /**
@@ -380,7 +379,7 @@ public abstract class AvatarEntity extends Entity {
      */
     @Override
     public boolean isPushable() {
-        return hittable;
+        return entityData.get(COLLIDABLE);
     }
 
     @Override

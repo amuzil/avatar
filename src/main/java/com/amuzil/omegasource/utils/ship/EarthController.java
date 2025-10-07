@@ -1,6 +1,7 @@
 package com.amuzil.omegasource.utils.ship;
 
 import com.amuzil.omegasource.capability.Bender;
+import com.amuzil.omegasource.entity.projectile.AvatarProjectile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
@@ -80,14 +81,14 @@ public final class EarthController implements ShipForcesInducer {
             toBeStaticUpdated = false;
         }
 
-        checkCollision();
+        checkCollision(physShip);
 
         if (idleTickCount.get() > 400) {
             cleanUpShip();
         }
     }
 
-    private void checkCollision() {
+    private void checkCollision(PhysShip physShip) {
         ServerLevel level = (ServerLevel) entity.level();
         Vector3dc velocity = ship.getVelocity();
         double mag = velocity.length();
@@ -98,6 +99,7 @@ public final class EarthController implements ShipForcesInducer {
             tickCount.incrementAndGet(); idleTickCount.set(0);
             if (isMovingFast)
                 checkShipShipCollisions(level, ship);
+            checkShipProjectileCollisions(level, ship, physShip);
             checkShipEntityCollisions(level, ship);
         }
     }
@@ -179,9 +181,32 @@ public final class EarthController implements ShipForcesInducer {
         });
     }
 
+    public void checkShipProjectileCollisions(ServerLevel level, ServerShip ship, PhysShip physShip) {
+        getShipProjectileCollisions(level, ship.getWorldAABB()).forEach(entity -> {
+            if (entity != null) {
+                bender.startTickingOriginalBlocks(ship.getId());
+                Vector3dc shipYardPos = ship.getTransform().getPositionInShip();
+                BlockPos blockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipYardPos));
+                double mass = ship.getInertiaData().getMass();
+                Vec3 vec3 = entity.getDeltaMovement().normalize()
+                        .multiply(500*mass, 500*mass, 500*mass);
+                Vector3d v3d = VectorConversionsMCKt.toJOML(vec3);
+                physShip.applyInvariantForce(v3d);
+                Vec3 motion = VectorConversionsMCKt.toMinecraft(ship.getVelocity());
+                entity.addDeltaMovement(motion.scale(0.025));
+                entity.hasImpulse = true; entity.hurtMarked = true;
+            }
+        });
+    }
+
     public static List<LivingEntity> getShipEntityCollisions(Level level, AABBdc shipBox) {
         return level.getEntitiesOfClass(
                 LivingEntity.class, toMcAABB(shipBox), LivingEntity::isAlive);
+    }
+
+    public static List<AvatarProjectile> getShipProjectileCollisions(Level level, AABBdc shipBox) {
+        return level.getEntitiesOfClass(
+                AvatarProjectile.class, toMcAABB(shipBox), AvatarProjectile::isAlive);
     }
 
     public static AABB toMcAABB(AABBdc jomlAABB) {
