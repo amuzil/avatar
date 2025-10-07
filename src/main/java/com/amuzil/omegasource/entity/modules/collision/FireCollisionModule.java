@@ -59,7 +59,7 @@ public class FireCollisionModule implements ICollisionModule {
         });
 
         FIRE_PROJECTILE_HANDLERS.put(AvatarProjectile.class, (proj, entity, damage, size) -> {
-            if (!proj.getOwner().equals(((AvatarProjectile) entity).getOwner()) && entity.canBeCollidedWith()) {
+            if (!proj.getOwner().equals(((AvatarProjectile) entity).getOwner()) && entity.canBeHitByProjectile()) {
                 Element element = ((AvatarProjectile) entity).element();
                 switch (element.type()) {
                     case AIR, EARTH, FIRE, WATER -> proj.discard();
@@ -98,7 +98,7 @@ public class FireCollisionModule implements ICollisionModule {
             Vec3 delta = pos.add(entity.getDeltaMovement());
             BlockHitResult hitResult = entity.level().clip(new ClipContext(pos, delta, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, entity));
             if (hitResult.getType() == HitResult.Type.BLOCK) {
-                entity.discard();
+//                entity.discard();
                 BlockPos blockpos = hitResult.getBlockPos();
                 BlockState blockstate = entity.level().getBlockState(blockpos);
 //                System.out.println("FireCollisionModule: Collided with " + blockstate.getBlock().getDescriptionId() + " at " + blockpos);

@@ -369,9 +369,12 @@ public abstract class AvatarEntity extends Entity {
         }
     }
 
+    /**
+     * Returns {@code true} if this entity
+     */
     @Override
     public boolean canBeCollidedWith() {
-        return entityData.get(COLLIDABLE);
+        return hittable;
     }
 
     /**
@@ -379,17 +382,17 @@ public abstract class AvatarEntity extends Entity {
      */
     @Override
     public boolean isPushable() {
-        return entityData.get(COLLIDABLE);
-    }
-
-    @Override
-    public boolean canBeHitByProjectile() {
         return hittable;
     }
 
     @Override
+    public boolean canBeHitByProjectile() {
+        return entityData.get(COLLIDABLE);
+    }
+
+    @Override
     public boolean isInvulnerable() {
-        return damageable;
+        return entityData.get(DAMAGEABLE);
     }
 
     //  TODO - These were copied from the projectile class. Need to update these to account for the other data

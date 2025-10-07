@@ -39,7 +39,7 @@ public class AirCollisionModule implements ICollisionModule {
         });
 
         AIR_PROJECTILE_HANDLERS.put(AvatarProjectile.class, (proj, entity, damage, size) -> {
-            if (!proj.getOwner().equals(((AvatarProjectile) entity).getOwner()) && entity.canBeCollidedWith()) {
+            if (!proj.getOwner().equals(((AvatarProjectile) entity).getOwner()) && entity.canBeHitByProjectile()) {
                 Element element = ((AvatarProjectile) entity).element();
                 switch (element.type()) {
                     case AIR, EARTH, FIRE, WATER -> proj.discard();
