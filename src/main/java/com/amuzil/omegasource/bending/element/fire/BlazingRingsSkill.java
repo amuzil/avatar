@@ -8,6 +8,7 @@ import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.traits.entitytraits.PointsTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.*;
 import com.amuzil.omegasource.bending.element.Elements;
+import com.amuzil.omegasource.bending.form.BendingForms;
 import com.amuzil.omegasource.bending.skill.FireSkill;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.entity.api.ICollisionModule;
@@ -23,8 +24,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-import static com.amuzil.omegasource.bending.form.BendingForms.STRIKE;
-
 
 public class BlazingRingsSkill extends FireSkill {
 
@@ -36,13 +35,15 @@ public class BlazingRingsSkill extends FireSkill {
         addTrait(new KnockbackTrait(Constants.KNOCKBACK, 0.4f));
         addTrait(new ColourTrait(0, 0, 0, Constants.FIRE_COLOUR));
         addTrait(new SpeedTrait(Constants.SPEED, 0.875d));
-        addTrait(new TimedTrait(Constants.LIFETIME, 15));
+        addTrait(new TimedTrait(Constants.LIFETIME, 40));
         addTrait(new TimedTrait(Constants.FIRE_TIME, 40));
-        addTrait(new SpeedTrait(Constants.SPEED_FACTOR, 0.85d));
-        addTrait(new StringTrait(Constants.FX, "fires_bloom_perma5"));
+        addTrait(new StringTrait(Constants.FX, "fires_bloom_perma6"));
         addTrait(new AngleTrait(Constants.ANGLE, 0));
 
-        startPaths = SkillPathBuilder.getInstance().simple(new ActiveForm(STRIKE, true)).build();
+        startPaths = SkillPathBuilder.getInstance()
+                .simple(new ActiveForm(BendingForms.ARC, true))
+                .simple(new ActiveForm(BendingForms.ROTATE, true))
+                .build();
     }
 
     @Override
@@ -110,12 +111,8 @@ public class BlazingRingsSkill extends FireSkill {
         projectile.addTraits(new CollisionTrait(Constants.COLLISION_TYPE, "Blaze", "Fireball", "AbstractArrow", "FireProjectile"));
         projectile.addCollisionModule((ICollisionModule) ModuleRegistry.create(FireCollisionModule.id));
 
-        // Slow down over time
-        projectile.addTraits(data.getTrait(Constants.SPEED_FACTOR, SpeedTrait.class));
-//        projectile.addModule(ModuleRegistry.create(ChangeSpeedModule.id));
-
         // Particle FX
-        projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
+//        projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
         projectile.init();
 
         bender.formPath.clear();

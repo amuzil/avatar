@@ -370,7 +370,7 @@ public abstract class AvatarEntity extends Entity {
     }
 
     /**
-     * Returns {@code true} if this entity
+     * Returns {@code true} if this entity can be collided with
      */
     @Override
     public boolean canBeCollidedWith() {
