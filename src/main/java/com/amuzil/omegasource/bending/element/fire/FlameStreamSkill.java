@@ -207,7 +207,7 @@ public class FlameStreamSkill extends FireSkill {
         projectile.addModule(ModuleRegistry.create(ChangeSpeedModule.id));
 
         // Particle FX
-        projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0.5);
+        projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 5.0);
         projectile.init();
 
         bender.formPath.clear();
