@@ -1,7 +1,9 @@
 package com.amuzil.omegasource.entity.modules.force;
 
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.AngleTrait;
+import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.RangeTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SizeTrait;
+import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SpeedTrait;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.api.IForceModule;
 import com.amuzil.omegasource.utils.Constants;
@@ -27,12 +29,13 @@ public static String id = OrbitModule.class.getSimpleName();
     public void tick(AvatarEntity entity) {
         if (entity.owner() == null) return;
 
-        double orbitRadius = 2.0; // how far from the owner
-        double orbitSpeed = 0.5; // in radians per tick (adjust as needed)
         AngleTrait angleTrait = entity.getTrait(Constants.ANGLE, AngleTrait.class);
-        if (angleTrait == null) return;
-
-        double angle = angleTrait.getDegrees(); // current angle along the circle
+        SpeedTrait speedTrait = entity.getTrait(Constants.SPEED, SpeedTrait.class);
+        RangeTrait rangeTrait = entity.getTrait(Constants.RANGE, RangeTrait.class);
+        if (angleTrait == null || speedTrait == null || rangeTrait == null) return;
+        double angle = angleTrait.getDegrees(); // current angle along the circle (start at 0)
+        double orbitSpeed = speedTrait.getSpeed(); // in radians per tick (ex: 0.5)
+        double orbitRadius = rangeTrait.getRange(); // how far from the owner (ex: 2.0)
 
         // Advance the angle
         angle += orbitSpeed;

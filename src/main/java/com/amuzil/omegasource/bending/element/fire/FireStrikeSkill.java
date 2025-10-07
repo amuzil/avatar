@@ -63,7 +63,7 @@ public class FireStrikeSkill extends FireSkill {
 
         AvatarDirectProjectile projectile = new AvatarDirectProjectile(level);
         projectile.setElement(Elements.FIRE);
-        projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo()); // TODO - Figure out why DataTrait won't sync
+        projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
         projectile.setOwner(entity);
         projectile.setMaxLifetime(lifetime);
         projectile.setWidth((float) size);

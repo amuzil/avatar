@@ -34,11 +34,12 @@ public class BlazingRingsSkill extends FireSkill {
         addTrait(new SizeTrait(Constants.MAX_SIZE, 1.25f));
         addTrait(new KnockbackTrait(Constants.KNOCKBACK, 0.4f));
         addTrait(new ColourTrait(0, 0, 0, Constants.FIRE_COLOUR));
-        addTrait(new SpeedTrait(Constants.SPEED, 0.875d));
+        addTrait(new SpeedTrait(Constants.SPEED, 0.4d));
         addTrait(new TimedTrait(Constants.LIFETIME, 40));
         addTrait(new TimedTrait(Constants.FIRE_TIME, 40));
         addTrait(new StringTrait(Constants.FX, "fires_bloom_perma6"));
         addTrait(new AngleTrait(Constants.ANGLE, 0));
+        addTrait(new RangeTrait(Constants.RANGE, 2.0d));
 
         startPaths = SkillPathBuilder.getInstance()
                 .simple(new ActiveForm(BendingForms.ARC, true))
@@ -60,12 +61,11 @@ public class BlazingRingsSkill extends FireSkill {
         SkillData data = bender.getSkillData(this);
 
         int lifetime = data.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
-        double speed = data.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
         double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
         AvatarOrbitProjectile projectile = new AvatarOrbitProjectile(level);
         projectile.setElement(Elements.FIRE);
-        projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo()); // TODO - Figure out why DataTrait won't sync
+        projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
         projectile.setOwner(entity);
         projectile.setMaxLifetime(lifetime);
         projectile.setWidth((float) size);
@@ -112,7 +112,6 @@ public class BlazingRingsSkill extends FireSkill {
         projectile.addCollisionModule((ICollisionModule) ModuleRegistry.create(FireCollisionModule.id));
 
         // Particle FX
-//        projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
         projectile.init();
 
         bender.formPath.clear();
