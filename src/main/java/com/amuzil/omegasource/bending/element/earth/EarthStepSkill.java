@@ -18,6 +18,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.Objects;
 
 import static com.amuzil.omegasource.bending.form.BendingForms.STEP;
+import static com.amuzil.omegasource.utils.SkillHelper.canEarthBend;
 import static com.amuzil.omegasource.utils.SkillHelper.getDistanceToGround;
 
 
@@ -41,16 +42,16 @@ public class EarthStepSkill extends EarthSkill {
     public void start(Bender bender) {
         super.start(bender);
         LivingEntity entity = bender.getEntity();
+        SkillData data = bender.getSkillData(this);
+        data.setSkillState(SkillState.RUN);
         BendingForm.Type.Motion motion;
         if (!bender.getFormPath().complex().isEmpty())
             motion = bender.getFormPath().complex().get(0).direction();
         else
             motion = BendingForm.Type.Motion.FORWARD;
 
-        SkillData data = bender.getSkillData(this);
-        double distance = getDistanceToGround(entity);
-        data.setSkillState(SkillState.RUN);
-        if (distance > 2.0) return; // Can't earth bend if too far from ground
+        if (!canEarthBend(entity)) return; // Can't earth bend if too far from ground
+
         int lifetime = data.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime();
         TimedTrait time = data.getTrait(Constants.RUNTIME, TimedTrait.class);
         time.setTime(0);

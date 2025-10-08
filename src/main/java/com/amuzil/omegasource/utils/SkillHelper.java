@@ -9,6 +9,10 @@ import net.minecraft.world.phys.Vec3;
 
 public class SkillHelper {
 
+    public static boolean canEarthBend(LivingEntity entity) {
+        return getDistanceToGround(entity) <= 2.0;
+    }
+
     public static double getDistanceToGround(LivingEntity entity) {
         Level level = entity.level();
 

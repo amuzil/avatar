@@ -95,11 +95,11 @@ public final class EarthController implements ShipPhysicsListener {
         boolean isMoving = mag > 0.1;
         boolean isMovingFast = mag > 2.0;
         idleTickCount.incrementAndGet();
+        checkShipProjectileCollisions(level, ship, physShip);
         if (isMoving || isControlled) {
             tickCount.incrementAndGet(); idleTickCount.set(0);
             if (isMovingFast)
                 checkShipShipCollisions(level, ship);
-            checkShipProjectileCollisions(level, ship, physShip);
             checkShipEntityCollisions(level, ship);
         }
     }
