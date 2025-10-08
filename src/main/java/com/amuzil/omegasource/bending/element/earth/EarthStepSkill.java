@@ -18,6 +18,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.Objects;
 
 import static com.amuzil.omegasource.bending.form.BendingForms.STEP;
+import static com.amuzil.omegasource.utils.SkillHelper.getDistanceToGround;
 
 
 public class EarthStepSkill extends EarthSkill {
@@ -47,6 +48,9 @@ public class EarthStepSkill extends EarthSkill {
             motion = BendingForm.Type.Motion.FORWARD;
 
         SkillData data = bender.getSkillData(this);
+        double distance = getDistanceToGround(entity);
+        data.setSkillState(SkillState.RUN);
+        if (distance > 2.0) return; // Can't earth bend if too far from ground
         int lifetime = data.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime();
         TimedTrait time = data.getTrait(Constants.RUNTIME, TimedTrait.class);
         time.setTime(0);
@@ -81,8 +85,6 @@ public class EarthStepSkill extends EarthSkill {
             entity.hurtMarked = true;
             entity.hasImpulse = true;
         }
-
-        data.setSkillState(SkillState.RUN);
     }
 
     @Override
