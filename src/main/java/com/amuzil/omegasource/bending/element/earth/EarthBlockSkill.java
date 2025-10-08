@@ -84,8 +84,8 @@ public class EarthBlockSkill extends EarthSkill {
                 LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(serverLevel, blockPos);
                 ServerShipWorld serverShipWorld = (ServerShipWorld) VSGameUtilsKt.getVsCore().getHooks().getCurrentShipServerWorld();
                 if (serverShip != null && serverShipWorld != null) {
-                    EarthController gtfa = EarthController.getOrCreate(serverShip, bender);
-                    gtfa.setControlled(true);
+                    EarthController earthController = EarthController.getOrCreate(serverShip, bender);
+                    earthController.setControlled(true);
                     controlBlock(serverShip, serverShipWorld, serverLevel, bender);
                 }
             }
@@ -102,10 +102,10 @@ public class EarthBlockSkill extends EarthSkill {
             if (blockPos != null && VSGameUtilsKt.isBlockInShipyard(level, blockPos)) {
                 LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, blockPos);
                 if (serverShip != null) {
-                    EarthController gtfa = EarthController.getOrCreate(serverShip, bender);
-                    if (gtfa != null) {
-                        gtfa.tickCount.set(0);
-                        gtfa.setControlled(false);
+                    EarthController earthController = EarthController.getOrCreate(serverShip, bender);
+                    if (earthController != null) {
+                        earthController.tickCount.set(0);
+                        earthController.setControlled(false);
                     }
                 }
             }

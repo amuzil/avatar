@@ -11,18 +11,15 @@ import com.amuzil.omegasource.bending.BendingSelection;
 import com.amuzil.omegasource.bending.skill.EarthSkill;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.utils.Constants;
+import com.amuzil.omegasource.utils.ship.EarthController;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3d;
 import org.joml.Vector3dc;
 import org.joml.Vector3i;
 import org.valkyrienskies.core.api.ships.LoadedServerShip;
 import org.valkyrienskies.core.api.ships.ServerShip;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
-import org.valkyrienskies.mod.common.util.GameTickForceApplier;
 import org.valkyrienskies.mod.common.util.VectorConversionsMCKt;
 import org.valkyrienskies.mod.util.RelocationUtilKt;
 
@@ -79,16 +76,15 @@ public class EarthTossSkill extends EarthSkill {
                 Vector3dc shipyardPos = ship.getTransform().getPositionInShip();
                 BlockPos shipyardBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipyardPos));
                 bender.getSelection().setBlockPos(shipyardBlockPos);
-                if (ship != null) {
-                    System.out.println("Ship created: " + ship.getId() + " " + bender.getSelection().blockPos());
-                }
+//                if (ship != null)
+//                    System.out.println("Ship created: " + ship.getId() + " " + bender.getSelection().blockPos());
             }
             if (blockPos != null && VSGameUtilsKt.isBlockInShipyard(level, blockPos)) {
                 LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, blockPos);
                 if (serverShip != null) {
-                    GameTickForceApplier gtfa = serverShip.getAttachment(GameTickForceApplier.class);
-                    if (gtfa != null) {
-                        tossBlock(bender.getEntity(), gtfa, serverShip);
+                    EarthController earthController = serverShip.getAttachment(EarthController.class);
+                    if (earthController != null) {
+                        tossBlock(bender.getEntity(), earthController, serverShip);
                     }
                 }
             }

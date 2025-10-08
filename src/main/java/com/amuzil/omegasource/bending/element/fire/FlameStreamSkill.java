@@ -46,22 +46,12 @@ public class FlameStreamSkill extends FireSkill {
                 .simple(new ActiveForm(BendingForms.BLOCK, true))
                 .build();
 
-        runPaths = SkillPathBuilder.getInstance()
-                .simple(new ActiveForm(BendingForms.ARC, true))
-                .simple(new ActiveForm(BendingForms.BLOCK, true))
-                .build();
-
         stopPaths = SkillPathBuilder.getInstance().build();
     }
 
     @Override
     public boolean shouldStart(Bender bender, FormPath formPath) {
         return formPath.simple().hashCode() == getStartPaths().simple().hashCode();
-    }
-
-    @Override
-    public boolean shouldRun(Bender bender, FormPath formPath) {
-        return formPath.simple().hashCode() == getRunPaths().simple().hashCode();
     }
 
     @Override
@@ -124,7 +114,6 @@ public class FlameStreamSkill extends FireSkill {
         // Damage module
         projectile.addTraits(data.getTrait(Constants.DAMAGE, DamageTrait.class));
         projectile.addTraits(data.getTrait(Constants.SIZE, SizeTrait.class));
-//        projectile.addModule(ModuleRegistry.create(SimpleDamageModule.id));
         projectile.addTraits(new CollisionTrait(Constants.COLLISION_TYPE, "Blaze", "Fireball", "AbstractArrow", "FireProjectile"));
         projectile.addCollisionModule((ICollisionModule) ModuleRegistry.create(FireCollisionModule.id));
 

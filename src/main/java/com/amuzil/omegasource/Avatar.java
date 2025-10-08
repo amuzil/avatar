@@ -11,6 +11,7 @@ import com.amuzil.omegasource.input.InputModule;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.api.magus.registry.Registries;
 import com.amuzil.omegasource.utils.commands.AvatarCommands;
+import com.amuzil.omegasource.utils.ship.EarthController;
 import com.lowdragmc.photon.client.fx.FX;
 import com.lowdragmc.photon.client.fx.FXHelper;
 import net.minecraft.client.Minecraft;
@@ -29,6 +30,8 @@ import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.valkyrienskies.core.api.attachment.AttachmentRegistration;
+import org.valkyrienskies.mod.api.ValkyrienSkies;
 
 
 @Mod(Avatar.MOD_ID)
@@ -85,6 +88,11 @@ public class Avatar {
         ModuleRegistry.register(AirCollisionModule::new);
         ModuleRegistry.register(FireCollisionModule::new);
         ModuleRegistry.register(WaterCollisionModule::new);
+
+        AttachmentRegistration<EarthController> attachmentRegistration = ValkyrienSkies.api()
+                .newAttachmentRegistrationBuilder(EarthController.class)
+                .build();
+        ValkyrienSkies.api().registerAttachment(attachmentRegistration);
     }
 
     private void setupClient(final FMLClientSetupEvent event) {

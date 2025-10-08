@@ -69,7 +69,6 @@ public class SkillData implements DataTrait {
         return this.getSkill().getActivationTypes();
     }
 
-
     public List<Skill.SkillType> getSkillTypes() {
         return this.getSkill().getTypes();
     }

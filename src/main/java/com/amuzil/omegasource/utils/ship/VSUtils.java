@@ -20,7 +20,6 @@ import org.valkyrienskies.mod.common.VSGameUtilsKt;
 import org.valkyrienskies.mod.common.ValkyrienSkiesMod;
 import org.valkyrienskies.mod.common.command.RelativeValue;
 import org.valkyrienskies.mod.common.command.RelativeVector3;
-import org.valkyrienskies.mod.common.util.GameTickForceApplier;
 import org.valkyrienskies.mod.common.util.VectorConversionsMCKt;
 import org.valkyrienskies.mod.util.RelocationUtilKt;
 
@@ -50,21 +49,21 @@ public class VSUtils {
         ValkyrienSkiesMod.getVsCore().teleportShip(serverShipWorld, serverShip, shipTeleportData);
     }
 
-    public static void tossBlock(LivingEntity entity, GameTickForceApplier gtfa, LoadedServerShip ship) {
+    public static void tossBlock(LivingEntity entity, EarthController earthController, LoadedServerShip ship) {
         double mass = ship.getInertiaData().getMass();
         Vec3 vec3 = entity.getLookAngle().normalize()
                 .multiply(1500*mass, 1000*mass, 1500*mass);
         Vector3d v3d = VectorConversionsMCKt.toJOML(vec3);
-        gtfa.applyInvariantForce(v3d);
+        earthController.applyInvariantForce(v3d);
     }
 
-    public static void raiseBlock(LoadedServerShip ship, EarthController gtfa) {
+    public static void raiseBlock(LoadedServerShip ship, EarthController earthController) {
         double gravity = 10; // Acceleration due to gravity
         double mass = ship.getInertiaData().getMass(); // Mass of the ship
 //        System.out.println("Mass: " + mass);
         double requiredForce = (gravity * mass) * 10; // Force needed to counteract gravity
         Vector3d v3d2 = new Vector3d(0, requiredForce, 0);
-        gtfa.applyInvariantForce(v3d2);
+        earthController.applyInvariantForce(v3d2);
     }
 
     public static void assembleEarthShip(Bender bender) {

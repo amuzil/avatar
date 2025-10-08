@@ -12,10 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
 import org.joml.primitives.AABBdc;
-import org.valkyrienskies.core.api.ships.LoadedServerShip;
-import org.valkyrienskies.core.api.ships.PhysShip;
-import org.valkyrienskies.core.api.ships.ServerShip;
-import org.valkyrienskies.core.api.ships.ShipForcesInducer;
+import org.valkyrienskies.core.api.ships.*;
+import org.valkyrienskies.core.api.world.PhysLevel;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 import org.valkyrienskies.mod.common.util.VectorConversionsMCKt;
 
@@ -24,7 +22,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-public final class EarthController implements ShipForcesInducer {
+public final class EarthController implements ShipPhysicsListener {
     private final ConcurrentLinkedQueue<Vector3dc> invForces = new ConcurrentLinkedQueue<>();
     private final ConcurrentLinkedQueue<Vector3dc> invTorques = new ConcurrentLinkedQueue<>();
     private final ConcurrentLinkedQueue<Vector3dc> rotForces = new ConcurrentLinkedQueue<>();
@@ -42,26 +40,28 @@ public final class EarthController implements ShipForcesInducer {
     public final AtomicInteger idleTickCount = new AtomicInteger(0);
 
     @Override
-    public void applyForces(@NotNull PhysShip physShip) {
+    public void physTick(@NotNull PhysShip physShip, @NotNull PhysLevel physLevel) {
 
-        if (!invForces.isEmpty()) {
-            if (physShip.isStatic())
-                physShip.setStatic(false);
-            Vector3dc force = invForces.poll();
-            if (tickCount.get() >= 5) {
-                double yForce = force.y() / 10;
-                if (physShip.getVelocity().y() <= 0) {
-                    yForce += 7000;
-                } else {
-                    yForce = 0;
-                }
-                Vector3d newForce = new Vector3d(0, yForce, 0);
-//                Avatar.LOGGER.info("applyForces: {} {}", yForce, physShip.getVelocity().y());
-                physShip.applyInvariantForce(newForce);
-            } else {
-                physShip.applyInvariantForce(force);
-            }
-        }
+//        if (!invForces.isEmpty()) {
+//            if (physShip.isStatic())
+//                physShip.setStatic(false);
+//            Vector3dc force = invForces.poll();
+//            if (tickCount.get() >= 5) {
+//                double yForce = force.y() / 10;
+//                if (physShip.getVelocity().y() <= 0) {
+//                    yForce += 7000;
+//                } else {
+//                    yForce = 0;
+//                }
+//                Vector3d newForce = new Vector3d(0, yForce, 0);
+////                Avatar.LOGGER.info("applyForces: {} {}", yForce, physShip.getVelocity().y());
+//                physShip.applyInvariantForce(newForce);
+//            } else {
+//                physShip.applyInvariantForce(force);
+//            }
+//        }
+        if (!invForces.isEmpty())
+            physShip.applyInvariantForce(invForces.poll());
         if (!invTorques.isEmpty())
             physShip.applyInvariantTorque(invTorques.poll());
         if (!rotForces.isEmpty())
@@ -105,6 +105,7 @@ public final class EarthController implements ShipForcesInducer {
     }
 
     private void cleanUpShip() {
+        if (originalBlocks == null) return;
         originalBlocks.get().forEach(block -> {
             ServerLevel level = (ServerLevel) entity.level();
             Vector3dc shipYardPos = ship.getTransform().getPositionInShip();
@@ -189,7 +190,7 @@ public final class EarthController implements ShipForcesInducer {
                 BlockPos blockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipYardPos));
                 double mass = ship.getInertiaData().getMass();
                 Vec3 vec3 = entity.getDeltaMovement().normalize()
-                        .multiply(500*mass, 500*mass, 500*mass);
+                        .multiply(250*mass, 250*mass, 250*mass);
                 Vector3d v3d = VectorConversionsMCKt.toJOML(vec3);
                 physShip.applyInvariantForce(v3d);
                 Vec3 motion = VectorConversionsMCKt.toMinecraft(ship.getVelocity());
@@ -225,7 +226,7 @@ public final class EarthController implements ShipForcesInducer {
             control.bender = bender;
             control.entity = bender.getEntity();
             control.originalBlocks = bender.getSelection().originalBlocksMap().get(ship.getId());
-            ship.setAttachment(EarthController.class, control);
+            ship.setAttachment(control);
             return control;
         }
     }
