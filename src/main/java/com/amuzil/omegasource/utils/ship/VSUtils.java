@@ -78,7 +78,6 @@ public class VSUtils {
                 .multiply(900*mass, 600*mass, 900*mass);
         Vector3d force = VectorConversionsMCKt.toJOML(vec3);
         earthController.applyInvariantForce(force);
-        System.out.println("Applying force: " + force + " to ship with mass: " + mass);
     }
 
     public static void raiseBlock(LoadedServerShip ship, EarthController earthController) {
