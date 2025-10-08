@@ -75,7 +75,7 @@ public class VSUtils {
     public static void tossBlock(LivingEntity entity, EarthController earthController, LoadedServerShip ship) {
         double mass = ship.getInertiaData().getMass();
         Vec3 vec3 = entity.getLookAngle().normalize()
-                .multiply(500*mass, 500*mass, 500*mass);
+                .multiply(900*mass, 600*mass, 900*mass);
         Vector3d force = VectorConversionsMCKt.toJOML(vec3);
         earthController.applyInvariantForce(force);
         System.out.println("Applying force: " + force + " to ship with mass: " + mass);

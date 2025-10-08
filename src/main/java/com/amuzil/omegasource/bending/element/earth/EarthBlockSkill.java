@@ -18,6 +18,7 @@ import org.valkyrienskies.core.api.world.ServerShipWorld;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
 import static com.amuzil.omegasource.bending.form.BendingForms.BLOCK;
+import static com.amuzil.omegasource.bending.form.BendingForms.STRIKE;
 import static com.amuzil.omegasource.utils.ship.VSUtils.assembleEarthShip;
 import static com.amuzil.omegasource.utils.ship.VSUtils.controlBlock;
 
@@ -33,11 +34,12 @@ public class EarthBlockSkill extends EarthSkill {
                 .simple(new ActiveForm(BLOCK, true))
                 .build();
 
-        this.runPaths = SkillPathBuilder.getInstance()
-                .simple(new ActiveForm(BLOCK, true))
-                .build();
+//        this.runPaths = SkillPathBuilder.getInstance()
+//                .simple(new ActiveForm(BLOCK, true))
+//                .build();
 
         this.stopPaths = SkillPathBuilder.getInstance()
+                .simple(new ActiveForm(STRIKE, true))
                 .build();
     }
 
