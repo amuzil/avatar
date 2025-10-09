@@ -10,7 +10,7 @@ import com.amuzil.omegasource.entity.modules.render.PhotonModule;
 import com.amuzil.omegasource.input.InputModule;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.api.magus.registry.Registries;
-import com.amuzil.omegasource.utils.AvatarSounds;
+import com.amuzil.omegasource.utils.sound.AvatarSounds;
 import com.amuzil.omegasource.utils.commands.AvatarCommands;
 import com.amuzil.omegasource.utils.ship.EarthController;
 import com.lowdragmc.photon.client.fx.FX;

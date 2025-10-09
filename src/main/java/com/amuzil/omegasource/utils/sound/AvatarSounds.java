@@ -1,4 +1,4 @@
-package com.amuzil.omegasource.utils;
+package com.amuzil.omegasource.utils.sound;
 
 import com.amuzil.omegasource.Avatar;
 import net.minecraft.resources.ResourceLocation;

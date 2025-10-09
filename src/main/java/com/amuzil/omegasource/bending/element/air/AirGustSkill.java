@@ -11,14 +11,13 @@ import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.skill.AirSkill;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.entity.projectile.AvatarCurveProjectile;
-import com.amuzil.omegasource.entity.projectile.AvatarDirectProjectile;
 import com.amuzil.omegasource.entity.api.ICollisionModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import com.amuzil.omegasource.entity.modules.collision.AirCollisionModule;
 import com.amuzil.omegasource.entity.modules.collision.SimpleKnockbackModule;
 import com.amuzil.omegasource.entity.modules.entity.GrowModule;
 import com.amuzil.omegasource.entity.modules.force.ChangeSpeedModule;
-import com.amuzil.omegasource.utils.AvatarSounds;
+import com.amuzil.omegasource.utils.sound.AvatarSounds;
 import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.maths.Point;
 import net.minecraft.sounds.SoundSource;
@@ -113,16 +112,17 @@ public class AirGustSkill extends AirSkill {
 
         projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
         projectile.init();
-        projectile.level().playSound(null,
-                entity.getX(), entity.getY(), entity.getZ(),
-                AvatarSounds.AIR_GUST.get(), SoundSource.PLAYERS,
-                1.0F, 1.0F);
 
         bender.formPath.clear();
         data.setSkillState(SkillState.IDLE);
 
         if (!bender.getEntity().level().isClientSide) {
             bender.getEntity().level().addFreshEntity(projectile);
+        } else {
+            projectile.level().playSound(null,
+                    entity.getX(), entity.getY(), entity.getZ(),
+                    AvatarSounds.AIR_GUST.get(), SoundSource.PLAYERS,
+                    1.0F, 1.0F);
         }
     }
 }
