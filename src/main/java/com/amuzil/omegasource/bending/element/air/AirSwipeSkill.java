@@ -10,37 +10,38 @@ import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.*;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.skill.AirSkill;
 import com.amuzil.omegasource.capability.Bender;
-import com.amuzil.omegasource.entity.projectile.AvatarCurveProjectile;
-import com.amuzil.omegasource.entity.projectile.AvatarDirectProjectile;
 import com.amuzil.omegasource.entity.api.ICollisionModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import com.amuzil.omegasource.entity.modules.collision.AirCollisionModule;
 import com.amuzil.omegasource.entity.modules.collision.SimpleKnockbackModule;
 import com.amuzil.omegasource.entity.modules.entity.GrowModule;
 import com.amuzil.omegasource.entity.modules.force.ChangeSpeedModule;
+import com.amuzil.omegasource.entity.projectile.AvatarDirectProjectile;
 import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.maths.Point;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-import static com.amuzil.omegasource.bending.form.BendingForms.STRIKE;
+import static com.amuzil.omegasource.bending.form.BendingForms.*;
 
 
-public class AirGustSkill extends AirSkill {
+public class AirSwipeSkill extends AirSkill {
 
-    public AirGustSkill() {
-        super(Avatar.MOD_ID, "air_gust");
-        addTrait(new DamageTrait(Constants.DAMAGE, 1.5f));
+    public AirSwipeSkill() {
+        super(Avatar.MOD_ID, "air_swipe");
+        addTrait(new DamageTrait(Constants.DAMAGE, 2.5f));
         addTrait(new SizeTrait(Constants.SIZE, 0.125F));
         addTrait(new SizeTrait(Constants.MAX_SIZE, 1.25f));
         addTrait(new KnockbackTrait(Constants.KNOCKBACK, 0.6f));
-        addTrait(new SpeedTrait(Constants.SPEED, 0.875d));
-        addTrait(new TimedTrait(Constants.LIFETIME, 15)); // Ticks not seconds...
-        addTrait(new SpeedTrait(Constants.SPEED_FACTOR, 1.0d));
-        addTrait(new StringTrait(Constants.FX, "airs_perma9"));
+        addTrait(new SpeedTrait(Constants.SPEED, 1.5d));
+        addTrait(new TimedTrait(Constants.LIFETIME, 30)); // Ticks not seconds...
+        addTrait(new StringTrait(Constants.FX, "airs_perma12"));
 
-        startPaths = SkillPathBuilder.getInstance().simple(new ActiveForm(STRIKE, true)).build();
+        startPaths = SkillPathBuilder.getInstance()
+                .simple(new ActiveForm(SHAPE, true))
+                .simple(new ActiveForm(COMPRESS, true))
+                .build();
     }
 
     @Override
@@ -60,7 +61,7 @@ public class AirGustSkill extends AirSkill {
         double speed = data.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
         double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
-        AvatarCurveProjectile projectile = new AvatarCurveProjectile(level);
+        AvatarDirectProjectile projectile = new AvatarDirectProjectile(level);
         projectile.setElement(Elements.AIR);
         projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
         projectile.setOwner(entity);
@@ -101,10 +102,6 @@ public class AirGustSkill extends AirSkill {
 //        projectile.addModule(ModuleRegistry.create(SimpleDamageModule.id));
         projectile.addTraits(new CollisionTrait(Constants.COLLISION_TYPE, "Blaze", "Fireball", "AbstractArrow", "FireProjectile"));
         projectile.addCollisionModule((ICollisionModule) ModuleRegistry.create(AirCollisionModule.id));
-
-        // Slow down over time
-        projectile.addTraits(data.getTrait(Constants.SPEED_FACTOR, SpeedTrait.class));
-        projectile.addModule(ModuleRegistry.create(ChangeSpeedModule.id));
 
         // Particle FX module
         projectile.addTraits(data.getTrait(Constants.FX, StringTrait.class));

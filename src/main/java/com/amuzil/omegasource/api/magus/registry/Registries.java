@@ -90,7 +90,7 @@ public class Registries {
 
     @SubscribeEvent
     public static void gameRegistry(RegisterEvent event) {
-        // Ensure lists get populated to be added to Forms registry
+        // Ensure lists get populated to be added to Skills & Forms registry
         if (!initialized_bending) {
             Elements.init();
             BendingForms.init();

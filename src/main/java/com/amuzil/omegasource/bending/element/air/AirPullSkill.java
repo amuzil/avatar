@@ -23,23 +23,26 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-import static com.amuzil.omegasource.bending.form.BendingForms.STRIKE;
+import static com.amuzil.omegasource.bending.form.BendingForms.*;
 
 
 public class AirPullSkill extends AirSkill {
 
     public AirPullSkill() {
         super(Avatar.MOD_ID, "air_pull");
-        addTrait(new DamageTrait(Constants.DAMAGE, 1.5f));
+        addTrait(new DamageTrait(Constants.DAMAGE, 0.5f));
         addTrait(new SizeTrait(Constants.SIZE, 0.125F));
         addTrait(new SizeTrait(Constants.MAX_SIZE, 1.25f));
         addTrait(new KnockbackTrait(Constants.KNOCKBACK, 0.6f));
         addTrait(new SpeedTrait(Constants.SPEED, 0.875d));
         addTrait(new TimedTrait(Constants.LIFETIME, 15)); // Ticks not seconds...
         addTrait(new SpeedTrait(Constants.SPEED_FACTOR, 1.0d));
-        addTrait(new StringTrait(Constants.FX, "airs_perma9"));
+        addTrait(new StringTrait(Constants.FX, "airs_perma10"));
 
-        startPaths = SkillPathBuilder.getInstance().simple(new ActiveForm(STRIKE, true)).build();
+        startPaths = SkillPathBuilder.getInstance()
+                .simple(new ActiveForm(ARC, true))
+                .simple(new ActiveForm(PULL, true))
+                .build();
     }
 
     @Override
@@ -91,7 +94,7 @@ public class AirPullSkill extends AirSkill {
         projectile.addModule(ModuleRegistry.create(GrowModule.id));
 
         projectile.addTraits(data.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
-        projectile.addTraits(new DirectionTrait("knockback_direction", new Vec3(0, 0.45, 0)));
+        projectile.addTraits(new DirectionTrait("knockback_direction", entity.getLookAngle().reverse()));
         projectile.addModule(ModuleRegistry.create(SimpleKnockbackModule.id));
 
         // Damage module
@@ -108,7 +111,7 @@ public class AirPullSkill extends AirSkill {
         // Particle FX module
         projectile.addTraits(data.getTrait(Constants.FX, StringTrait.class));
 
-        projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
+        projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0).add(entity.getLookAngle().scale(8)), entity.getLookAngle().reverse(), speed, 0);
         projectile.init();
 
         bender.formPath.clear();
