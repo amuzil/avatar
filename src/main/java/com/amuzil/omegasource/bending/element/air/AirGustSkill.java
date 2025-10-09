@@ -112,17 +112,16 @@ public class AirGustSkill extends AirSkill {
 
         projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
         projectile.init();
+        projectile.level().playSound(null,
+                entity.getX(), entity.getY(), entity.getZ(),
+                AvatarSounds.AIR_GUST.get(), SoundSource.PLAYERS,
+                1.0F, 1.0F);
 
         bender.formPath.clear();
         data.setSkillState(SkillState.IDLE);
 
         if (!bender.getEntity().level().isClientSide) {
             bender.getEntity().level().addFreshEntity(projectile);
-        } else {
-            projectile.level().playSound(null,
-                    entity.getX(), entity.getY(), entity.getZ(),
-                    AvatarSounds.AIR_GUST.get(), SoundSource.PLAYERS,
-                    1.0F, 1.0F);
         }
     }
 }
