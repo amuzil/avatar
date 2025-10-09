@@ -7,7 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 
 public class BindModule implements IForceModule {
 
-public static String id = BindModule.class.getSimpleName();
+    public static String id = BindModule.class.getSimpleName();
 
     @Override
     public String id() {

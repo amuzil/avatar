@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class SimpleKnockbackModule implements ICollisionModule {
 
-public static String id = SimpleKnockbackModule.class.getSimpleName();
+    public static String id = SimpleKnockbackModule.class.getSimpleName();
 
     @Override
     public String id() {

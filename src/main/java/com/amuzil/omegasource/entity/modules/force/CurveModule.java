@@ -13,7 +13,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class CurveModule implements IForceModule {
 
-public static String id = CurveModule.class.getSimpleName();
+    public static String id = CurveModule.class.getSimpleName();
 
     @Override
     public String id() {

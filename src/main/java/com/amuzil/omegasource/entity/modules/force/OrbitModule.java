@@ -13,7 +13,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class OrbitModule implements IForceModule {
 
-public static String id = OrbitModule.class.getSimpleName();
+    public static String id = OrbitModule.class.getSimpleName();
 
     @Override
     public String id() {

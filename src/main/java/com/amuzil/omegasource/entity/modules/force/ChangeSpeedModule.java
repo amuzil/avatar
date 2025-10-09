@@ -10,7 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 
 public class ChangeSpeedModule implements IForceModule {
 
-public static String id = ChangeSpeedModule.class.getSimpleName();
+    public static String id = ChangeSpeedModule.class.getSimpleName();
 
     @Override
     public String id() {

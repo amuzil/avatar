@@ -13,7 +13,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class MoveModule implements IForceModule {
 
-public static String id = MoveModule.class.getSimpleName();
+    public static String id = MoveModule.class.getSimpleName();
 
     @Override
     public String id() {

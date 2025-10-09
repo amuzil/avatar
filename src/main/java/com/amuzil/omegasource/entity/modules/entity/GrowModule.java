@@ -13,7 +13,7 @@ import net.minecraft.world.entity.LivingEntity;
 
 public class GrowModule implements IEntityModule {
 
-public static String id = GrowModule.class.getSimpleName();
+    public static String id = GrowModule.class.getSimpleName();
 
     @Override
     public String id() {
