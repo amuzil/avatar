@@ -10,6 +10,7 @@ import com.amuzil.omegasource.entity.modules.render.PhotonModule;
 import com.amuzil.omegasource.input.InputModule;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.api.magus.registry.Registries;
+import com.amuzil.omegasource.utils.AvatarSounds;
 import com.amuzil.omegasource.utils.commands.AvatarCommands;
 import com.amuzil.omegasource.utils.ship.EarthController;
 import com.lowdragmc.photon.client.fx.FX;
@@ -67,6 +68,7 @@ public class Avatar {
 
         // Register Entities
         AvatarEntities.register(modEventBus);
+        AvatarSounds.register(modEventBus);
     }
 
     private void setup(final FMLCommonSetupEvent event) {
@@ -98,6 +100,7 @@ public class Avatar {
     private void setupClient(final FMLClientSetupEvent event) {
         // Register the input modules
         inputModule = new InputModule();
+
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {}

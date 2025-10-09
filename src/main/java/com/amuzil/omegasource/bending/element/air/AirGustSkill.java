@@ -18,8 +18,10 @@ import com.amuzil.omegasource.entity.modules.collision.AirCollisionModule;
 import com.amuzil.omegasource.entity.modules.collision.SimpleKnockbackModule;
 import com.amuzil.omegasource.entity.modules.entity.GrowModule;
 import com.amuzil.omegasource.entity.modules.force.ChangeSpeedModule;
+import com.amuzil.omegasource.utils.AvatarSounds;
 import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.maths.Point;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -111,6 +113,10 @@ public class AirGustSkill extends AirSkill {
 
         projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
         projectile.init();
+        projectile.level().playSound(null,
+                entity.getX(), entity.getY(), entity.getZ(),
+                AvatarSounds.AIR_GUST.get(), SoundSource.PLAYERS,
+                1.0F, 1.0F);
 
         bender.formPath.clear();
         data.setSkillState(SkillState.IDLE);
