@@ -36,7 +36,8 @@ public class Registries {
 
     private static boolean initialized_bending = false;
 
-    public static void init() {}
+    public static void init() {
+    }
 
     public static List<Form> getForms() {
         return forms;
@@ -92,7 +93,7 @@ public class Registries {
     public static void gameRegistry(RegisterEvent event) {
         // Ensure lists get populated to be added to Skills & Forms registry
         if (!initialized_bending) {
-            Elements.init();
+            Elements.init(); // If there is error in Registries, it's probably in one of the BendingSkills
             BendingForms.init();
             initialized_bending = true;
         }
