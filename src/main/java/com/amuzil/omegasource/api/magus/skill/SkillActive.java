@@ -13,37 +13,37 @@ public class SkillActive extends Skill {
     }
 
     @Override
-    public FormPath getStartPaths() {
+    public FormPath startPaths() {
         return startPaths;
     }
 
     @Override
-    public FormPath getRunPaths() {
+    public FormPath runPaths() {
         return runPaths;
     }
 
     @Override
-    public FormPath getStopPaths() {
+    public FormPath stopPaths() {
         return stopPaths;
     }
 
     @Override
     public boolean shouldStart(Bender bender, FormPath formPath) {
-        return formPath.hashCode() == getStartPaths().hashCode();
+        return formPath.hashCode() == startPaths().hashCode();
     }
 
     @Override
     public boolean shouldRun(Bender bender, FormPath formPath) {
-        if (getRunPaths() == null)
+        if (runPaths() == null)
             return false;
-        return formPath.hashCode() == getRunPaths().hashCode();
+        return formPath.hashCode() == runPaths().hashCode();
     }
 
     @Override
     public boolean shouldStop(Bender bender, FormPath formPath) {
-        if (getStopPaths() == null)
+        if (stopPaths() == null)
             return false;
-        return formPath.hashCode() == getStopPaths().hashCode();
+        return formPath.hashCode() == stopPaths().hashCode();
     }
 
     @Override

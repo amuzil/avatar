@@ -41,7 +41,7 @@ public class EarthTossSkill extends EarthSkill {
 
     @Override
     public boolean shouldStart(Bender bender, FormPath formPath) {
-        return formPath.simple().hashCode() == getStartPaths().simple().hashCode();
+        return formPath.simple().hashCode() == startPaths().simple().hashCode();
     }
 
     @Override

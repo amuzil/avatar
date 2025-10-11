@@ -58,6 +58,8 @@ public class Bender implements IBender {
     private final List<SkillData> skillData = new ArrayList<>();
     private final List<DataTrait> dataTraits = new ArrayList<>();
 
+    private final List<Skill> activeSkills = new ArrayList<>();
+
     public Bender(LivingEntity entity) {
         this.entity = entity;
         this.formListener = this::onFormActivatedEvent;
@@ -66,7 +68,7 @@ public class Bender implements IBender {
             skillCategoryData.add(new SkillCategoryData(category));
         for (Skill skill : Registries.getSkills()) {
             skillData.add(new SkillData(skill));
-            if (skill.getRunPaths() != null)
+            if (skill.runPaths() != null)
                 shouldRuns.put(skill.getId(), false); // Initialize shouldRuns map
         }
         dataTraits.addAll(Registries.getTraits());

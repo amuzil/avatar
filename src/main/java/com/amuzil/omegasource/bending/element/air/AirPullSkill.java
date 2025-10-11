@@ -24,7 +24,6 @@ import com.amuzil.omegasource.utils.sound.AvatarSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 
 import static com.amuzil.omegasource.bending.form.BendingForms.*;
 
@@ -50,7 +49,7 @@ public class AirPullSkill extends AirSkill {
 
     @Override
     public boolean shouldStart(Bender bender, FormPath formPath) {
-        return formPath.simple().hashCode() == getStartPaths().simple().hashCode();
+        return formPath.simple().hashCode() == startPaths().simple().hashCode();
     }
 
     @Override

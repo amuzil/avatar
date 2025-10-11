@@ -51,12 +51,12 @@ public class FlameStreamSkill extends FireSkill {
 
     @Override
     public boolean shouldStart(Bender bender, FormPath formPath) {
-        return formPath.simple().hashCode() == getStartPaths().simple().hashCode();
+        return formPath.simple().hashCode() == startPaths().simple().hashCode();
     }
 
     @Override
     public boolean shouldStop(Bender bender, FormPath formPath) {
-        return formPath.simple().hashCode() == getStopPaths().simple().hashCode();
+        return formPath.simple().hashCode() == stopPaths().simple().hashCode();
     }
 
     @Override

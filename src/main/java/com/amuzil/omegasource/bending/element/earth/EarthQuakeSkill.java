@@ -13,34 +13,37 @@ import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.ship.EarthController;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import org.valkyrienskies.core.api.ships.LoadedServerShip;
 import org.valkyrienskies.core.api.world.ServerShipWorld;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
-import static com.amuzil.omegasource.bending.form.BendingForms.BLOCK;
-import static com.amuzil.omegasource.bending.form.BendingForms.STRIKE;
-import static com.amuzil.omegasource.utils.ship.VSUtils.assembleEarthShip;
+import java.util.HashMap;
+
+import static com.amuzil.omegasource.bending.form.BendingForms.*;
 import static com.amuzil.omegasource.utils.ship.VSUtils.controlBlock;
 
 
-public class EarthBlockSkill extends EarthSkill {
+public class EarthQuakeSkill extends EarthSkill {
 
-    public EarthBlockSkill() {
-        super(Avatar.MOD_ID, "earth_block");
+    private HashMap<BlockPos, BlockState> WorldState;
+    private int currentQuakeDistance = 0;
+
+    public EarthQuakeSkill() {
+        super(Avatar.MOD_ID, "earth_quake");
         addTrait(new KnockbackTrait(Constants.KNOCKBACK, 1.5f));
         addTrait(new SizeTrait(Constants.SIZE, 1.0f));
 
         this.startPaths = SkillPathBuilder.getInstance()
+                .simple(new ActiveForm(RAISE, true))
+                .simple(new ActiveForm(LOWER, true))
+                .build();
+
+        this.stopPaths = SkillPathBuilder.getInstance()
                 .simple(new ActiveForm(BLOCK, true))
                 .build();
 
-//        this.runPaths = SkillPathBuilder.getInstance()
-//                .simple(new ActiveForm(BLOCK, true))
-//                .build();
-
-        this.stopPaths = SkillPathBuilder.getInstance()
-                .simple(new ActiveForm(STRIKE, true))
-                .build();
     }
 
     @Override
@@ -57,20 +60,15 @@ public class EarthBlockSkill extends EarthSkill {
     public void start(Bender bender) {
         super.start(bender);
 
+        int numRings = 3;
+
         if (!bender.getEntity().level().isClientSide()) {
-            assembleEarthShip(bender);
+            // get player position casting as epicentre.
+            BlockPos epicenter = bender.getEntity().blockPosition();
+
+//            epicenter
+
         }
-//        else if (bender.getEntity() instanceof AbstractClientPlayer benderPlayer) {
-//            AnimationStack animationStack = PlayerAnimationAccess.getPlayerAnimLayer(benderPlayer);
-////            animationStack.addAnimLayer(null, true);
-//            var animation = (ModifierLayer<IAnimation>) PlayerAnimationAccess.getPlayerAssociatedData(benderPlayer).get(
-//                    ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "animation"));
-//            if (animation != null) {
-//                animation.setAnimation(new KeyframeAnimationPlayer(PlayerAnimationRegistry.getAnimation(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "earth_block"))));
-//                // You might use  animation.replaceAnimationWithFade(); to create fade effect instead of sudden change
-//                // See javadoc for details
-//            }
-//        }
 
         SkillData data = bender.getSkillData(this);
         data.setSkillState(SkillState.RUN);

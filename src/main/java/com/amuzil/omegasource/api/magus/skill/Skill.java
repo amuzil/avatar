@@ -145,11 +145,11 @@ public abstract class Skill {
         }
     }
 
-    public abstract FormPath getStartPaths();
+    public abstract FormPath startPaths();
 
-    public abstract FormPath getRunPaths();
+    public abstract FormPath runPaths();
 
-    public abstract FormPath getStopPaths();
+    public abstract FormPath stopPaths();
 
     public abstract boolean shouldStart(Bender bender, FormPath formPath);
 
