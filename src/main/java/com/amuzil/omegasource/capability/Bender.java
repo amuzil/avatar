@@ -58,7 +58,8 @@ public class Bender implements IBender {
     private final List<SkillData> skillData = new ArrayList<>();
     private final List<DataTrait> dataTraits = new ArrayList<>();
 
-    private final List<Skill> activeSkills = new ArrayList<>();
+    public final HashMap<String, Skill> activeSkills = new HashMap<>();
+    private final List<Skill> availableSkills = new ArrayList<>();
 
     public Bender(LivingEntity entity) {
         this.entity = entity;
@@ -66,7 +67,8 @@ public class Bender implements IBender {
 
         for (SkillCategory category : Registries.getSkillCategories())
             skillCategoryData.add(new SkillCategoryData(category));
-        for (Skill skill : Registries.getSkills()) {
+        this.availableSkills.addAll(Registries.getSkills());
+        for (Skill skill : availableSkills) {
             skillData.add(new SkillData(skill));
             if (skill.runPaths() != null)
                 shouldRuns.put(skill.getId(), false); // Initialize shouldRuns map
@@ -91,7 +93,7 @@ public class Bender implements IBender {
         if (entity instanceof Player) {
             if (!entity.level().isClientSide())
                 serverTick();
-            for (Skill skill: Registries.getSkills()) {
+            for (Skill skill: activeSkills.values()) {
                 if (canUseSkill(skill)) {
                     skill.tick(this, formPath);
                 }
@@ -110,9 +112,12 @@ public class Bender implements IBender {
             active = !event.released();
             formPath.update(event.getActiveForm());
 //            this.syncFormPathToClient();
-            for (Skill skill: Registries.getSkills()) {
+            for (Skill skill: availableSkills) {
                 if (canUseSkill(skill)) {
-                    skill.execute(this, formPath);
+                    Skill newSkill = Registries.getSkillByName(skill.getId());
+                    newSkill.execute(this, formPath);
+                    activeSkills.put(newSkill.getSkillUuid(), newSkill);
+                    formPath.clear();
                 }
             }
             tick = timeout;
@@ -215,7 +220,7 @@ public class Bender implements IBender {
     @Override
     public void resetSkillData() {
         skillData.clear();
-        for (Skill skill : Registries.getSkills())
+        for (Skill skill : availableSkills)
             skillData.add(new SkillData(skill));
         markDirty();
     }

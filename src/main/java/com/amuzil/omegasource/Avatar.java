@@ -70,11 +70,13 @@ public class Avatar {
         // Register Entities
         AvatarEntities.register(modEventBus);
         AvatarSounds.register(modEventBus);
+
+        Registries.init();
+        Registries.SKILL_REGISTER.register(context.getModEventBus());
     }
 
     private void setup(final FMLCommonSetupEvent event) {
         // some pre init code
-        Registries.init();
         AvatarNetwork.register();
 
         ModuleRegistry.register(MoveModule::new);

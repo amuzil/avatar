@@ -27,24 +27,17 @@ public class SkillData implements DataTrait {
     // Types should not need serialisation as they do not change
     //The reason we're using a resource location and not the actual Skill object is because
     //it's much easier to serialise a String and then get a skill from it.
-    protected ResourceLocation skillId;
+    protected String skillId;
+    protected Skill skill;
     protected boolean canUse = true; // TODO - Temporary for testing
     protected boolean isDirty = false;
     protected Skill.SkillState skillState;
 
-    public SkillData(ResourceLocation skillId) {
-        this.skillId = skillId;
-        this.skillTraits = new LinkedList<>();
-        this.skillState = Skill.SkillState.IDLE;
-        if (getSkill() != null)
-            skillTraits = getSkill().getTraits()
-                    .stream()
-                    .map(SkillTrait::clone)
-                    .toList();
-    }
-
     public SkillData(Skill skill) {
-        this(skill.getId());
+        this.skill = skill;
+        this.skillId = skill.getSkillUuid();
+        this.skillTraits = skill.getTraits();
+        this.skillState = Skill.SkillState.IDLE;
     }
 
     public void setCanUse(boolean canUse) {
@@ -113,7 +106,7 @@ public class SkillData implements DataTrait {
     @Override
     public void deserializeNBT(CompoundTag tag) {
         try {
-            skillId = ResourceLocation.tryParse(tag.getString("Skill ID"));
+            skillId = tag.getString("Skill ID");
             canUse = tag.getBoolean("Can Use");
             if (!skillTraits.isEmpty())
                 skillTraits.forEach(skillTrait -> {
@@ -134,11 +127,14 @@ public class SkillData implements DataTrait {
     }
 
     public ResourceLocation getSkillId() {
+        return skill.getId();
+    }
+    public String getSkillUuid() {
         return skillId;
     }
 
     public Skill getSkill() {
-        return Registries.SKILLS.get().getValue(getSkillId());
+        return skill;
     }
 
     public List<SkillTrait> getFilteredTraits(Predicate<? super SkillTrait> filter) {

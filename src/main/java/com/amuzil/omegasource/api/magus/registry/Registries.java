@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -24,26 +25,28 @@ import java.util.function.Supplier;
  */
 @Mod.EventBusSubscriber(modid = Avatar.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Registries {
-
     public static Supplier<IForgeRegistry<Form>> FORMS;
-    public static Supplier<IForgeRegistry<Skill>> SKILLS;
+    public static DeferredRegister<Skill> SKILL_REGISTER = DeferredRegister.create(ResourceLocation.parse("skills"), Avatar.MOD_ID);
+    public static Supplier<IForgeRegistry<Skill>> SKILLS = SKILL_REGISTER.makeRegistry(RegistryBuilder::new);
     public static Supplier<IForgeRegistry<SkillCategory>> SKILL_CATEGORIES;
 
     private static final List<Form> forms = new ArrayList<>();
-    private static final List<Skill> skills = new ArrayList<>();
+    private static final HashMap<String, RegistryObject<Skill>> skills = new HashMap<>();
     private static final List<SkillCategory> categories = new ArrayList<>();
     private static final List<DataTrait> traits = new ArrayList<>();
 
     private static boolean initialized_bending = false;
 
-    public static void init() {}
+    public static void init() {
+        Elements.init();
+    }
 
     public static List<Form> getForms() {
         return forms;
     }
 
     public static List<Skill> getSkills() {
-        return skills;
+        return skills.values().stream().map(c -> c.get()).toList();
     }
 
     public static List<SkillCategory> getSkillCategories() {
@@ -58,8 +61,12 @@ public class Registries {
         forms.add(form);
     }
 
-    public static void registerSkill(Skill skill) {
-        skills.add(skill);
+    public static RegistryObject<? extends Skill> registerSkill(String name, Supplier<? extends Skill> skillSup) {
+        RegistryObject<Skill> skillRegistryObject = SKILL_REGISTER.register(name, skillSup);
+        String namespace = ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, name).toString();
+        skills.put(namespace, skillRegistryObject);
+
+        return skillRegistryObject;
     }
 
     public static void registerSkillCategory(SkillCategory skillCategory) {
@@ -78,9 +85,9 @@ public class Registries {
         FORMS = event.create(formRegistryBuilder);
 
         // Skills
-        RegistryBuilder<Skill> skills = new RegistryBuilder<>();
-        skills.setName(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "skills"));
-        SKILLS = event.create(skills);
+//        RegistryBuilder<Skill> skills = new RegistryBuilder<>();
+//        skills.setName(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "skills"));
+//        SKILLS = event.create(skills);
 
         // Skill Categories
         RegistryBuilder<SkillCategory> categories = new RegistryBuilder<>();
@@ -92,7 +99,6 @@ public class Registries {
     public static void gameRegistry(RegisterEvent event) {
         // Ensure lists get populated to be added to Skills & Forms registry
         if (!initialized_bending) {
-            Elements.init();
             BendingForms.init();
             initialized_bending = true;
         }
@@ -108,14 +114,14 @@ public class Registries {
         }
 
         // Skills
-        if (event.getRegistryKey().equals(SKILLS.get().getRegistryKey())) {
-            IForgeRegistry<Skill> registry = SKILLS.get();
-            ResourceKey<Registry<Skill>> resKey = registry.getRegistryKey();
-            event.register(resKey, helper -> {
-                for (Skill skill: skills)
-                    helper.register(skill.getId(), skill);
-            });
-        }
+//        if (event.getRegistryKey().equals(SKILLS.get().getRegistryKey())) {
+//            IForgeRegistry<Skill> registry = SKILLS.get();
+//            ResourceKey<Registry<Skill>> resKey = registry.getRegistryKey();
+//            event.register(resKey, helper -> {
+//                for (Skill skill: skills)
+//                    helper.register(skill.getId(), skill);
+//            });
+//        }
 
         // Skill Categories
         if (event.getRegistryKey().equals(SKILL_CATEGORIES.get().getRegistryKey())) {
@@ -126,6 +132,11 @@ public class Registries {
                     helper.register(category.name(), category);
             });
         }
+    }
+
+    public static Skill getSkillByName(ResourceLocation id) {
+        String namespace = id.toString();
+        return skills.get(namespace).get();
     }
 
     @Mod.EventBusSubscriber(modid = Avatar.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)

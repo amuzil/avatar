@@ -10,19 +10,13 @@ import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SizeTrait;
 import com.amuzil.omegasource.bending.skill.EarthSkill;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.utils.Constants;
-import com.amuzil.omegasource.utils.ship.EarthController;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
-import org.valkyrienskies.core.api.ships.LoadedServerShip;
-import org.valkyrienskies.core.api.world.ServerShipWorld;
-import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
 import java.util.HashMap;
 
 import static com.amuzil.omegasource.bending.form.BendingForms.*;
-import static com.amuzil.omegasource.utils.ship.VSUtils.controlBlock;
 
 
 public class EarthQuakeSkill extends EarthSkill {
@@ -43,7 +37,6 @@ public class EarthQuakeSkill extends EarthSkill {
         this.stopPaths = SkillPathBuilder.getInstance()
                 .simple(new ActiveForm(BLOCK, true))
                 .build();
-
     }
 
     @Override
@@ -53,7 +46,7 @@ public class EarthQuakeSkill extends EarthSkill {
 
     @Override
     public boolean shouldStop(Bender bender, FormPath formPath) {
-        return formPath.simple().hashCode() == stopPaths().simple().hashCode();
+        return super.shouldStop(bender, formPath) && formPath.simple().hashCode() == stopPaths().simple().hashCode();
     }
 
     @Override
@@ -68,6 +61,9 @@ public class EarthQuakeSkill extends EarthSkill {
 
 //            epicenter
 
+        } else {
+
+            bender.getEntity().sendSystemMessage(Component.literal("Shit began to happen fam"));
         }
 
         SkillData data = bender.getSkillData(this);
@@ -78,17 +74,9 @@ public class EarthQuakeSkill extends EarthSkill {
     public void run(Bender bender) {
         super.run(bender);
         if (!bender.getEntity().level().isClientSide()) {
-            ServerLevel serverLevel = (ServerLevel) bender.getEntity().level();
-            BlockPos blockPos = bender.getSelection().blockPos();
-            if (blockPos != null && VSGameUtilsKt.isBlockInShipyard(serverLevel, blockPos)) {
-                LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(serverLevel, blockPos);
-                ServerShipWorld serverShipWorld = (ServerShipWorld) VSGameUtilsKt.getVsCore().getHooks().getCurrentShipServerWorld();
-                if (serverShip != null && serverShipWorld != null) {
-                    EarthController earthController = EarthController.getOrCreate(serverShip, bender);
-                    earthController.setControlled(true);
-                    controlBlock(serverShip, serverShipWorld, serverLevel, bender);
-                }
-            }
+
+        } else {
+            bender.getEntity().sendSystemMessage(Component.literal("Shit happened fam"));
         }
     }
 
@@ -97,18 +85,10 @@ public class EarthQuakeSkill extends EarthSkill {
         super.stop(bender);
 
         if (!bender.getEntity().level().isClientSide()) {
-            ServerLevel level = (ServerLevel) bender.getEntity().level();
-            BlockPos blockPos = bender.getSelection().blockPos();
-            if (blockPos != null && VSGameUtilsKt.isBlockInShipyard(level, blockPos)) {
-                LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, blockPos);
-                if (serverShip != null) {
-                    EarthController earthController = EarthController.getOrCreate(serverShip, bender);
-                    if (earthController != null) {
-                        earthController.tickCount.set(0);
-                        earthController.setControlled(false);
-                    }
-                }
-            }
+
+        } else {
+            bender.getEntity().sendSystemMessage(Component.literal("Shit stopped happening fam"));
+
         }
     }
 }

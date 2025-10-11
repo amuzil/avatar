@@ -43,7 +43,8 @@ public class SkillActive extends Skill {
     public boolean shouldStop(Bender bender, FormPath formPath) {
         if (stopPaths() == null)
             return false;
-        return formPath.hashCode() == stopPaths().hashCode();
+        SkillState state = bender.getSkillData(this).getSkillState();
+        return state != SkillState.IDLE && state != SkillState.STOP && formPath.hashCode() == stopPaths().hashCode();
     }
 
     @Override
@@ -60,6 +61,7 @@ public class SkillActive extends Skill {
     public void stop(Bender bender) {
         SkillData data = bender.getSkillData(this);
         data.setSkillState(SkillState.IDLE);
+        bender.activeSkills.remove(getSkillUuid());
     }
 
     @Override

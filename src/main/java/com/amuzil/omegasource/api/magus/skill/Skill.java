@@ -10,6 +10,7 @@ import com.amuzil.omegasource.api.magus.registry.Registries;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.skill.ActivatedSkillPacket;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -18,6 +19,7 @@ import net.minecraftforge.common.MinecraftForge;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 
@@ -26,6 +28,7 @@ import java.util.function.Predicate;
  */
 public abstract class Skill {
     private final String name;
+    private final String skillUuid;
     private final ResourceLocation id;
     private final SkillCategory category;
     private final List<RadixTree.ActivationType> activationTypes;
@@ -43,6 +46,7 @@ public abstract class Skill {
 
     public Skill(ResourceLocation id, String name, SkillCategory category) {
         this.id = id;
+        this.skillUuid = UUID.randomUUID().toString();
         this. name = name;
         this.category = category;
         // Menu is default
@@ -54,7 +58,7 @@ public abstract class Skill {
         // Maybe static instances of traits rather than new instances per Skill? Unsure
         addTrait(new UseTrait("use_skill", false));
 
-        Registries.registerSkill(this);
+//        Registries.registerSkill(this);
     }
 
     public boolean addTrait(SkillTrait trait) {
@@ -89,6 +93,9 @@ public abstract class Skill {
 
     public ResourceLocation getId() {
         return id;
+    }
+    public String getSkillUuid() {
+        return skillUuid;
     }
 
     public List<SkillTrait> getTraits() {
@@ -129,6 +136,7 @@ public abstract class Skill {
             executeOnClient(bender.getEntity(), skillData, SkillState.STOP);
             stop(bender);
         }
+
     }
 
     // Execute Skill on client(s) and sync SkillState
