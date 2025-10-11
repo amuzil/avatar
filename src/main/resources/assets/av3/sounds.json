@@ -7,5 +7,14 @@
         "stream": false
       }
     ]
+  },
+  "fire_strike": {
+    "sounds": [
+      {
+        "attenuation_distance": 4,
+        "name": "av3:fire_strike",
+        "stream": false
+      }
+    ]
   }
 }

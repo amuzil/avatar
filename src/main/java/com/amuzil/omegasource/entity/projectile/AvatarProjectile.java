@@ -96,11 +96,6 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
     }
 
     @Override
-    public void remove(RemovalReason pReason) {
-        super.remove(pReason);
-    }
-
-    @Override
     public void init() {
         super.init();
         setBoundingBox(getSize());

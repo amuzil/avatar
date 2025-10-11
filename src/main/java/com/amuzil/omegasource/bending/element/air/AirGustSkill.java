@@ -40,7 +40,7 @@ public class AirGustSkill extends AirSkill {
         addTrait(new SizeTrait(Constants.SIZE, 0.125F));
         addTrait(new SizeTrait(Constants.MAX_SIZE, 1.25f));
         addTrait(new KnockbackTrait(Constants.KNOCKBACK, 0.6f));
-        addTrait(new SpeedTrait(Constants.SPEED, 1.875d));
+        addTrait(new SpeedTrait(Constants.SPEED, 0.875d));
         addTrait(new TimedTrait(Constants.LIFETIME, 15)); // Ticks not seconds...
         addTrait(new SpeedTrait(Constants.SPEED_FACTOR, 1.0d));
         addTrait(new StringTrait(Constants.FX, "airs_perma9"));
@@ -108,8 +108,8 @@ public class AirGustSkill extends AirSkill {
         projectile.addCollisionModule((ICollisionModule) ModuleRegistry.create(AirCollisionModule.id));
 
         // Slow down over time
-//        projectile.addTraits(data.getTrait(Constants.SPEED_FACTOR, SpeedTrait.class));
-//        projectile.addModule(ModuleRegistry.create(ChangeSpeedModule.id));
+        projectile.addTraits(data.getTrait(Constants.SPEED_FACTOR, SpeedTrait.class));
+        projectile.addModule(ModuleRegistry.create(ChangeSpeedModule.id));
 
         // Particle FX module
         projectile.addTraits(data.getTrait(Constants.FX, StringTrait.class));
@@ -126,12 +126,8 @@ public class AirGustSkill extends AirSkill {
         else {
             DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
                 Minecraft.getInstance().getSoundManager()
-                        .play(new AvatarEntitySound(projectile, AvatarSounds.AIR_GUST.get()));
+                        .play(new AvatarEntitySound(projectile, AvatarSounds.AIR_GUST.get(), lifetime));
             });
-//            projectile.level().playSound(null,
-//                    entity.getX(), entity.getY(), entity.getZ(),
-//                    AvatarSounds.AIR_GUST.get(), SoundSource.AMBIENT,
-//                    1.0F, 1.0F);
         }
     }
 }

@@ -19,8 +19,13 @@ import com.amuzil.omegasource.entity.modules.force.ChangeSpeedModule;
 import com.amuzil.omegasource.entity.projectile.AvatarDirectProjectile;
 import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.maths.Point;
+import com.amuzil.omegasource.utils.sound.AvatarEntitySound;
+import com.amuzil.omegasource.utils.sound.AvatarSounds;
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 
 import static com.amuzil.omegasource.bending.form.BendingForms.*;
 
@@ -119,9 +124,11 @@ public class AirPullSkill extends AirSkill {
         if (!bender.getEntity().level().isClientSide) {
             bender.getEntity().level().addFreshEntity(projectile);
         }
-//        else {
-//            Minecraft.getInstance().getSoundManager()
-//                    .play(new AvatarEntitySound(projectile, AvatarSounds.AIR_GUST.get()));
-//        }
+        else {
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+                Minecraft.getInstance().getSoundManager()
+                        .play(new AvatarEntitySound(projectile, AvatarSounds.AIR_GUST.get(), lifetime));
+            });
+        }
     }
 }
