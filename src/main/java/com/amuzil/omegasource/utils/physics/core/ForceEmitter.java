@@ -8,7 +8,7 @@ import java.util.List;
 public class ForceEmitter {
 
     private List<ForceCloud> clouds;
-    private List<Vec3[][][]> fields;
+    private final List<Vec3[][][]> fields;
 
     public ForceEmitter() {
         this.fields = new ArrayList<>();
@@ -36,6 +36,11 @@ public class ForceEmitter {
 
     }
 
+
+    public List<ForceCloud> getClouds() {
+        return clouds;
+    }
+
     public List<Vec3[][][]> vectorFields() {
         return fields;
     }
@@ -43,6 +48,7 @@ public class ForceEmitter {
     public void addCloud(ForceCloud c) {
         clouds.add(c);
     }
+
     public void removeCloud(ForceCloud c) {
         clouds.remove(c);
     }

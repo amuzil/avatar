@@ -22,9 +22,31 @@ public class ForceSystem {
 
     private List<ForceEmitter> emitters;
 
+    public ForceSystem(double systemCellSize) {
+        this.cloudGrid = new ForceGrid<>(systemCellSize);
+    }
+
+    public void addEmitter(ForceEmitter e) {
+        if (!emitters.contains(e)) {
+            emitters.add(e);
+        }
+    }
+
+    public void unregisterEmitter(ForceEmitter e) {
+        emitters.remove(e);
+        // Optionally remove that emitter's clouds from the grid
+        for (ForceCloud c : e.getClouds()) {
+            cloudGrid.remove(c, c.pos());
+        }
+    }
+
     public void tick(double dt) {
         for (ForceEmitter e : emitters) {
             e.tick(dt);
         }
+        // Need to rebuild the cloud grid each tick, as clouds may have moved
+
+        
     }
 }
+

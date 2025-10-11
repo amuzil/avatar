@@ -129,6 +129,16 @@ public class ForceGrid<T extends IPhysicsElement> {
         return result;
     }
 
+    public List<T> queryNeighbours(Vec3 pos) {
+        long[] coords = normalCoords(pos);
+        List<T> result = new ArrayList<>();
+        List<T> bucket = cells.get(computeKey(coords[0], coords[1], coords[2]));
+        if (bucket != null) {
+            result.addAll(bucket);
+        }
+        return result;
+    }
+
     /**
      * Clear all cells (call each frame before re-inserting if needed).
      */
@@ -140,3 +150,4 @@ public class ForceGrid<T extends IPhysicsElement> {
         return this.identifierHash;
     }
 }
+
