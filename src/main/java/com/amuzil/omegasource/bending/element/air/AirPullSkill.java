@@ -98,7 +98,7 @@ public class AirPullSkill extends AirSkill {
         projectile.addModule(ModuleRegistry.create(GrowModule.id));
 
         projectile.addTraits(data.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
-        projectile.addTraits(new DirectionTrait("knockback_direction", entity.getLookAngle().reverse()));
+        projectile.addTraits(new DirectionTrait(Constants.KNOCKBACK_DIRECTION, entity.getLookAngle().reverse()));
         projectile.addModule(ModuleRegistry.create(SimpleKnockbackModule.id));
 
         // Damage module
