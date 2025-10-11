@@ -93,6 +93,7 @@ public class ForceCloud extends PhysicsElement {
 
     /**
      * Build a uniform voxel grid of sampled vectors.
+     * This is the vector field based on the current ForcePoints in the cloud. 
      *
      * @param centreX world-space centre X
      * @param centreY world-space centre Y
@@ -163,7 +164,7 @@ public class ForceCloud extends PhysicsElement {
         // Build grid...
         if (spaceGrid == null)
             // Hash is hashed id + hashed pos
-            spaceGrid = new ForceGrid(cellSize, hashCode());
+            spaceGrid = new ForceGrid<>(cellSize, hashCode());
         spaceGrid.clear();
         for (ForcePoint p : points) {
             spaceGrid.insert(p);               // uses p.pos() internally

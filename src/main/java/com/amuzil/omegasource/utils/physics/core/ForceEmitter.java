@@ -32,6 +32,9 @@ public class ForceEmitter {
                     /*cellDim=*/0.5
             );
             fields.add(field);
+
+            // Now combine relevant fields from other clouds in the system, and solve interactions
+            // (This will be done at the ForceSystem level eventually)
         }
 
     }

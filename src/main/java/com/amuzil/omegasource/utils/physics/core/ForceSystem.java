@@ -46,7 +46,7 @@ public class ForceSystem {
         }
         // Need to rebuild the cloud grid each tick, as clouds may have moved
 
-        
+
     }
 }
 
