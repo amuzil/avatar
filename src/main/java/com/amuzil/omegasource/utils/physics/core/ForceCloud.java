@@ -83,7 +83,7 @@ public class ForceCloud extends PhysicsElement {
             System.arraycopy(header, 0, point.header, 0, header.length);
     }
 
-    public void tick(double dt) {
+    public void tick() {
         for (IPhysicsModule module : modules) {
             module.preSolve(this);
             module.solve(this);
