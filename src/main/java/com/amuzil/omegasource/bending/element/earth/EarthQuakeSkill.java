@@ -13,6 +13,9 @@ import com.amuzil.omegasource.utils.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.state.BlockState;
+import org.checkerframework.checker.units.qual.A;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 
@@ -21,6 +24,7 @@ import static com.amuzil.omegasource.bending.form.BendingForms.*;
 
 public class EarthQuakeSkill extends EarthSkill {
 
+    private static final Logger log = LoggerFactory.getLogger(EarthQuakeSkill.class);
     private HashMap<BlockPos, BlockState> WorldState;
     private int currentQuakeDistance = 0;
 
@@ -30,6 +34,8 @@ public class EarthQuakeSkill extends EarthSkill {
         addTrait(new SizeTrait(Constants.SIZE, 1.0f));
 
         this.startPaths = SkillPathBuilder.getInstance()
+                // TODO: Remove arc/account for this skill being a motion skill, so no need to log ARC and SHAPE
+                .simple(new ActiveForm(ARC, true))
                 .simple(new ActiveForm(RAISE, true))
                 .simple(new ActiveForm(LOWER, true))
                 .build();
@@ -41,12 +47,18 @@ public class EarthQuakeSkill extends EarthSkill {
 
     @Override
     public boolean shouldStart(Bender bender, FormPath formPath) {
+//        System.out.println("DEBUG: Checking shouldStart in EarthQuakeSkill");
         return formPath.simple().hashCode() == startPaths().simple().hashCode();
     }
 
     @Override
+    public boolean shouldRun(Bender bender, FormPath formPath) {
+        return bender.getSkillData(this).getSkillState().equals(SkillState.RUN);
+    }
+
+    @Override
     public boolean shouldStop(Bender bender, FormPath formPath) {
-        return super.shouldStop(bender, formPath) && formPath.simple().hashCode() == stopPaths().simple().hashCode();
+        return formPath.simple().hashCode() == stopPaths().simple().hashCode();
     }
 
     @Override
@@ -77,6 +89,7 @@ public class EarthQuakeSkill extends EarthSkill {
 
         } else {
             bender.getEntity().sendSystemMessage(Component.literal("Shit happened fam"));
+
         }
 
     }
