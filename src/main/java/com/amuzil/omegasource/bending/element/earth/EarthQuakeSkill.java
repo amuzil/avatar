@@ -78,11 +78,12 @@ public class EarthQuakeSkill extends EarthSkill {
         } else {
             bender.getEntity().sendSystemMessage(Component.literal("Shit happened fam"));
         }
+
     }
 
     @Override
     public void stop(Bender bender) {
-        super.stop(bender);
+
 
         if (!bender.getEntity().level().isClientSide()) {
 
@@ -90,5 +91,8 @@ public class EarthQuakeSkill extends EarthSkill {
             bender.getEntity().sendSystemMessage(Component.literal("Shit stopped happening fam"));
 
         }
+
+        // Always call this at the end!
+        super.stop(bender);
     }
 }
