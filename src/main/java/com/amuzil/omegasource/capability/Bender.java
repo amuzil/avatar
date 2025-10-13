@@ -12,6 +12,7 @@ import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.events.FormActivatedEvent;
 import com.amuzil.omegasource.network.AvatarNetwork;
+import com.amuzil.omegasource.network.packets.skill.SkillDataPacket;
 import com.amuzil.omegasource.network.packets.sync.SyncBenderPacket;
 import com.amuzil.omegasource.network.packets.sync.SyncFormPathPacket;
 import com.amuzil.omegasource.network.packets.sync.SyncMovementPacket;
@@ -19,6 +20,7 @@ import com.amuzil.omegasource.network.packets.sync.SyncSelectionPacket;
 import com.amuzil.omegasource.utils.ship.OriginalBlocks;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -93,17 +95,12 @@ public class Bender implements IBender {
         if (entity instanceof Player) {
             if (!entity.level().isClientSide())
                 serverTick();
-            for (Skill skill: activeSkills.values()) {
-                if (canUseSkill(skill)) {
-                    skill.tick(this, formPath);
-                }
-            }
         }
     }
 
     private boolean canUseSkill(Skill skill) {
         return getSkillCategoryData(skill.getCategory().getId()).canUse()
-                && getSkillData(skill).canUse()
+//                && getSkillData(skill).canUse()
                 && getElement() == skill.getCategory(); // Make SkillCategory part of Skill RadixTree
     }
 
@@ -112,11 +109,20 @@ public class Bender implements IBender {
             active = !event.released();
             formPath.update(event.getActiveForm());
 //            this.syncFormPathToClient();
+            for (Skill skill: activeSkills.values()) {
+                if (skill.shouldStop(this, formPath)) {
+                    skill.stop(this);
+                } else if (skill.shouldRun(this, formPath)) {
+                    skill.run(this);
+                }
+            }
+
             for (Skill skill: availableSkills) {
-                if (canUseSkill(skill)) {
+                if (canUseSkill(skill) && skill.shouldStart(this, formPath)) {
                     Skill newSkill = Registries.getSkillByName(skill.getId());
-                    newSkill.execute(this, formPath);
-                    activeSkills.put(newSkill.getSkillUuid(), newSkill);
+                    skillData.add(new SkillData(newSkill));
+//                    AvatarNetwork.sendToClient(new SkillDataPacket(newSkill.getId(), newSkill.getSkillUuid(), 0), (ServerPlayer) entity);
+                    newSkill.start(this);
                     formPath.clear();
                 }
             }
@@ -138,6 +144,13 @@ public class Bender implements IBender {
             }
             tick--;
         }
+
+        for (Skill skill: activeSkills.values()) {
+            if (canUseSkill(skill)) {
+                skill.execute(this, formPath);
+            }
+        }
+
         restoreOriginalBlocks();
     }
 
@@ -206,13 +219,13 @@ public class Bender implements IBender {
 
     @Override
     public SkillData getSkillData(Skill skill) {
-        return getSkillData(skill.getId());
+        return getSkillData(skill.getSkillUuid());
     }
 
     @Override
-    public SkillData getSkillData(ResourceLocation id) {
+    public SkillData getSkillData(String skillUuid) {
         return skillData.stream()
-                .filter(data -> data.getSkillId().equals(id))
+                .filter(data -> data.getSkillUuid().equals(skillUuid))
                 .findFirst()
                 .orElse(null);
     }
@@ -229,7 +242,7 @@ public class Bender implements IBender {
     public void resetSkillData(Skill skill) {
         List<SkillData> newSkillData = new ArrayList<>();
         for (SkillData data : skillData) {
-            if (data.getSkillId().equals(skill.getId()))
+            if (data.getSkillUuid().equals(skill.getSkillUuid()))
                 newSkillData.add(new SkillData(skill));
             else
                 newSkillData.add(data);
@@ -268,7 +281,7 @@ public class Bender implements IBender {
     }
 
     @Override
-    public void setCanUseSkill(boolean canUse, ResourceLocation skillId) {
+    public void setCanUseSkill(boolean canUse, String skillId) {
         SkillData skillData = getSkillData(skillId);
         if (skillData != null) {
             skillData.setCanUse(canUse);

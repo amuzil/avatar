@@ -4,6 +4,7 @@ import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.network.packets.api.AvatarPacket;
 import com.amuzil.omegasource.network.packets.form.ActivatedFormPacket;
 import com.amuzil.omegasource.network.packets.skill.ActivatedSkillPacket;
+import com.amuzil.omegasource.network.packets.skill.SkillDataPacket;
 import com.amuzil.omegasource.network.packets.sync.*;
 import com.amuzil.omegasource.network.packets.form.ExecuteFormPacket;
 import com.amuzil.omegasource.network.packets.form.ReleaseFormPacket;
@@ -77,6 +78,12 @@ public class AvatarNetwork {
                 .encoder(SyncMovementPacket::toBytes)
                 .decoder(SyncMovementPacket::fromBytes)
                 .consumerMainThread(SyncMovementPacket::handle)
+                .add();
+
+        CHANNEL.messageBuilder(SkillDataPacket.class, nextID())
+                .encoder(SkillDataPacket::toBytes)
+                .decoder(SkillDataPacket::fromBytes)
+                .consumerMainThread(SkillDataPacket::handle)
                 .add();
     }
 

@@ -28,7 +28,7 @@ import java.util.function.Predicate;
  */
 public abstract class Skill {
     private final String name;
-    private final String skillUuid;
+    private String skillUuid;
     private final ResourceLocation id;
     private final SkillCategory category;
     private final List<RadixTree.ActivationType> activationTypes;
@@ -47,7 +47,7 @@ public abstract class Skill {
     public Skill(ResourceLocation id, String name, SkillCategory category) {
         this.id = id;
         this.skillUuid = UUID.randomUUID().toString();
-        this. name = name;
+        this.name = name;
         this.category = category;
         // Menu is default
         this.activatedType = RadixTree.ActivationType.MENU;
@@ -96,6 +96,9 @@ public abstract class Skill {
     }
     public String getSkillUuid() {
         return skillUuid;
+    }
+    public void setSkillUuid(String skillUuid) {
+        this.skillUuid = skillUuid;
     }
 
     public List<SkillTrait> getTraits() {

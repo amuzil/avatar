@@ -49,6 +49,7 @@ public class SkillActive extends Skill {
 
     @Override
     public void start(Bender bender) {
+        bender.activeSkills.put(getSkillUuid(), this);
 
     }
 

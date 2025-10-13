@@ -27,7 +27,8 @@ public class SkillData implements DataTrait {
     // Types should not need serialisation as they do not change
     //The reason we're using a resource location and not the actual Skill object is because
     //it's much easier to serialise a String and then get a skill from it.
-    protected String skillId;
+    protected ResourceLocation skillId;
+    protected String skillUuId;
     protected Skill skill;
     protected boolean canUse = true; // TODO - Temporary for testing
     protected boolean isDirty = false;
@@ -35,7 +36,8 @@ public class SkillData implements DataTrait {
 
     public SkillData(Skill skill) {
         this.skill = skill;
-        this.skillId = skill.getSkillUuid();
+        this.skillId = skill.getId();
+        this.skillUuId = skill.getSkillUuid();
         this.skillTraits = skill.getTraits();
         this.skillState = Skill.SkillState.IDLE;
     }
@@ -96,6 +98,7 @@ public class SkillData implements DataTrait {
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
         tag.putString("Skill ID", skillId.toString());
+        tag.putString("Skill UUID", skillUuId.toString());
         tag.putBoolean("Can Use", canUse);
         skillTraits.forEach(skillTrait -> {
             tag.put(skillTrait.name() + "_" + skillTrait.getClass().getSimpleName(), skillTrait.serializeNBT());
@@ -106,7 +109,8 @@ public class SkillData implements DataTrait {
     @Override
     public void deserializeNBT(CompoundTag tag) {
         try {
-            skillId = tag.getString("Skill ID");
+            skillId = ResourceLocation.tryParse(tag.getString("Skill ID"));
+            skillUuId = tag.getString("Skill UUID");
             canUse = tag.getBoolean("Can Use");
             if (!skillTraits.isEmpty())
                 skillTraits.forEach(skillTrait -> {
@@ -127,10 +131,10 @@ public class SkillData implements DataTrait {
     }
 
     public ResourceLocation getSkillId() {
-        return skill.getId();
+        return skillId;
     }
     public String getSkillUuid() {
-        return skillId;
+        return skillUuId;
     }
 
     public Skill getSkill() {
