@@ -57,11 +57,15 @@ public abstract class Skill {
         this.skillTraits = new LinkedList<>();
         this.activationTypes = new LinkedList<>();
 
-        addTrait(new UseTrait("use_skill", false));
         this.run = event -> {
-            if (bender != null)
-                run(bender);
+            if (bender != null) {
+                if (shouldRun(bender, bender.formPath)) {
+                    run(bender);
+                }
+            }
         };
+
+        addTrait(new UseTrait("use_skill", false));
 //        Registries.registerSkill(this);
     }
 

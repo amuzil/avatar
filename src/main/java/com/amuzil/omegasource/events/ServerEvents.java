@@ -77,8 +77,8 @@ public class ServerEvents {
         if (!player.isAlive()) return;
         Bender bender = (Bender) Bender.getBender(event.getEntity());
         if (bender == null) return;
-        bender.tick();
 
+        bender.tick();
         MinecraftForge.EVENT_BUS.post(new SkillTickEvent());
     }
 }

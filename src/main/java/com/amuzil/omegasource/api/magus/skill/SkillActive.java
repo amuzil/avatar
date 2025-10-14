@@ -49,8 +49,7 @@ public abstract class SkillActive extends Skill {
 
     @Override
     public void start(Bender bender) {
-//        listen();
-            bender.activeSkills.put(getSkillUuid(), this);
+        bender.activeSkills.put(getSkillUuid(), this);
     }
 
     @Override
