@@ -112,22 +112,33 @@ public abstract class Skill {
         // Remember, for some reason post only returns true upon the event being cancelled. Blame Forge.
         SkillData skillData = bender.getSkillData(this);
 
-        if (shouldStart(bender, formPath)) {
-            if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Start(bender.getEntity(), formPath, this))) return;
-            executeOnClient(bender.getEntity(), skillData, SkillState.START);
-            start(bender);
-        }
+        switch (skillData.getSkillState()) {
+            case START -> {
+                if (shouldStart(bender, formPath)) {
+                    if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Start(bender.getEntity(), formPath, this)))
+                        return;
+                    executeOnClient(bender.getEntity(), skillData, SkillState.START);
+                    start(bender);
+                }
+            }
 
-        if (shouldRun(bender, formPath)) {
-            if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Run(bender.getEntity(), formPath, this))) return;
-            executeOnClient(bender.getEntity(), skillData, SkillState.RUN);
-            run(bender);
-        }
+            case RUN -> {
+                if (shouldRun(bender, formPath)) {
+                    if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Run(bender.getEntity(), formPath, this)))
+                        return;
+                    executeOnClient(bender.getEntity(), skillData, SkillState.RUN);
+                    run(bender);
+                }
+            }
 
-        if (shouldStop(bender, formPath)) {
-            if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Stop(bender.getEntity(), formPath, this))) return;
-            executeOnClient(bender.getEntity(), skillData, SkillState.STOP);
-            stop(bender);
+            case STOP -> {
+                if (shouldStop(bender, formPath)) {
+                    if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Stop(bender.getEntity(), formPath, this)))
+                        return;
+                    executeOnClient(bender.getEntity(), skillData, SkillState.STOP);
+                    stop(bender);
+                }
+            }
         }
     }
 

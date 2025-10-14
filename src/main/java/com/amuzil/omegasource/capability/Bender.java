@@ -113,7 +113,7 @@ public class Bender implements IBender {
             active = !event.released();
             formPath.update(event.getActiveForm());
 //            this.syncFormPathToClient();
-            for (Skill skill: Registries.getSkills()) {
+            for (Skill skill : Registries.getSkills()) {
                 if (canUseSkill(skill)) {
                     skill.execute(this, formPath);
                 }
@@ -135,6 +135,7 @@ public class Bender implements IBender {
                 active = true;
             }
             tick--;
+            
         }
     }
 
