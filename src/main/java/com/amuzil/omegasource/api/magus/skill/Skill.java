@@ -17,6 +17,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
 
+import java.lang.reflect.Field;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -65,6 +66,10 @@ public abstract class Skill {
 
         addTrait(new UseTrait("use_skill", false));
 //        Registries.registerSkill(this);
+    }
+
+    public void generateUuid() {
+        this.skillUuid = UUID.randomUUID().toString();
     }
 
     public boolean addTrait(SkillTrait trait) {
@@ -162,9 +167,10 @@ public abstract class Skill {
     }
 
     public void tick(Bender bender) {
-        if (shouldStop(bender, bender.formPath) || !shouldRun(bender, bender.formPath)) {
+        if (shouldStop(bender, bender.formPath)) {
             SkillData data = bender.getSkillData(this);
-            data.setSkillState(SkillState.STOP);
+            if(data != null)
+                data.setSkillState(SkillState.STOP);
             stop(bender);
             hush();
         } else {
@@ -207,6 +213,18 @@ public abstract class Skill {
     // Resets the skill and any necessary skill data; should be called upon stopping execution.
     public abstract void reset(LivingEntity entity);
 
+    public Skill cloneObject() {
+        try {
+            Skill copy = (Skill) this.getClass().getDeclaredConstructor().newInstance();
+            for (Field f : this.getClass().getFields()) {
+                f.setAccessible(true);
+                f.set(copy, f.get(this));
+            }
+            return copy;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
     public void setBender(Bender bender) {
         this.bender = bender;
     }

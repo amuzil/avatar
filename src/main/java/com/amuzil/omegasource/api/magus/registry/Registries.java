@@ -66,6 +66,7 @@ public class Registries {
         String namespace = ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, name).toString();
         skills.put(namespace, skillRegistryObject);
 
+
         return skillRegistryObject;
     }
 

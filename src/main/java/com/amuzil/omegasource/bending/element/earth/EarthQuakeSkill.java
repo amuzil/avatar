@@ -36,8 +36,8 @@ public class EarthQuakeSkill extends EarthSkill {
         this.startPaths = SkillPathBuilder.getInstance()
                 // TODO: Remove arc/account for this skill being a motion skill, so no need to log ARC and SHAPE
 //                .simple(new ActiveForm(ARC, true))
-                .simple(new ActiveForm(RAISE, true))
-                .simple(new ActiveForm(LOWER, true))
+                .complex(new ActiveForm(RAISE, true))
+                .complex(new ActiveForm(LOWER, true))
                 .build();
 
         this.stopPaths = SkillPathBuilder.getInstance()
@@ -47,7 +47,7 @@ public class EarthQuakeSkill extends EarthSkill {
 
     @Override
     public boolean shouldStart(Bender bender, FormPath formPath) {
-        return formPath.simple().hashCode() == startPaths().simple().hashCode();
+        return formPath.complex().hashCode() == startPaths().complex().hashCode();
     }
 
     @Override

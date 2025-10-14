@@ -111,16 +111,17 @@ public class Bender implements IBender {
 
             for (Skill skill: availableSkills) {
                 if (canUseSkill(skill) && skill.shouldStart(this, formPath)) {
-                    Skill newSkill = Registries.getSkillByName(skill.getId());
+                    Skill newSkill = Registries.getSkillByName(skill.getId()).cloneObject();
                     newSkill.setBender(this);
+                    newSkill.generateUuid();
                     skillData.add(new SkillData(newSkill));
-//                    AvatarNetwork.sendToClient(new SkillDataPacket(newSkill.getId(), newSkill.getSkillUuid(), 0), (ServerPlayer) entity);
+                    formPath.clear();
                     newSkill.start(this);
                 }
             }
             tick = timeout;
-//            LOGGER.info("Simple Forms: {}", formPath.simple());
-//            LOGGER.info("Complex Forms: {}", formPath.complex());
+            LOGGER.info("Simple Forms: {}", formPath.simple());
+            LOGGER.info("Complex Forms: {}", formPath.complex());
         }
     }
 
