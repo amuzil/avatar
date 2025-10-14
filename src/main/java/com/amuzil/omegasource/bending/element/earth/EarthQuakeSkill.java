@@ -86,9 +86,7 @@ public class EarthQuakeSkill extends EarthSkill {
         super.run(bender);
         if (!bender.getEntity().level().isClientSide()) {
             System.out.println("EarthQuakeSkill running on server");
-        } else {
             bender.getEntity().sendSystemMessage(Component.literal("Shit happened fam"));
-
         }
 
     }
@@ -97,9 +95,7 @@ public class EarthQuakeSkill extends EarthSkill {
     public void stop(Bender bender) {
         if (!bender.getEntity().level().isClientSide()) {
             System.out.println("EarthQuakeSkill stopped on server");
-        } else {
             bender.getEntity().sendSystemMessage(Component.literal("Shit stopped happening fam"));
-
         }
 
         // Always call this at the end!

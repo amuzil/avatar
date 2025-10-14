@@ -71,6 +71,7 @@ public abstract class SkillActive extends Skill {
         data.setSkillState(SkillState.IDLE);
         bender.activeSkills.remove(getSkillUuid());
         hush();
+        bender.removeSkillData(bender.getSkillData(this));
     }
 
     @Override

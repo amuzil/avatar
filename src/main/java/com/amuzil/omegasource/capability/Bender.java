@@ -209,6 +209,11 @@ public class Bender implements IBender {
         return getSkillData(skill.getSkillUuid());
     }
 
+
+    public void removeSkillData(SkillData data) {
+        skillData.remove(data);
+    }
+
     @Override
     public SkillData getSkillData(String skillUuid) {
         return skillData.stream()
@@ -433,4 +438,5 @@ public class Bender implements IBender {
         return entity.getCapability(AvatarCapabilities.BENDER)
                 .orElse(null);
     }
+
 }
