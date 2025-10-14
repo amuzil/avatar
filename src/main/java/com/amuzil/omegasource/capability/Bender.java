@@ -123,7 +123,7 @@ public class Bender implements IBender {
 //                    System.out.println(skillData.size());
 //                    AvatarNetwork.sendToClient(new SkillDataPacket(newSkill.getId(), newSkill.getSkillUuid(), 0), (ServerPlayer) entity);
                     newSkill.execute(this, formPath);
-                    formPath.clear();
+//                    formPath.clear(); // Why clear formPath so soon?
                 }
             }
             tick = timeout;
