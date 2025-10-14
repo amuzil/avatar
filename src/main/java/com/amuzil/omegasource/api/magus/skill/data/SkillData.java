@@ -133,6 +133,7 @@ public class SkillData implements DataTrait {
     public ResourceLocation getSkillId() {
         return skillId;
     }
+
     public String getSkillUuid() {
         return skillUuId;
     }

@@ -37,7 +37,6 @@ public abstract class Skill {
     // How the skill was activated. Useful if you want different methods to influence the skill in different ways.
     // For complex, game-design move combinations, see ModifierData for how to alter your skills.
     protected RadixTree.ActivationType activatedType;
-    private boolean shouldStart, shouldRun, shouldStop;
     protected FormPath startPaths, runPaths, stopPaths;
 
     public Skill(String modId, String name, SkillCategory category) {
@@ -94,6 +93,7 @@ public abstract class Skill {
     public ResourceLocation getId() {
         return id;
     }
+
     public String getSkillUuid() {
         return skillUuid;
     }

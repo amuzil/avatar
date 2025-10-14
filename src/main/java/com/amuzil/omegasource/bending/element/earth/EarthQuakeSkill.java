@@ -35,7 +35,7 @@ public class EarthQuakeSkill extends EarthSkill {
 
         this.startPaths = SkillPathBuilder.getInstance()
                 // TODO: Remove arc/account for this skill being a motion skill, so no need to log ARC and SHAPE
-                .simple(new ActiveForm(ARC, true))
+//                .simple(new ActiveForm(ARC, true))
                 .simple(new ActiveForm(RAISE, true))
                 .simple(new ActiveForm(LOWER, true))
                 .build();
@@ -47,7 +47,6 @@ public class EarthQuakeSkill extends EarthSkill {
 
     @Override
     public boolean shouldStart(Bender bender, FormPath formPath) {
-//        System.out.println("DEBUG: Checking shouldStart in EarthQuakeSkill");
         return formPath.simple().hashCode() == startPaths().simple().hashCode();
     }
 
@@ -68,13 +67,13 @@ public class EarthQuakeSkill extends EarthSkill {
         int numRings = 3;
 
         if (!bender.getEntity().level().isClientSide()) {
+            System.out.println("EarthQuakeSkill started on server");
             // get player position casting as epicentre.
             BlockPos epicenter = bender.getEntity().blockPosition();
 
 //            epicenter
 
         } else {
-
             bender.getEntity().sendSystemMessage(Component.literal("Shit began to happen fam"));
         }
 
@@ -86,7 +85,7 @@ public class EarthQuakeSkill extends EarthSkill {
     public void run(Bender bender) {
         super.run(bender);
         if (!bender.getEntity().level().isClientSide()) {
-
+            System.out.println("EarthQuakeSkill running on server");
         } else {
             bender.getEntity().sendSystemMessage(Component.literal("Shit happened fam"));
 
@@ -96,10 +95,8 @@ public class EarthQuakeSkill extends EarthSkill {
 
     @Override
     public void stop(Bender bender) {
-
-
         if (!bender.getEntity().level().isClientSide()) {
-
+            System.out.println("EarthQuakeSkill stopped on server");
         } else {
             bender.getEntity().sendSystemMessage(Component.literal("Shit stopped happening fam"));
 

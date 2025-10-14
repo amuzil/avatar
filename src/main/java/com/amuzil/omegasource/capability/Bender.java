@@ -20,7 +20,6 @@ import com.amuzil.omegasource.network.packets.sync.SyncSelectionPacket;
 import com.amuzil.omegasource.utils.ship.OriginalBlocks;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -118,11 +117,12 @@ public class Bender implements IBender {
             }
 
             for (Skill skill: availableSkills) {
-                if (canUseSkill(skill) && skill.shouldStart(this, formPath)) {
+                if (canUseSkill(skill)) {
                     Skill newSkill = Registries.getSkillByName(skill.getId());
-                    skillData.add(new SkillData(newSkill));
+                    skillData.add(new SkillData(newSkill)); // What's clearing this to stop it from accumulating?
+//                    System.out.println(skillData.size());
 //                    AvatarNetwork.sendToClient(new SkillDataPacket(newSkill.getId(), newSkill.getSkillUuid(), 0), (ServerPlayer) entity);
-                    newSkill.start(this);
+                    newSkill.execute(this, formPath);
                     formPath.clear();
                 }
             }
