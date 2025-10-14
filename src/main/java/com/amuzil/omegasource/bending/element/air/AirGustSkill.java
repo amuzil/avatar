@@ -45,6 +45,11 @@ public class AirGustSkill extends AirSkill {
     }
 
     @Override
+    public FormPath startPaths() {
+        return startPaths;
+    }
+
+    @Override
     public boolean shouldStart(Bender bender, FormPath formPath) {
         return formPath.simple().hashCode() == startPaths().simple().hashCode();
     }

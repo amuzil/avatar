@@ -5,7 +5,7 @@ import com.amuzil.omegasource.bending.BendingSkill;
 import com.amuzil.omegasource.bending.element.Elements;
 
 
-public class WaterSkill extends BendingSkill {
+public abstract class WaterSkill extends BendingSkill {
 
     public WaterSkill(String modID, String name) {
         super(modID, name, Elements.WATER);

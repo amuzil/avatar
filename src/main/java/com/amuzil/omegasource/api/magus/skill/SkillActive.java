@@ -6,7 +6,7 @@ import com.amuzil.omegasource.capability.Bender;
 import net.minecraft.world.entity.LivingEntity;
 
 
-public class SkillActive extends Skill {
+public abstract class SkillActive extends Skill {
 
     public SkillActive(String modID, String name, SkillCategory category) {
         super(modID, name, category);
@@ -50,11 +50,18 @@ public class SkillActive extends Skill {
     @Override
     public void start(Bender bender) {
         bender.activeSkills.put(getSkillUuid(), this);
-
+        if (shouldRun(bender, bender.formPath))
+            listen();
     }
 
     @Override
     public void run(Bender bender) {
+        if (shouldStop(bender, bender.formPath) || !shouldRun(bender, bender.formPath)) {
+            SkillData data = bender.getSkillData(this);
+            data.setSkillState(SkillState.STOP);
+            stop(bender);
+            hush();
+        }
 
     }
 
@@ -63,6 +70,7 @@ public class SkillActive extends Skill {
         SkillData data = bender.getSkillData(this);
         data.setSkillState(SkillState.IDLE);
         bender.activeSkills.remove(getSkillUuid());
+        hush();
     }
 
     @Override

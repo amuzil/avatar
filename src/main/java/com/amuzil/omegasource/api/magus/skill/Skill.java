@@ -2,24 +2,25 @@ package com.amuzil.omegasource.api.magus.skill;
 
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.radix.RadixTree;
-import com.amuzil.omegasource.api.magus.skill.event.SkillTickEvent;
+import com.amuzil.omegasource.api.magus.skill.event.SkillExecutionEvent;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
+import com.amuzil.omegasource.api.magus.skill.event.SkillTickEvent;
 import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.UseTrait;
-import com.amuzil.omegasource.api.magus.registry.Registries;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.skill.ActivatedSkillPacket;
-import net.minecraft.core.UUIDUtil;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.EventPriority;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 
@@ -27,7 +28,9 @@ import java.util.function.Predicate;
  * Basic skill class. All other skills extend this.
  */
 public abstract class Skill {
+    private Consumer<SkillTickEvent> run;
     private final String name;
+    private Bender bender;
     private String skillUuid;
     private final ResourceLocation id;
     private final SkillCategory category;
@@ -57,7 +60,10 @@ public abstract class Skill {
 
         // Maybe static instances of traits rather than new instances per Skill? Unsure
         addTrait(new UseTrait("use_skill", false));
-
+        this.run = event -> {
+            if(bender != null)
+                execute(bender);
+        };
 //        Registries.registerSkill(this);
     }
 
@@ -109,37 +115,48 @@ public abstract class Skill {
         return this.skillTypes;
     }
 
-    public void tick(Bender bender, FormPath formPath) {
-        if (bender.getSkillData(this).getSkillState().equals(SkillState.RUN)) {
-            if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Run(bender.getEntity(), formPath, this))) return;
-            run(bender);
-        }
-    }
-
     // Execute Skill on server
-    public void execute(Bender bender, FormPath formPath) {
-
+    public void execute(Bender bender) {
+        FormPath formPath = bender.formPath;
         // Remember, for some reason post only returns true upon the event being cancelled. Blame Forge.
         SkillData skillData = bender.getSkillData(this);
 
-        if (shouldStart(bender, formPath)) {
-            if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Start(bender.getEntity(), formPath, this))) return;
-            executeOnClient(bender.getEntity(), skillData, SkillState.START);
-            start(bender);
-        }
+        switch (skillData.getSkillState()) {
+            case START -> {
+                if (shouldStart(bender, formPath)) {
+                    if (MinecraftForge.EVENT_BUS.post(new SkillExecutionEvent.Start(bender.getEntity(), formPath, this)))
+                        return;
+                    executeOnClient(bender.getEntity(), skillData, SkillState.START);
+                    start(bender);
+                }
+            }
 
-        if (shouldRun(bender, formPath)) {
-            if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Run(bender.getEntity(), formPath, this))) return;
-            executeOnClient(bender.getEntity(), skillData, SkillState.RUN);
-            run(bender);
-        }
+            case RUN -> {
+                if (shouldRun(bender, formPath)) {
+                    if (MinecraftForge.EVENT_BUS.post(new SkillExecutionEvent.Run(bender.getEntity(), formPath, this)))
+                        return;
+                    executeOnClient(bender.getEntity(), skillData, SkillState.RUN);
+                    run(bender);
+                }
+            }
 
-        if (shouldStop(bender, formPath)) {
-            if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Stop(bender.getEntity(), formPath, this))) return;
-            executeOnClient(bender.getEntity(), skillData, SkillState.STOP);
-            stop(bender);
+            case STOP -> {
+                if (shouldStop(bender, formPath)) {
+                    if (MinecraftForge.EVENT_BUS.post(new SkillExecutionEvent.Stop(bender.getEntity(), formPath, this)))
+                        return;
+                    executeOnClient(bender.getEntity(), skillData, SkillState.STOP);
+                    stop(bender);
+                }
+            }
         }
+    }
 
+    public void listen() {
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, SkillTickEvent.class, run);
+    }
+
+    public void hush() {
+        MinecraftForge.EVENT_BUS.unregister(run);
     }
 
     // Execute Skill on client(s) and sync SkillState
@@ -176,6 +193,10 @@ public abstract class Skill {
 
     // Resets the skill and any necessary skill data; should be called upon stopping execution.
     public abstract void reset(LivingEntity entity);
+
+    public void SetBender(Bender bender) {
+        this.bender = bender;
+    }
 
     public enum SkillState {
         IDLE,

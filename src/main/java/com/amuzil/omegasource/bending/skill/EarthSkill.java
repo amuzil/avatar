@@ -5,7 +5,7 @@ import com.amuzil.omegasource.bending.BendingSkill;
 import com.amuzil.omegasource.bending.element.Elements;
 
 
-public class EarthSkill extends BendingSkill {
+public abstract class EarthSkill extends BendingSkill {
 
     public EarthSkill(String modID, String name) {
         super(modID, name, Elements.EARTH);

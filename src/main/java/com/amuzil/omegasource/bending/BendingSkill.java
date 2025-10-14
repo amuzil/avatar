@@ -8,7 +8,7 @@ import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.TimedTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.XPTrait;
 
 
-public class BendingSkill extends SkillActive {
+public abstract class BendingSkill extends SkillActive {
 
     public BendingSkill(String modID, String name, SkillCategory category) {
         super(modID, name, category);

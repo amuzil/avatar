@@ -71,6 +71,7 @@ public class Bender implements IBender {
             skillCategoryData.add(new SkillCategoryData(category));
         this.availableSkills.addAll(Registries.getSkills());
         for (Skill skill : availableSkills) {
+            skill.SetBender(this);
             skillData.add(new SkillData(skill));
             if (skill.runPaths() != null)
                 shouldRuns.put(skill.getId(), false); // Initialize shouldRuns map
@@ -108,22 +109,15 @@ public class Bender implements IBender {
         if (event.getEntity().getId() == entity.getId()) {
             active = !event.released();
             formPath.update(event.getActiveForm());
-//            this.syncFormPathToClient();
-            for (Skill skill: activeSkills.values()) {
-                if (skill.shouldStop(this, formPath)) {
-                    skill.stop(this);
-                } else if (skill.shouldRun(this, formPath)) {
-                    skill.run(this);
-                }
-            }
+            this.syncFormPathToClient();
 
             for (Skill skill: availableSkills) {
                 if (canUseSkill(skill) && skill.shouldStart(this, formPath)) {
                     Skill newSkill = Registries.getSkillByName(skill.getId());
+                    newSkill.SetBender(this);
                     skillData.add(new SkillData(newSkill));
 //                    AvatarNetwork.sendToClient(new SkillDataPacket(newSkill.getId(), newSkill.getSkillUuid(), 0), (ServerPlayer) entity);
                     newSkill.start(this);
-                    formPath.clear();
                 }
             }
             tick = timeout;
@@ -143,12 +137,6 @@ public class Bender implements IBender {
                 active = true;
             }
             tick--;
-        }
-
-        for (Skill skill: activeSkills.values()) {
-            if (canUseSkill(skill)) {
-                skill.execute(this, formPath);
-            }
         }
 
         restoreOriginalBlocks();
