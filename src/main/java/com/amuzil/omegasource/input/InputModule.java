@@ -154,9 +154,10 @@ public class InputModule {
                 sendFormPacket(form, false);
             } else if (isHoldingAlt && form.type().equals(BendingForm.Type.SHAPE)) {
                 sendFormPacket(form, false);
-            } else if (form.type().equals(BendingForm.Type.INITIALIZER)) {
-                sendFormPacket(form, false);
             }
+//            else if (form.type().equals(BendingForm.Type.INITIALIZER)) {
+//                sendFormPacket(form, false);
+//            }
         }
     }
 

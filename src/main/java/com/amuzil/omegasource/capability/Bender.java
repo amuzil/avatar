@@ -20,7 +20,6 @@ import com.amuzil.omegasource.network.packets.sync.SyncSelectionPacket;
 import com.amuzil.omegasource.utils.ship.OriginalBlocks;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;

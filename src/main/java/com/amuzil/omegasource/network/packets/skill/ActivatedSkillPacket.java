@@ -41,10 +41,14 @@ public class ActivatedSkillPacket implements AvatarPacket {
         Player player = Minecraft.getInstance().player;
         assert player != null;
         Bender bender = (Bender) Bender.getBender(player);
-        Skill skill = Registries.SKILLS.get().getValue(skillId);
+//        Skill skill = Registries.SKILLS.get().getValue(skillId);
+        Skill skill = Registries.getSkillByName(skillId);
         assert skill != null;
-        bender.getSkillData(skill).setSkillState(Skill.SkillState.values()[skillState]); // Sync SkillState to client
-        switch (Skill.SkillState.values()[skillState]) {
+        Skill.SkillState newSkillState = Skill.SkillState.values()[skillState];
+        // TODO: If you want this to work, pass SkillUUID instead.
+//        System.out.println("DEBUG: ActivatedSkillPacket " + bender.getSkillData(skill) + " "  + newSkillState);
+        bender.getSkillData(skill).setSkillState(newSkillState); // Sync SkillState to client
+        switch (newSkillState) {
             case START -> skill.start(bender);
             case RUN -> skill.run(bender);
             case STOP -> skill.stop(bender);
