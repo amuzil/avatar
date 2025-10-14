@@ -59,9 +59,7 @@ public abstract class Skill {
 
         this.run = event -> {
             if (bender != null) {
-                if (shouldRun(bender, bender.formPath)) {
-                    run(bender);
-                }
+                tick(bender);
             }
         };
 
@@ -163,6 +161,17 @@ public abstract class Skill {
         MinecraftForge.EVENT_BUS.unregister(run);
     }
 
+    public void tick(Bender bender) {
+        if (shouldStop(bender, bender.formPath) || !shouldRun(bender, bender.formPath)) {
+            SkillData data = bender.getSkillData(this);
+            data.setSkillState(SkillState.STOP);
+            stop(bender);
+            hush();
+        } else {
+            run(bender);
+        }
+    }
+
     // Execute Skill on client(s) and sync SkillState
     public void executeOnClient(LivingEntity entity, SkillData skillData, SkillState skillState) {
         // Handle which player clients should receive the packet based on Skill
@@ -198,7 +207,7 @@ public abstract class Skill {
     // Resets the skill and any necessary skill data; should be called upon stopping execution.
     public abstract void reset(LivingEntity entity);
 
-    public void SetBender(Bender bender) {
+    public void setBender(Bender bender) {
         this.bender = bender;
     }
 

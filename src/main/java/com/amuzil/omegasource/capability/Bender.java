@@ -12,7 +12,6 @@ import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.events.FormActivatedEvent;
 import com.amuzil.omegasource.network.AvatarNetwork;
-import com.amuzil.omegasource.network.packets.skill.SkillDataPacket;
 import com.amuzil.omegasource.network.packets.sync.SyncBenderPacket;
 import com.amuzil.omegasource.network.packets.sync.SyncFormPathPacket;
 import com.amuzil.omegasource.network.packets.sync.SyncMovementPacket;
@@ -70,7 +69,7 @@ public class Bender implements IBender {
             skillCategoryData.add(new SkillCategoryData(category));
         this.availableSkills.addAll(Registries.getSkills());
         for (Skill skill : availableSkills) {
-            skill.SetBender(this);
+            skill.setBender(this);
             skillData.add(new SkillData(skill));
             if (skill.runPaths() != null)
                 shouldRuns.put(skill.getId(), false); // Initialize shouldRuns map
@@ -113,7 +112,7 @@ public class Bender implements IBender {
             for (Skill skill: availableSkills) {
                 if (canUseSkill(skill) && skill.shouldStart(this, formPath)) {
                     Skill newSkill = Registries.getSkillByName(skill.getId());
-                    newSkill.SetBender(this);
+                    newSkill.setBender(this);
                     skillData.add(new SkillData(newSkill));
 //                    AvatarNetwork.sendToClient(new SkillDataPacket(newSkill.getId(), newSkill.getSkillUuid(), 0), (ServerPlayer) entity);
                     newSkill.start(this);

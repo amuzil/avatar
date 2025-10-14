@@ -34,32 +34,29 @@ public abstract class SkillActive extends Skill {
 
     @Override
     public boolean shouldRun(Bender bender, FormPath formPath) {
-        if (runPaths() == null)
-            return false;
+        if (runPaths() == null) return false;
+        SkillData skillData = bender.getSkillData(this);
+        if (skillData == null) return false;
         return formPath.hashCode() == runPaths().hashCode();
     }
 
     @Override
     public boolean shouldStop(Bender bender, FormPath formPath) {
-        if (stopPaths() == null)
-            return false;
-        SkillState state = bender.getSkillData(this).getSkillState();
+        if (stopPaths() == null) return false;
+        SkillData skillData = bender.getSkillData(this);
+        if (skillData == null) return true;
+        SkillState state = skillData.getSkillState();
         return state != SkillState.IDLE && formPath.hashCode() == stopPaths().hashCode();
     }
 
     @Override
     public void start(Bender bender) {
         bender.activeSkills.put(getSkillUuid(), this);
+        listen();
     }
 
     @Override
     public void run(Bender bender) {
-        if (shouldStop(bender, bender.formPath) || !shouldRun(bender, bender.formPath)) {
-            SkillData data = bender.getSkillData(this);
-            data.setSkillState(SkillState.STOP);
-            stop(bender);
-            hush();
-        }
     }
 
     @Override
