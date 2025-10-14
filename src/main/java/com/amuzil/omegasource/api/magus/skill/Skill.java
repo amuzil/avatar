@@ -57,11 +57,10 @@ public abstract class Skill {
         this.skillTraits = new LinkedList<>();
         this.activationTypes = new LinkedList<>();
 
-        // Maybe static instances of traits rather than new instances per Skill? Unsure
         addTrait(new UseTrait("use_skill", false));
         this.run = event -> {
-            if(bender != null)
-                execute(bender);
+            if (bender != null)
+                run(bender);
         };
 //        Registries.registerSkill(this);
     }

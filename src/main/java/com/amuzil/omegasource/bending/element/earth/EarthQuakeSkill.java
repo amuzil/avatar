@@ -63,42 +63,24 @@ public class EarthQuakeSkill extends EarthSkill {
     @Override
     public void start(Bender bender) {
         super.start(bender);
-
+        System.out.println("EarthQuakeSkill started on server");
         int numRings = 3;
-
-        if (!bender.getEntity().level().isClientSide()) {
-            System.out.println("EarthQuakeSkill started on server");
-            // get player position casting as epicentre.
-            BlockPos epicenter = bender.getEntity().blockPosition();
-
-//            epicenter
-
-        } else {
-            bender.getEntity().sendSystemMessage(Component.literal("Shit began to happen fam"));
-        }
-
+        // get player position casting as epicentre.
+        BlockPos epicenter = bender.getEntity().blockPosition();
         SkillData data = bender.getSkillData(this);
         data.setSkillState(SkillState.RUN);
+        this.listen(); // start listening
     }
 
     @Override
     public void run(Bender bender) {
         super.run(bender);
-        if (!bender.getEntity().level().isClientSide()) {
-            System.out.println("EarthQuakeSkill running on server");
-            bender.getEntity().sendSystemMessage(Component.literal("Shit happened fam"));
-        }
-
+        System.out.println("EarthQuakeSkill running on server");
     }
 
     @Override
     public void stop(Bender bender) {
-        if (!bender.getEntity().level().isClientSide()) {
-            System.out.println("EarthQuakeSkill stopped on server");
-            bender.getEntity().sendSystemMessage(Component.literal("Shit stopped happening fam"));
-        }
-
-        // Always call this at the end!
         super.stop(bender);
+        System.out.println("EarthQuakeSkill stopped on server");
     }
 }
