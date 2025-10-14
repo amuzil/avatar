@@ -103,6 +103,7 @@ public abstract class Skill {
     public String getSkillUuid() {
         return skillUuid;
     }
+
     public void setSkillUuid(String skillUuid) {
         this.skillUuid = skillUuid;
     }
