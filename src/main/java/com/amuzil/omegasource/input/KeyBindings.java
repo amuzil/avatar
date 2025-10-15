@@ -51,7 +51,7 @@ public class KeyBindings {
     }
 
     private static void createKeyMapping(BendingForm form, int defaultKey) {
-        if (defaultKey > 2) { // Exclude mouse buttons to avoid error
+        if (defaultKey > 5) { // Exclude mouse buttons to avoid error
             KeyMapping keyMapping = new KeyMapping(
                     String.format("key.av3.form.%s", form.name().toLowerCase()),
                     defaultKey,
