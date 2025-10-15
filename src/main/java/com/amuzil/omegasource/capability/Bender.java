@@ -216,8 +216,9 @@ public class Bender implements IBender {
 
     @Override
     public SkillData getSkillData(String skillUuid) {
-        return skillData.stream()
-                .filter(data -> data.getSkillUuid().equals(skillUuid))
+        List<SkillData> snapshot = new ArrayList<>(this.skillData);
+        return snapshot.stream()
+                .filter(data ->  data.getSkillUuid().equals(skillUuid))
                 .findFirst()
                 .orElse(null);
     }
