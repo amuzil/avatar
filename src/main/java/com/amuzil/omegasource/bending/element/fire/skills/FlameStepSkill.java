@@ -43,10 +43,9 @@ public class FlameStepSkill extends FireSkill {
 
         LivingEntity entity = bender.getEntity();
         BendingForm.Type.Motion motion;
-        if (!bender.getFormPath().complex().isEmpty()) {
+        if (!bender.getFormPath().complex().isEmpty())
             motion = bender.getFormPath().complex().get(0).direction();
-            System.out.println("Motion: " + motion);
-        } else
+        else
             motion = BendingForm.Type.Motion.FORWARD; // Default to forward if no motion is specified
         SkillData data = bender.getSkillData(this);
         int lifetime = data.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime();
