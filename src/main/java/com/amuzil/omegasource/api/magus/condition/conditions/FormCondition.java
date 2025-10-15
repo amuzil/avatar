@@ -19,14 +19,14 @@ public class FormCondition extends Condition {
     }
 
     @Override
-    public void register(String name, Runnable onSuccess, Runnable onFailure) {
-        super.register(name, onSuccess, onFailure);
-        this.register();
+    public void registerRunnables(String name, Runnable onSuccess, Runnable onFailure) {
+        super.registerRunnables(name, onSuccess, onFailure);
+        this.registerRunnables();
     }
 
     @Override
-    public void register() {
-        super.register();
+    public void registerRunnables() {
+        super.registerRunnables();
         MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, listener);
     }
 

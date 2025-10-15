@@ -102,7 +102,6 @@ public class FlameStreamSkill extends FireSkill {
 
         projectile.addModule(ModuleRegistry.create(GrowModule.id));
 
-        // TODO: make more advanced knockback calculator that uses the entity's current size as well as speed (mass * velocity!!!!)
         projectile.addTraits(data.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
         projectile.addTraits(new DirectionTrait("knockback_direction", new Vec3(0, 0.45, 0)));
         projectile.addModule(ModuleRegistry.create(SimpleKnockbackModule.id));
@@ -175,7 +174,6 @@ public class FlameStreamSkill extends FireSkill {
 
         projectile.addModule(ModuleRegistry.create(GrowModule.id));
 
-        // TODO: make more advanced knockback calculator that uses the entity's current size as well as speed (mass * velocity!!!!)
         projectile.addTraits(data.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
         projectile.addTraits(new DirectionTrait("knockback_direction", new Vec3(0, 0.45, 0)));
         projectile.addModule(ModuleRegistry.create(SimpleKnockbackModule.id));

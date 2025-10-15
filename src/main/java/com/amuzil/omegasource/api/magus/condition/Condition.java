@@ -20,8 +20,7 @@ public abstract class Condition {
 	protected Runnable onSuccess;
 	protected Runnable onFailure;
 
-	// TODO: Change to registerRunnables()
-	public void register(String name, Runnable onSuccess, Runnable onFailure) {
+	public void registerRunnables(String name, Runnable onSuccess, Runnable onFailure) {
 		this.name = name;
 		//RadixTree.getLogger().info("Registering results");
 //		if (this instanceof KeyPressCondition && ((KeyPressCondition) this).getKey() == 0)
@@ -34,7 +33,7 @@ public abstract class Condition {
 		registerEntry();
 	}
 
-	public void register() {}
+	public void registerRunnables() {}
 
 	// Every Condition needs to call this in their constructor
 	public void registerEntry() {
@@ -79,12 +78,6 @@ public abstract class Condition {
 			return false;
 		}
 	}
-
-	// TODO - May need to override the equals or create a new method to check if conditions have matching prefixes
-//	@Override
-//	public boolean equals(Object obj) {
-//		return super.equals(obj);
-//	}
 
 	@Override
 	public String toString() {

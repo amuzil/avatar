@@ -45,7 +45,7 @@ public class ActivatedSkillPacket implements AvatarPacket {
         Skill skill = Registries.getSkillByName(skillId);
         assert skill != null;
         Skill.SkillState newSkillState = Skill.SkillState.values()[skillState];
-        // TODO: If you want this to work, pass SkillUUID instead.
+        // If you want this to work, pass SkillUUID instead.
 //        System.out.println("DEBUG: ActivatedSkillPacket " + bender.getSkillData(skill) + " "  + newSkillState);
         bender.getSkillData(skill).setSkillState(newSkillState); // Sync SkillState to client
         switch (newSkillState) {

@@ -107,7 +107,7 @@ public class Bender implements IBender {
         if (event.getEntity().getId() == entity.getId()) {
             active = !event.released();
             formPath.update(event.getActiveForm());
-            this.syncFormPathToClient();
+            this.syncFormPathToClient(); // TODO: We probably don't need this anymore
 
             for (Skill skill: availableSkills) {
                 if (canUseSkill(skill) && skill.shouldStart(this, formPath)) {
@@ -120,8 +120,8 @@ public class Bender implements IBender {
                 }
             }
             tick = timeout;
-            LOGGER.info("Simple Forms: {}", formPath.simple());
-            LOGGER.info("Complex Forms: {}", formPath.complex());
+//            LOGGER.info("Simple Forms: {}", formPath.simple());
+//            LOGGER.info("Complex Forms: {}", formPath.complex());
         }
     }
 

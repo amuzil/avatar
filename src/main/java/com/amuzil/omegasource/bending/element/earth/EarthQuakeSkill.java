@@ -34,7 +34,6 @@ public class EarthQuakeSkill extends EarthSkill {
         addTrait(new SizeTrait(Constants.SIZE, 1.0f));
 
         this.startPaths = SkillPathBuilder.getInstance()
-                // TODO: Remove arc/account for this skill being a motion skill, so no need to log ARC and SHAPE
 //                .simple(new ActiveForm(ARC, true))
                 .complex(new ActiveForm(RAISE, true))
                 .complex(new ActiveForm(LOWER, true))
