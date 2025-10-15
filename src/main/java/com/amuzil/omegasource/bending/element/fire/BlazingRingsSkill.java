@@ -42,7 +42,7 @@ public class BlazingRingsSkill extends FireSkill {
         addTrait(new RangeTrait(Constants.RANGE, 2.0d));
 
         startPaths = SkillPathBuilder.getInstance()
-                .simple(new ActiveForm(BendingForms.ARC, true))
+//                .simple(new ActiveForm(BendingForms.ARC, true))
                 .simple(new ActiveForm(BendingForms.ROTATE, true))
                 .build();
     }

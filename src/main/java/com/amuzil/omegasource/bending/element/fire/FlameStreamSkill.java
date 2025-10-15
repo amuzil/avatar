@@ -42,7 +42,7 @@ public class FlameStreamSkill extends FireSkill {
         addTrait(new StringTrait(Constants.FX, "fires_bloom_perma5"));
 
         startPaths = SkillPathBuilder.getInstance()
-                .simple(new ActiveForm(BendingForms.ARC, true))
+//                .simple(new ActiveForm(BendingForms.ARC, true))
                 .simple(new ActiveForm(BendingForms.BLOCK, true))
                 .build();
 

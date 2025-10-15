@@ -42,7 +42,7 @@ public class AirPullSkill extends AirSkill {
         addTrait(new StringTrait(Constants.FX, "airs_perma10"));
 
         startPaths = SkillPathBuilder.getInstance()
-                .simple(new ActiveForm(ARC, true))
+//                .simple(new ActiveForm(ARC, true))
                 .simple(new ActiveForm(PULL, true))
                 .build();
     }

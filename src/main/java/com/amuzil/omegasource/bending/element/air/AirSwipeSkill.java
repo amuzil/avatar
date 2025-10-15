@@ -38,7 +38,7 @@ public class AirSwipeSkill extends AirSkill {
         addTrait(new StringTrait(Constants.FX, "airs_perma12"));
 
         startPaths = SkillPathBuilder.getInstance()
-                .simple(new ActiveForm(SHAPE, true))
+//                .simple(new ActiveForm(SHAPE, true))
                 .simple(new ActiveForm(COMPRESS, true))
                 .build();
     }
