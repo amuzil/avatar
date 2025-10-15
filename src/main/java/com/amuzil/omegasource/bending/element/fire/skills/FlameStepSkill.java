@@ -1,4 +1,4 @@
-package com.amuzil.omegasource.bending.element.fire;
+package com.amuzil.omegasource.bending.element.fire.skills;
 
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
@@ -43,9 +43,10 @@ public class FlameStepSkill extends FireSkill {
 
         LivingEntity entity = bender.getEntity();
         BendingForm.Type.Motion motion;
-        if (!bender.getFormPath().complex().isEmpty())
+        if (!bender.getFormPath().complex().isEmpty()) {
             motion = bender.getFormPath().complex().get(0).direction();
-        else
+            System.out.println("Motion: " + motion);
+        } else
             motion = BendingForm.Type.Motion.FORWARD; // Default to forward if no motion is specified
         SkillData data = bender.getSkillData(this);
         int lifetime = data.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime();

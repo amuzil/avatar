@@ -61,7 +61,8 @@ public class Registries {
         forms.add(form);
     }
 
-    public static RegistryObject<? extends Skill> registerSkill(String name, Supplier<? extends Skill> skillSup) {
+    public static RegistryObject<? extends Skill> registerSkill(Supplier<? extends Skill> skillSup) {
+        String name = skillSup.get().name();
         RegistryObject<Skill> skillRegistryObject = SKILL_REGISTER.register(name, skillSup);
         String namespace = ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, name).toString();
         skills.put(namespace, skillRegistryObject);

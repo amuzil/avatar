@@ -122,25 +122,6 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
 
 
 
-    /**
-     * Returns null or the entityliving it was ignited by
-     */
-//    @Override @Nullable
-//    public Entity getOwner() {
-//        if (this.cachedOwner != null && !this.cachedOwner.isRemoved()) {
-//            return this.cachedOwner;
-//        } else if (this.ownerUUID != null && this.level() instanceof ServerLevel) {
-//            this.cachedOwner = ((ServerLevel) this.level()).getEntity(this.ownerUUID);
-//            return this.cachedOwner;
-//        } else if (this.owner() != null) {
-//            this.cachedOwner = this.owner();
-//            this.ownerUUID = this.cachedOwner.getUUID();
-//            return this.cachedOwner;
-//        } else {
-//            return null;
-//        }
-//    }
-
     public Entity getEffectSource() {
         return MoreObjects.firstNonNull(this.getOwner(), this);
     }
@@ -322,11 +303,6 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
         }
 
         return Mth.lerp(0.2F, pCurrentRotation, pTargetRotation);
-    }
-
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        Entity entity = this.getOwner();
-        return new ClientboundAddEntityPacket(this, entity == null ? 0 : entity.getId());
     }
 
     public void recreateFromPacket(ClientboundAddEntityPacket pPacket) {

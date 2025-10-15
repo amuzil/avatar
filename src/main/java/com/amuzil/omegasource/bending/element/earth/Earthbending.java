@@ -9,10 +9,10 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class Earthbending extends Element {
     // Class for registering Earthbending skills
-    public static final RegistryObject<? extends Skill> EARTH_QUAKE_SKILL = Registries.registerSkill("earth_quake", EarthQuakeSkill::new);
-    public static final RegistryObject<? extends Skill> EARTH_TOSS_SKILL = Registries.registerSkill("earth_toss", EarthTossSkill::new);
-    public static final RegistryObject<? extends Skill> EARTH_BLOCK_SKILL = Registries.registerSkill("earth_block", EarthBlockSkill::new);
-    public static final RegistryObject<? extends Skill> EARTH_STEP_SKILL = Registries.registerSkill("earth_step", EarthStepSkill::new);
+    public static final RegistryObject<? extends Skill> EARTH_QUAKE_SKILL = Registries.registerSkill(EarthQuakeSkill::new);
+    public static final RegistryObject<? extends Skill> EARTH_TOSS_SKILL = Registries.registerSkill(EarthTossSkill::new);
+    public static final RegistryObject<? extends Skill> EARTH_BLOCK_SKILL = Registries.registerSkill(EarthBlockSkill::new);
+    public static final RegistryObject<? extends Skill> EARTH_STEP_SKILL = Registries.registerSkill(EarthStepSkill::new);
 
     public Earthbending() {
         super(Avatar.MOD_ID, "earthbending", Type.EARTH);

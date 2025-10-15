@@ -395,8 +395,9 @@ public abstract class AvatarEntity extends Entity {
         return entityData.get(DAMAGEABLE);
     }
 
-    //  TODO - These were copied from the projectile class. Need to update these to account for the other data
-    //   serializers and important values that this class keeps track of.
+    /** These were copied from the projectile class. Need to update these to account for the other data
+     * serializers and important values that this class keeps track of.
+     */
     public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket() {
         Entity entity = this.owner();
         return new ClientboundAddEntityPacket(this, entity == null ? 0 : entity.getId());

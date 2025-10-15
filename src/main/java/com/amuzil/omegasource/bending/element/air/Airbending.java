@@ -9,10 +9,10 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class Airbending extends Element {
     // Class for registering Airbending skills
-    public static final RegistryObject<? extends Skill> AIR_GUST_SKILL = Registries.registerSkill("air_gust", AirGustSkill::new);
-    public static final RegistryObject<? extends Skill> AIR_STEP_SKILL = Registries.registerSkill("air_step", AirStepSkill::new);
-    public static final RegistryObject<? extends Skill> AIR_PULL_SKILL = Registries.registerSkill("air_pull", AirPullSkill::new);
-    public static final RegistryObject<? extends Skill> AIR_SWIPE_SKILL = Registries.registerSkill("air_swipe", AirSwipeSkill::new);
+    public static final RegistryObject<? extends Skill> AIR_GUST_SKILL = Registries.registerSkill(AirGustSkill::new);
+    public static final RegistryObject<? extends Skill> AIR_STEP_SKILL = Registries.registerSkill(AirStepSkill::new);
+    public static final RegistryObject<? extends Skill> AIR_PULL_SKILL = Registries.registerSkill(AirPullSkill::new);
+    public static final RegistryObject<? extends Skill> AIR_SWIPE_SKILL = Registries.registerSkill(AirSwipeSkill::new);
 
     public Airbending() {
         super(Avatar.MOD_ID, "airbending", Type.AIR);
