@@ -111,11 +111,9 @@ public class Bender implements IBender {
 
             for (Skill skill: availableSkills) {
                 if (canUseSkill(skill) && skill.shouldStart(this, formPath)) {
-                    Skill newSkill = Registries.getSkillByName(skill.getId()).cloneObject();
-                    newSkill.setBender(this);
-                    newSkill.generateUuid();
-                    skillData.add(new SkillData(newSkill));
-                    formPath.clear();
+                    Skill newSkill = Registries.getSkillByName(skill.getId()).create(this);
+                    skillData.add(new SkillData(newSkill)); // May not be necessary since we store skillData in Skill
+//                    formPath.clear(); // breaks Step / Dash skills
                     newSkill.start(this);
                 }
             }

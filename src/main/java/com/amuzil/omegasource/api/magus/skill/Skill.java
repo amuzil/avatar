@@ -38,8 +38,8 @@ public abstract class Skill {
     private final List<RadixTree.ActivationType> activationTypes;
     private final List<SkillType> skillTypes;
     private final List<SkillTrait> skillTraits;
+    protected SkillData skillData;
     // How the skill was activated. Useful if you want different methods to influence the skill in different ways.
-    // For complex, game-design move combinations, see ModifierData for how to alter your skills.
     protected RadixTree.ActivationType activatedType;
     protected FormPath startPaths, runPaths, stopPaths;
 
@@ -68,8 +68,12 @@ public abstract class Skill {
 //        Registries.registerSkill(this);
     }
 
-    public void generateUuid() {
-        this.skillUuid = UUID.randomUUID().toString();
+    public Skill create(Bender bender) {
+        this.bender = bender;
+        this.skillData = bender.getSkillData(this);
+        // Should we be making another SkillData instance?
+        // Probs not since we have instances of Skills now
+        return this.cloneObject();
     }
 
     public boolean addTrait(SkillTrait trait) {
