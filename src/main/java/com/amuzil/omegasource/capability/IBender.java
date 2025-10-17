@@ -42,7 +42,7 @@ public interface IBender extends INBTSerializable<CompoundTag> {
 
     SkillData getSkillData(Skill skill);
 
-    SkillData getSkillData(String skillUuid);
+    SkillData getSkillData(String name);
 
     void resetSkillData();
 

@@ -96,8 +96,10 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
     }
 
     @Override
-    public void remove(RemovalReason pReason) {
-        super.remove(pReason);
+    public void remove(@NotNull RemovalReason reason) {
+        if (!this.isRemoved() && this.getId() >= 0) {
+            super.remove(reason);
+        }
     }
 
     @Override

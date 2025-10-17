@@ -76,6 +76,21 @@ public abstract class Skill {
         return this.cloneObject();
     }
 
+    public Skill cloneObject() {
+        try {
+            Skill copy = this.getClass().getDeclaredConstructor().newInstance();
+            for (Field f : this.getClass().getFields()) { // Never executes
+                f.setAccessible(true);
+                f.set(copy, f.get(this));
+            }
+            copy.skillData = this.skillData;
+            copy.bender = this.bender;
+            return copy;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public boolean addTrait(SkillTrait trait) {
         String name = trait.name();
         for (SkillTrait st : this.skillTraits) {
@@ -216,22 +231,6 @@ public abstract class Skill {
 
     // Resets the skill and any necessary skill data; should be called upon stopping execution.
     public abstract void reset(LivingEntity entity);
-
-    public Skill cloneObject() {
-        try {
-            Skill copy = (Skill) this.getClass().getDeclaredConstructor().newInstance();
-            for (Field f : this.getClass().getFields()) {
-                f.setAccessible(true);
-                f.set(copy, f.get(this));
-            }
-            return copy;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-    public void setBender(Bender bender) {
-        this.bender = bender;
-    }
 
     public enum SkillState {
         IDLE,

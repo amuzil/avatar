@@ -55,7 +55,7 @@ public class Bender implements IBender {
     // Persistent data
     private Element activeElement = Elements.FIRE; // Currently active element // TODO - Randomize on first load
     private final List<SkillCategoryData> skillCategoryData = new ArrayList<>();
-    private final List<SkillData> skillData = new ArrayList<>();
+    private final HashMap<String, SkillData> skillDataMap = new HashMap<>();
     private final List<DataTrait> dataTraits = new ArrayList<>();
 
     public final HashMap<String, Skill> activeSkills = new HashMap<>();
@@ -69,8 +69,7 @@ public class Bender implements IBender {
             skillCategoryData.add(new SkillCategoryData(category));
         this.availableSkills.addAll(Registries.getSkills());
         for (Skill skill : availableSkills) {
-            skill.setBender(this);
-            skillData.add(new SkillData(skill));
+            skillDataMap.put(skill.name(), new SkillData(skill));
             if (skill.runPaths() != null)
                 shouldRuns.put(skill.getId(), false); // Initialize shouldRuns map
         }
@@ -112,7 +111,7 @@ public class Bender implements IBender {
             for (Skill skill: availableSkills) {
                 if (canUseSkill(skill) && skill.shouldStart(this, formPath)) {
                     Skill newSkill = Registries.getSkillByName(skill.getId()).create(this);
-                    skillData.add(new SkillData(newSkill)); // May not be necessary since we store skillData in Skill
+//                    skillData.add(new SkillData(newSkill)); // May not be necessary since we store skillData in Skill
 //                    formPath.clear(); // breaks Step / Dash skills
                     newSkill.start(this);
                 }
@@ -204,42 +203,26 @@ public class Bender implements IBender {
 
     @Override
     public SkillData getSkillData(Skill skill) {
-        return getSkillData(skill.getSkillUuid());
-    }
-
-
-    public void removeSkillData(SkillData data) {
-        skillData.remove(data);
+        return skillDataMap.get(skill.name());
     }
 
     @Override
-    public SkillData getSkillData(String skillUuid) {
-        List<SkillData> snapshot = new ArrayList<>(this.skillData);
-        return snapshot.stream()
-                .filter(data ->  data.getSkillUuid().equals(skillUuid))
-                .findFirst()
-                .orElse(null);
+    public SkillData getSkillData(String name) {
+        return skillDataMap.get(name);
     }
 
     @Override
     public void resetSkillData() {
-        skillData.clear();
+        skillDataMap.clear();
         for (Skill skill : availableSkills)
-            skillData.add(new SkillData(skill));
+            skillDataMap.put(skill.name(), new SkillData(skill));
         markDirty();
     }
 
     @Override
     public void resetSkillData(Skill skill) {
-        List<SkillData> newSkillData = new ArrayList<>();
-        for (SkillData data : skillData) {
-            if (data.getSkillUuid().equals(skill.getSkillUuid()))
-                newSkillData.add(new SkillData(skill));
-            else
-                newSkillData.add(data);
-        }
-        skillData.clear();
-        skillData.addAll(newSkillData);
+            skillDataMap.put(skill.name(), new SkillData(skill));
+        skillDataMap.put(skill.name(), new SkillData(skill));
         markDirty();
     }
 
@@ -272,13 +255,13 @@ public class Bender implements IBender {
     }
 
     @Override
-    public void setCanUseSkill(boolean canUse, String skillId) {
-        SkillData skillData = getSkillData(skillId);
+    public void setCanUseSkill(boolean canUse, String name) {
+        SkillData skillData = getSkillData(name);
         if (skillData != null) {
             skillData.setCanUse(canUse);
             markDirty();
         } else {
-            LOGGER.warn("Skill data not found for ID: {}", skillId);
+            LOGGER.warn("Skill data not found for ID: {}", name);
         }
     }
 
@@ -290,16 +273,16 @@ public class Bender implements IBender {
 
     @Override
     public void setCanUseAllSkills() {
-        skillData.forEach(skill -> skill.setCanUse(true));
+        skillDataMap.values().forEach(skill -> skill.setCanUse(true));
         markDirty();
     }
 
     @Override
     public void setCanUseAllSkills(Element element) {
         setCanUseElement(true, element);
-        skillData.forEach(skill -> {
-            if (skill.getSkill().getCategory().getId().equals(element.getId()))
-                skill.setCanUse(true);
+        skillDataMap.values().forEach(skillData -> {
+            if (skillData.getSkill().getCategory().getId().equals(element.getId()))
+                skillData.setCanUse(true);
         });
         markDirty();
     }
@@ -381,7 +364,9 @@ public class Bender implements IBender {
                 Active Element: %s
                 """, tag.getInt("DataVersion"), tag.getString("Active Element")));
         skillCategoryData.forEach(catData -> sb.append(tag.get(catData.name())).append("\n"));
-        skillData.forEach(sData -> sb.append(tag.get(sData.name())).append("\n"));
+        skillDataMap.values().forEach(skillData -> sb.append(tag.get(skillData.name())).append("\n"));
+        System.out.println("[Bender] Serialized NBT: " + skillDataMap.size());
+        System.out.println("[Bender] Serialized NBT: " + skillDataMap.keySet());
         LOGGER.info(sb.toString());
     }
 
@@ -391,7 +376,7 @@ public class Bender implements IBender {
         tag.putInt("DataVersion", DATA_VERSION);
         tag.putString("Active Element", Objects.requireNonNullElse(activeElement, Elements.FIRE).getId().toString());
         skillCategoryData.forEach(catData -> tag.put(catData.name(), catData.serializeNBT()));
-        skillData.forEach(sData -> tag.put(sData.name(), sData.serializeNBT()));
+        skillDataMap.values().forEach(skillData -> tag.put(skillData.name(), skillData.serializeNBT()));
         return tag;
     }
 
@@ -417,11 +402,11 @@ public class Bender implements IBender {
                     }
                 }
 
-                for (SkillData sData : skillData) {
-                    if (tag.contains(sData.name(), Tag.TAG_COMPOUND)) {
-                        sData.deserializeNBT(tag.getCompound(sData.name()));
+                for (SkillData skillData : skillDataMap.values()) {
+                    if (tag.contains(skillData.name(), Tag.TAG_COMPOUND)) {
+                        skillData.deserializeNBT(tag.getCompound(skillData.name()));
                     } else {
-                        LOGGER.warn("Missing skill data for: {}", sData.name());
+                        LOGGER.warn("Missing skill data for: {}", skillData.name());
                     }
                 }
             } default -> { // Handle unknown versions for migrating data
