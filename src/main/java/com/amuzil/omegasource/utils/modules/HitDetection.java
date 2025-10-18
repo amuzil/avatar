@@ -86,7 +86,7 @@ public class HitDetection {
         try {
             AABB box = source.getBoundingBox().inflate(growth / 2);
             return new ArrayList<>(source.level().getEntitiesOfClass(type, box, filter));
-        } catch (ConcurrentModificationException ex) {
+        } catch (ConcurrentModificationException e) {
             System.err.println("ConcurrentModificationException caught in getEntitiesWithinBox; returning empty list.");
             return new ArrayList<>();
         }
