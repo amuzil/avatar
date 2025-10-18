@@ -2,11 +2,29 @@ package com.amuzil.omegasource.api.magus.skill;
 
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
+import com.amuzil.omegasource.api.magus.skill.event.SkillTickEvent;
+import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.TimedTrait;
 import com.amuzil.omegasource.capability.Bender;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.EventPriority;
+
+import java.util.function.Consumer;
 
 
 public abstract class SkillActive extends Skill {
+
+    private final Consumer<SkillTickEvent> cooldown = event -> {;
+        // We want to change persistent data, not instanced data.
+        SkillData data = bender.getSkillData(name());
+        if (data == null) return;
+        TimedTrait cooldown = data.getTrait("cooldown", TimedTrait.class);
+        if (cooldown == null)
+            return;
+        if (cooldown.getTime() > 0) {
+            cooldown.setTime(cooldown.getTime() - 1);
+        }
+    };
 
     public SkillActive(String modID, String name, SkillCategory category) {
         super(modID, name, category);
@@ -78,5 +96,12 @@ public abstract class SkillActive extends Skill {
 
     }
 
+    public void startCooldown() {
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, SkillTickEvent.class, cooldown);
+    }
+
+    public void stopCooldown() {
+        MinecraftForge.EVENT_BUS.unregister(cooldown);
+    }
 
 }

@@ -31,7 +31,7 @@ import java.util.function.Predicate;
 public abstract class Skill {
     private Consumer<SkillTickEvent> run;
     private final String name;
-    private Bender bender;
+    protected Bender bender;
     private String skillUuid;
     private final ResourceLocation id;
     private final SkillCategory category;
