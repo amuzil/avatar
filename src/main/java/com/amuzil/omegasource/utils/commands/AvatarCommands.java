@@ -39,20 +39,20 @@ public class AvatarCommands {
     }
 
     private static void createFormCommands() {
-        for (Form form : Registries.getForms()) {
+        for (Form form : Registries.getForms().values()) {
             builder.then(triggerFormCommand(form));
         }
     }
 
     private static void createSkillCommands() {
+        builder.then(resetSkillCommand(null)); // Pass null to reset all
         for (Skill skill : Registries.getSkills()) {
+            builder.then(resetSkillCommand(skill));
             builder.then(setCanUseSkillCommand(skill, "grant"));
             builder.then(setCanUseSkillCommand(skill, "take"));
             for (Skill.SkillState state : Skill.SkillState.values())
                 builder.then(triggerSkillCommand(skill, state));
-            builder.then(resetSkillCommand(skill));
         }
-        builder.then(resetSkillCommand(null)); // Pass null to reset all
     }
 
     private static void createElementCommands() {

@@ -39,7 +39,7 @@ public class SkillData implements DataTrait {
         this.skillId = skill.getId();
         this.skillUuId = skill.getSkillUuid();
         this.skillState = Skill.SkillState.IDLE;
-        // NOTE: NEED to clone the traits so each SkillData has its own copy and so the Bender Capobility doesn't use Registry references
+        // NOTE: NEED to clone the traits so each SkillData has its own copy and so the Bender Capability doesn't update Registry references
         if (getSkill() != null)
             skillTraits = getSkill().getTraits()
                     .stream()

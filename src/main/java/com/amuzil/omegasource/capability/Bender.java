@@ -1,5 +1,6 @@
 package com.amuzil.omegasource.capability;
 
+import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.registry.Registries;
 import com.amuzil.omegasource.api.magus.skill.Skill;
@@ -7,6 +8,7 @@ import com.amuzil.omegasource.api.magus.skill.SkillCategory;
 import com.amuzil.omegasource.api.magus.skill.data.SkillCategoryData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.traits.DataTrait;
+import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SizeTrait;
 import com.amuzil.omegasource.bending.BendingSelection;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
@@ -65,7 +67,7 @@ public class Bender implements IBender {
         this.entity = entity;
         this.formListener = this::onFormActivatedEvent;
 
-        for (SkillCategory category : Registries.getSkillCategories())
+        for (SkillCategory category: Registries.getSkillCategories())
             skillCategoryData.add(new SkillCategoryData(category));
         this.availableSkills.addAll(Registries.getSkills());
         for (Skill skill : availableSkills) {
@@ -79,6 +81,11 @@ public class Bender implements IBender {
         setAvatar(); // Uncomment this to grant all elements & skills
 
         markDirty();
+    }
+
+    private void printFormPath() {
+        LOGGER.info("Simple Forms: {}", formPath.simple());
+        LOGGER.info("Complex Forms: {}", formPath.complex());
     }
 
     @Override
@@ -117,8 +124,7 @@ public class Bender implements IBender {
                 }
             }
             tick = timeout;
-//            LOGGER.info("Simple Forms: {}", formPath.simple());
-//            LOGGER.info("Complex Forms: {}", formPath.complex());
+//            printFormPath(); // Debugging purposes
         }
     }
 
@@ -214,14 +220,13 @@ public class Bender implements IBender {
     @Override
     public void resetSkillData() {
         skillDataMap.clear();
-        for (Skill skill : availableSkills)
+        for (Skill skill: availableSkills)
             skillDataMap.put(skill.name(), new SkillData(skill));
         markDirty();
     }
 
     @Override
     public void resetSkillData(Skill skill) {
-            skillDataMap.put(skill.name(), new SkillData(skill));
         skillDataMap.put(skill.name(), new SkillData(skill));
         markDirty();
     }
@@ -365,8 +370,6 @@ public class Bender implements IBender {
                 """, tag.getInt("DataVersion"), tag.getString("Active Element")));
         skillCategoryData.forEach(catData -> sb.append(tag.get(catData.name())).append("\n"));
         skillDataMap.values().forEach(skillData -> sb.append(tag.get(skillData.name())).append("\n"));
-        System.out.println("[Bender] Serialized NBT: " + skillDataMap.size());
-        System.out.println("[Bender] Serialized NBT: " + skillDataMap.keySet());
         LOGGER.info(sb.toString());
     }
 

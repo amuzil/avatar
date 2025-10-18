@@ -30,7 +30,7 @@ public class Registries {
     public static Supplier<IForgeRegistry<Skill>> SKILLS = SKILL_REGISTER.makeRegistry(RegistryBuilder::new);
     public static Supplier<IForgeRegistry<SkillCategory>> SKILL_CATEGORIES;
 
-    private static final List<Form> forms = new ArrayList<>();
+    private static final HashMap<String, Form> forms = new HashMap<>();
     private static final HashMap<String, RegistryObject<Skill>> skills = new HashMap<>();
     private static final List<SkillCategory> categories = new ArrayList<>();
     private static final List<DataTrait> traits = new ArrayList<>();
@@ -41,12 +41,12 @@ public class Registries {
         Elements.init();
     }
 
-    public static List<Form> getForms() {
+    public static HashMap<String, Form> getForms() {
         return forms;
     }
 
     public static List<Skill> getSkills() {
-        return skills.values().stream().map(c -> c.get()).toList();
+        return skills.values().stream().map(RegistryObject::get).toList();
     }
 
     public static List<SkillCategory> getSkillCategories() {
@@ -58,7 +58,7 @@ public class Registries {
     }
 
     public static void registerForm(Form form) {
-        forms.add(form);
+        forms.put(form.name(), form);
     }
 
     public static RegistryObject<? extends Skill> registerSkill(Supplier<? extends Skill> skillSup) {
@@ -66,7 +66,6 @@ public class Registries {
         RegistryObject<Skill> skillRegistryObject = SKILL_REGISTER.register(name, skillSup);
         String namespace = ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, name).toString();
         skills.put(namespace, skillRegistryObject);
-
 
         return skillRegistryObject;
     }
@@ -111,7 +110,7 @@ public class Registries {
             IForgeRegistry<Form> registry = FORMS.get();
             ResourceKey<Registry<Form>> resKey = registry.getRegistryKey();
             event.register(resKey, helper -> {
-                for (Form form: forms)
+                for (Form form: forms.values())
                     helper.register(form.name(), form);
             });
         }
@@ -138,8 +137,7 @@ public class Registries {
     }
 
     public static Skill getSkillByName(ResourceLocation id) {
-        String namespace = id.toString();
-        return skills.get(namespace).get();
+        return skills.get(id.toString()).get();
     }
 
     @Mod.EventBusSubscriber(modid = Avatar.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)

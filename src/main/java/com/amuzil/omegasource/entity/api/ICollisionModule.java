@@ -3,6 +3,7 @@ package com.amuzil.omegasource.entity.api;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.projectile.AvatarProjectile;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +23,11 @@ public interface ICollisionModule extends IEntityModule {
     @FunctionalInterface
     interface ProjectileHandler {
         void handle(AvatarProjectile entity, Entity hitEntity, float damage, float size);
+    }
+
+    @FunctionalInterface
+    interface EffectHandler {
+        void handle(AvatarProjectile entity, Entity hitEntity, Vec3 direction, float size);
     }
 
     @FunctionalInterface

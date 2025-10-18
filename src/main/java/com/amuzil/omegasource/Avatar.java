@@ -92,6 +92,7 @@ public class Avatar {
         ModuleRegistry.register(AirCollisionModule::new);
         ModuleRegistry.register(FireCollisionModule::new);
         ModuleRegistry.register(WaterCollisionModule::new);
+        ModuleRegistry.register(FireEffectModule::new);
 
         AttachmentRegistration<EarthController> attachmentRegistration = ValkyrienSkies.api()
                 .newAttachmentRegistrationBuilder(EarthController.class)

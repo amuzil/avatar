@@ -10,6 +10,7 @@ import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.entity.api.ICollisionModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import com.amuzil.omegasource.entity.modules.collision.FireCollisionModule;
+import com.amuzil.omegasource.entity.modules.collision.FireEffectModule;
 import com.amuzil.omegasource.entity.projectile.AvatarDirectProjectile;
 import com.amuzil.omegasource.utils.Constants;
 import net.minecraft.world.entity.LivingEntity;
@@ -23,10 +24,9 @@ public class FirePushForm extends FireForm {
     public FirePushForm() {
         super(Avatar.MOD_ID, "fire_push");
         addTrait(new ColourTrait(0, 0, 0, Constants.FIRE_COLOUR));
-        addTrait(new SizeTrait(Constants.SIZE, 0.5F));
+        addTrait(new SizeTrait(Constants.SIZE, 1.5F));
         addTrait(new TimedTrait(Constants.LIFETIME, 20));
         addTrait(new SpeedTrait(Constants.SPEED, 1.5d));
-        addTrait(new StringTrait(Constants.FX, "fires_bloom_perma5"));
 
         startPaths = SkillPathBuilder.getInstance().simple(new ActiveForm(PUSH, true)).build();
     }
@@ -55,11 +55,12 @@ public class FirePushForm extends FireForm {
         projectile.setHeight((float) size);
         projectile.setNoGravity(true);
         projectile.setDamageable(false);
-        projectile.setHittable(true);
+        projectile.setHittable(false);
 
+        projectile.addTraits(new StringTrait(Constants.BENDING_FORM, startPaths.simple().get(0).form().name()));
         projectile.addTraits(skillData.getTrait(Constants.SIZE, SizeTrait.class));
         projectile.addTraits(new CollisionTrait(Constants.COLLISION_TYPE, "Blaze", "Fireball", "AbstractArrow", "FireProjectile"));
-        projectile.addCollisionModule((ICollisionModule) ModuleRegistry.create(FireCollisionModule.id));
+        projectile.addCollisionModule((ICollisionModule) ModuleRegistry.create(FireEffectModule.id));
 
         projectile.shoot(benderEntity.position().add(0, benderEntity.getEyeHeight(), 0), benderEntity.getLookAngle(), speed, 0);
         projectile.init();
@@ -77,6 +78,6 @@ public class FirePushForm extends FireForm {
 //        }
 
         skillData.setSkillState(SkillState.IDLE);
-
+        bender.getEntity().level().addFreshEntity(projectile);
     }
 }

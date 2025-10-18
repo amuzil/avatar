@@ -29,6 +29,7 @@ public final class Constants {
     public static final String COLLISION_TYPE = "collision_type";
     public static final String ANGLE = "angle";
     public static final String RANGE = "range";
+    public static final String BENDING_FORM = "bending_form";
 
     private Constants() {
         // Private constructor to prevent instantiation
