@@ -24,6 +24,8 @@ public abstract class BendingSkill extends SkillActive {
         return (Element) getCategory();
     }
 
+
+    // TODO: Update cooldown methods to use cooldown runnable in Skill
     public void resetCooldown(SkillData data) {
         TimedTrait trait = data.getTrait("cooldown", TimedTrait.class);
         assert trait != null;

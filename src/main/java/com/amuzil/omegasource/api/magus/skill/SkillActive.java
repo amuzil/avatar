@@ -1,30 +1,27 @@
 package com.amuzil.omegasource.api.magus.skill;
 
+import com.amuzil.omegasource.api.magus.condition.conditions.EventCondition;
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.event.SkillTickEvent;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.TimedTrait;
 import com.amuzil.omegasource.capability.Bender;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.EventPriority;
-
-import java.util.function.Consumer;
 
 
 public abstract class SkillActive extends Skill {
 
-    private final Consumer<SkillTickEvent> cooldown = event -> {;
-        // We want to change persistent data, not instanced data.
+    protected final EventCondition<SkillTickEvent> cdr = new EventCondition<>(SkillTickEvent.class, event -> {
         SkillData data = bender.getSkillData(name());
-        if (data == null) return;
-        TimedTrait cooldown = data.getTrait("cooldown", TimedTrait.class);
-        if (cooldown == null)
-            return;
-        if (cooldown.getTime() > 0) {
-            cooldown.setTime(cooldown.getTime() - 1);
+        if (data == null) return false;
+        TimedTrait cd = data.getTrait("cooldown", TimedTrait.class);
+        if (cd == null)
+            return false;
+        if (cd.getTime() > 0) {
+            cd.setTime(cd.getTime() - 1);
         }
-    };
+        return cd.getTime() > 0;
+    });
 
     public SkillActive(String modID, String name, SkillCategory category) {
         super(modID, name, category);
@@ -64,7 +61,7 @@ public abstract class SkillActive extends Skill {
         if (skillData == null) return true;
 
         SkillState state = skillData.getSkillState();
-        if(state == SkillState.STOP) return true;
+        if (state == SkillState.STOP) return true;
 
         if (stopPaths() == null) return false;
 
@@ -74,7 +71,7 @@ public abstract class SkillActive extends Skill {
     @Override
     public void start(Bender bender) {
         bender.activeSkills.put(getSkillUuid(), this);
-        listen();
+        listen(SkillTickEvent.class, run);
     }
 
     @Override
@@ -84,11 +81,12 @@ public abstract class SkillActive extends Skill {
     @Override
     public void stop(Bender bender) {
         SkillData data = bender.getSkillData(this);
-        if(data != null) {
+        if (data != null) {
             data.setSkillState(SkillState.IDLE);
             bender.activeSkills.remove(getSkillUuid());
         }
-        hush();
+
+        // Hush is automatically handled in Skill.tick()
     }
 
     @Override
@@ -96,12 +94,12 @@ public abstract class SkillActive extends Skill {
 
     }
 
-    public void startCooldown() {
-        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, SkillTickEvent.class, cooldown);
+    protected void cooldown() {
+        SkillData persistentData = bender.getSkillData(name());
+        persistentData.getTrait("cooldown", TimedTrait.class).setTime(
+                persistentData.getTrait("max_cooldown", TimedTrait.class).getTime()
+        );
+        cdr.registerRunnables("cooldown", () -> {
+        }, cdr::unregister);
     }
-
-    public void stopCooldown() {
-        MinecraftForge.EVENT_BUS.unregister(cooldown);
-    }
-
 }

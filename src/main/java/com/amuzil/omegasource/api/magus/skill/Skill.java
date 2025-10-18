@@ -2,8 +2,8 @@ package com.amuzil.omegasource.api.magus.skill;
 
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.radix.RadixTree;
-import com.amuzil.omegasource.api.magus.skill.event.SkillExecutionEvent;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
+import com.amuzil.omegasource.api.magus.skill.event.SkillExecutionEvent;
 import com.amuzil.omegasource.api.magus.skill.event.SkillTickEvent;
 import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.UseTrait;
@@ -15,6 +15,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 import java.lang.reflect.Field;
@@ -29,19 +30,19 @@ import java.util.function.Predicate;
  * Basic skill class. All other skills extend this.
  */
 public abstract class Skill {
-    private Consumer<SkillTickEvent> run;
     private final String name;
-    protected Bender bender;
-    private String skillUuid;
     private final ResourceLocation id;
     private final SkillCategory category;
     private final List<RadixTree.ActivationType> activationTypes;
     private final List<SkillType> skillTypes;
     private final List<SkillTrait> skillTraits;
+    protected final Consumer<SkillTickEvent> run;
+    protected Bender bender;
     protected SkillData skillData;
     // How the skill was activated. Useful if you want different methods to influence the skill in different ways.
     protected RadixTree.ActivationType activatedType;
     protected FormPath startPaths, runPaths, stopPaths;
+    private String skillUuid;
 
     public Skill(String modId, String name, SkillCategory category) {
         this(ResourceLocation.fromNamespaceAndPath(modId, name), name, category);
@@ -177,21 +178,21 @@ public abstract class Skill {
         }
     }
 
-    public void listen() {
-        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, SkillTickEvent.class, run);
+    protected <T extends Event> void listen(Class<T> eventType, Consumer<T> runnable) {
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, eventType, runnable);
     }
 
-    public void hush() {
-        MinecraftForge.EVENT_BUS.unregister(run);
+    protected void hush(Consumer<?> runnable) {
+        MinecraftForge.EVENT_BUS.unregister(runnable);
     }
 
     public void tick(Bender bender) {
         if (shouldStop(bender, bender.formPath)) {
             SkillData data = bender.getSkillData(this);
-            if(data != null)
+            if (data != null)
                 data.setSkillState(SkillState.STOP);
             stop(bender);
-            hush();
+            hush(run);
         } else {
             run(bender);
         }

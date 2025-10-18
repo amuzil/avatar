@@ -30,7 +30,7 @@ public abstract class Condition {
 		//			RadixTree.getLogger().info("Result: failure: " + getClass());
 		//			Thread.dumpStack();
 		this.onFailure = onFailure;
-		registerEntry();
+//		registerEntry();
 	}
 
 	public void registerRunnables() {}
