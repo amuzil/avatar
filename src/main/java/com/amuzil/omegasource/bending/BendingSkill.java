@@ -32,15 +32,13 @@ public abstract class BendingSkill extends SkillActive {
         trait.setTime(data.getTrait("max_cooldown", TimedTrait.class).getTime());
     }
 
-    public boolean checkCooldown(SkillData data) {
+    /**
+     * @return Whether the current cooldown for a skill is ready.
+     */
+    public boolean checkCooldown() {
+        SkillData data = bender.getSkillData(name());
         TimedTrait time = data.getTrait("cooldown", TimedTrait.class);
-        if (time.getTime() > 0) {
-            time.setTime(time.getTime() - 1);
-            return false;
-        } else {
-            data.setSkillState(SkillState.START);
-            return true;
-        }
+        return time != null && time.getTime() <= 0;
     }
 
     // Increment TimedTrait until maxTime is reached, then reset to 0 and set skill state to IDLE
@@ -53,4 +51,6 @@ public abstract class BendingSkill extends SkillActive {
             data.setSkillState(SkillState.IDLE);
         }
     }
+
+
 }
