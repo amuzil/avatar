@@ -65,7 +65,7 @@ public class Bender implements IBender {
         this.entity = entity;
         this.formListener = this::onFormActivatedEvent;
 
-        for (SkillCategory category : Registries.getSkillCategories())
+        for (SkillCategory category: Registries.getSkillCategories())
             skillCategoryData.add(new SkillCategoryData(category));
         this.availableSkills.addAll(Registries.getSkills());
         for (Skill skill : availableSkills) {
@@ -110,15 +110,14 @@ public class Bender implements IBender {
 
             for (Skill skill: availableSkills) {
                 if (canUseSkill(skill) && skill.shouldStart(this, formPath)) {
-                    Skill newSkill = Registries.getSkillByName(skill.getId()).create(this);
+                    Skill newSkill = Registries.getSkill(skill.getId()).create(this);
 //                    skillData.add(new SkillData(newSkill)); // May not be necessary since we store skillData in Skill
 //                    formPath.clear(); // breaks Step / Dash skills
                     newSkill.start(this);
                 }
             }
             tick = timeout;
-//            LOGGER.info("Simple Forms: {}", formPath.simple());
-//            LOGGER.info("Complex Forms: {}", formPath.complex());
+//            printFormPath(); // Debugging purposes
         }
     }
 
@@ -214,14 +213,13 @@ public class Bender implements IBender {
     @Override
     public void resetSkillData() {
         skillDataMap.clear();
-        for (Skill skill : availableSkills)
+        for (Skill skill: availableSkills)
             skillDataMap.put(skill.name(), new SkillData(skill));
         markDirty();
     }
 
     @Override
     public void resetSkillData(Skill skill) {
-            skillDataMap.put(skill.name(), new SkillData(skill));
         skillDataMap.put(skill.name(), new SkillData(skill));
         markDirty();
     }
@@ -355,6 +353,11 @@ public class Bender implements IBender {
 //        return list != null && !list.isEmpty();
 //    }
 
+    private void printFormPath() {
+        LOGGER.info("Simple Forms: {}", formPath.simple());
+        LOGGER.info("Complex Forms: {}", formPath.complex());
+    }
+
     public void printNBT() {
         CompoundTag tag = this.serializeNBT();
         StringBuilder sb = new StringBuilder();
@@ -365,8 +368,6 @@ public class Bender implements IBender {
                 """, tag.getInt("DataVersion"), tag.getString("Active Element")));
         skillCategoryData.forEach(catData -> sb.append(tag.get(catData.name())).append("\n"));
         skillDataMap.values().forEach(skillData -> sb.append(tag.get(skillData.name())).append("\n"));
-        System.out.println("[Bender] Serialized NBT: " + skillDataMap.size());
-        System.out.println("[Bender] Serialized NBT: " + skillDataMap.keySet());
         LOGGER.info(sb.toString());
     }
 

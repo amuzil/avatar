@@ -41,10 +41,6 @@ public class BendingForm extends Form {
         }
     }
 
-    public String name() {
-        return super.name();
-    }
-
     public Type type() {
         return type;
     }

@@ -38,8 +38,13 @@ public class SkillData implements DataTrait {
         this.skill = skill;
         this.skillId = skill.getId();
         this.skillUuId = skill.getSkillUuid();
-        this.skillTraits = skill.getTraits();
         this.skillState = Skill.SkillState.IDLE;
+        // NOTE: NEED to clone the traits so each SkillData has its own copy and so the Bender Capability doesn't update Registry references
+        if (getSkill() != null)
+            skillTraits = getSkill().getTraits()
+                    .stream()
+                    .map(SkillTrait::clone)
+                    .toList();
     }
 
     public void setCanUse(boolean canUse) {
