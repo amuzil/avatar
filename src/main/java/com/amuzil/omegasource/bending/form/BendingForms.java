@@ -1,5 +1,7 @@
 package com.amuzil.omegasource.bending.form;
 
+import com.amuzil.omegasource.api.magus.registry.Registries;
+
 import static com.amuzil.omegasource.bending.form.BendingForm.Type;
 
 
@@ -26,4 +28,8 @@ public class BendingForms {
     public static final BendingForm FOCUS = new BendingForm("focus", Type.INITIALIZER);
 
     public static void init() {}
+
+    public static BendingForm get(String name) {
+        return (BendingForm) Registries.getForm(name);
+    }
 }

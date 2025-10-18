@@ -11,6 +11,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -71,7 +72,7 @@ public class HitDetection {
     }
 
     /**
-     * T
+     * Returns entities within an expanded version of {@code source}'s bounding box.
      * @param source
      * @param growth Rather than scaling the bb, this value is merely added in all directions.
      * @param filter
@@ -82,13 +83,26 @@ public class HitDetection {
     public static <T extends Entity> List<T> getEntitiesWithinBox(
             Entity source, double growth, Predicate<Entity> filter, Class<T> type
     ) {
-        AABB box = source.getBoundingBox();
-        List<T> out = new ArrayList<>();
-        AABB newBox = box.inflate(growth / 2);
-        for (Entity e : source.level().getEntities(source, newBox, filter)) {
-            if (type.isInstance(e)) out.add(type.cast(e));
+        try {
+            AABB box = source.getBoundingBox().inflate(growth / 2);
+            return new ArrayList<>(source.level().getEntitiesOfClass(type, box, filter));
+        } catch (ConcurrentModificationException ex) {
+            System.err.println("ConcurrentModificationException caught in getEntitiesWithinBox; returning empty list.");
+            return new ArrayList<>();
         }
-        return out;
+//        List<T> out = new ArrayList<>();
+//        List<Entity> entities;
+//        try {
+//            entities = new ArrayList<>(source.level().getEntities(source, box, filter));
+//        } catch (ConcurrentModificationException ex) {
+//            System.err.println("ConcurrentModificationException caught in getEntitiesWithinBox; returning empty list.");
+//            entities = new ArrayList<>();
+//        }
+//
+//        for (Entity entity : entities) {
+//            if (type.isInstance(entity)) out.add(type.cast(entity));
+//        }
+//        return out;
     }
 
     /**

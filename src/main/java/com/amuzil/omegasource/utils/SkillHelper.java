@@ -7,6 +7,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
+
 public class SkillHelper {
 
     public static boolean canEarthBend(LivingEntity entity) {

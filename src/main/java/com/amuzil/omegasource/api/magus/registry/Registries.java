@@ -45,8 +45,16 @@ public class Registries {
         return forms;
     }
 
+    public static Form getForm(String name) {
+        return forms.get(name);
+    }
+
     public static List<Skill> getSkills() {
         return skills.values().stream().map(RegistryObject::get).toList();
+    }
+
+    public static Skill getSkill(ResourceLocation id) {
+        return skills.get(id.toString()).get();
     }
 
     public static List<SkillCategory> getSkillCategories() {
@@ -134,10 +142,6 @@ public class Registries {
                     helper.register(category.name(), category);
             });
         }
-    }
-
-    public static Skill getSkillByName(ResourceLocation id) {
-        return skills.get(id.toString()).get();
     }
 
     @Mod.EventBusSubscriber(modid = Avatar.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)

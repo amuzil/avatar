@@ -1,6 +1,5 @@
 package com.amuzil.omegasource.capability;
 
-import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.registry.Registries;
 import com.amuzil.omegasource.api.magus.skill.Skill;
@@ -8,7 +7,6 @@ import com.amuzil.omegasource.api.magus.skill.SkillCategory;
 import com.amuzil.omegasource.api.magus.skill.data.SkillCategoryData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.traits.DataTrait;
-import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SizeTrait;
 import com.amuzil.omegasource.bending.BendingSelection;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
@@ -83,11 +81,6 @@ public class Bender implements IBender {
         markDirty();
     }
 
-    private void printFormPath() {
-        LOGGER.info("Simple Forms: {}", formPath.simple());
-        LOGGER.info("Complex Forms: {}", formPath.complex());
-    }
-
     @Override
     public String toString() {
         String elementName = "";
@@ -117,7 +110,7 @@ public class Bender implements IBender {
 
             for (Skill skill: availableSkills) {
                 if (canUseSkill(skill) && skill.shouldStart(this, formPath)) {
-                    Skill newSkill = Registries.getSkillByName(skill.getId()).create(this);
+                    Skill newSkill = Registries.getSkill(skill.getId()).create(this);
 //                    skillData.add(new SkillData(newSkill)); // May not be necessary since we store skillData in Skill
 //                    formPath.clear(); // breaks Step / Dash skills
                     newSkill.start(this);
@@ -359,6 +352,11 @@ public class Bender implements IBender {
 //        }
 //        return list != null && !list.isEmpty();
 //    }
+
+    private void printFormPath() {
+        LOGGER.info("Simple Forms: {}", formPath.simple());
+        LOGGER.info("Complex Forms: {}", formPath.complex());
+    }
 
     public void printNBT() {
         CompoundTag tag = this.serializeNBT();

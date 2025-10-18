@@ -1,9 +1,9 @@
 package com.amuzil.omegasource.entity.api;
 
+import com.amuzil.omegasource.bending.form.BendingForm;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.projectile.AvatarProjectile;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +27,7 @@ public interface ICollisionModule extends IEntityModule {
 
     @FunctionalInterface
     interface EffectHandler {
-        void handle(AvatarProjectile entity, Entity hitEntity, Vec3 direction, float size);
+        void handle(AvatarProjectile entity, Entity hitEntity, BendingForm bendingForm, float size);
     }
 
     @FunctionalInterface

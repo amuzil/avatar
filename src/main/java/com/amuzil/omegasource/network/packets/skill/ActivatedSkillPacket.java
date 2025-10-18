@@ -2,7 +2,6 @@ package com.amuzil.omegasource.network.packets.skill;
 
 import com.amuzil.omegasource.api.magus.registry.Registries;
 import com.amuzil.omegasource.api.magus.skill.Skill;
-import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.network.packets.api.AvatarPacket;
 import net.minecraft.client.Minecraft;
@@ -42,7 +41,7 @@ public class ActivatedSkillPacket implements AvatarPacket {
         assert player != null;
         Bender bender = (Bender) Bender.getBender(player);
 //        Skill skill = Registries.SKILLS.get().getValue(skillId);
-        Skill skill = Registries.getSkillByName(skillId);
+        Skill skill = Registries.getSkill(skillId);
         assert skill != null;
         Skill.SkillState newSkillState = Skill.SkillState.values()[skillState];
         // If you want this to work, pass SkillUUID instead.

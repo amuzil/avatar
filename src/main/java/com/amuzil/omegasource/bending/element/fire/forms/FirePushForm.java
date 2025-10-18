@@ -9,7 +9,6 @@ import com.amuzil.omegasource.bending.skill.FireForm;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.entity.api.ICollisionModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
-import com.amuzil.omegasource.entity.modules.collision.FireCollisionModule;
 import com.amuzil.omegasource.entity.modules.collision.FireEffectModule;
 import com.amuzil.omegasource.entity.projectile.AvatarDirectProjectile;
 import com.amuzil.omegasource.utils.Constants;
@@ -23,7 +22,6 @@ public class FirePushForm extends FireForm {
 
     public FirePushForm() {
         super(Avatar.MOD_ID, "fire_push");
-        addTrait(new ColourTrait(0, 0, 0, Constants.FIRE_COLOUR));
         addTrait(new SizeTrait(Constants.SIZE, 1.5F));
         addTrait(new TimedTrait(Constants.LIFETIME, 20));
         addTrait(new SpeedTrait(Constants.SPEED, 1.5d));
@@ -64,18 +62,6 @@ public class FirePushForm extends FireForm {
 
         projectile.shoot(benderEntity.position().add(0, benderEntity.getEyeHeight(), 0), benderEntity.getLookAngle(), speed, 0);
         projectile.init();
-//        HitResult hitResult = ProjectileUtil.getHitResultOnViewVector(benderEntity, entity -> true, 15);
-//        if (hitResult instanceof EntityHitResult result) {
-//            Entity target = result.getEntity();
-//            Vec3 direction = target.position().subtract(benderEntity.position()).normalize();
-//            Vec3 pushVelocity = direction.scale(speed);
-//
-//            target.setDeltaMovement(target.getDeltaMovement().add(pushVelocity));
-//            target.hurtMarked = true;
-//            target.hasImpulse = true;
-//
-//            Avatar.LOGGER.info("Fire Push applied to {} with velocity {}", target.getName().getString(), pushVelocity);
-//        }
 
         skillData.setSkillState(SkillState.IDLE);
         bender.getEntity().level().addFreshEntity(projectile);

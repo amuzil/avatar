@@ -143,11 +143,6 @@ public class FlameStreamSkill extends FireSkill {
         LivingEntity entity = bender.getEntity();
         Level level = bender.getEntity().level();
 
-        if (skillData == null) {
-            System.out.println("SkillData is null in FlameStreamSkill.run");
-            return;
-        }
-
         int lifetime = skillData.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
         double speed = skillData.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
         double size = skillData.getTrait(Constants.SIZE, SizeTrait.class).getSize();
