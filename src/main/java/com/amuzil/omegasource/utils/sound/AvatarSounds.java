@@ -15,6 +15,8 @@ public class AvatarSounds {
 
     public static final RegistryObject<SoundEvent> AIR_GUST = register("air_gust");
 
+    public static final RegistryObject<SoundEvent> FIRE_STRIKE = register("fire_strike");
+
     private static RegistryObject<SoundEvent> register(String name) {
         return SOUND_EVENTS.register(name,
                 () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, name)));

@@ -2,7 +2,17 @@
   "air_gust": {
     "sounds": [
       {
+        "attenuation_distance": 4,
         "name": "av3:air_gust",
+        "stream": false
+      }
+    ]
+  },
+  "fire_strike": {
+    "sounds": [
+      {
+        "attenuation_distance": 4,
+        "name": "av3:fire_strike",
         "stream": false
       }
     ]

@@ -28,9 +28,9 @@ public class SimpleDamageModule implements ICollisionModule {
 
     @Override
     public void tick(AvatarEntity entity) {
-        List<LivingEntity> targets = HitDetection.getEntitiesWithinBox(entity, 0.75f, hit ->
-                        hit != entity.owner() && (!(hit instanceof AvatarEntity) || ((AvatarEntity) hit).owner() != entity.owner())
-                , LivingEntity.class);
+        List<LivingEntity> targets = HitDetection.getEntitiesWithinBox(entity, 0.75f,
+                hit -> hit != entity.owner() && (!(hit instanceof AvatarEntity) || ((AvatarEntity) hit).owner() != entity.owner()),
+                LivingEntity.class);
         DamageTrait dmg = entity.getTrait(Constants.DAMAGE, DamageTrait.class);
         if (dmg == null) {
             Avatar.LOGGER.warn("No damage trait set for SimpleDamage module. Please remove the module or add the trait to the entity.");

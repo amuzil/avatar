@@ -67,7 +67,6 @@ public class Avatar {
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
 
-        // Register Entities
         AvatarEntities.register(modEventBus);
         AvatarSounds.register(modEventBus);
 

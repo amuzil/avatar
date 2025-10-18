@@ -17,13 +17,17 @@ import com.amuzil.omegasource.entity.modules.collision.AirCollisionModule;
 import com.amuzil.omegasource.entity.modules.collision.SimpleKnockbackModule;
 import com.amuzil.omegasource.entity.modules.entity.GrowModule;
 import com.amuzil.omegasource.entity.modules.force.ChangeSpeedModule;
-import com.amuzil.omegasource.utils.sound.AvatarSounds;
 import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.maths.Point;
+import com.amuzil.omegasource.utils.sound.AvatarEntitySound;
+import com.amuzil.omegasource.utils.sound.AvatarSounds;
+import net.minecraft.client.Minecraft;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 
 import static com.amuzil.omegasource.bending.form.BendingForms.STRIKE;
 
@@ -98,7 +102,7 @@ public class AirGustSkill extends AirSkill {
         projectile.addModule(ModuleRegistry.create(GrowModule.id));
 
         projectile.addTraits(data.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
-        projectile.addTraits(new DirectionTrait("knockback_direction", new Vec3(0, 0.45, 0)));
+        projectile.addTraits(new DirectionTrait(Constants.KNOCKBACK_DIRECTION, new Vec3(0, 0.45, 0)));
         projectile.addModule(ModuleRegistry.create(SimpleKnockbackModule.id));
 
         // Damage module
@@ -117,16 +121,18 @@ public class AirGustSkill extends AirSkill {
 
         projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
         projectile.init();
-        projectile.level().playSound(null,
-                entity.getX(), entity.getY(), entity.getZ(),
-                AvatarSounds.AIR_GUST.get(), SoundSource.PLAYERS,
-                1.0F, 1.0F);
 
         bender.formPath.clear();
         data.setSkillState(SkillState.IDLE);
 
         if (!bender.getEntity().level().isClientSide) {
             bender.getEntity().level().addFreshEntity(projectile);
+        }
+        else {
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+                Minecraft.getInstance().getSoundManager()
+                        .play(new AvatarEntitySound(projectile, AvatarSounds.AIR_GUST.get(), lifetime));
+            });
         }
     }
 }

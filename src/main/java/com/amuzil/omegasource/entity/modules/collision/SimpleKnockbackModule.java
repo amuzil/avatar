@@ -4,6 +4,7 @@ import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.DirectionTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.KnockbackTrait;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.api.ICollisionModule;
+import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.modules.HitDetection;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,17 +34,18 @@ public class SimpleKnockbackModule implements ICollisionModule {
     @Override
     public void tick(AvatarEntity entity) {
         // 1.25f gives a nice, extra boost
-        List<LivingEntity> targets = HitDetection.getEntitiesWithinBox(entity, 0.75f, hit ->
-            hit != entity.owner() && (!(hit instanceof AvatarEntity) || ((AvatarEntity) hit).owner() != entity.owner())
-        , LivingEntity.class);
+        List<LivingEntity> targets = HitDetection.getEntitiesWithinBox(entity, 0.75f,
+                hit -> hit != entity.owner() && (!(hit instanceof AvatarEntity) || ((AvatarEntity) hit).owner() != entity.owner()),
+                LivingEntity.class);
 
-        Vec3 knockback = entity.getTrait("knockback_direction", DirectionTrait.class).direction();
-        float scale = (float) entity.getTrait("knockback", KnockbackTrait.class).getKnockback();
+        Vec3 knockback = entity.getTrait(Constants.KNOCKBACK_DIRECTION, DirectionTrait.class).direction();
+        float scale = (float) entity.getTrait(Constants.KNOCKBACK, KnockbackTrait.class).getKnockback();
         Vec3 motion = entity.getDeltaMovement();
 
         // TODO: make projectile entities not hit the same target multiple times
         for (LivingEntity hit : targets) {
-            hit.addDeltaMovement(motion.scale(scale).add(knockback.scale(scale)));
+            hit.addDeltaMovement(motion.add(knockback.scale(scale)));
+            hit.hurtMarked = true;
             hit.hasImpulse = true;
         }
     }
