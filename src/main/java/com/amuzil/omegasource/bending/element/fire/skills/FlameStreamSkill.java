@@ -43,7 +43,8 @@ public class FlameStreamSkill extends FireSkill {
 
         startPaths = SkillPathBuilder.getInstance()
 //                .simple(new ActiveForm(BendingForms.ARC, true))
-                .simple(new ActiveForm(BendingForms.BLOCK, true))
+                .complex(new ActiveForm(BendingForms.EXPAND, true))
+                .complex(new ActiveForm(BendingForms.BLOCK, true))
                 .build();
 
         stopPaths = SkillPathBuilder.getInstance().build();
@@ -51,7 +52,7 @@ public class FlameStreamSkill extends FireSkill {
 
     @Override
     public boolean shouldStart(Bender bender, FormPath formPath) {
-        return formPath.simple().hashCode() == startPaths().simple().hashCode();
+        return formPath.complex().hashCode() == startPaths().complex().hashCode();
     }
 
     @Override
