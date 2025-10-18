@@ -2,11 +2,11 @@ package com.amuzil.omegasource.api.magus.skill;
 
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.radix.RadixTree;
-import com.amuzil.omegasource.api.magus.skill.event.SkillTickEvent;
+import com.amuzil.omegasource.api.magus.skill.event.SkillExecutionEvent;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
+import com.amuzil.omegasource.api.magus.skill.event.SkillTickEvent;
 import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.UseTrait;
-import com.amuzil.omegasource.api.magus.registry.Registries;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.skill.ActivatedSkillPacket;
@@ -15,9 +15,13 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.EventPriority;
 
+import java.lang.reflect.Field;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 
@@ -25,16 +29,18 @@ import java.util.function.Predicate;
  * Basic skill class. All other skills extend this.
  */
 public abstract class Skill {
+    private Consumer<SkillTickEvent> run;
     private final String name;
+    private Bender bender;
+    private String skillUuid;
     private final ResourceLocation id;
     private final SkillCategory category;
     private final List<RadixTree.ActivationType> activationTypes;
     private final List<SkillType> skillTypes;
     private final List<SkillTrait> skillTraits;
+    protected SkillData skillData;
     // How the skill was activated. Useful if you want different methods to influence the skill in different ways.
-    // For complex, game-design move combinations, see ModifierData for how to alter your skills.
     protected RadixTree.ActivationType activatedType;
-    private boolean shouldStart, shouldRun, shouldStop;
     protected FormPath startPaths, runPaths, stopPaths;
 
     public Skill(String modId, String name, SkillCategory category) {
@@ -43,7 +49,8 @@ public abstract class Skill {
 
     public Skill(ResourceLocation id, String name, SkillCategory category) {
         this.id = id;
-        this. name = name;
+        this.skillUuid = UUID.randomUUID().toString();
+        this.name = name;
         this.category = category;
         // Menu is default
         this.activatedType = RadixTree.ActivationType.MENU;
@@ -51,10 +58,37 @@ public abstract class Skill {
         this.skillTraits = new LinkedList<>();
         this.activationTypes = new LinkedList<>();
 
-        // Maybe static instances of traits rather than new instances per Skill? Unsure
-        addTrait(new UseTrait("use_skill", false));
+        this.run = event -> {
+            if (bender != null) {
+                tick(bender);
+            }
+        };
 
-        Registries.registerSkill(this);
+        addTrait(new UseTrait("use_skill", false));
+//        Registries.registerSkill(this);
+    }
+
+    public Skill create(Bender bender) {
+        this.bender = bender;
+        this.skillData = bender.getSkillData(this);
+        // Should we be making another SkillData instance?
+        // Probs not since we have instances of Skills now
+        return this.cloneObject();
+    }
+
+    public Skill cloneObject() {
+        try {
+            Skill copy = this.getClass().getDeclaredConstructor().newInstance();
+            for (Field f : this.getClass().getFields()) { // Never executes
+                f.setAccessible(true);
+                f.set(copy, f.get(this));
+            }
+            copy.skillData = this.skillData;
+            copy.bender = this.bender;
+            return copy;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public boolean addTrait(SkillTrait trait) {
@@ -91,6 +125,14 @@ public abstract class Skill {
         return id;
     }
 
+    public String getSkillUuid() {
+        return skillUuid;
+    }
+
+    public void setSkillUuid(String skillUuid) {
+        this.skillUuid = skillUuid;
+    }
+
     public List<SkillTrait> getTraits() {
         return this.skillTraits;
     }
@@ -99,35 +141,59 @@ public abstract class Skill {
         return this.skillTypes;
     }
 
-    public void tick(Bender bender, FormPath formPath) {
-        if (bender.getSkillData(this).getSkillState().equals(SkillState.RUN)) {
-            if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Run(bender.getEntity(), formPath, this))) return;
-            run(bender);
-        }
-    }
-
     // Execute Skill on server
-    public void execute(Bender bender, FormPath formPath) {
-
+    public void execute(Bender bender) {
+        FormPath formPath = bender.formPath;
         // Remember, for some reason post only returns true upon the event being cancelled. Blame Forge.
         SkillData skillData = bender.getSkillData(this);
 
-        if (shouldStart(bender, formPath)) {
-            if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Start(bender.getEntity(), formPath, this))) return;
-            executeOnClient(bender.getEntity(), skillData, SkillState.START);
-            start(bender);
-        }
+        switch (skillData.getSkillState()) {
+            case START -> {
+                if (shouldStart(bender, formPath)) {
+                    if (MinecraftForge.EVENT_BUS.post(new SkillExecutionEvent.Start(bender.getEntity(), formPath, this)))
+                        return;
+                    executeOnClient(bender.getEntity(), skillData, SkillState.START);
+                    start(bender);
+                }
+            }
 
-        if (shouldRun(bender, formPath)) {
-            if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Run(bender.getEntity(), formPath, this))) return;
-            executeOnClient(bender.getEntity(), skillData, SkillState.RUN);
-            run(bender);
-        }
+            case RUN -> {
+                if (shouldRun(bender, formPath)) {
+                    if (MinecraftForge.EVENT_BUS.post(new SkillExecutionEvent.Run(bender.getEntity(), formPath, this)))
+                        return;
+                    executeOnClient(bender.getEntity(), skillData, SkillState.RUN);
+                    run(bender);
+                }
+            }
 
-        if (shouldStop(bender, formPath)) {
-            if (MinecraftForge.EVENT_BUS.post(new SkillTickEvent.Stop(bender.getEntity(), formPath, this))) return;
-            executeOnClient(bender.getEntity(), skillData, SkillState.STOP);
+            case STOP -> {
+                if (shouldStop(bender, formPath)) {
+                    if (MinecraftForge.EVENT_BUS.post(new SkillExecutionEvent.Stop(bender.getEntity(), formPath, this)))
+                        return;
+                    executeOnClient(bender.getEntity(), skillData, SkillState.STOP);
+                    stop(bender);
+                }
+            }
+        }
+    }
+
+    public void listen() {
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, SkillTickEvent.class, run);
+    }
+
+    public void hush() {
+        MinecraftForge.EVENT_BUS.unregister(run);
+    }
+
+    public void tick(Bender bender) {
+        if (shouldStop(bender, bender.formPath)) {
+            SkillData data = bender.getSkillData(this);
+            if(data != null)
+                data.setSkillState(SkillState.STOP);
             stop(bender);
+            hush();
+        } else {
+            run(bender);
         }
     }
 
@@ -145,11 +211,11 @@ public abstract class Skill {
         }
     }
 
-    public abstract FormPath getStartPaths();
+    public abstract FormPath startPaths();
 
-    public abstract FormPath getRunPaths();
+    public abstract FormPath runPaths();
 
-    public abstract FormPath getStopPaths();
+    public abstract FormPath stopPaths();
 
     public abstract boolean shouldStart(Bender bender, FormPath formPath);
 

@@ -42,7 +42,7 @@ public interface IBender extends INBTSerializable<CompoundTag> {
 
     SkillData getSkillData(Skill skill);
 
-    SkillData getSkillData(ResourceLocation id);
+    SkillData getSkillData(String name);
 
     void resetSkillData();
 
@@ -56,7 +56,7 @@ public interface IBender extends INBTSerializable<CompoundTag> {
 
     void setCanUseElement(boolean canUse, Element element);
 
-    void setCanUseSkill(boolean canUse, ResourceLocation skillId);
+    void setCanUseSkill(boolean canUse, String skillId);
 
     void setCanUseAllElements();
 

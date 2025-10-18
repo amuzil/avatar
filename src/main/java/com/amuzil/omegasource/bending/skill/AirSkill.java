@@ -5,7 +5,7 @@ import com.amuzil.omegasource.bending.BendingSkill;
 import com.amuzil.omegasource.bending.element.Elements;
 
 
-public class AirSkill extends BendingSkill {
+public abstract class AirSkill extends BendingSkill {
 
     public AirSkill(String modID, String name) {
         super(modID, name, Elements.AIR);

@@ -96,7 +96,7 @@ class CommandUtils {
             player = ctx.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = player;
         player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
-            bender.setCanUseSkill(canUse, skill.getId());
+            bender.setCanUseSkill(canUse, skill.getSkillUuid());
             bender.syncToClient();
             String action = canUse
                     ? String.format("Learned %s skill", skill.name())
@@ -123,9 +123,9 @@ class CommandUtils {
             player = ctx.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = player;
         player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
-            bender.setCanUseSkill(canUse, skill.getId());
+            bender.setCanUseSkill(canUse, skill.getSkillUuid());
             Bender ben = (Bender) bender;
-            ben.getSkillData(skill.getId()).getSkillTraits().forEach(trait -> {
+            ben.getSkillData(skill.getSkillUuid()).getSkillTraits().forEach(trait -> {
                 if (trait.name().equals(tag.getString("name"))) {
                     trait.deserializeNBT(tag);
                     bender.syncToClient();

@@ -1,4 +1,4 @@
-package com.amuzil.omegasource.bending.element.fire;
+package com.amuzil.omegasource.bending.element.fire.skills;
 
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
@@ -51,7 +51,7 @@ public class FireStrikeSkill extends FireSkill {
 
     @Override
     public boolean shouldStart(Bender bender, FormPath formPath) {
-        return formPath.simple().hashCode() == getStartPaths().simple().hashCode();
+        return formPath.simple().hashCode() == startPaths().simple().hashCode();
     }
 
     @Override
@@ -60,15 +60,14 @@ public class FireStrikeSkill extends FireSkill {
 
         LivingEntity entity = bender.getEntity();
         Level level = bender.getEntity().level();
-        SkillData data = bender.getSkillData(this);
 
-        int lifetime = data.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
-        double speed = data.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
-        double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
+        int lifetime = skillData.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
+        double speed = skillData.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
+        double size = skillData.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
         AvatarDirectProjectile projectile = new AvatarDirectProjectile(level);
-        projectile.setElement(Elements.FIRE);
-        projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
+        projectile.setElement(element());
+        projectile.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
         projectile.setOwner(entity);
         projectile.setMaxLifetime(lifetime);
         projectile.setWidth((float) size);
@@ -77,7 +76,7 @@ public class FireStrikeSkill extends FireSkill {
         projectile.setDamageable(false);
         projectile.setHittable(true);
 
-        projectile.addTraits(data.getTrait(Constants.MAX_SIZE, SizeTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.MAX_SIZE, SizeTrait.class));
 
         // Copied from the fire easing constant
         projectile.addTraits(new PointsTrait("height_curve", new Point(0.00, 0.5),  // t=0: zero width
@@ -98,23 +97,23 @@ public class FireStrikeSkill extends FireSkill {
         projectile.addModule(ModuleRegistry.create(GrowModule.id));
 
         // TODO: make more advanced knockback calculator that uses the entity's current size as well as speed (mass * velocity!!!!)
-        projectile.addTraits(data.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
         projectile.addTraits(new DirectionTrait(Constants.KNOCKBACK_DIRECTION, new Vec3(0, 0.45, 0)));
         projectile.addModule(ModuleRegistry.create(SimpleKnockbackModule.id));
 
         // Set Fire module
-        projectile.addTraits(data.getTrait(Constants.FIRE_TIME, TimedTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.FIRE_TIME, TimedTrait.class));
         projectile.addModule(ModuleRegistry.create(FireModule.id));
 
         // Damage module
-        projectile.addTraits(data.getTrait(Constants.DAMAGE, DamageTrait.class));
-        projectile.addTraits(data.getTrait(Constants.SIZE, SizeTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.DAMAGE, DamageTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.SIZE, SizeTrait.class));
 //        projectile.addModule(ModuleRegistry.create(SimpleDamageModule.id));
         projectile.addTraits(new CollisionTrait(Constants.COLLISION_TYPE, "Blaze", "Fireball", "AbstractArrow", "FireProjectile"));
         projectile.addCollisionModule((ICollisionModule) ModuleRegistry.create(FireCollisionModule.id));
 
         // Slow down over time
-        projectile.addTraits(data.getTrait(Constants.SPEED_FACTOR, SpeedTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.SPEED_FACTOR, SpeedTrait.class));
 //        projectile.addModule(ModuleRegistry.create(ChangeSpeedModule.id));
 
         // Particle FX
@@ -122,7 +121,7 @@ public class FireStrikeSkill extends FireSkill {
         projectile.init();
 
         bender.formPath.clear();
-        data.setSkillState(SkillState.IDLE);
+        skillData.setSkillState(SkillState.IDLE);
 
         if (!bender.getEntity().level().isClientSide) {
             bender.getEntity().level().addFreshEntity(projectile);

@@ -7,7 +7,6 @@ import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.traits.entitytraits.PointsTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.*;
-import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.skill.AirSkill;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.entity.api.ICollisionModule;
@@ -44,14 +43,14 @@ public class AirPullSkill extends AirSkill {
         addTrait(new StringTrait(Constants.FX, "airs_perma10"));
 
         startPaths = SkillPathBuilder.getInstance()
-                .simple(new ActiveForm(ARC, true))
+//                .simple(new ActiveForm(ARC, true))
                 .simple(new ActiveForm(PULL, true))
                 .build();
     }
 
     @Override
     public boolean shouldStart(Bender bender, FormPath formPath) {
-        return formPath.simple().hashCode() == getStartPaths().simple().hashCode();
+        return formPath.simple().hashCode() == startPaths().simple().hashCode();
     }
 
     @Override
@@ -67,7 +66,7 @@ public class AirPullSkill extends AirSkill {
         double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
         AvatarDirectProjectile projectile = new AvatarDirectProjectile(level);
-        projectile.setElement(Elements.AIR);
+        projectile.setElement(element());
         projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
         projectile.setOwner(entity);
         projectile.setMaxLifetime(lifetime);

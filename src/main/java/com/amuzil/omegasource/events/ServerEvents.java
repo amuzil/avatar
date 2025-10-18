@@ -1,11 +1,13 @@
 package com.amuzil.omegasource.events;
 
 import com.amuzil.omegasource.Avatar;
+import com.amuzil.omegasource.api.magus.skill.event.SkillTickEvent;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.capability.AvatarCapabilities;
 import com.amuzil.omegasource.capability.Bender;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -75,6 +77,8 @@ public class ServerEvents {
         if (!player.isAlive()) return;
         Bender bender = (Bender) Bender.getBender(event.getEntity());
         if (bender == null) return;
+
         bender.tick();
+        MinecraftForge.EVENT_BUS.post(new SkillTickEvent());
     }
 }

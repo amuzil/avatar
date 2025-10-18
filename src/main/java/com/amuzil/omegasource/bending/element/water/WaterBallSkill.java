@@ -9,7 +9,6 @@ import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.*;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.skill.WaterSkill;
 import com.amuzil.omegasource.capability.Bender;
-import com.amuzil.omegasource.entity.api.IAvatarProjectile;
 import com.amuzil.omegasource.entity.projectile.AvatarCurveProjectile;
 import com.amuzil.omegasource.entity.api.ICollisionModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
@@ -17,7 +16,6 @@ import com.amuzil.omegasource.entity.modules.collision.SimpleKnockbackModule;
 import com.amuzil.omegasource.entity.modules.collision.WaterCollisionModule;
 import com.amuzil.omegasource.utils.Constants;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.TraceableEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -28,7 +26,7 @@ public class WaterBallSkill extends WaterSkill {
 
     public WaterBallSkill() {
         super(Avatar.MOD_ID, "water_ball");
-        addTrait(new DamageTrait(Constants.DAMAGE, 1.5f));
+        addTrait(new DamageTrait(Constants.DAMAGE, 2.0f));
         addTrait(new SizeTrait(Constants.SIZE, 0.3F));
         addTrait(new SizeTrait(Constants.MAX_SIZE, 1.25f));
         addTrait(new KnockbackTrait(Constants.KNOCKBACK, 0.2f));
@@ -42,7 +40,7 @@ public class WaterBallSkill extends WaterSkill {
 
     @Override
     public boolean shouldStart(Bender bender, FormPath formPath) {
-        return formPath.simple().hashCode() == getStartPaths().simple().hashCode();
+        return formPath.simple().hashCode() == startPaths().simple().hashCode();
     }
 
     @Override
@@ -58,7 +56,7 @@ public class WaterBallSkill extends WaterSkill {
         double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
         AvatarCurveProjectile projectile = new AvatarCurveProjectile(level);
-        projectile.setElement(Elements.WATER);
+        projectile.setElement(element());
         projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
         projectile.setOwner(entity);
         projectile.setMaxLifetime(lifetime);

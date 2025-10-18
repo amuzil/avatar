@@ -1,4 +1,4 @@
-package com.amuzil.omegasource.bending.element.fire;
+package com.amuzil.omegasource.bending.element.fire.skills;
 
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
@@ -47,13 +47,12 @@ public class FlameStepSkill extends FireSkill {
             motion = bender.getFormPath().complex().get(0).direction();
         else
             motion = BendingForm.Type.Motion.FORWARD; // Default to forward if no motion is specified
-        SkillData data = bender.getSkillData(this);
-        int lifetime = data.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime();
-        TimedTrait time = data.getTrait(Constants.RUNTIME, TimedTrait.class);
+        int lifetime = skillData.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime();
+        TimedTrait time = skillData.getTrait(Constants.RUNTIME, TimedTrait.class);
         time.setTime(0); // Reset fall damage nullification timer
         AvatarEntity bound = new AvatarBoundProjectile(entity.level());
         bound.setElement(Elements.FIRE);
-        bound.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
+        bound.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
         bound.setOwner(entity);
         bound.setMaxLifetime(lifetime / 3);
         bound.setNoGravity(true);
@@ -62,7 +61,7 @@ public class FlameStepSkill extends FireSkill {
 
         if (!bender.getEntity().level().isClientSide()) {
             bender.getEntity().level().addFreshEntity(bound);
-            float dashSpeed = (float) Objects.requireNonNull(data.getTrait(Constants.DASH_SPEED, SpeedTrait.class)).getSpeed();
+            float dashSpeed = (float) Objects.requireNonNull(skillData.getTrait(Constants.DASH_SPEED, SpeedTrait.class)).getSpeed();
             Vec3 dashVec = Vec3.ZERO;
             switch (motion) {
                 case FORWARD ->
@@ -86,7 +85,7 @@ public class FlameStepSkill extends FireSkill {
             entity.hasImpulse = true;
         }
 
-        data.setSkillState(SkillState.RUN);
+        skillData.setSkillState(SkillState.RUN);
     }
 
     @Override

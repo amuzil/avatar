@@ -15,7 +15,6 @@ import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import com.amuzil.omegasource.entity.modules.collision.AirCollisionModule;
 import com.amuzil.omegasource.entity.modules.collision.SimpleKnockbackModule;
 import com.amuzil.omegasource.entity.modules.entity.GrowModule;
-import com.amuzil.omegasource.entity.modules.force.ChangeSpeedModule;
 import com.amuzil.omegasource.entity.projectile.AvatarDirectProjectile;
 import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.maths.Point;
@@ -39,14 +38,14 @@ public class AirSwipeSkill extends AirSkill {
         addTrait(new StringTrait(Constants.FX, "airs_perma12"));
 
         startPaths = SkillPathBuilder.getInstance()
-                .simple(new ActiveForm(SHAPE, true))
+//                .simple(new ActiveForm(SHAPE, true))
                 .simple(new ActiveForm(COMPRESS, true))
                 .build();
     }
 
     @Override
     public boolean shouldStart(Bender bender, FormPath formPath) {
-        return formPath.simple().hashCode() == getStartPaths().simple().hashCode();
+        return formPath.simple().hashCode() == startPaths().simple().hashCode();
     }
 
     @Override
@@ -62,7 +61,7 @@ public class AirSwipeSkill extends AirSkill {
         double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
         AvatarDirectProjectile projectile = new AvatarDirectProjectile(level);
-        projectile.setElement(Elements.AIR);
+        projectile.setElement(element());
         projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
         projectile.setOwner(entity);
         projectile.setMaxLifetime(lifetime);

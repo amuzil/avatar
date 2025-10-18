@@ -5,7 +5,7 @@ import com.amuzil.omegasource.bending.BendingSkill;
 import com.amuzil.omegasource.bending.element.Elements;
 
 
-public class FireSkill extends BendingSkill {
+public abstract class FireSkill extends BendingSkill {
 
     public FireSkill(String modID, String name) {
         super(modID, name, Elements.FIRE);

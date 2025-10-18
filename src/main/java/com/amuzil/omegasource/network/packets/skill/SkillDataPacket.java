@@ -14,51 +14,48 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
+import java.util.UUID;
 import java.util.function.Supplier;
 
 
-public class ActivatedSkillPacket implements AvatarPacket {
+public class SkillDataPacket implements AvatarPacket {
 
     private final ResourceLocation skillId;
-    private final int skillState; // SkillState (START, RUN, STOP, IDLE)
+    private final String skillUuId;
+    private final SkillData skillData;
 
-    public ActivatedSkillPacket(ResourceLocation skillId, int skillState) {
+    public SkillDataPacket(ResourceLocation skillId, String skillUuId, SkillData skillData) {
         this.skillId = skillId;
-        this.skillState = skillState;
+        this.skillUuId = skillUuId;
+        this.skillData = skillData;
     }
 
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeResourceLocation(skillId);
-        buf.writeInt(skillState);
+        buf.writeUUID(UUID.fromString(skillUuId));
+        buf.writeNbt(skillData.serializeNBT());
     }
 
-    public static ActivatedSkillPacket fromBytes(FriendlyByteBuf buf) {
-        return new ActivatedSkillPacket(buf.readResourceLocation(), buf.readInt());
+    public static SkillDataPacket fromBytes(FriendlyByteBuf buf) {
+//        Skill clientSkill
+//        return new SkillDataPacket(buf.readResourceLocation(), buf.readUUID().toString(), new SkillData().buf.readInt());
+        return null;
     }
 
     @OnlyIn(Dist.CLIENT)
-    private static void handleClientSide(ResourceLocation skillId, int skillState) {
+    private static void handleClientSide(ResourceLocation skillId, String skillUuId, SkillData skillData) {
         Player player = Minecraft.getInstance().player;
         assert player != null;
         Bender bender = (Bender) Bender.getBender(player);
-//        Skill skill = Registries.SKILLS.get().getValue(skillId);
-        Skill skill = Registries.getSkillByName(skillId);
+        Skill skill = Registries.SKILLS.get().getValue(skillId);
         assert skill != null;
-        Skill.SkillState newSkillState = Skill.SkillState.values()[skillState];
-        // If you want this to work, pass SkillUUID instead.
-//        System.out.println("DEBUG: ActivatedSkillPacket " + bender.getSkillData(skill) + " "  + newSkillState);
-        bender.getSkillData(skill).setSkillState(newSkillState); // Sync SkillState to client
-        switch (newSkillState) {
-            case START -> skill.start(bender);
-            case RUN -> skill.run(bender);
-            case STOP -> skill.stop(bender);
-        }
+        bender.getSkillData(skillUuId);
     }
 
     public boolean handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             if (ctx.get().getDirection().getReceptionSide().isClient()) {
-                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> handleClientSide(skillId, skillState));
+//                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> handleClientSide(skillId, skillUuId, skillState));
             }
         });
         return true;

@@ -1,4 +1,4 @@
-package com.amuzil.omegasource.bending.element.fire;
+package com.amuzil.omegasource.bending.element.fire.skills;
 
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
@@ -33,7 +33,7 @@ public class FlameStreamSkill extends FireSkill {
         addTrait(new DamageTrait(Constants.DAMAGE, 1.5f));
         addTrait(new SizeTrait(Constants.SIZE, 0.125F));
         addTrait(new SizeTrait(Constants.MAX_SIZE, 1.0f));
-        addTrait(new KnockbackTrait(Constants.KNOCKBACK, 0.4f));
+        addTrait(new KnockbackTrait(Constants.KNOCKBACK, 0.01f));
         addTrait(new ColourTrait(0, 0, 0, Constants.FIRE_COLOUR));
         addTrait(new SpeedTrait(Constants.SPEED, 0.875d));
         addTrait(new TimedTrait(Constants.LIFETIME, 15));
@@ -42,8 +42,9 @@ public class FlameStreamSkill extends FireSkill {
         addTrait(new StringTrait(Constants.FX, "fires_bloom_perma5"));
 
         startPaths = SkillPathBuilder.getInstance()
-                .simple(new ActiveForm(BendingForms.ARC, true))
-                .simple(new ActiveForm(BendingForms.BLOCK, true))
+//                .simple(new ActiveForm(BendingForms.ARC, true))
+                .complex(new ActiveForm(BendingForms.EXPAND, true))
+                .complex(new ActiveForm(BendingForms.BLOCK, true))
                 .build();
 
         stopPaths = SkillPathBuilder.getInstance().build();
@@ -51,12 +52,12 @@ public class FlameStreamSkill extends FireSkill {
 
     @Override
     public boolean shouldStart(Bender bender, FormPath formPath) {
-        return formPath.simple().hashCode() == getStartPaths().simple().hashCode();
+        return formPath.complex().hashCode() == startPaths().complex().hashCode();
     }
 
     @Override
     public boolean shouldStop(Bender bender, FormPath formPath) {
-        return formPath.simple().hashCode() == getStopPaths().simple().hashCode();
+        return formPath.simple().hashCode() == stopPaths().simple().hashCode();
     }
 
     @Override
@@ -65,15 +66,19 @@ public class FlameStreamSkill extends FireSkill {
 
         LivingEntity entity = bender.getEntity();
         Level level = bender.getEntity().level();
-        SkillData data = bender.getSkillData(this);
 
-        int lifetime = data.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
-        double speed = data.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
-        double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
+        if (skillData == null) {
+            System.out.println("SkillData is null in FlameStreamSkill.start");
+            return;
+        }
+
+        int lifetime = skillData.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
+        double speed = skillData.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
+        double size = skillData.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
         AvatarDirectProjectile projectile = new AvatarDirectProjectile(level);
-        projectile.setElement(Elements.FIRE);
-        projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
+        projectile.setElement(element());
+        projectile.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
         projectile.setOwner(entity);
         projectile.setMaxLifetime(lifetime);
         projectile.setWidth((float) size);
@@ -82,7 +87,7 @@ public class FlameStreamSkill extends FireSkill {
         projectile.setDamageable(false);
         projectile.setHittable(true);
 
-        projectile.addTraits(data.getTrait(Constants.MAX_SIZE, SizeTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.MAX_SIZE, SizeTrait.class));
 
         // Copied from the fire easing constant
         projectile.addTraits(new PointsTrait("height_curve", new Point(0.00, 0.5),  // t=0: zero width
@@ -102,23 +107,22 @@ public class FlameStreamSkill extends FireSkill {
 
         projectile.addModule(ModuleRegistry.create(GrowModule.id));
 
-        // TODO: make more advanced knockback calculator that uses the entity's current size as well as speed (mass * velocity!!!!)
-        projectile.addTraits(data.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
         projectile.addTraits(new DirectionTrait(Constants.KNOCKBACK_DIRECTION, new Vec3(0, 0.45, 0)));
         projectile.addModule(ModuleRegistry.create(SimpleKnockbackModule.id));
 
         // Set Fire module
-        projectile.addTraits(data.getTrait(Constants.FIRE_TIME, TimedTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.FIRE_TIME, TimedTrait.class));
         projectile.addModule(ModuleRegistry.create(FireModule.id));
 
         // Damage module
-        projectile.addTraits(data.getTrait(Constants.DAMAGE, DamageTrait.class));
-        projectile.addTraits(data.getTrait(Constants.SIZE, SizeTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.DAMAGE, DamageTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.SIZE, SizeTrait.class));
         projectile.addTraits(new CollisionTrait(Constants.COLLISION_TYPE, "Blaze", "Fireball", "AbstractArrow", "FireProjectile"));
         projectile.addCollisionModule((ICollisionModule) ModuleRegistry.create(FireCollisionModule.id));
 
         // Slow down over time
-        projectile.addTraits(data.getTrait(Constants.SPEED_FACTOR, SpeedTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.SPEED_FACTOR, SpeedTrait.class));
         projectile.addModule(ModuleRegistry.create(ChangeSpeedModule.id));
 
         // Particle FX
@@ -126,7 +130,7 @@ public class FlameStreamSkill extends FireSkill {
         projectile.init();
 
         bender.formPath.clear();
-        data.setSkillState(SkillState.RUN);
+        skillData.setSkillState(SkillState.RUN);
 
         if (!bender.getEntity().level().isClientSide) {
             bender.getEntity().level().addFreshEntity(projectile);
@@ -138,15 +142,19 @@ public class FlameStreamSkill extends FireSkill {
         super.run(bender);
         LivingEntity entity = bender.getEntity();
         Level level = bender.getEntity().level();
-        SkillData data = bender.getSkillData(this);
 
-        int lifetime = data.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
-        double speed = data.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
-        double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
+        if (skillData == null) {
+            System.out.println("SkillData is null in FlameStreamSkill.run");
+            return;
+        }
+
+        int lifetime = skillData.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
+        double speed = skillData.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
+        double size = skillData.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
         AvatarDirectProjectile projectile = new AvatarDirectProjectile(level);
-        projectile.setElement(Elements.FIRE);
-        projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
+        projectile.setElement(element());
+        projectile.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
         projectile.setOwner(entity);
         projectile.setMaxLifetime(lifetime);
         projectile.setWidth((float) size);
@@ -155,7 +163,7 @@ public class FlameStreamSkill extends FireSkill {
         projectile.setDamageable(false);
         projectile.setHittable(true);
 
-        projectile.addTraits(data.getTrait(Constants.MAX_SIZE, SizeTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.MAX_SIZE, SizeTrait.class));
 
         // Copied from the fire easing constant
         projectile.addTraits(new PointsTrait("height_curve", new Point(0.00, 0.5),  // t=0: zero width
@@ -175,24 +183,23 @@ public class FlameStreamSkill extends FireSkill {
 
         projectile.addModule(ModuleRegistry.create(GrowModule.id));
 
-        // TODO: make more advanced knockback calculator that uses the entity's current size as well as speed (mass * velocity!!!!)
-        projectile.addTraits(data.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
         projectile.addTraits(new DirectionTrait(Constants.KNOCKBACK_DIRECTION, new Vec3(0, 0.45, 0)));
         projectile.addModule(ModuleRegistry.create(SimpleKnockbackModule.id));
 
         // Set Fire module
-        projectile.addTraits(data.getTrait(Constants.FIRE_TIME, TimedTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.FIRE_TIME, TimedTrait.class));
         projectile.addModule(ModuleRegistry.create(FireModule.id));
 
         // Damage module
-        projectile.addTraits(data.getTrait(Constants.DAMAGE, DamageTrait.class));
-        projectile.addTraits(data.getTrait(Constants.SIZE, SizeTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.DAMAGE, DamageTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.SIZE, SizeTrait.class));
 //        projectile.addModule(ModuleRegistry.create(SimpleDamageModule.id));
         projectile.addTraits(new CollisionTrait(Constants.COLLISION_TYPE, "Blaze", "Fireball", "AbstractArrow", "FireProjectile"));
         projectile.addCollisionModule((ICollisionModule) ModuleRegistry.create(FireCollisionModule.id));
 
         // Slow down over time
-        projectile.addTraits(data.getTrait(Constants.SPEED_FACTOR, SpeedTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.SPEED_FACTOR, SpeedTrait.class));
         projectile.addModule(ModuleRegistry.create(ChangeSpeedModule.id));
 
         // Particle FX

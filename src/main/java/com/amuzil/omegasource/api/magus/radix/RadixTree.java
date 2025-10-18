@@ -35,7 +35,7 @@ public class RadixTree {
 
     public static void registerConditions(List<Condition> conditions) {
         for (Condition condition : conditions) {
-            condition.register();
+            condition.registerRunnables();
         }
     }
 
@@ -59,7 +59,7 @@ public class RadixTree {
 
     private void activateAllConditions(Node current, List<Condition> result) {
         if (current.isComplete) for (Condition condition : result)
-            condition.register();
+            condition.registerRunnables();
 
         for (RadixBranch branch : current.branches.values())
             activateAllConditions(branch.next, Stream.concat(result.stream(), branch.path.conditions.stream()).toList());
@@ -80,7 +80,7 @@ public class RadixTree {
     public void resetTree() {
         deactivateAllConditions();
         for (Condition condition : root.getImmediateBranches())
-            condition.register();
+            condition.registerRunnables();
 //        setActive(root);
     }
 

@@ -6,9 +6,10 @@ import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.LevelTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.TimedTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.XPTrait;
+import com.amuzil.omegasource.bending.element.Element;
 
 
-public class BendingSkill extends SkillActive {
+public abstract class BendingSkill extends SkillActive {
 
     public BendingSkill(String modID, String name, SkillCategory category) {
         super(modID, name, category);
@@ -17,6 +18,10 @@ public class BendingSkill extends SkillActive {
         addTrait(new LevelTrait("tier", 1));
         addTrait(new TimedTrait("max_cooldown", 40));
         addTrait(new TimedTrait("cooldown", 40));
+    }
+
+    public Element element() {
+        return (Element) getCategory();
     }
 
     public void resetCooldown(SkillData data) {

@@ -154,9 +154,10 @@ public class InputModule {
                 sendFormPacket(form, false);
             } else if (isHoldingAlt && form.type().equals(BendingForm.Type.SHAPE)) {
                 sendFormPacket(form, false);
-            } else if (form.type().equals(BendingForm.Type.INITIALIZER)) {
-                sendFormPacket(form, false);
             }
+//            else if (form.type().equals(BendingForm.Type.INITIALIZER)) {
+//                sendFormPacket(form, false);
+//            }
         }
     }
 
@@ -195,7 +196,9 @@ public class InputModule {
 
     private void releaseForm(BendingForm form, int key) {
         glfwKeysDown.remove(key);
-        sendFormPacket(form, true);
+        if (!form.type().equals(BendingForm.Type.INITIALIZER)) {
+            sendFormPacket(form, true);
+        }
     }
 
     private void sendFormPacket(BendingForm form, boolean released) {

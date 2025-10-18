@@ -6,60 +6,71 @@ import com.amuzil.omegasource.capability.Bender;
 import net.minecraft.world.entity.LivingEntity;
 
 
-public class SkillActive extends Skill {
+public abstract class SkillActive extends Skill {
 
     public SkillActive(String modID, String name, SkillCategory category) {
         super(modID, name, category);
     }
 
     @Override
-    public FormPath getStartPaths() {
+    public FormPath startPaths() {
         return startPaths;
     }
 
     @Override
-    public FormPath getRunPaths() {
+    public FormPath runPaths() {
         return runPaths;
     }
 
     @Override
-    public FormPath getStopPaths() {
+    public FormPath stopPaths() {
         return stopPaths;
     }
 
     @Override
     public boolean shouldStart(Bender bender, FormPath formPath) {
-        return formPath.hashCode() == getStartPaths().hashCode();
+        return formPath.hashCode() == startPaths().hashCode();
     }
 
     @Override
     public boolean shouldRun(Bender bender, FormPath formPath) {
-        if (getRunPaths() == null)
-            return false;
-        return formPath.hashCode() == getRunPaths().hashCode();
+        if (runPaths() == null) return false;
+        SkillData skillData = bender.getSkillData(this);
+        if (skillData == null) return false;
+        return formPath.hashCode() == runPaths().hashCode();
     }
 
     @Override
     public boolean shouldStop(Bender bender, FormPath formPath) {
-        if (getStopPaths() == null)
-            return false;
-        return formPath.hashCode() == getStopPaths().hashCode();
+        SkillData skillData = bender.getSkillData(this);
+        if (skillData == null) return true;
+
+        SkillState state = skillData.getSkillState();
+        if(state == SkillState.STOP) return true;
+
+        if (stopPaths() == null) return false;
+
+        return formPath.hashCode() == stopPaths().hashCode();
     }
 
     @Override
     public void start(Bender bender) {
-
+        bender.activeSkills.put(getSkillUuid(), this);
+        listen();
     }
 
     @Override
     public void run(Bender bender) {
-
     }
 
     @Override
     public void stop(Bender bender) {
         SkillData data = bender.getSkillData(this);
-        data.setSkillState(SkillState.IDLE);
+        if(data != null) {
+            data.setSkillState(SkillState.IDLE);
+            bender.activeSkills.remove(getSkillUuid());
+        }
+        hush();
     }
 
     @Override

@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+
 public class SyncBenderPacket implements AvatarPacket {
     private final CompoundTag tag; // The NBT data to sync
     private final UUID playerUUID; // Entity ID to send back to client
