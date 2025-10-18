@@ -61,7 +61,7 @@ public class FireStrikeSkill extends FireSkill {
         double size = skillData.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
         AvatarDirectProjectile projectile = new AvatarDirectProjectile(level);
-        projectile.setElement(Elements.FIRE);
+        projectile.setElement(element());
         projectile.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
         projectile.setOwner(entity);
         projectile.setMaxLifetime(lifetime);

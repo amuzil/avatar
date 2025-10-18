@@ -56,7 +56,7 @@ public class WaterBallSkill extends WaterSkill {
         double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
         AvatarCurveProjectile projectile = new AvatarCurveProjectile(level);
-        projectile.setElement(Elements.WATER);
+        projectile.setElement(element());
         projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
         projectile.setOwner(entity);
         projectile.setMaxLifetime(lifetime);
