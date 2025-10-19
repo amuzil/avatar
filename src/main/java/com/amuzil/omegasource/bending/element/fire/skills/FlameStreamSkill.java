@@ -21,6 +21,7 @@ import com.amuzil.omegasource.entity.modules.force.ChangeSpeedModule;
 import com.amuzil.omegasource.entity.projectile.AvatarDirectProjectile;
 import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.maths.Point;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -202,9 +203,8 @@ public class FlameStreamSkill extends FireSkill {
         projectile.init();
 
         bender.formPath.clear();
-
-        if (!bender.getEntity().level().isClientSide) {
-            bender.getEntity().level().addFreshEntity(projectile);
-        }
+        ServerLevel serverLevel = (ServerLevel) bender.getEntity().level();
+        // Ensure entity is added on the main server thread after current tick
+        serverLevel.getServer().execute(() -> serverLevel.addFreshEntity(projectile));
     }
 }

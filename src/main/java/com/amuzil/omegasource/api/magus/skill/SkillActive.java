@@ -70,7 +70,12 @@ public abstract class SkillActive extends Skill {
 
     @Override
     public void start(Bender bender) {
-        bender.activeSkills.put(getSkillUuid(), this);
+        bender.activeSkills.put(getUUID(), this);
+        this.run = event -> {
+            if (bender != null) {
+                this.tick(bender);
+            }
+        };
         listen(SkillTickEvent.class, run);
     }
 
@@ -83,10 +88,8 @@ public abstract class SkillActive extends Skill {
         SkillData data = bender.getSkillData(this);
         if (data != null) {
             data.setSkillState(SkillState.STOP);
-            bender.activeSkills.remove(getSkillUuid());
+            bender.activeSkills.remove(getUUID());
         }
-
-        // Hush is automatically handled in Skill.tick()
     }
 
     @Override

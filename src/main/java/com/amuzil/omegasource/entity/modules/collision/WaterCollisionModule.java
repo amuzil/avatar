@@ -89,7 +89,7 @@ public class WaterCollisionModule implements ICollisionModule {
                     return;
                 }
             }
-            target.hurt(entity.damageSources().dragonBreath(), damage);
+            target.hurt(entity.damageSources().drown(), damage);
         }
     }
 

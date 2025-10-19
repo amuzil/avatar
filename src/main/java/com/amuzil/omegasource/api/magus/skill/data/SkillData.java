@@ -4,14 +4,12 @@ import com.amuzil.omegasource.api.magus.radix.RadixTree;
 import com.amuzil.omegasource.api.magus.skill.Skill;
 import com.amuzil.omegasource.api.magus.skill.traits.DataTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
-import com.amuzil.omegasource.api.magus.registry.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -28,7 +26,7 @@ public class SkillData implements DataTrait {
     //The reason we're using a resource location and not the actual Skill object is because
     //it's much easier to serialise a String and then get a skill from it.
     protected ResourceLocation skillId;
-    protected String skillUuId;
+    protected String skillUUID;
     protected Skill skill;
     protected boolean canUse = true; // TODO - Temporary for testing
     protected boolean isDirty = false;
@@ -37,7 +35,7 @@ public class SkillData implements DataTrait {
     public SkillData(Skill skill) {
         this.skill = skill;
         this.skillId = skill.getId();
-        this.skillUuId = skill.getSkillUuid();
+        this.skillUUID = skill.getUUID();
         this.skillState = Skill.SkillState.IDLE;
         // NOTE: NEED to clone the traits so each SkillData has its own copy and so the Bender Capability doesn't update Registry references
         if (getSkill() != null)
@@ -103,7 +101,7 @@ public class SkillData implements DataTrait {
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
         tag.putString("Skill ID", skillId.toString());
-        tag.putString("Skill UUID", skillUuId.toString());
+        tag.putString("Skill UUID", skillUUID.toString());
         tag.putBoolean("Can Use", canUse);
         skillTraits.forEach(skillTrait -> {
             tag.put(skillTrait.name() + "_" + skillTrait.getClass().getSimpleName(), skillTrait.serializeNBT());
@@ -115,7 +113,7 @@ public class SkillData implements DataTrait {
     public void deserializeNBT(CompoundTag tag) {
         try {
             skillId = ResourceLocation.tryParse(tag.getString("Skill ID"));
-            skillUuId = tag.getString("Skill UUID");
+            skillUUID = tag.getString("Skill UUID");
             canUse = tag.getBoolean("Can Use");
             if (!skillTraits.isEmpty())
                 skillTraits.forEach(skillTrait -> {
@@ -139,8 +137,8 @@ public class SkillData implements DataTrait {
         return skillId;
     }
 
-    public String getSkillUuid() {
-        return skillUuId;
+    public String getSkillUUID() {
+        return skillUUID;
     }
 
     public Skill getSkill() {

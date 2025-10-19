@@ -17,7 +17,7 @@ public class SkillTrait implements DataTrait, Cloneable {
         try {
             return (SkillTrait) super.clone();
         } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
+            throw new AssertionError("Failed to clone SkillTrait, cloning not supported!", e);
         }
     }
 

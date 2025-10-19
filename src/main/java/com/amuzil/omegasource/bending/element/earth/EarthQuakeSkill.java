@@ -3,7 +3,6 @@ package com.amuzil.omegasource.bending.element.earth;
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
 import com.amuzil.omegasource.api.magus.form.FormPath;
-import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.event.SkillTickEvent;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.KnockbackTrait;
@@ -21,18 +20,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
-import org.apache.logging.log4j.core.jmx.Server;
 import org.joml.Vector3d;
 import org.joml.Vector3i;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.valkyrienskies.core.api.ships.LoadedServerShip;
 import org.valkyrienskies.core.api.ships.ServerShip;
-import org.valkyrienskies.core.api.ships.Ship;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 import org.valkyrienskies.mod.common.util.VectorConversionsMCKt;
-import org.valkyrienskies.mod.util.RelocationUtilKt;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -45,6 +40,7 @@ public class EarthQuakeSkill extends EarthSkill {
     private static final Logger log = LoggerFactory.getLogger(EarthQuakeSkill.class);
     OriginalBlocks originalLevelState = new OriginalBlocks();
     Map<BlockPos, ServerShip> quakingBlocks = new HashMap<>();
+    Consumer<SkillTickEvent> blockQuaker;
     private BlockPos epicenter;
     private int currentQuakeDistance = 0;
     private int ticksPassed = 0;
@@ -75,7 +71,7 @@ public class EarthQuakeSkill extends EarthSkill {
 
     @Override
     public boolean shouldRun(Bender bender, FormPath formPath) {
-        return bender.getSkillData(this).getSkillState().equals(SkillState.RUN);
+        return skillData.getSkillState().equals(SkillState.RUN);
     }
 
     @Override
@@ -85,20 +81,41 @@ public class EarthQuakeSkill extends EarthSkill {
 
     @Override
     public void start(Bender bender) {
-        super.start(bender);
         System.out.println("EarthQuakeSkill started on server");
-        int numRings = 3;
         // get player position casting as epicentre.
         epicenter = bender.getEntity().blockPosition().below();
+        System.out.println("Epicenter(start): " + epicenter);
         skillData.setSkillState(SkillState.RUN);
+        super.start(bender);
+
+
+        Level level = bender.getEntity().level();
+        ServerLevel serverLevel = (ServerLevel) level;
+
+        blockQuaker = event -> {
+            for (int i = 0; i < quakingBlocks.size(); i++) {
+                BlockPos pos = (BlockPos) quakingBlocks.keySet().toArray()[i];
+//            ServerShip quakingBlock = quakingBlocks.get(pos);
+                LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(serverLevel, pos);
+                if (serverShip != null) {
+                    EarthController earthController = EarthController.getOrCreate(serverShip, bender);
+                    earthController.applyInvariantForce(new Vector3d(0, random.nextDouble(5) / 10, 0));
+                }
+            }
+        };
+
+        this.listen(SkillTickEvent.class, blockQuaker);
     }
 
     @Override
     public void run(Bender bender) {
+        System.out.println("Epicenter(tick): " + epicenter);
         super.run(bender);
         ticksPassed++;
         Level level = bender.getEntity().level();
         ServerLevel serverLevel = (ServerLevel) level;
+
+
         if(currentQuakeDistance < 3 && ticksPassed >= 20) // todo - configurable/skilldata based
         {
             currentQuakeDistance++;
@@ -121,21 +138,11 @@ public class EarthQuakeSkill extends EarthSkill {
 
             ServerShip ship = VSUtils.createNewShipAtBlock(serverLevel, VectorConversionsMCKt.toJOML(pos), false, 1, dimensionId);
             BlockPos centerPos = VectorConversionsMCKt.toBlockPos(ship.getChunkClaim().getCenterBlockCoordinates(VSGameUtilsKt.getYRange(level), new Vector3i()));
-            System.out.println(pos.toString());
+            System.out.println(pos);
             VSUtils.relocateBlock(level, pos, centerPos, true, ship, Rotation.NONE);
 
             quakingBlocks.put(pos, ship);
         }
-//        for (int i = 0; i < quakingBlocks.size(); i++) {
-//            BlockPos pos = (BlockPos) quakingBlocks.keySet().toArray()[i];
-////            ServerShip quakingBlock = quakingBlocks.get(pos);
-//            LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(serverLevel, pos);
-//            if (serverShip != null) {
-//                EarthController earthController = EarthController.getOrCreate(serverShip, bender);
-//                earthController.applyInvariantForce(new Vector3d(0, random.nextInt(5), 0));
-//            }
-//
-//        }
 
         System.out.println("EarthQuakeSkill running on server");
     }
@@ -217,6 +224,7 @@ public class EarthQuakeSkill extends EarthSkill {
 
     @Override
     public void stop(Bender bender) {
+        this.hush(blockQuaker);
         System.out.println("EarthQuakeSkill requested stop on server");
         this.startCleanup(); // defer skill stop and removal till cleaned up blocks
     }
