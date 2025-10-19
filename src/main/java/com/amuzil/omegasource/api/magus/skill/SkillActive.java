@@ -82,7 +82,7 @@ public abstract class SkillActive extends Skill {
     public void stop(Bender bender) {
         SkillData data = bender.getSkillData(this);
         if (data != null) {
-            data.setSkillState(SkillState.IDLE);
+            data.setSkillState(SkillState.STOP);
             bender.activeSkills.remove(getSkillUuid());
         }
 

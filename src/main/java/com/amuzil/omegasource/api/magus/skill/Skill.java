@@ -143,40 +143,40 @@ public abstract class Skill {
     }
 
     // Execute Skill on server
-    public void execute(Bender bender) {
-        FormPath formPath = bender.formPath;
-        // Remember, for some reason post only returns true upon the event being cancelled. Blame Forge.
-        SkillData skillData = bender.getSkillData(this);
-
-        switch (skillData.getSkillState()) {
-            case START -> {
-                if (shouldStart(bender, formPath)) {
-                    if (MinecraftForge.EVENT_BUS.post(new SkillExecutionEvent.Start(bender.getEntity(), formPath, this)))
-                        return;
-                    executeOnClient(bender.getEntity(), skillData, SkillState.START);
-                    start(bender);
-                }
-            }
-
-            case RUN -> {
-                if (shouldRun(bender, formPath)) {
-                    if (MinecraftForge.EVENT_BUS.post(new SkillExecutionEvent.Run(bender.getEntity(), formPath, this)))
-                        return;
-                    executeOnClient(bender.getEntity(), skillData, SkillState.RUN);
-                    run(bender);
-                }
-            }
-
-            case STOP -> {
-                if (shouldStop(bender, formPath)) {
-                    if (MinecraftForge.EVENT_BUS.post(new SkillExecutionEvent.Stop(bender.getEntity(), formPath, this)))
-                        return;
-                    executeOnClient(bender.getEntity(), skillData, SkillState.STOP);
-                    stop(bender);
-                }
-            }
-        }
-    }
+//    public void execute(Bender bender) {
+//        FormPath formPath = bender.formPath;
+//        // Remember, for some reason post only returns true upon the event being cancelled. Blame Forge.
+//        SkillData skillData = bender.getSkillData(this);
+//
+//        switch (skillData.getSkillState()) {
+//            case START -> {
+//                if (shouldStart(bender, formPath)) {
+//                    if (MinecraftForge.EVENT_BUS.post(new SkillExecutionEvent.Start(bender.getEntity(), formPath, this)))
+//                        return;
+//                    executeOnClient(bender.getEntity(), skillData, SkillState.START);
+//                    start(bender);
+//                }
+//            }
+//
+//            case RUN -> {
+//                if (shouldRun(bender, formPath)) {
+//                    if (MinecraftForge.EVENT_BUS.post(new SkillExecutionEvent.Run(bender.getEntity(), formPath, this)))
+//                        return;
+//                    executeOnClient(bender.getEntity(), skillData, SkillState.RUN);
+//                    run(bender);
+//                }
+//            }
+//
+//            case STOP -> {
+//                if (shouldStop(bender, formPath)) {
+//                    if (MinecraftForge.EVENT_BUS.post(new SkillExecutionEvent.Stop(bender.getEntity(), formPath, this)))
+//                        return;
+//                    executeOnClient(bender.getEntity(), skillData, SkillState.STOP);
+//                    stop(bender);
+//                }
+//            }
+//        }
+//    }
 
     protected <T extends Event> void listen(Class<T> eventType, Consumer<T> runnable) {
         MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, eventType, runnable);
@@ -188,9 +188,6 @@ public abstract class Skill {
 
     public void tick(Bender bender) {
         if (shouldStop(bender, bender.formPath)) {
-            SkillData data = bender.getSkillData(this);
-            if (data != null)
-                data.setSkillState(SkillState.STOP);
             stop(bender);
             hush(run);
         } else {
@@ -237,7 +234,7 @@ public abstract class Skill {
         IDLE,
         START,
         RUN,
-        STOP
+        STOP,
     }
 
     /**

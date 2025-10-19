@@ -57,9 +57,7 @@ public class EarthBlockSkill extends EarthSkill {
     public void start(Bender bender) {
         super.start(bender);
 
-        if (!bender.getEntity().level().isClientSide()) {
-            assembleEarthShip(bender);
-        }
+        assembleEarthShip(bender);
 //        else if (bender.getEntity() instanceof AbstractClientPlayer benderPlayer) {
 //            AnimationStack animationStack = PlayerAnimationAccess.getPlayerAnimLayer(benderPlayer);
 ////            animationStack.addAnimLayer(null, true);

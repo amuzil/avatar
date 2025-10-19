@@ -5,6 +5,7 @@ import com.amuzil.omegasource.capability.Bender;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -48,12 +49,20 @@ public class VSUtils {
         ValkyrienSkiesMod.getVsCore().teleportShip(serverShipWorld, serverShip, shipTeleportData);
     }
 
+    public static ServerShip createNewShipAtBlock(ServerLevel level, Vector3i joml, boolean makeImmediately, int scale, String dimensionId) {
+        return VSGameUtilsKt.getShipObjectWorld(level).createNewShipAtBlock(joml, makeImmediately, scale, dimensionId);
+    }
+
     private static void getPivot(Bender bender) {
         // Calculate the pivot point in front of the player
         Vec3[] pose = new Vec3[]{bender.getEntity().position(), bender.getEntity().getLookAngle()};
         pose[1] = pose[1].scale((1.7)).add((0), (bender.getEntity().getEyeHeight()), (0));
         Vec3 newPos = pose[1].add(pose[0]);
         Vector3d pivot = new Vector3d(newPos.x, newPos.y, newPos.z);
+    }
+
+    public static void relocateBlock(Level level, BlockPos pos, BlockPos centerPos, boolean b, ServerShip ship, Rotation rotation) {
+        RelocationUtilKt.relocateBlock(level, pos, centerPos, b, ship, rotation);
     }
 
     private static @NotNull Vector3d getPivotRight(Bender bender) {
