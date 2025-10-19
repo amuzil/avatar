@@ -51,6 +51,7 @@ public class FireEffectModule implements ICollisionModule {
             if (!(entity instanceof AvatarProjectile otherEntity)) return;
             if (!proj.getOwner().equals(otherEntity.getOwner()) && entity.canBeHitByProjectile()) {
                 if (otherEntity.element().equals(Elements.FIRE)) {
+                    otherEntity.setOwner(proj.getOwner());
                     Vec3 direction = proj.getDeltaMovement();
 //                    Vec3 direction = otherEntity.position().subtract(proj.position()).normalize();
                     Vec3 pushVelocity = direction.scale(1.0);

@@ -38,7 +38,7 @@ public class AvatarEntitySound extends AbstractTickableSoundInstance {
             var player = Minecraft.getInstance().player;
             if (player != null) {
                 double distance = player.distanceTo(entity);
-                this.volume = (float) Math.max(0.0, 1.0 - (distance / 12.0)); // fade beyond 16 blocks
+                this.volume = (float) Math.max(0.0, 1.0 - (distance / 8.0)); // fade beyond 8 blocks
             }
         }
     }

@@ -7,7 +7,6 @@ import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.traits.entitytraits.PointsTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.*;
-import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.skill.AirSkill;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.entity.projectile.AvatarCurveProjectile;
@@ -19,15 +18,9 @@ import com.amuzil.omegasource.entity.modules.entity.GrowModule;
 import com.amuzil.omegasource.entity.modules.force.ChangeSpeedModule;
 import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.maths.Point;
-import com.amuzil.omegasource.utils.sound.AvatarEntitySound;
-import com.amuzil.omegasource.utils.sound.AvatarSounds;
-import net.minecraft.client.Minecraft;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
 
 import static com.amuzil.omegasource.bending.form.BendingForms.STRIKE;
 
@@ -128,11 +121,11 @@ public class AirGustSkill extends AirSkill {
         if (!bender.getEntity().level().isClientSide) {
             bender.getEntity().level().addFreshEntity(projectile);
         }
-        else {
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-                Minecraft.getInstance().getSoundManager()
-                        .play(new AvatarEntitySound(projectile, AvatarSounds.AIR_GUST.get(), lifetime));
-            });
-        }
+//        else {
+//            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+//                Minecraft.getInstance().getSoundManager()
+//                        .play(new AvatarEntitySound(projectile, AvatarSounds.AIR_GUST.get(), lifetime));
+//            });
+//        }
     }
 }
