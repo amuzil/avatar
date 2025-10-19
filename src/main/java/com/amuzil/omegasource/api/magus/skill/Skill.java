@@ -18,7 +18,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
-import java.lang.reflect.Field;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -29,7 +28,7 @@ import java.util.function.Predicate;
 /**
  * Basic skill class. All other skills extend this.
  */
-public abstract class Skill {
+public abstract class Skill implements Cloneable {
     private final String name;
     private final ResourceLocation id;
     private final SkillCategory category;
@@ -42,7 +41,7 @@ public abstract class Skill {
     // How the skill was activated. Useful if you want different methods to influence the skill in different ways.
     protected RadixTree.ActivationType activatedType;
     protected FormPath startPaths, runPaths, stopPaths;
-    private String skillUuid;
+    private String uuid;
 
     public Skill(String modId, String name, SkillCategory category) {
         this(ResourceLocation.fromNamespaceAndPath(modId, name), name, category);
@@ -50,7 +49,7 @@ public abstract class Skill {
 
     public Skill(ResourceLocation id, String name, SkillCategory category) {
         this.id = id;
-        this.skillUuid = UUID.randomUUID().toString();
+        this.uuid = UUID.randomUUID().toString();
         this.name = name;
         this.category = category;
         // Menu is default
@@ -74,21 +73,24 @@ public abstract class Skill {
         this.skillData = bender.getSkillData(this);
         // Should we be making another SkillData instance?
         // Probs not since we have instances of Skills now
-        return this.cloneObject();
+        return this.clone();
     }
 
-    public Skill cloneObject() {
+    @Override
+    public Skill clone() {
         try {
-            Skill copy = this.getClass().getDeclaredConstructor().newInstance();
-            for (Field f : this.getClass().getFields()) { // Never executes
-                f.setAccessible(true);
-                f.set(copy, f.get(this));
-            }
-            copy.skillData = this.skillData;
-            copy.bender = this.bender;
+//            Skill copy = this.getClass().getDeclaredConstructor().newInstance();
+//            for (Field f : this.getClass().getFields()) { // Never executes
+//                f.setAccessible(true);
+//                f.set(copy, f.get(this));
+//            }
+//            copy.skillData = this.skillData;
+//            copy.bender = this.bender;
+            Skill copy = (Skill) super.clone();
+            copy.setUUID(UUID.randomUUID().toString());
             return copy;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError("Failed to clone Skill, cloning not supported!", e);
         }
     }
 
@@ -126,12 +128,12 @@ public abstract class Skill {
         return id;
     }
 
-    public String getSkillUuid() {
-        return skillUuid;
+    public String getUUID() {
+        return uuid;
     }
 
-    public void setSkillUuid(String skillUuid) {
-        this.skillUuid = skillUuid;
+    public void setUUID(String uuid) {
+        this.uuid = uuid;
     }
 
     public List<SkillTrait> getTraits() {
