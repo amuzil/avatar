@@ -68,7 +68,7 @@ public abstract class Skill implements Cloneable {
         // Should we be making another SkillData instance?
         // Probs not since we have instances of Skills now
         var newInstance = this.clone();
-        newInstance.skillData = new SkillData(this);
+        newInstance.skillData = new SkillData(newInstance);
         return newInstance;
     }
 

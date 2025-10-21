@@ -39,7 +39,7 @@ import static com.amuzil.omegasource.bending.form.BendingForms.*;
 public class EarthQuakeSkill extends EarthSkill {
     private static final Logger log = LoggerFactory.getLogger(EarthQuakeSkill.class);
     OriginalBlocks originalLevelState = new OriginalBlocks();
-    Map<BlockPos, ServerShip> quakingBlocks = new HashMap<>();
+    Map<BlockPos, EarthController> quakingBlocks = new HashMap<>();
     Consumer<SkillTickEvent> blockQuaker;
     private BlockPos epicenter;
     private int currentQuakeDistance = 0;
@@ -83,7 +83,8 @@ public class EarthQuakeSkill extends EarthSkill {
     public void start(Bender bender) {
         System.out.println("EarthQuakeSkill started on server");
         // get player position casting as epicentre.
-        epicenter = bender.getEntity().blockPosition().below();
+        epicenter = bender.getEntity().blockPosition()
+                .below();
         System.out.println("Epicenter(start): " + epicenter);
         skillData.setSkillState(SkillState.RUN);
         super.start(bender);
@@ -94,13 +95,20 @@ public class EarthQuakeSkill extends EarthSkill {
 
         blockQuaker = event -> {
             for (int i = 0; i < quakingBlocks.size(); i++) {
-                BlockPos pos = (BlockPos) quakingBlocks.keySet().toArray()[i];
-//            ServerShip quakingBlock = quakingBlocks.get(pos);
-                LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(serverLevel, pos);
-                if (serverShip != null) {
-                    EarthController earthController = EarthController.getOrCreate(serverShip, bender);
-                    earthController.applyInvariantForce(new Vector3d(0, random.nextDouble(5) / 10, 0));
+                Map.Entry<BlockPos, EarthController> entry = (Map.Entry<BlockPos, EarthController>) quakingBlocks.entrySet().toArray()[i];
+                BlockPos pos = entry.getKey();
+                EarthController earthController = entry.getValue();
+                if(earthController == null) {
+                    LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(serverLevel, pos);
+                    if(serverShip == null) return;
+                    earthController = EarthController.getOrCreate(serverShip, bender);
+                    quakingBlocks.put(pos, earthController);
                 }
+                System.out.println("TICKING FORCE INSIDE LOOP");
+
+                double force = random.nextDouble(200) + 200;
+                earthController.applyInvariantForce(new Vector3d(0, force, 0));
+                System.out.println("force applied: " + force);
             }
         };
 
@@ -109,14 +117,13 @@ public class EarthQuakeSkill extends EarthSkill {
 
     @Override
     public void run(Bender bender) {
-        System.out.println("Epicenter(tick): " + epicenter);
         super.run(bender);
         ticksPassed++;
         Level level = bender.getEntity().level();
         ServerLevel serverLevel = (ServerLevel) level;
 
 
-        if(currentQuakeDistance < 3 && ticksPassed >= 20) // todo - configurable/skilldata based
+        if(currentQuakeDistance < 1 && ticksPassed >= 20) // todo - configurable/skilldata based
         {
             currentQuakeDistance++;
             ticksPassed -= 20;
@@ -126,25 +133,41 @@ public class EarthQuakeSkill extends EarthSkill {
                     pos -> !level.getBlockState(pos).isAir(),
                     true
             );
-            queue.addAll(currentRing.entrySet());
-        }
-        if(!queue.isEmpty() && ticksPassed % 2 == 0) {
             String dimensionId = VSGameUtilsKt.getDimensionId(level);
-            Map.Entry<BlockPos, BlockState> entry = queue.remove();
-            BlockPos pos = entry.getKey();
-            BlockState state = entry.getValue();
+            if(currentRing.size() > 0) {
+//                BlockPos ringOwner = (BlockPos) currentRing.keySet().toArray()[0];
+//                Map.Entry<BlockPos, BlockState> entry = currentRing.entrySet().stream().findFirst().get();
+//                BlockPos pos = entry.getKey();
+//                BlockState state = entry.getValue();
 
-            originalLevelState.add(new OriginalBlock(pos, state));
+//                originalLevelState.add(new OriginalBlock(pos, state));
+//
+//                BlockPos centerPos = VectorConversionsMCKt.toBlockPos(ship.getChunkClaim().getCenterBlockCoordinates(VSGameUtilsKt.getYRange(level), new Vector3i()));
+//                VSUtils.relocateBlock(level, pos, centerPos, true, ship, Rotation.NONE);
+                ServerShip ship = VSUtils.createNewShipAtBlock(serverLevel, VectorConversionsMCKt.toJOML(epicenter), false, 1, dimensionId);
+                BlockPos centerPos = VectorConversionsMCKt.toBlockPos(ship.getChunkClaim().getCenterBlockCoordinates(VSGameUtilsKt.getYRange(level), new Vector3i()));
 
-            ServerShip ship = VSUtils.createNewShipAtBlock(serverLevel, VectorConversionsMCKt.toJOML(pos), false, 1, dimensionId);
-            BlockPos centerPos = VectorConversionsMCKt.toBlockPos(ship.getChunkClaim().getCenterBlockCoordinates(VSGameUtilsKt.getYRange(level), new Vector3i()));
-            System.out.println(pos);
-            VSUtils.relocateBlock(level, pos, centerPos, true, ship, Rotation.NONE);
+                currentRing.forEach((pos, state) -> {
+                    originalLevelState.add(new OriginalBlock(pos, state));
 
-            quakingBlocks.put(pos, ship);
+                    System.out.println(pos);
+                    VSUtils.relocateBlock(level, pos,
+                            centerPos,
+                            true, ship, Rotation.NONE);
+
+
+                });
+
+                quakingBlocks.put(centerPos, null);
+
+//                LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(serverLevel, centerPos);
+//                EarthController earthController = EarthController.getOrCreate(serverShip, bender);
+
+            }
+
+//            queue.addAll(currentRing.entrySet());
         }
-
-        System.out.println("EarthQuakeSkill running on server");
+        System.out.println("EarthQuakeSkill is running on server");
     }
 
 
@@ -203,18 +226,19 @@ public class EarthQuakeSkill extends EarthSkill {
         sink.put(pos, state);
     }
 
-    protected Consumer<SkillTickEvent> cleanupRunnable = (skillTickEvent) -> {
-        System.out.println("EarthQuakeSkill ticking stop on server");
-        ticksStopped++;
-        if(ticksStopped >= 400) {
-            originalLevelState.restore((ServerLevel) bender.getEntity().level());
-            super.stop(bender);
-            System.out.println("EarthQuakeSkill stopped on server");
-            this.stopCleanup();
-        }
-    };
+    protected Consumer<SkillTickEvent> cleanupRunnable;
 
     public void startCleanup() {
+        cleanupRunnable = (skillTickEvent) -> {
+            System.out.println("EarthQuakeSkill ticking stop on server");
+            ticksStopped++;
+            if(ticksStopped >= 400) {
+                originalLevelState.restore((ServerLevel) bender.getEntity().level());
+                super.stop(bender);
+                System.out.println("EarthQuakeSkill stopped on server");
+                this.stopCleanup();
+            }
+        };
         this.listen(SkillTickEvent.class, cleanupRunnable);
     }
 
