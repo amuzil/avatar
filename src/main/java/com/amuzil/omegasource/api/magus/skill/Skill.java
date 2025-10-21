@@ -84,7 +84,6 @@ public abstract class Skill implements Cloneable {
 //            copy.bender = this.bender;
             Skill copy = (Skill) super.clone();
             copy.setUUID(UUID.randomUUID().toString());
-            System.out.println("duplicating skill");
             return copy;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError("Failed to clone Skill, cloning not supported!", e);
@@ -141,7 +140,8 @@ public abstract class Skill implements Cloneable {
         return this.skillTypes;
     }
 
-    // Execute Skill on server
+    // Execute Skill on server then on client
+//    @Deprecated
 //    public void execute(Bender bender) {
 //        FormPath formPath = bender.formPath;
 //        // Remember, for some reason post only returns true upon the event being cancelled. Blame Forge.

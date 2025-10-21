@@ -70,11 +70,6 @@ public class EarthQuakeSkill extends EarthSkill {
     }
 
     @Override
-    public boolean shouldRun(Bender bender, FormPath formPath) {
-        return skillData.getSkillState().equals(SkillState.RUN);
-    }
-
-    @Override
     public boolean shouldStop(Bender bender, FormPath formPath) {
         return formPath.simple().hashCode() == stopPaths().simple().hashCode();
     }
@@ -88,7 +83,6 @@ public class EarthQuakeSkill extends EarthSkill {
         System.out.println("Epicenter(start): " + epicenter);
         skillData.setSkillState(SkillState.RUN);
         super.start(bender);
-
 
         Level level = bender.getEntity().level();
         ServerLevel serverLevel = (ServerLevel) level;
@@ -122,7 +116,6 @@ public class EarthQuakeSkill extends EarthSkill {
         Level level = bender.getEntity().level();
         ServerLevel serverLevel = (ServerLevel) level;
 
-
         if(currentQuakeDistance < 1 && ticksPassed >= 20) // todo - configurable/skilldata based
         {
             currentQuakeDistance++;
@@ -134,14 +127,14 @@ public class EarthQuakeSkill extends EarthSkill {
                     true
             );
             String dimensionId = VSGameUtilsKt.getDimensionId(level);
-            if(currentRing.size() > 0) {
+            if(!currentRing.isEmpty()) {
 //                BlockPos ringOwner = (BlockPos) currentRing.keySet().toArray()[0];
 //                Map.Entry<BlockPos, BlockState> entry = currentRing.entrySet().stream().findFirst().get();
 //                BlockPos pos = entry.getKey();
 //                BlockState state = entry.getValue();
 
 //                originalLevelState.add(new OriginalBlock(pos, state));
-//
+
 //                BlockPos centerPos = VectorConversionsMCKt.toBlockPos(ship.getChunkClaim().getCenterBlockCoordinates(VSGameUtilsKt.getYRange(level), new Vector3i()));
 //                VSUtils.relocateBlock(level, pos, centerPos, true, ship, Rotation.NONE);
                 ServerShip ship = VSUtils.createNewShipAtBlock(serverLevel, VectorConversionsMCKt.toJOML(epicenter), false, 1, dimensionId);
@@ -151,11 +144,7 @@ public class EarthQuakeSkill extends EarthSkill {
                     originalLevelState.add(new OriginalBlock(pos, state));
 
                     System.out.println(pos);
-                    VSUtils.relocateBlock(level, pos,
-                            centerPos,
-                            true, ship, Rotation.NONE);
-
-
+                    VSUtils.relocateBlock(level, pos, centerPos, true, ship, Rotation.NONE);
                 });
 
                 quakingBlocks.put(centerPos, null);
@@ -167,7 +156,7 @@ public class EarthQuakeSkill extends EarthSkill {
 
 //            queue.addAll(currentRing.entrySet());
         }
-        System.out.println("EarthQuakeSkill is running on server");
+//        System.out.println("EarthQuakeSkill is running on server");
     }
 
 
@@ -250,6 +239,6 @@ public class EarthQuakeSkill extends EarthSkill {
     public void stop(Bender bender) {
         this.hush(blockQuaker);
         System.out.println("EarthQuakeSkill requested stop on server");
-        this.startCleanup(); // defer skill stop and removal till cleaned up blocks
+//        this.startCleanup(); // defer skill stop and removal till cleaned up blocks
     }
 }

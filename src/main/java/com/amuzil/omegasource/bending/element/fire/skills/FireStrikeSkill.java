@@ -31,7 +31,7 @@ public class FireStrikeSkill extends FireSkill {
         addTrait(new DamageTrait(Constants.DAMAGE, 2.5f));
         addTrait(new SizeTrait(Constants.SIZE, 0.125F));
         addTrait(new SizeTrait(Constants.MAX_SIZE, 1.25f));
-        addTrait(new KnockbackTrait(Constants.KNOCKBACK, 0.4f));
+        addTrait(new KnockbackTrait(Constants.KNOCKBACK, 0.1f));
         addTrait(new ColourTrait(0, 0, 0, Constants.FIRE_COLOUR));
         addTrait(new SpeedTrait(Constants.SPEED, 0.875d));
         addTrait(new TimedTrait(Constants.LIFETIME, 15));
@@ -91,7 +91,7 @@ public class FireStrikeSkill extends FireSkill {
 
         // TODO: make more advanced knockback calculator that uses the entity's current size as well as speed (mass * velocity!!!!)
         projectile.addTraits(skillData.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
-        projectile.addTraits(new DirectionTrait(Constants.KNOCKBACK_DIRECTION, new Vec3(0, 0.45, 0)));
+        projectile.addTraits(new DirectionTrait(Constants.KNOCKBACK_DIRECTION, new Vec3(0, 0.25, 0)));
         projectile.addModule(ModuleRegistry.create(SimpleKnockbackModule.id));
 
         // Set Fire module
