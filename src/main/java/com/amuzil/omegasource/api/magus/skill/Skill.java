@@ -58,12 +58,6 @@ public abstract class Skill implements Cloneable {
         this.skillTraits = new LinkedList<>();
         this.activationTypes = new LinkedList<>();
 
-        this.run = event -> {
-            if (bender != null) {
-                this.tick(bender);
-            }
-        };
-
         addTrait(new UseTrait("use_skill", false));
 //        Registries.registerSkill(this);
     }
