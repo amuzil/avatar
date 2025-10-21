@@ -82,10 +82,8 @@ public class EarthTossSkill extends EarthSkill {
             if (blockPos != null && VSGameUtilsKt.isBlockInShipyard(level, blockPos)) {
                 LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, blockPos);
                 if (serverShip != null) {
-                    EarthController earthController = serverShip.getAttachment(EarthController.class);
-                    if (earthController != null) {
-                        tossBlock(bender.getEntity(), earthController, serverShip);
-                    }
+                    EarthController earthController = EarthController.getOrCreate(serverShip, bender);
+                    tossBlock(bender.getEntity(), earthController, serverShip);
                 }
             }
         }
