@@ -54,7 +54,6 @@ public abstract class SkillActive extends Skill {
         SkillState state = skillData.getSkillState();
         System.out.println("state " + state);
         if (state == SkillState.RUN) return true;
-        System.out.println("MADE IT?!");
         if (runPaths() == null) return false;
         return formPath.hashCode() == runPaths().hashCode();
     }

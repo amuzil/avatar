@@ -91,7 +91,6 @@ public class EarthStepSkill extends EarthSkill {
     @Override
     public void run(Bender bender) {
         super.run(bender);
-        System.out.println("EarthStepSkill running s" + this.getUUID());
         if (!bender.getEntity().level().isClientSide()) {
             SkillData data = bender.getSkillData(this);
             bender.getEntity().fallDistance = 0.0F;

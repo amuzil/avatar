@@ -48,7 +48,7 @@ public abstract class BendingSkill extends SkillActive {
             time.setTime(time.getTime() + 1);
         } else {
             time.setTime(0);
-            data.setSkillState(SkillState.IDLE);
+            data.setSkillState(SkillState.STOP);
         }
     }
 

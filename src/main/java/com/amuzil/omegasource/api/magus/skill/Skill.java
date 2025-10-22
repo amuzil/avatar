@@ -52,8 +52,7 @@ public abstract class Skill implements Cloneable {
         this.uuid = UUID.randomUUID().toString();
         this.name = name;
         this.category = category;
-        // Menu is default
-        this.activatedType = RadixTree.ActivationType.MENU;
+        this.activatedType = RadixTree.ActivationType.MENU; // Menu is default
         this.skillTypes = new LinkedList<>();
         this.skillTraits = new LinkedList<>();
         this.activationTypes = new LinkedList<>();
@@ -71,14 +70,8 @@ public abstract class Skill implements Cloneable {
     @Override
     public Skill clone() {
         try {
-//            Skill copy = this.getClass().getDeclaredConstructor().newInstance();
-//            for (Field f : this.getClass().getFields()) { // Never executes
-//                f.setAccessible(true);
-//                f.set(copy, f.get(this));
-//            }
             Skill copy = (Skill) super.clone();
             copy.setUUID(UUID.randomUUID().toString());
-            System.out.println("copy " + copy.skillData);
             return copy;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError("Failed to clone Skill, cloning not supported!", e);
@@ -183,7 +176,7 @@ public abstract class Skill implements Cloneable {
     public void tick(Bender bender) {
         if (shouldStop(bender, bender.formPath)) {
             stop(bender);
-        } else {
+        } else if (shouldRun(bender, bender.formPath)) {
             run(bender);
         }
     }
