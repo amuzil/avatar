@@ -11,7 +11,6 @@ import net.minecraft.world.entity.LivingEntity;
 
 public abstract class SkillActive extends Skill {
 
-
     protected final EventCondition<SkillTickEvent> cdr = new EventCondition<>(SkillTickEvent.class, event -> {
         SkillData data = bender.getSkillData(name());
         if (data == null) return false;
@@ -76,14 +75,11 @@ public abstract class SkillActive extends Skill {
 
         // Initialises the skill thread runnable
         this.run = event -> {
-            if (bender != null) {
-                this.tick(bender);
-            }
+            this.tick(bender);
         };
+
         // Registers the skill thread runnable to the SkillTickEvent
-        if (shouldRun(bender, bender.formPath)) {
-            listen(SkillTickEvent.class, run);
-        }
+        listen(SkillTickEvent.class, run);
     }
 
     @Override
@@ -92,6 +88,7 @@ public abstract class SkillActive extends Skill {
 
     @Override
     public void stop(Bender bender) {
+        hush(run);
         SkillData data = bender.getSkillData(this);
         if (data != null) {
             data.setSkillState(SkillState.IDLE);

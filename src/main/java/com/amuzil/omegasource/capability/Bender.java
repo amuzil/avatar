@@ -111,9 +111,7 @@ public class Bender implements IBender {
             for (Skill skill: availableSkills) {
                 if (canUseSkill(skill) && skill.shouldStart(this, formPath)) {
                     Skill newSkill = Registries.getSkill(skill.getId()).create(this);
-
                     newSkill.start(this);
-
                     formPath.clear(); // breaks Step / Dash skills
                 }
             }

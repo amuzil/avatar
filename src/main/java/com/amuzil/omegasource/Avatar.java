@@ -14,11 +14,9 @@ import com.amuzil.omegasource.utils.sound.AvatarSounds;
 import com.amuzil.omegasource.utils.commands.AvatarCommands;
 import com.amuzil.omegasource.utils.ship.EarthController;
 import com.lowdragmc.photon.client.fx.FX;
-import com.lowdragmc.photon.client.fx.FXHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -29,7 +27,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.DeferredRegister;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.valkyrienskies.core.api.attachment.AttachmentRegistration;
@@ -43,15 +40,6 @@ public class Avatar {
     // Directly reference a log4j logger.
     public static final Logger LOGGER = LogManager.getLogger();
     public static InputModule inputModule;
-
-    public static FX fire_bloom;
-    public static FX fire_bloom_perma;
-    public static FX air_perma;
-    public static FX blue_fire;
-    public static FX blue_fire_perma;
-    public static FX orb_bloom;
-    public static FX water;
-    public static FX steam;
 
     public Avatar(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
@@ -135,18 +123,6 @@ public class Avatar {
 //                    ResourceLocation.fromNamespaceAndPath(MOD_ID, "animation"),
 //                    42, Avatar::registerPlayerAnimation);
         }
-    }
-
-    @Deprecated
-    public static void reloadFX() {
-        fire_bloom = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "fire_bloom"));
-        fire_bloom_perma = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "fires_bloom_perma5"));
-        air_perma = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "airs_perma8"));
-        blue_fire = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "blue_fire"));
-        blue_fire_perma = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "fire_bloom_perma5"));
-        orb_bloom = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "orb_bloom"));
-        water = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "water"));
-        steam = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "steam"));
     }
 
     public static String isClientOrServer(boolean isClient) {

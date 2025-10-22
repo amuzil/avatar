@@ -98,9 +98,7 @@ public class KeyBindings {
             if (Minecraft.getInstance().screen != null) return; // Ignore input when in GUI
             if (key.getKey() == toggleBendingKey.getKey().getValue()
                 && key.getAction() == InputConstants.RELEASE) {
-
                 Avatar.inputModule.toggleListeners();
-                Avatar.reloadFX();
             }
         }
     }
