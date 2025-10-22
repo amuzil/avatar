@@ -213,6 +213,7 @@ public class EarthQuakeSkill extends EarthSkill {
 
     @Override
     public void stop(Bender bender) {
+        super.stop(bender);
         this.hush(blockQuaker);
         System.out.println("EarthQuakeSkill requested stop on server");
 //        this.startCleanup(); // defer skill stop and removal till cleaned up blocks

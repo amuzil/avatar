@@ -176,7 +176,7 @@ public abstract class Skill implements Cloneable {
     public void tick(Bender bender) {
         if (shouldStop(bender, bender.formPath)) {
             stop(bender);
-        } else if (shouldRun(bender, bender.formPath)) {
+        } else {
             run(bender);
         }
     }
