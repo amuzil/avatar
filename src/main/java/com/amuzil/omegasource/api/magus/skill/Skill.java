@@ -64,12 +64,8 @@ public abstract class Skill implements Cloneable {
 
     public Skill create(Bender bender) {
         this.bender = bender;
-//        this.skillData = bender.getSkillData(this);
-        // Should we be making another SkillData instance?
-        // Probs not since we have instances of Skills now
-        var newInstance = this.clone();
-        newInstance.skillData = new SkillData(newInstance);
-        return newInstance;
+        this.skillData = bender.getSkillData(this);
+        return this.clone();
     }
 
     @Override
@@ -80,10 +76,9 @@ public abstract class Skill implements Cloneable {
 //                f.setAccessible(true);
 //                f.set(copy, f.get(this));
 //            }
-//            copy.skillData = this.skillData;
-//            copy.bender = this.bender;
             Skill copy = (Skill) super.clone();
             copy.setUUID(UUID.randomUUID().toString());
+            System.out.println("copy " + copy.skillData);
             return copy;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError("Failed to clone Skill, cloning not supported!", e);

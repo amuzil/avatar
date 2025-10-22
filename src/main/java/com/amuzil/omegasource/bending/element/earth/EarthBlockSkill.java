@@ -77,6 +77,7 @@ public class EarthBlockSkill extends EarthSkill {
     @Override
     public void run(Bender bender) {
         super.run(bender);
+        System.out.println("NO!!!");
         if (!bender.getEntity().level().isClientSide()) {
             ServerLevel serverLevel = (ServerLevel) bender.getEntity().level();
             BlockPos blockPos = bender.getSelection().blockPos();
@@ -87,6 +88,7 @@ public class EarthBlockSkill extends EarthSkill {
                     EarthController earthController = EarthController.getOrCreate(serverShip, bender);
                     earthController.setControlled(true);
                     controlBlock(serverShip, serverShipWorld, serverLevel, bender);
+                    System.out.println("UUUHHH?!?!?!");
                 }
             }
         }

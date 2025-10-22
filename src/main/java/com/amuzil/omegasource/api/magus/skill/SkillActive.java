@@ -50,9 +50,13 @@ public abstract class SkillActive extends Skill {
 
     @Override
     public boolean shouldRun(Bender bender, FormPath formPath) {
-        if (runPaths() == null) return false;
         SkillData skillData = bender.getSkillData(this);
         if (skillData == null) return false;
+        SkillState state = skillData.getSkillState();
+        System.out.println("state " + state);
+        if (state == SkillState.RUN) return true;
+        System.out.println("MADE IT?!");
+        if (runPaths() == null) return false;
         return formPath.hashCode() == runPaths().hashCode();
     }
 
@@ -60,12 +64,9 @@ public abstract class SkillActive extends Skill {
     public boolean shouldStop(Bender bender, FormPath formPath) {
         SkillData skillData = bender.getSkillData(this);
         if (skillData == null) return true;
-
         SkillState state = skillData.getSkillState();
         if (state == SkillState.STOP) return true;
-
         if (stopPaths() == null) return false;
-
         return formPath.hashCode() == stopPaths().hashCode();
     }
 
@@ -80,7 +81,9 @@ public abstract class SkillActive extends Skill {
             }
         };
         // Registers the skill thread runnable to the SkillTickEvent
-        listen(SkillTickEvent.class, run);
+        if (shouldRun(bender, bender.formPath)) {
+            listen(SkillTickEvent.class, run);
+        }
     }
 
     @Override
@@ -91,7 +94,7 @@ public abstract class SkillActive extends Skill {
     public void stop(Bender bender) {
         SkillData data = bender.getSkillData(this);
         if (data != null) {
-            data.setSkillState(SkillState.STOP);
+            data.setSkillState(SkillState.IDLE);
             bender.activeSkills.remove(getUUID());
         }
     }

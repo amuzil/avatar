@@ -81,7 +81,7 @@ public class EarthQuakeSkill extends EarthSkill {
         // get player position casting as epicentre.
         epicenter = bender.getEntity().blockPosition()
                 .below();
-        System.out.println("Epicenter(start): " + epicenter);
+        System.out.println("Epicenter: " + epicenter);
         skillData.setSkillState(SkillState.RUN);
         super.start(bender);
 
@@ -112,11 +112,12 @@ public class EarthQuakeSkill extends EarthSkill {
     @Override
     public void run(Bender bender) {
         super.run(bender);
+        System.out.println("EarthQuakeSkill is running on server");
         ticksPassed++;
         Level level = bender.getEntity().level();
         ServerLevel serverLevel = (ServerLevel) level;
 
-        if(currentQuakeDistance < 1 && ticksPassed >= 20) {
+        if (currentQuakeDistance < 1 && ticksPassed >= 20) {
             currentQuakeDistance++;
             ticksPassed -= 20;
 
@@ -132,7 +133,6 @@ public class EarthQuakeSkill extends EarthSkill {
             }
 //            queue.addAll(currentRing.entrySet());
         }
-//        System.out.println("EarthQuakeSkill is running on server");
     }
 
 
