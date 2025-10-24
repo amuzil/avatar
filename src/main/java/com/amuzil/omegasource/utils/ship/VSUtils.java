@@ -118,7 +118,7 @@ public class VSUtils {
                 shipyardBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipyardPos));
             } else {
                 LoadedServerShip ship = VSGameUtilsKt.getShipObjectManagingPos(level, blockPos);
-                assert ship != null;
+                if (ship == null) return null;
                 Vector3dc shipyardPos = ship.getTransform().getPositionInShip();
                 shipyardBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipyardPos));
             }
@@ -126,30 +126,18 @@ public class VSUtils {
         return shipyardBlockPos;
     }
 
-    public static BlockPos assembleEarthShip(Bender bender, List<BlockPos> blockPositions) {
+    public static BlockPos assembleEarthRingShip(Bender bender, List<BlockPos> blockPositions) {
         BlockPos shipyardBlockPos = null;
         ServerLevel level = (ServerLevel) bender.getEntity().level();
         if (!blockPositions.isEmpty()) {
             BlockPos coreBlockPos = blockPositions.get(0);
             BlockState coreBlockState = level.getBlockState(coreBlockPos);
             String dimensionId = VSGameUtilsKt.getDimensionId(level);
-            BlockPos selectedCentre = null;
-            int deltaX, deltaY, deltaZ;
-            double avgX = 0, avgY = 0, avgZ = 0;
-            for (BlockPos pos : blockPositions) {
-                avgX += pos.getX();
-                avgY += pos.getY();
-                avgZ += pos.getZ();
-            }
-            int centerX = (int) Math.round(avgX / blockPositions.size());
-            int centerY = (int) Math.round(avgY / blockPositions.size());
-            int centerZ = (int) Math.round(avgZ / blockPositions.size());
-            BlockPos holeCenter = new BlockPos(centerX, centerY, centerZ);
+            BlockPos holeCenter = getHoleCenter(blockPositions);
             ServerShip ship = VSGameUtilsKt.getShipObjectWorld(level).createNewShipAtBlock(VectorConversionsMCKt.toJOML(holeCenter), false, 1, dimensionId);
             BlockPos centerPos = VectorConversionsMCKt.toBlockPos(ship.getChunkClaim().getCenterBlockCoordinates(VSGameUtilsKt.getYRange(level), new Vector3i()));
 
             if (!VSGameUtilsKt.isBlockInShipyard(level, holeCenter) && !coreBlockState.isAir()) {
-                System.out.println("ASSEMBLING SHIP");
                 for (BlockPos blockPos: blockPositions) {
                     BlockState blockState = level.getBlockState(blockPos);
                     bender.getSelection().addOriginalBlocks(ship.getId(), blockPos, blockState);
@@ -169,6 +157,19 @@ public class VSUtils {
         return shipyardBlockPos;
     }
 
+    private static @NotNull BlockPos getHoleCenter(List<BlockPos> blockPositions) {
+        double avgX = 0, avgY = 0, avgZ = 0;
+        for (BlockPos pos : blockPositions) {
+            avgX += pos.getX();
+            avgY += pos.getY();
+            avgZ += pos.getZ();
+        }
+        int centerX = (int) Math.round(avgX / blockPositions.size());
+        int centerY = (int) Math.round(avgY / blockPositions.size());
+        int centerZ = (int) Math.round(avgZ / blockPositions.size());
+        return new BlockPos(centerX, centerY, centerZ);
+    }
+
     public static void assembleEarthShip2(Bender bender, List<BlockPos> blockPositions) {
         if (blockPositions == null || blockPositions.isEmpty()) return;
 
@@ -186,16 +187,7 @@ public class VSUtils {
         if (validBlocks.isEmpty()) return;
 
         // 🔹 Compute the geometric center of all blocks for ship creation
-        double avgX = 0, avgY = 0, avgZ = 0;
-        for (BlockPos pos : validBlocks) {
-            avgX += pos.getX();
-            avgY += pos.getY();
-            avgZ += pos.getZ();
-        }
-        int centerX = (int) Math.round(avgX / validBlocks.size());
-        int centerY = (int) Math.round(avgY / validBlocks.size());
-        int centerZ = (int) Math.round(avgZ / validBlocks.size());
-        BlockPos centerPos = new BlockPos(centerX, centerY, centerZ);
+        BlockPos centerPos = getHoleCenter(validBlocks);
 
         // 🔹 Create a new ship centered on the group
         ServerShip ship = VSGameUtilsKt.getShipObjectWorld(level)

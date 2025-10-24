@@ -12,6 +12,7 @@ import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.ship.EarthController;
 import com.amuzil.omegasource.utils.ship.OriginalBlocks;
+import com.amuzil.omegasource.utils.ship.VSUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
@@ -28,8 +29,6 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static com.amuzil.omegasource.bending.form.BendingForms.*;
-import static com.amuzil.omegasource.utils.ship.VSUtils.assembleEarthShip;
-import static com.amuzil.omegasource.utils.ship.VSUtils.assembleEarthShip2;
 
 
 public class EarthQuakeSkill extends EarthSkill {
@@ -76,7 +75,6 @@ public class EarthQuakeSkill extends EarthSkill {
         startRun(bender);
 
         epicenter = bender.getEntity().blockPosition().below();
-        System.out.println("Epicenter: " + epicenter);
         Level level = bender.getEntity().level();
         ServerLevel serverLevel = (ServerLevel) level;
 
@@ -85,16 +83,17 @@ public class EarthQuakeSkill extends EarthSkill {
                 Map.Entry<BlockPos, EarthController> entry = (Map.Entry<BlockPos, EarthController>) quakingBlocks.entrySet().toArray()[i];
                 BlockPos pos = entry.getKey();
                 EarthController earthController = entry.getValue();
-                if(earthController == null) {
-                    LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(serverLevel, pos);
-                    if(serverShip == null) return;
-                    earthController = EarthController.getOrCreate(serverShip, bender);
-                    quakingBlocks.put(pos, earthController);
+                LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(serverLevel, pos);
+                if (serverShip != null) {
+                    if (earthController == null)
+                        earthController = EarthController.getOrCreate(serverShip, bender);
+                    double gravity = 10; // Acceleration due to gravity
+                    double mass = serverShip.getInertiaData().getMass(); // Mass of the ship
+                    double requiredForce = (gravity * mass) * 1; // Force needed to counteract gravity
+                    Vector3d force = new Vector3d(0, requiredForce, 0);
+                    earthController.applyInvariantForce(force);
+                    System.out.println("force applied: " + force);
                 }
-
-                double force = random.nextDouble(200) + 800;
-                earthController.applyInvariantForce(new Vector3d(0, force, 0));
-                System.out.println("force applied: " + force);
             }
         };
 
@@ -120,7 +119,7 @@ public class EarthQuakeSkill extends EarthSkill {
             );
 
             if (!currentRing.isEmpty()) {
-                BlockPos centerPos = assembleEarthShip(bender, currentRing.keySet().stream().toList());
+                BlockPos centerPos = VSUtils.assembleEarthRingShip(bender, currentRing.keySet().stream().toList());
                 quakingBlocks.put(centerPos, null);
             }
         }
