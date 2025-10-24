@@ -7,6 +7,7 @@ import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.LevelTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.TimedTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.XPTrait;
 import com.amuzil.omegasource.bending.element.Element;
+import com.amuzil.omegasource.capability.Bender;
 
 
 public abstract class BendingSkill extends SkillActive {
@@ -24,6 +25,15 @@ public abstract class BendingSkill extends SkillActive {
         return (Element) getCategory();
     }
 
+    // Ensure SkillState gets set to RUN before super.start() is called so run() executes on 1st try
+    public void startRun(Bender bender) {
+        skillData.setSkillState(SkillState.RUN);
+        super.start(bender);
+    }
+
+    public void stopRun() {
+        skillData.setSkillState(SkillState.STOP);
+    }
 
     // TODO: Update cooldown methods to use cooldown runnable in Skill
     public void resetCooldown(SkillData data) {

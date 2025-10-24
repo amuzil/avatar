@@ -11,23 +11,17 @@ import com.amuzil.omegasource.bending.skill.EarthSkill;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.ship.EarthController;
-import com.amuzil.omegasource.utils.ship.OriginalBlock;
 import com.amuzil.omegasource.utils.ship.OriginalBlocks;
-import com.amuzil.omegasource.utils.ship.VSUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Vector3d;
-import org.joml.Vector3i;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.valkyrienskies.core.api.ships.LoadedServerShip;
-import org.valkyrienskies.core.api.ships.ServerShip;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
-import org.valkyrienskies.mod.common.util.VectorConversionsMCKt;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -79,12 +73,10 @@ public class EarthQuakeSkill extends EarthSkill {
     public void start(Bender bender) {
         System.out.println("EarthQuakeSkill started on server");
         // get player position casting as epicentre.
-        epicenter = bender.getEntity().blockPosition()
-                .below();
-        System.out.println("Epicenter: " + epicenter);
-        skillData.setSkillState(SkillState.RUN);
-        super.start(bender);
+        startRun(bender);
 
+        epicenter = bender.getEntity().blockPosition().below();
+        System.out.println("Epicenter: " + epicenter);
         Level level = bender.getEntity().level();
         ServerLevel serverLevel = (ServerLevel) level;
 

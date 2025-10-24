@@ -52,7 +52,6 @@ public abstract class SkillActive extends Skill {
         SkillData skillData = bender.getSkillData(this);
         if (skillData == null) return false;
         SkillState state = skillData.getSkillState();
-        System.out.println("state " + state);
         if (state == SkillState.RUN) return true;
         if (runPaths() == null) return false;
         return formPath.hashCode() == runPaths().hashCode();
@@ -69,7 +68,7 @@ public abstract class SkillActive extends Skill {
     }
 
     @Override
-    public void start(Bender bender) {
+    public void start(Bender bender) { // If using run method, call this super last or after setting SkillState to RUN!
         bender.activeSkills.put(getUUID(), this);
 
         // Initialises the skill thread runnable
@@ -86,24 +85,23 @@ public abstract class SkillActive extends Skill {
         // We should not run tick listener by default for every Skill because this causes a runaway tick runnable for
         // one shot Skills that only use start() method. In other words, every skill would need to define or specify
         // how their skill shouldStop just to remove the listener.
-        if (!shouldRun(bender, bender.formPath)) {
+        if (!shouldRun(bender, bender.formPath))
             hush(run);
-        }
     }
 
     @Override
     public void stop(Bender bender) {
+        bender.activeSkills.remove(getUUID());
         hush(run);
-        SkillData data = bender.getSkillData(this);
-        if (data != null) {
-            data.setSkillState(SkillState.IDLE);
-            bender.activeSkills.remove(getUUID());
-        }
+        if (skillData != null)
+            skillData.setSkillState(SkillState.IDLE);
     }
 
     @Override
     public void reset(LivingEntity entity) {
-
+        if (skillData != null) {
+            skillData.setSkillState(SkillState.IDLE);
+        }
     }
 
     protected void cooldown() {
