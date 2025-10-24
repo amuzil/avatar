@@ -39,7 +39,7 @@ public class EarthBlockSkill extends EarthSkill {
 
         this.stopPaths = SkillPathBuilder.getInstance()
                 .simple(new ActiveForm(STRIKE, true))
-                .build();
+                .build(); // TODO: Make this BLOCK Form so it's like a toggle if already controlling selected Block
     }
 
     @Override

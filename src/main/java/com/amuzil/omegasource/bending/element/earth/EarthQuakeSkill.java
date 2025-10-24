@@ -29,6 +29,7 @@ import java.util.function.Predicate;
 
 import static com.amuzil.omegasource.bending.form.BendingForms.*;
 import static com.amuzil.omegasource.utils.ship.VSUtils.assembleEarthShip;
+import static com.amuzil.omegasource.utils.ship.VSUtils.assembleEarthShip2;
 
 
 public class EarthQuakeSkill extends EarthSkill {
@@ -41,7 +42,6 @@ public class EarthQuakeSkill extends EarthSkill {
     private int ticksPassed = 0;
     private int ticksStopped = 0;
     private Random random = new Random();
-    private Queue<Map.Entry<BlockPos, BlockState>> queue = new ArrayDeque<>();
 
     public EarthQuakeSkill() {
         super(Avatar.MOD_ID, "earth_quake");
@@ -92,7 +92,7 @@ public class EarthQuakeSkill extends EarthSkill {
                     quakingBlocks.put(pos, earthController);
                 }
 
-                double force = random.nextDouble(200) + 200;
+                double force = random.nextDouble(200) + 800;
                 earthController.applyInvariantForce(new Vector3d(0, force, 0));
                 System.out.println("force applied: " + force);
             }
@@ -119,14 +119,20 @@ public class EarthQuakeSkill extends EarthSkill {
                     true
             );
 
-            if(!currentRing.isEmpty()) {
-                assembleEarthShip(bender, currentRing.keySet().stream().toList());
-//                quakingBlocks.put(centerPos, null);
+            if (!currentRing.isEmpty()) {
+                BlockPos centerPos = assembleEarthShip(bender, currentRing.keySet().stream().toList());
+                quakingBlocks.put(centerPos, null);
             }
-//            queue.addAll(currentRing.entrySet());
         }
     }
 
+    @Override
+    public void stop(Bender bender) {
+        super.stop(bender);
+        this.hush(blockQuaker);
+        System.out.println("EarthQuakeSkill requested stop on server");
+//        this.startCleanup(); // defer skill stop and removal till cleaned up blocks
+    }
 
     public static LinkedHashMap<BlockPos, BlockState> collectRing(LevelReader level,
                                                                          BlockPos epicentre,
@@ -201,13 +207,5 @@ public class EarthQuakeSkill extends EarthSkill {
 
     public void stopCleanup() {
         this.hush(cleanupRunnable);
-    }
-
-    @Override
-    public void stop(Bender bender) {
-        super.stop(bender);
-        this.hush(blockQuaker);
-        System.out.println("EarthQuakeSkill requested stop on server");
-//        this.startCleanup(); // defer skill stop and removal till cleaned up blocks
     }
 }
