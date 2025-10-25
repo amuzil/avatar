@@ -150,24 +150,45 @@ public class VSUtils {
                     RelocationUtilKt.relocateBlock(level, blockPos, targetPos, true, ship, Rotation.NONE);
                 }
                 bender.getSelection().addOriginalBlocks(ship.getId(), originalBlocks);
-            Vector3dc shipyardPos = ship.getTransform().getPositionInShip();
-            shipyardBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipyardPos));
+                Vector3dc shipyardPos = ship.getTransform().getPositionInShip();
+                shipyardBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipyardPos));
             }
         }
         return shipyardBlockPos;
     }
 
-    private static @NotNull BlockPos getHoleCenter(List<BlockPos> blockPositions) {
-        double avgX = 0, avgY = 0, avgZ = 0;
-        for (BlockPos pos : blockPositions) {
-            avgX += pos.getX();
-            avgY += pos.getY();
-            avgZ += pos.getZ();
+    public static BlockPos assembleEarthShip(Bender bender, List<BlockPos> blockPositions) {
+        BlockPos shipyardBlockPos = null;
+        ServerLevel level = (ServerLevel) bender.getEntity().level();
+        if (!blockPositions.isEmpty()) {
+            BlockPos coreBlockPos = blockPositions.get(0);
+            BlockState coreBlockState = level.getBlockState(coreBlockPos);
+            String dimensionId = VSGameUtilsKt.getDimensionId(level);
+            ServerShip ship = VSGameUtilsKt.getShipObjectWorld(level).createNewShipAtBlock(VectorConversionsMCKt.toJOML(coreBlockPos), false, 1, dimensionId);
+            BlockPos centerPos = VectorConversionsMCKt.toBlockPos(ship.getChunkClaim().getCenterBlockCoordinates(VSGameUtilsKt.getYRange(level), new Vector3i()));
+            BlockPos selectedCentre = null;
+            int deltaX, deltaY, deltaZ;
+            if (!VSGameUtilsKt.isBlockInShipyard(level, coreBlockPos) && !coreBlockState.isAir()) {
+                OriginalBlocks originalBlocks = new OriginalBlocks();
+                for (BlockPos blockPos: blockPositions) {
+                    BlockState blockState = level.getBlockState(blockPos);
+                    originalBlocks.add(new OriginalBlock(blockPos, blockState));
+                    if (selectedCentre == null) {
+                        selectedCentre = blockPos;
+                        RelocationUtilKt.relocateBlock(level, selectedCentre, centerPos, true, ship, Rotation.NONE);
+                    } else {
+                        deltaX = selectedCentre.getX() - blockPos.getX();
+                        deltaY = selectedCentre.getY() - blockPos.getY();
+                        deltaZ = selectedCentre.getZ() - blockPos.getZ();
+                        RelocationUtilKt.relocateBlock(level, blockPos, centerPos.offset(deltaX, deltaY, deltaZ), true, ship, Rotation.NONE);
+                    }
+                }
+                bender.getSelection().addOriginalBlocks(ship.getId(), originalBlocks);
+                Vector3dc shipyardPos = ship.getTransform().getPositionInShip();
+                shipyardBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipyardPos));
+            }
         }
-        int centerX = (int) Math.round(avgX / blockPositions.size());
-        int centerY = (int) Math.round(avgY / blockPositions.size());
-        int centerZ = (int) Math.round(avgZ / blockPositions.size());
-        return new BlockPos(centerX, centerY, centerZ);
+        return shipyardBlockPos;
     }
 
     public static void assembleEarthShip2(Bender bender, List<BlockPos> blockPositions) {
@@ -209,6 +230,19 @@ public class VSUtils {
         Vector3dc shipyardPos = ship.getTransform().getPositionInShip();
         BlockPos shipyardBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipyardPos));
         bender.getSelection().setBlockPos(shipyardBlockPos);
+    }
+
+    private static @NotNull BlockPos getHoleCenter(List<BlockPos> blockPositions) {
+        double avgX = 0, avgY = 0, avgZ = 0;
+        for (BlockPos pos : blockPositions) {
+            avgX += pos.getX();
+            avgY += pos.getY();
+            avgZ += pos.getZ();
+        }
+        int centerX = (int) Math.round(avgX / blockPositions.size());
+        int centerY = (int) Math.round(avgY / blockPositions.size());
+        int centerZ = (int) Math.round(avgZ / blockPositions.size());
+        return new BlockPos(centerX, centerY, centerZ);
     }
 
 }
