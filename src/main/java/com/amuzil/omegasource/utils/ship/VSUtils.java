@@ -138,18 +138,18 @@ public class VSUtils {
             BlockPos centerPos = VectorConversionsMCKt.toBlockPos(ship.getChunkClaim().getCenterBlockCoordinates(VSGameUtilsKt.getYRange(level), new Vector3i()));
 
             if (!VSGameUtilsKt.isBlockInShipyard(level, holeCenter) && !coreBlockState.isAir()) {
+                OriginalBlocks originalBlocks = new OriginalBlocks();
                 for (BlockPos blockPos: blockPositions) {
                     BlockState blockState = level.getBlockState(blockPos);
-                    bender.getSelection().addOriginalBlocks(ship.getId(), blockPos, blockState);
+                    originalBlocks.add(new OriginalBlock(blockPos, blockState));
                     int dx = blockPos.getX() - holeCenter.getX();
                     int dy = blockPos.getY() - holeCenter.getY();
                     int dz = blockPos.getZ() - holeCenter.getZ();
-
                     BlockPos targetPos = centerPos.offset(dx, dy, dz);
 
                     RelocationUtilKt.relocateBlock(level, blockPos, targetPos, true, ship, Rotation.NONE);
                 }
-//            ship.setStatic(true);
+                bender.getSelection().addOriginalBlocks(ship.getId(), originalBlocks);
             Vector3dc shipyardPos = ship.getTransform().getPositionInShip();
             shipyardBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipyardPos));
             }

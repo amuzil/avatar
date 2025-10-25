@@ -33,7 +33,8 @@ import static com.amuzil.omegasource.bending.form.BendingForms.*;
 
 public class EarthQuakeSkill extends EarthSkill {
     private static final Logger log = LoggerFactory.getLogger(EarthQuakeSkill.class);
-    OriginalBlocks originalLevelState = new OriginalBlocks();
+    OriginalBlocks originalBlocks = new OriginalBlocks();
+    protected Consumer<SkillTickEvent> cleanupRunnable;
     Map<BlockPos, EarthController> quakingBlocks = new HashMap<>();
     Consumer<SkillTickEvent> blockQuaker;
     private BlockPos epicenter;
@@ -70,9 +71,8 @@ public class EarthQuakeSkill extends EarthSkill {
 
     @Override
     public void start(Bender bender) {
-        System.out.println("EarthQuakeSkill started");
-        // get player position casting as epicentre.
         startRun(bender);
+        System.out.println("EarthQuakeSkill started");
 
         epicenter = bender.getEntity().blockPosition().below();
         Level level = bender.getEntity().level();
@@ -89,10 +89,12 @@ public class EarthQuakeSkill extends EarthSkill {
                         earthController = EarthController.getOrCreate(serverShip, bender);
                     double gravity = 10; // Acceleration due to gravity
                     double mass = serverShip.getInertiaData().getMass(); // Mass of the ship
-                    double requiredForce = (gravity * mass) * 0.8; // Force needed to counteract gravity
+                    double pulse = random.nextDouble(0.4) + 0.3;
+                    System.out.println(pulse);
+                    double requiredForce = (gravity * mass) * pulse; // Force needed to counteract gravity
                     Vector3d force = new Vector3d(0, requiredForce, 0);
                     earthController.applyInvariantForce(force);
-//                    System.out.println("force applied: " + force);
+                    System.out.println("force applied: " + force);
                 }
             }
         };
@@ -106,7 +108,6 @@ public class EarthQuakeSkill extends EarthSkill {
 //        System.out.println("EarthQuakeSkill is running on server");
         ticksPassed++;
         Level level = bender.getEntity().level();
-        ServerLevel serverLevel = (ServerLevel) level;
 
         if (currentQuakeDistance < 1 && ticksPassed >= 20) {
             currentQuakeDistance++;
@@ -188,16 +189,12 @@ public class EarthQuakeSkill extends EarthSkill {
         sink.put(pos, state);
     }
 
-    protected Consumer<SkillTickEvent> cleanupRunnable;
-
     public void startCleanup() {
         cleanupRunnable = (skillTickEvent) -> {
-            System.out.println("EarthQuakeSkill ticking stop on server");
             ticksStopped++;
-            if(ticksStopped >= 400) {
-                originalLevelState.restore((ServerLevel) bender.getEntity().level());
-                super.stop(bender);
-                System.out.println("EarthQuakeSkill stopped on server");
+            if (ticksStopped >= 400) {
+                originalBlocks.restore((ServerLevel) bender.getEntity().level());
+                System.out.println("EarthQuakeSkill cleanup stopped");
                 this.stopCleanup();
             }
         };

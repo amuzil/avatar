@@ -6,6 +6,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +20,7 @@ import org.valkyrienskies.mod.common.VSGameUtilsKt;
 import org.valkyrienskies.mod.common.util.VectorConversionsMCKt;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -104,15 +107,48 @@ public final class EarthController implements ShipPhysicsListener {
         }
     }
 
+//    private void cleanUpShip() {
+//        if (originalBlocks == null) return;
+//        ServerLevel level = (ServerLevel) entity.level();
+//        originalBlocks.get().forEach(block -> {
+//            Vector3dc shipYardPos = ship.getTransform().getPositionInShip();
+//            BlockPos shipBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipYardPos));
+//            level.destroyBlock(shipBlockPos, false);
+//            level.setBlock(block.pos(), block.state(), 3);
+//        });
+//        bender.getSelection().originalBlocksMap().remove(ship.getId());
+//    }
+
     private void cleanUpShip() {
-        if (originalBlocks == null) return;
+        if (originalBlocks == null || ship == null) return;
+        ServerLevel level = (ServerLevel) entity.level();
+        // --- 1. Fetch ship transform and current position ---
+        var shipTransform = ship.getTransform();
+        Vector3dc shipPos = shipTransform.getPositionInWorld();
+
+        // --- 2. For each stored block in this ship’s originalBlocks ---
         originalBlocks.get().forEach(block -> {
-            ServerLevel level = (ServerLevel) entity.level();
-            Vector3dc shipYardPos = ship.getTransform().getPositionInShip();
-            BlockPos shipBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipYardPos));
-            level.destroyBlock(shipBlockPos, false);
+//                Vector3dc localPos = (Vector3dc) VectorConversionsMCKt.toJOML(block.pos());
+//                Vector3dc worldBlockPosVec = shipTransform.getShipToWorld().transformPosition(localPos, new org.joml.Vector3d());
+//                BlockPos worldBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(worldBlockPosVec));
+//
+////             --- 3. Destroy the block currently inside the ship world ---
+//                if (level.getBlockState(worldBlockPos).getBlock() != Blocks.AIR)
+//                    level.destroyBlock(worldBlockPos, false);
+
+            // --- 4. Restore original block back into the world ---
             level.setBlock(block.pos(), block.state(), 3);
         });
+
+        // --- 5. Remove the ship from the world so VS stops simulating it ---
+        try {
+            if (ship != null)
+                VSGameUtilsKt.getShipObjectWorld(level).deleteShip(ship);
+        } catch (IllegalArgumentException e) {
+//            System.err.println("Failed to delete, ship not found!");
+        }
+
+        // --- 6. Clear stored mapping for that ship ID ---
         bender.getSelection().originalBlocksMap().remove(ship.getId());
     }
 
