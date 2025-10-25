@@ -17,6 +17,7 @@ import net.minecraftforge.registries.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 
@@ -31,6 +32,7 @@ public class Registries {
     public static Supplier<IForgeRegistry<SkillCategory>> SKILL_CATEGORIES;
 
     private static final HashMap<String, Form> forms = new HashMap<>();
+    private static final Map<String, Supplier<? extends Skill>> skillSuppliers = new HashMap<>();
     private static final HashMap<String, RegistryObject<Skill>> skills = new HashMap<>();
     private static final List<SkillCategory> categories = new ArrayList<>();
     private static final List<DataTrait> traits = new ArrayList<>();
@@ -41,6 +43,10 @@ public class Registries {
         Elements.init();
     }
 
+    public static List<DataTrait> getTraits() {
+        return traits;
+    }
+
     public static HashMap<String, Form> getForms() {
         return forms;
     }
@@ -49,24 +55,30 @@ public class Registries {
         return forms.get(name);
     }
 
+    public static List<SkillCategory> getSkillCategories() {
+        return categories;
+    }
+
     public static List<Skill> getSkills() {
         return skills.values().stream().map(RegistryObject::get).toList();
     }
 
     public static Skill getSkill(ResourceLocation id) {
-        return skills.get(id.toString()).get();
+        Supplier<? extends Skill> sup = skillSuppliers.get(id.toString());
+        return sup != null ? sup.get() : null;
     }
 
-    public static List<SkillCategory> getSkillCategories() {
-        return categories;
-    }
-
-    public static List<DataTrait> getTraits() {
-        return traits;
+    public static Skill getRegisteredSkill(ResourceLocation id) {
+        RegistryObject<Skill> obj = skills.get(id.toString());
+        return obj != null ? obj.get() : null;
     }
 
     public static void registerForm(Form form) {
         forms.put(form.name(), form);
+    }
+
+    public static void registerSkillCategory(SkillCategory skillCategory) {
+        categories.add(skillCategory);
     }
 
     public static RegistryObject<? extends Skill> registerSkill(Supplier<? extends Skill> skillSup) {
@@ -74,12 +86,8 @@ public class Registries {
         RegistryObject<Skill> skillRegistryObject = SKILL_REGISTER.register(name, skillSup);
         String namespace = ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, name).toString();
         skills.put(namespace, skillRegistryObject);
-
+        skillSuppliers.put(namespace, skillSup);
         return skillRegistryObject;
-    }
-
-    public static void registerSkillCategory(SkillCategory skillCategory) {
-        categories.add(skillCategory);
     }
 
     /**

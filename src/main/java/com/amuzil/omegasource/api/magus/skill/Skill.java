@@ -3,7 +3,6 @@ package com.amuzil.omegasource.api.magus.skill;
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.radix.RadixTree;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
-import com.amuzil.omegasource.api.magus.skill.event.SkillExecutionEvent;
 import com.amuzil.omegasource.api.magus.skill.event.SkillTickEvent;
 import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.UseTrait;
@@ -28,7 +27,7 @@ import java.util.function.Predicate;
 /**
  * Basic skill class. All other skills extend this.
  */
-public abstract class Skill implements Cloneable {
+public abstract class Skill {
     private final String name;
     private final ResourceLocation id;
     private final SkillCategory category;
@@ -64,18 +63,7 @@ public abstract class Skill implements Cloneable {
     public Skill create(Bender bender) {
         this.bender = bender;
         this.skillData = bender.getSkillData(this);
-        return this.clone();
-    }
-
-    @Override
-    public Skill clone() {
-        try {
-            Skill copy = (Skill) super.clone();
-            copy.setUUID(UUID.randomUUID().toString());
-            return copy;
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError("Failed to clone Skill, cloning not supported!", e);
-        }
+        return this;
     }
 
     public boolean addTrait(SkillTrait trait) {

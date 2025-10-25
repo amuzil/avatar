@@ -106,11 +106,11 @@ public class Bender implements IBender {
         if (event.getEntity().getId() == entity.getId()) {
             active = !event.released();
             formPath.update(event.getActiveForm());
-            this.syncFormPathToClient(); // TODO: We probably don't need this anymore
+//            this.syncFormPathToClient(); // TODO: We probably don't need this anymore
 
             for (Skill skill: availableSkills) {
                 if (canUseSkill(skill) && skill.shouldStart(this, formPath)) {
-                    Skill newSkill = Registries.getSkill(skill.getId()).create(this);
+                    Skill newSkill = Objects.requireNonNull(Registries.getSkill(skill.getId())).create(this);
                     newSkill.start(this);
                     formPath.clear(); // breaks Step / Dash skills
                 }

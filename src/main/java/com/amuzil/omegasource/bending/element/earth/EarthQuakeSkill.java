@@ -70,7 +70,7 @@ public class EarthQuakeSkill extends EarthSkill {
 
     @Override
     public void start(Bender bender) {
-        System.out.println("EarthQuakeSkill started on server");
+        System.out.println("EarthQuakeSkill started");
         // get player position casting as epicentre.
         startRun(bender);
 
@@ -89,10 +89,10 @@ public class EarthQuakeSkill extends EarthSkill {
                         earthController = EarthController.getOrCreate(serverShip, bender);
                     double gravity = 10; // Acceleration due to gravity
                     double mass = serverShip.getInertiaData().getMass(); // Mass of the ship
-                    double requiredForce = (gravity * mass) * 1; // Force needed to counteract gravity
+                    double requiredForce = (gravity * mass) * 0.8; // Force needed to counteract gravity
                     Vector3d force = new Vector3d(0, requiredForce, 0);
                     earthController.applyInvariantForce(force);
-                    System.out.println("force applied: " + force);
+//                    System.out.println("force applied: " + force);
                 }
             }
         };
@@ -103,7 +103,7 @@ public class EarthQuakeSkill extends EarthSkill {
     @Override
     public void run(Bender bender) {
         super.run(bender);
-        System.out.println("EarthQuakeSkill is running on server");
+//        System.out.println("EarthQuakeSkill is running on server");
         ticksPassed++;
         Level level = bender.getEntity().level();
         ServerLevel serverLevel = (ServerLevel) level;
@@ -129,7 +129,7 @@ public class EarthQuakeSkill extends EarthSkill {
     public void stop(Bender bender) {
         super.stop(bender);
         this.hush(blockQuaker);
-        System.out.println("EarthQuakeSkill requested stop on server");
+        System.out.println("EarthQuakeSkill requested stop");
 //        this.startCleanup(); // defer skill stop and removal till cleaned up blocks
     }
 
