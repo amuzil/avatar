@@ -181,6 +181,10 @@ public final class EarthController implements ShipPhysicsListener {
         isControlled = controlled;
     }
 
+    public boolean isControlled() {
+        return isControlled;
+    }
+
     private record InvForceAtPos(Vector3dc force, Vector3dc pos) {}
 
     public void checkShipShipCollisions(ServerLevel level, ServerShip ship) {

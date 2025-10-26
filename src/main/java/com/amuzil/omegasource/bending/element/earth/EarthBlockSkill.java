@@ -17,7 +17,6 @@ import org.valkyrienskies.core.api.world.ServerShipWorld;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
 import static com.amuzil.omegasource.bending.form.BendingForms.BLOCK;
-import static com.amuzil.omegasource.bending.form.BendingForms.STRIKE;
 import static com.amuzil.omegasource.utils.ship.VSUtils.assembleEarthShip;
 import static com.amuzil.omegasource.utils.ship.VSUtils.controlBlock;
 
@@ -32,14 +31,6 @@ public class EarthBlockSkill extends EarthSkill {
         this.startPaths = SkillPathBuilder.getInstance()
                 .simple(new ActiveForm(BLOCK, true))
                 .build();
-
-//        this.runPaths = SkillPathBuilder.getInstance()
-//                .simple(new ActiveForm(BLOCK, true))
-//                .build();
-
-        this.stopPaths = SkillPathBuilder.getInstance()
-                .simple(new ActiveForm(STRIKE, true))
-                .build(); // TODO: Make this BLOCK Form so it's like a toggle if already controlling selected Block
     }
 
     @Override
@@ -48,18 +39,27 @@ public class EarthBlockSkill extends EarthSkill {
     }
 
     @Override
-    public boolean shouldStop(Bender bender, FormPath formPath) {
-        return formPath.simple().hashCode() == stopPaths().simple().hashCode();
-    }
-
-    @Override
     public void start(Bender bender) {
         startRun(bender);
         BlockPos shipyardBlockPos = assembleEarthShip(bender);
-        if (shipyardBlockPos != null)
+        if (shipyardBlockPos != null) {
             bender.getSelection().setBlockPos(shipyardBlockPos); // Important: Update BlockPos to the shipyard position
-        else
-            stopRun();
+            ServerLevel level = (ServerLevel) bender.getEntity().level();
+            if (VSGameUtilsKt.isBlockInShipyard(level, shipyardBlockPos)) {
+                LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, shipyardBlockPos);
+                ServerShipWorld serverShipWorld = (ServerShipWorld) VSGameUtilsKt.getVsCore().getHooks().getCurrentShipServerWorld();
+                if (serverShip != null && serverShipWorld != null) {
+                    EarthController earthController = EarthController.getOrCreate(serverShip, bender);
+                    if (earthController.isControlled()) {
+                        earthController.setControlled(false);
+                        stopRun();
+                    } else {
+                        earthController.setControlled(true);
+                    }
+                }
+            }
+        } else
+            stopRun(); // cleanup
 //        if (bender.getEntity() instanceof AbstractClientPlayer benderPlayer) {
 //            AnimationStack animationStack = PlayerAnimationAccess.getPlayerAnimLayer(benderPlayer);
 ////            animationStack.addAnimLayer(null, true);
@@ -76,15 +76,15 @@ public class EarthBlockSkill extends EarthSkill {
     @Override
     public void run(Bender bender) {
         super.run(bender);
-        ServerLevel serverLevel = (ServerLevel) bender.getEntity().level();
+        ServerLevel level = (ServerLevel) bender.getEntity().level();
         BlockPos blockPos = bender.getSelection().blockPos();
-        if (blockPos != null && VSGameUtilsKt.isBlockInShipyard(serverLevel, blockPos)) {
-            LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(serverLevel, blockPos);
+        if (blockPos != null && VSGameUtilsKt.isBlockInShipyard(level, blockPos)) {
+            LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, blockPos);
             ServerShipWorld serverShipWorld = (ServerShipWorld) VSGameUtilsKt.getVsCore().getHooks().getCurrentShipServerWorld();
             if (serverShip != null && serverShipWorld != null) {
-                EarthController earthController = EarthController.getOrCreate(serverShip, bender);
-                earthController.setControlled(true);
-                controlBlock(serverShip, serverShipWorld, serverLevel, bender);
+//                EarthController earthController = EarthController.getOrCreate(serverShip, bender);
+//                earthController.setControlled(true);
+                controlBlock(serverShip, serverShipWorld, level, bender);
             }
         }
     }
@@ -95,6 +95,7 @@ public class EarthBlockSkill extends EarthSkill {
 
         ServerLevel level = (ServerLevel) bender.getEntity().level();
         BlockPos blockPos = bender.getSelection().blockPos();
+        System.out.println("UH? Stop EarthBlockSkill " + blockPos);
         bender.getSelection().reset();
         if (blockPos != null && VSGameUtilsKt.isBlockInShipyard(level, blockPos)) {
             LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, blockPos);
