@@ -2,11 +2,11 @@ package com.amuzil.omegasource.api.magus.skill;
 
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.radix.RadixTree;
-import com.amuzil.omegasource.api.magus.skill.event.SkillTickEvent;
+import com.amuzil.omegasource.api.magus.registry.Registries;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
+import com.amuzil.omegasource.api.magus.skill.event.SkillTickEvent;
 import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.UseTrait;
-import com.amuzil.omegasource.api.magus.registry.Registries;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.skill.ActivatedSkillPacket;
@@ -34,8 +34,8 @@ public abstract class Skill {
     // How the skill was activated. Useful if you want different methods to influence the skill in different ways.
     // For complex, game-design move combinations, see ModifierData for how to alter your skills.
     protected RadixTree.ActivationType activatedType;
-    private boolean shouldStart, shouldRun, shouldStop;
     protected FormPath startPaths, runPaths, stopPaths;
+    private boolean shouldStart, shouldRun, shouldStop;
 
     public Skill(String modId, String name, SkillCategory category) {
         this(ResourceLocation.fromNamespaceAndPath(modId, name), name, category);
@@ -43,7 +43,7 @@ public abstract class Skill {
 
     public Skill(ResourceLocation id, String name, SkillCategory category) {
         this.id = id;
-        this. name = name;
+        this.name = name;
         this.category = category;
         // Menu is default
         this.activatedType = RadixTree.ActivationType.MENU;
