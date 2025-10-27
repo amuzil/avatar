@@ -27,7 +27,7 @@ import static com.amuzil.omegasource.utils.ship.VSUtils.controlBlock;
 
 
 public class EarthWallSkill extends EarthSkill {
-    // TODO: Create Earth Wall Skill that adjusts shape based on player's lookVector
+    // TODO: Create Earth Wall Skill that adjusts shape based on player's look angle
     public EarthWallSkill() {
         super(Avatar.MOD_ID, "earth_wall");
         addTrait(new KnockbackTrait(Constants.KNOCKBACK, 1.5f));
