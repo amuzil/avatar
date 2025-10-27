@@ -1,5 +1,6 @@
 package com.amuzil.omegasource.api.magus.skill;
 
+import com.amuzil.omegasource.api.magus.form.Form;
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.radix.RadixTree;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
@@ -7,6 +8,7 @@ import com.amuzil.omegasource.api.magus.skill.event.SkillExecutionEvent;
 import com.amuzil.omegasource.api.magus.skill.event.SkillTickEvent;
 import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.UseTrait;
+import com.amuzil.omegasource.bending.BendingSelection;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.skill.ActivatedSkillPacket;
@@ -31,7 +33,6 @@ import java.util.function.Predicate;
 public abstract class Skill implements Cloneable {
     private final String name;
     private final ResourceLocation id;
-    private final SkillCategory category;
     private final List<RadixTree.ActivationType> activationTypes;
     private final List<SkillType> skillTypes;
     private final List<SkillTrait> skillTraits;
@@ -40,18 +41,17 @@ public abstract class Skill implements Cloneable {
     protected SkillData skillData;
     // How the skill was activated. Useful if you want different methods to influence the skill in different ways.
     protected RadixTree.ActivationType activatedType;
-    protected FormPath startPaths, runPaths, stopPaths;
+    protected List<Form> startPaths, runPaths, stopPaths;
     private String uuid;
 
-    public Skill(String modId, String name, SkillCategory category) {
-        this(ResourceLocation.fromNamespaceAndPath(modId, name), name, category);
+    public Skill(String modId, String name) {
+        this(ResourceLocation.fromNamespaceAndPath(modId, name), name);
     }
 
-    public Skill(ResourceLocation id, String name, SkillCategory category) {
+    public Skill(ResourceLocation id, String name) {
         this.id = id;
         this.uuid = UUID.randomUUID().toString();
         this.name = name;
-        this.category = category;
         // Menu is default
         this.activatedType = RadixTree.ActivationType.MENU;
         this.skillTypes = new LinkedList<>();
@@ -107,6 +107,8 @@ public abstract class Skill implements Cloneable {
         return true;
     }
 
+//    public abstract BendingSelection.Target targetType();  // todo: part of selection type refactor
+
     public void addType(SkillType type) {
         this.skillTypes.add(type);
     }
@@ -119,9 +121,7 @@ public abstract class Skill implements Cloneable {
         this.activationTypes.add(type);
     }
 
-    public SkillCategory getCategory() {
-        return category;
-    }
+    public abstract SkillCategory getCategory();
 
     public String name() {
         return name;
@@ -214,17 +214,15 @@ public abstract class Skill implements Cloneable {
         }
     }
 
-    public abstract FormPath startPaths();
+    public abstract List<Form> startPaths();
 
-    public abstract FormPath runPaths();
+    public abstract List<Form> runPaths();
 
-    public abstract FormPath stopPaths();
+    public abstract List<Form> stopPaths();
 
-    public abstract boolean shouldStart(Bender bender, FormPath formPath);
+    public abstract boolean shouldRun(Bender bender, List<Form> formPath);
 
-    public abstract boolean shouldRun(Bender bender, FormPath formPath);
-
-    public abstract boolean shouldStop(Bender bender, FormPath formPath);
+    public abstract boolean shouldStop(Bender bender, List<Form> formPath);
 
     public abstract void start(Bender bender);
 

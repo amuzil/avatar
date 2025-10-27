@@ -65,7 +65,7 @@ public class ServerEvents {
     @SubscribeEvent
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
         event.getPlayer().getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
-            if (bender.getElement() == Elements.EARTH) {
+            if (bender.getElement() == Elements.EARTH.get()) {
                 event.setCanceled(true);
             }
         });

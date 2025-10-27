@@ -39,13 +39,8 @@ public class AirPullSkill extends AirSkill {
 
         startPaths = SkillPathBuilder.getInstance()
 //                .simple(new ActiveForm(ARC, true))
-                .simple(new ActiveForm(PULL, true))
+                .add(PULL)
                 .build();
-    }
-
-    @Override
-    public boolean shouldStart(Bender bender, FormPath formPath) {
-        return formPath.simple().hashCode() == startPaths().simple().hashCode();
     }
 
     @Override

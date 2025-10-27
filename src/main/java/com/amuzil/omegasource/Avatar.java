@@ -1,5 +1,8 @@
 package com.amuzil.omegasource;
 
+import com.amuzil.omegasource.api.magus.tree.SkillTree;
+import com.amuzil.omegasource.bending.BendingSkill;
+import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.entity.AvatarEntities;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import com.amuzil.omegasource.entity.modules.collision.*;
@@ -70,8 +73,12 @@ public class Avatar {
         AvatarEntities.register(modEventBus);
         AvatarSounds.register(modEventBus);
 
-        Registries.init();
-        Registries.SKILL_REGISTER.register(context.getModEventBus());
+//        Registries.init();
+//        Registries.SKILL_CATEGORY_REGISTER.register(modEventBus);
+        Elements.SKILL_CATEGORY_REGISTER.register(modEventBus);
+//        Elements.init();
+        Registries.SKILL_REGISTER.register(modEventBus);
+
     }
 
     private void setup(final FMLCommonSetupEvent event) {
@@ -116,6 +123,9 @@ public class Avatar {
         // Do something when the server starts
         LOGGER.info("Setting up Avatar commands...");
         AvatarCommands.register(event.getServer().getCommands().getDispatcher());
+
+        SkillTree.clear();
+        Registries.SKILLS.get().getValues().forEach(c -> SkillTree.RegisterSkill(((BendingSkill)c).element(), /* toRegister.targetType(), */c.startPaths(), c));
     }
 
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)

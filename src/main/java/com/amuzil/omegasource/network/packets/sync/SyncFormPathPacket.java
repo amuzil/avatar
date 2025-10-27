@@ -34,7 +34,9 @@ public class SyncFormPathPacket implements AvatarPacket {
                 LocalPlayer player = Minecraft.getInstance().player;
                 assert player != null;
                 player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
-                    bender.getFormPath().deserializeNBT(msg.tag);
+//                    bender.getFormPath().deserializeNBT(msg.tag);
+//                    why do we need to sync this? we're sending these forms from client to server,
+//                    sending it back again is a bit roundabout?
                     bender.markClean();
                 });
             }

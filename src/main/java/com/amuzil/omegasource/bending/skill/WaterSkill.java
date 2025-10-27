@@ -8,11 +8,11 @@ import com.amuzil.omegasource.bending.element.Elements;
 public abstract class WaterSkill extends BendingSkill {
 
     public WaterSkill(String modID, String name) {
-        super(modID, name, Elements.WATER);
+        super(modID, name);
     }
 
     @Override
     public SkillCategory getCategory() {
-        return Elements.WATER;
+        return Elements.WATER.get();
     }
 }

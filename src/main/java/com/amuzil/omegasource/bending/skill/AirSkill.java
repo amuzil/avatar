@@ -8,11 +8,11 @@ import com.amuzil.omegasource.bending.element.Elements;
 public abstract class AirSkill extends BendingSkill {
 
     public AirSkill(String modID, String name) {
-        super(modID, name, Elements.AIR);
+        super(modID, name);
     }
 
     @Override
     public SkillCategory getCategory() {
-        return Elements.AIR;
+        return Elements.AIR.get();
     }
 }

@@ -1,5 +1,6 @@
 package com.amuzil.omegasource.capability;
 
+import com.amuzil.omegasource.api.magus.form.Form;
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.skill.Skill;
 import com.amuzil.omegasource.api.magus.skill.data.SkillCategoryData;
@@ -14,6 +15,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.AutoRegisterCapability;
 import net.minecraftforge.common.util.INBTSerializable;
+
+import java.util.List;
 
 
 /**
@@ -34,7 +37,7 @@ public interface IBender extends INBTSerializable<CompoundTag> {
 
     LivingEntity getEntity();
 
-    FormPath getFormPath();
+    List<Form> getFormPath();
 
     SkillCategoryData getSkillCategoryData(Element element);
 

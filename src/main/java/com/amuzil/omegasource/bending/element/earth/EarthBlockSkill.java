@@ -31,7 +31,7 @@ public class EarthBlockSkill extends EarthSkill {
         addTrait(new SizeTrait(Constants.SIZE, 1.0f));
 
         this.startPaths = SkillPathBuilder.getInstance()
-                .simple(new ActiveForm(BLOCK, true))
+                .add(BLOCK)
                 .build();
 
 //        this.runPaths = SkillPathBuilder.getInstance()
@@ -39,18 +39,8 @@ public class EarthBlockSkill extends EarthSkill {
 //                .build();
 
         this.stopPaths = SkillPathBuilder.getInstance()
-                .simple(new ActiveForm(STRIKE, true))
+                .add(STRIKE)
                 .build();
-    }
-
-    @Override
-    public boolean shouldStart(Bender bender, FormPath formPath) {
-        return formPath.simple().hashCode() == startPaths().simple().hashCode();
-    }
-
-    @Override
-    public boolean shouldStop(Bender bender, FormPath formPath) {
-        return formPath.simple().hashCode() == stopPaths().simple().hashCode();
     }
 
     @Override

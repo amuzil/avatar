@@ -2,6 +2,7 @@ package com.amuzil.omegasource.bending.element.air;
 
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
+import com.amuzil.omegasource.api.magus.form.Form;
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
@@ -22,6 +23,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.List;
+
 import static com.amuzil.omegasource.bending.form.BendingForms.STRIKE;
 
 
@@ -38,17 +41,7 @@ public class AirGustSkill extends AirSkill {
         addTrait(new SpeedTrait(Constants.SPEED_FACTOR, 1.0d));
         addTrait(new StringTrait(Constants.FX, "airs_perma9"));
 
-        startPaths = SkillPathBuilder.getInstance().simple(new ActiveForm(STRIKE, true)).build();
-    }
-
-    @Override
-    public FormPath startPaths() {
-        return startPaths;
-    }
-
-    @Override
-    public boolean shouldStart(Bender bender, FormPath formPath) {
-        return formPath.simple().hashCode() == startPaths().simple().hashCode();
+        startPaths = SkillPathBuilder.getInstance().add(STRIKE).build();
     }
 
     @Override

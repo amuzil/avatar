@@ -2,12 +2,9 @@ package com.amuzil.omegasource.bending.element.fire.skills;
 
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
-import com.amuzil.omegasource.api.magus.form.FormPath;
-import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.traits.entitytraits.PointsTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.*;
-import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.form.BendingForms;
 import com.amuzil.omegasource.bending.skill.FireSkill;
 import com.amuzil.omegasource.capability.Bender;
@@ -44,21 +41,11 @@ public class FlameStreamSkill extends FireSkill {
 
         startPaths = SkillPathBuilder.getInstance()
 //                .simple(new ActiveForm(BendingForms.ARC, true))
-                .complex(new ActiveForm(BendingForms.EXPAND, true))
-                .complex(new ActiveForm(BendingForms.BLOCK, true))
+                .add(BendingForms.EXPAND)
+                .add(BendingForms.BLOCK)
                 .build();
 
         stopPaths = SkillPathBuilder.getInstance().build();
-    }
-
-    @Override
-    public boolean shouldStart(Bender bender, FormPath formPath) {
-        return formPath.complex().hashCode() == startPaths().complex().hashCode();
-    }
-
-    @Override
-    public boolean shouldStop(Bender bender, FormPath formPath) {
-        return formPath.simple().hashCode() == stopPaths().simple().hashCode();
     }
 
     @Override

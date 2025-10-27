@@ -39,13 +39,8 @@ public class AirSwipeSkill extends AirSkill {
 
         startPaths = SkillPathBuilder.getInstance()
 //                .simple(new ActiveForm(SHAPE, true))
-                .simple(new ActiveForm(COMPRESS, true))
+                .add(COMPRESS)
                 .build();
-    }
-
-    @Override
-    public boolean shouldStart(Bender bender, FormPath formPath) {
-        return formPath.simple().hashCode() == startPaths().simple().hashCode();
     }
 
     @Override

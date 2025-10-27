@@ -1,16 +1,15 @@
 package com.amuzil.omegasource.api.magus.skill.data;
 
+import com.amuzil.omegasource.api.magus.form.Form;
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
-import com.amuzil.omegasource.capability.Bender;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class SkillPathBuilder {
 
-    private List<ActiveForm> complexForms;
-    private List<ActiveForm> simpleForms;
+    private List<Form> forms;
     public static SkillPathBuilder instance;
 
     public static SkillPathBuilder getInstance() {
@@ -20,33 +19,23 @@ public class SkillPathBuilder {
         return instance;
     }
 
-    public SkillPathBuilder complex(ActiveForm form) {
-        this.complexForms.add(form);
+    public SkillPathBuilder add(Form form) {
+        this.forms.add(form);
         return this;
     }
 
-    public SkillPathBuilder simple(ActiveForm form) {
-        this.simpleForms.add(form);
-        return this;
-    }
-
-    public FormPath build() {
+    public List<Form> build() {
         // Need to copy the list
-        LinkedList<ActiveForm> simple = simpleForms == null || simpleForms.isEmpty() ? new LinkedList<>() : new LinkedList<>(simpleForms);
-        LinkedList<ActiveForm> complex = complexForms == null || complexForms.isEmpty() ? new LinkedList<>() : new LinkedList<>(complexForms);
-        FormPath path = new FormPath(simple, complex);
+        LinkedList<Form> list = forms == null || forms.isEmpty() ? new LinkedList<>() : new LinkedList<>(forms);
         this.reset();
-        return path;
+        return list;
     }
 
     public void reset() {
-        if (simpleForms == null)
-            simpleForms = new LinkedList<>();
-        if (complexForms == null)
-            complexForms = new LinkedList<>();
+        if (forms == null)
+            forms = new LinkedList<>();
 
-        this.simpleForms.clear();
-        this.complexForms.clear();
+        this.forms.clear();
     }
 
     public static boolean checkForms(List<ActiveForm> activeForms, List<ActiveForm> skillForms) {
@@ -59,12 +48,9 @@ public class SkillPathBuilder {
                 return false;
         }
         return true;
-
     }
 
-
-
     public static boolean checkAllForms(FormPath first, FormPath second) {
-        return checkForms(first.complex(), second.complex()) || checkForms(first.simple(), second.simple());
+        return checkForms(first.complex(), second.complex());
     }
 }

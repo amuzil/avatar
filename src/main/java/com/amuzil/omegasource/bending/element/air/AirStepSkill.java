@@ -31,8 +31,7 @@ public class AirStepSkill extends AirSkill {
         addTrait(new TimedTrait(Constants.RUNTIME, 0));
         addTrait(new StringTrait(Constants.FX, "airs_perma8"));
         this.startPaths = SkillPathBuilder.getInstance()
-                .simple(new ActiveForm(STEP, true))
-                .complex(new ActiveForm(STEP, true))
+                .add(STEP)
                 .build();
     }
 
@@ -40,10 +39,9 @@ public class AirStepSkill extends AirSkill {
     public void start(Bender bender) {
         super.start(bender);
         LivingEntity entity = bender.getEntity();
-        BendingForm.Type.Motion motion;
-        if (!bender.getFormPath().complex().isEmpty())
-            motion = bender.getFormPath().complex().get(0).direction();
-        else
+
+        BendingForm.Type.Motion motion = bender.getStepDirection();
+        if (motion == null)
             motion = BendingForm.Type.Motion.FORWARD;
 
         SkillData data = bender.getSkillData(this);
@@ -52,7 +50,7 @@ public class AirStepSkill extends AirSkill {
         time.setTime(0);
 
         AvatarEntity bound = new AvatarBoundProjectile(entity.level());
-        bound.setElement(Elements.AIR);
+        bound.setElement(Elements.AIR.get());
         bound.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
         bound.setOwner(entity);
         bound.setMaxLifetime(lifetime / 3);
