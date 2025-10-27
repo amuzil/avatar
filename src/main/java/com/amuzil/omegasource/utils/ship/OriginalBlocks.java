@@ -27,6 +27,7 @@ public class OriginalBlocks {
     public void add(OriginalBlock additionalBlock) {
         this.originalBlocks.add(additionalBlock);
     }
+
     public void addAll(List<OriginalBlock> additionalBlocks) {
         this.originalBlocks.addAll(additionalBlocks);
     }

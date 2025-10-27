@@ -5,7 +5,6 @@ import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.CollisionTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.DamageTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SizeTrait;
 import com.amuzil.omegasource.bending.element.Element;
-import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.projectile.*;
 import com.amuzil.omegasource.entity.api.ICollisionModule;
@@ -21,8 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.amuzil.omegasource.Avatar.steam;
-import static com.amuzil.omegasource.bending.element.Elements.*;
+import static com.amuzil.omegasource.utils.visual.AvatarFX.steam;
 
 
 public class WaterCollisionModule implements ICollisionModule {

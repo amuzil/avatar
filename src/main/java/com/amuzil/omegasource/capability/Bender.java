@@ -150,9 +150,12 @@ public class Bender implements IBender {
         switch(result.resultType) {
             case SKILL_FOUND -> {
                 LOGGER.info("Skill found: " + result.skill.name());
-                Skill newSkill = Registries.getSkill(result.skill.getId()).create(this);
-                newSkill.start(this);
-                formPath.clear();
+                Skill skill = result.skill;
+                Skill newSkill = Objects.requireNonNull(Registries.getSkill(skill.getId())).create(this);
+				if (canUseSkill(newSkill)) {
+                	newSkill.start(this);
+                	formPath.clear();
+				}
             }
             case TERMINAL_NODE -> {
                 LOGGER.info("Terminal node");

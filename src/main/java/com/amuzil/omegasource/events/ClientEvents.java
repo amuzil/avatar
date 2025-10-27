@@ -15,7 +15,6 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onClientLogin(ClientPlayerNetworkEvent.LoggingIn event) {
         Avatar.inputModule.registerListeners();
-        Avatar.reloadFX();
         System.out.println("InputModule Initiated for " + event.getPlayer().getName().getString());
     }
 

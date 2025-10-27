@@ -7,23 +7,28 @@ import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.LevelTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.TimedTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.XPTrait;
 import com.amuzil.omegasource.bending.element.Element;
+import com.amuzil.omegasource.capability.Bender;
 
 
 public abstract class BendingSkill extends SkillActive {
 
     public BendingSkill(String modID, String name) {
         super(modID, name);
-        addTrait(new XPTrait("xp", 0));
-        addTrait(new LevelTrait("level", 0));
-        addTrait(new LevelTrait("tier", 1));
-        addTrait(new TimedTrait("max_cooldown", 40));
-        addTrait(new TimedTrait("cooldown", 40));
     }
 
     public Element element() {
         return (Element) getCategory();
     }
 
+    // Ensure SkillState gets set to RUN before super.start() is called so run() executes on 1st try
+    public void startRun(Bender bender) {
+        skillData.setSkillState(SkillState.RUN);
+        super.start(bender);
+    }
+
+    public void stopRun() {
+        skillData.setSkillState(SkillState.STOP);
+    }
 
     // TODO: Update cooldown methods to use cooldown runnable in Skill
     public void resetCooldown(SkillData data) {
@@ -48,9 +53,8 @@ public abstract class BendingSkill extends SkillActive {
             time.setTime(time.getTime() + 1);
         } else {
             time.setTime(0);
-            data.setSkillState(SkillState.IDLE);
+            data.setSkillState(SkillState.STOP);
         }
     }
-
 
 }

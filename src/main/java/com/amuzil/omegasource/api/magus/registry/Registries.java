@@ -3,6 +3,7 @@ package com.amuzil.omegasource.api.magus.registry;
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.form.Form;
 import com.amuzil.omegasource.api.magus.skill.Skill;
+import com.amuzil.omegasource.api.magus.skill.SkillActive;
 import com.amuzil.omegasource.api.magus.skill.SkillCategory;
 import com.amuzil.omegasource.api.magus.skill.traits.DataTrait;
 import com.amuzil.omegasource.api.magus.tree.SkillTree;
@@ -19,6 +20,7 @@ import net.minecraftforge.registries.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 
@@ -36,12 +38,17 @@ public class Registries {
     public static Supplier<IForgeRegistry<SkillCategory>> SKILL_CATEGORIES = SKILL_CATEGORY_REGISTER.makeRegistry(RegistryBuilder::new);
 
     private static final HashMap<String, Form> forms = new HashMap<>();
+    private static final Map<String, Supplier<? extends Skill>> skillSuppliers = new HashMap<>();
     private static final HashMap<String, RegistryObject<Skill>> skills = new HashMap<>();
     private static final List<SkillCategory> categories = new ArrayList<>();
     private static final List<DataTrait> traits = new ArrayList<>();
 
     public static void init() {
         Elements.init();
+    }
+
+    public static List<DataTrait> getTraits() {
+        return traits;
     }
 
     public static HashMap<String, Form> getForms() {
@@ -52,32 +59,34 @@ public class Registries {
         return forms.get(name);
     }
 
+    public static List<SkillCategory> getSkillCategories() {
+        return categories;
+    }
+
     public static List<Skill> getSkills() {
         return skills.values().stream().map(RegistryObject::get).toList();
     }
 
     public static Skill getSkill(ResourceLocation id) {
-        return skills.get(id.toString()).get();
+        Supplier<? extends Skill> sup = skillSuppliers.get(id.toString());
+        return sup != null ? sup.get() : null;
     }
 
-    public static List<SkillCategory> getSkillCategories() {
-        return categories;
-    }
-
-    public static List<DataTrait> getTraits() {
-        return traits;
+    public static Skill getRegisteredSkill(ResourceLocation id) {
+        RegistryObject<Skill> obj = skills.get(id.toString());
+        return obj != null ? obj.get() : null;
     }
 
     public static void registerForm(Form form) {
         forms.put(form.name(), form);
     }
 
-    public static RegistryObject<? extends Skill> registerSkill(Supplier<? extends BendingSkill> skillSup) {
+    public static RegistryObject<? extends Skill> registerSkill(Supplier<? extends Skill> skillSup) {
         String name = skillSup.get().name();
         RegistryObject<Skill> skillRegistryObject = SKILL_REGISTER.register(name, skillSup);
         String namespace = ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, name).toString();
         skills.put(namespace, skillRegistryObject);
-
+        skillSuppliers.put(namespace, skillSup);
         return skillRegistryObject;
     }
 

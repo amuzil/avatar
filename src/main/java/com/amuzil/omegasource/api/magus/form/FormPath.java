@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 
+@Deprecated
 public class FormPath {
 
     private final List<ActiveForm> complexForms; // Only populated with recent active Forms (removed on timeout)
