@@ -87,6 +87,7 @@ public class VSUtils {
         double mass = ship.getInertiaData().getMass();
         Vec3 vec3 = entity.getLookAngle().normalize()
                 .multiply(500*mass, 250*mass, 500*mass);
+//        System.out.printf("Applying force %.4f on mass %f\n", vec3.y, mass);
         Vector3d force = VectorConversionsMCKt.toJOML(vec3);
         earthController.applyInvariantForce(force);
     }
