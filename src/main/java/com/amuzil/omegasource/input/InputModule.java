@@ -135,9 +135,9 @@ public class InputModule {
                 if (heldTicks == 0)
                     checkForm(form);
             } else {
-                if (glfwKeysDown.containsKey(key)) {
-                    releaseForm(form, key);
-                }
+//                if (glfwKeysDown.containsKey(key)) {
+//                    releaseForm(form, key);
+//                }
             }
         });
 

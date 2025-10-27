@@ -33,8 +33,11 @@ public class EarthBlockSkill extends EarthSkill {
 
     @Override
     public void start(Bender bender) {
+        System.out.println("RUNNING START");
+
         BlockPos shipyardBlockPos = assembleEarthShip(bender);
         if (shipyardBlockPos != null) {
+            System.out.println("RUNNING START - 1");
             ServerLevel level = (ServerLevel) bender.getEntity().level();
             level.getServer().execute(() -> {
                 LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, shipyardBlockPos);
@@ -49,8 +52,10 @@ public class EarthBlockSkill extends EarthSkill {
                     }
                 }
             });
-        } else
+        } else {
+            System.out.println("RUNNING START - 2");
             stopRun(); // cleanup
+        }
 //        if (bender.getEntity() instanceof AbstractClientPlayer benderPlayer) {
 //            AnimationStack animationStack = PlayerAnimationAccess.getPlayerAnimLayer(benderPlayer);
 ////            animationStack.addAnimLayer(null, true);

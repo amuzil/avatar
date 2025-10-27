@@ -54,7 +54,6 @@ public abstract class SkillActive extends Skill {
 
     @Override
     public boolean shouldRun(Bender bender, List<Form> formPath) {
-        SkillData skillData = bender.getSkillData(this);
         if (skillData == null) return false;
         SkillState state = skillData.getSkillState();
         if (state == SkillState.RUN) return true;
@@ -64,7 +63,6 @@ public abstract class SkillActive extends Skill {
 
     @Override
     public boolean shouldStop(Bender bender, List<Form> formPath) {
-        SkillData skillData = bender.getSkillData(this);
         if (skillData == null) return true;
         SkillState state = skillData.getSkillState();
         if (state == SkillState.STOP) return true;
