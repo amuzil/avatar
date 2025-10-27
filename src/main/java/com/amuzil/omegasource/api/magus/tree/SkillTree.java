@@ -1,8 +1,6 @@
 package com.amuzil.omegasource.api.magus.tree;
 
-import com.amuzil.omegasource.api.magus.form.ActiveForm;
 import com.amuzil.omegasource.api.magus.form.Form;
-import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.skill.Skill;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.capability.Bender;

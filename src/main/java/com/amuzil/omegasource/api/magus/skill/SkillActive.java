@@ -102,9 +102,8 @@ public abstract class SkillActive extends Skill {
 
     @Override
     public void reset(LivingEntity entity) {
-        if (skillData != null) {
+        if (skillData != null)
             skillData.setSkillState(SkillState.IDLE);
-        }
     }
 
     protected void cooldown() {

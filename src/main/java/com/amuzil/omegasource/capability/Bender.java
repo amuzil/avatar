@@ -120,20 +120,20 @@ public class Bender implements IBender {
             } else stepDirection = null;
 
             formPath.add(event.getActiveForm().form());
-            if(active) {
+            if (active) {
                 switch (getSelection().target()) {
                     case BLOCK, NONE, SELF, ENTITY -> checkSkillTree();
                     case SKILL ->
                             applyFormsToSkill(getSelection().skillIds(), formPath); // send the form to the skill.
                 }
             } else {
-                if(getSelection().target().equals(BendingSelection.Target.SKILL)) {
+                if (getSelection().target().equals(BendingSelection.Target.SKILL)) {
                     releaseFormsOnSkill(getSelection().skillIds(), formPath);
                 }
             }
 
             tick = timeout;
-            printFormPath(); // Debugging purposes
+//            printFormPath(); // Debugging purposes
         }
     }
 
@@ -179,19 +179,13 @@ public class Bender implements IBender {
             }
         }
         if (!active) {
-            LOGGER.info("Complex Forms Ticking 1");
             if (tick == 0) {
-                LOGGER.info("Complex Forms Ticking 2");
-//                if (!formPath.isActive()) {
-                    formPath.clear(); // Only clear when no Forms are active
-                    LOGGER.info("Complex Forms Timed Out");
-//                }
+                formPath.clear(); // Only clear when no Forms are active
                 tick = timeout;
                 active = true;
             }
             tick--;
         }
-
         restoreOriginalBlocks();
     }
 

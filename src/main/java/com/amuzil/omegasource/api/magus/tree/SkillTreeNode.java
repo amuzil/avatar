@@ -1,6 +1,5 @@
 package com.amuzil.omegasource.api.magus.tree;
 
-import com.amuzil.omegasource.api.magus.form.ActiveForm;
 import com.amuzil.omegasource.api.magus.form.Form;
 import com.amuzil.omegasource.api.magus.skill.Skill;
 
@@ -17,10 +16,10 @@ public class SkillTreeNode {
     }
 
     public TreeResult ExecutePath(List<Form> forms) {
-        if(forms.size() > 0) {
+        if (forms.size() > 0) {
             SkillTreeNode branch = children.get(forms.get(0));
 
-            if(branch == null)
+            if (branch == null)
                 return new TreeResult(TreeResult.ResultType.TERMINAL_NODE, null);
 
             return branch.ExecutePath(forms.subList(1, forms.size()));
