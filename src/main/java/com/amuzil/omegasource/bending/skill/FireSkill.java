@@ -8,11 +8,11 @@ import com.amuzil.omegasource.bending.element.Elements;
 public abstract class FireSkill extends BendingSkill {
 
     public FireSkill(String modID, String name) {
-        super(modID, name, Elements.FIRE);
+        super(modID, name);
     }
 
     @Override
     public SkillCategory getCategory() {
-        return Elements.FIRE;
+        return Elements.FIRE.get();
     }
 }

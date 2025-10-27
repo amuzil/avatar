@@ -48,6 +48,9 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
     public Map<Long, OriginalBlocks> originalBlocksMap() {
         return originalBlocksMap;
     }
+    public List<String> skillIds() {
+        return skillIds;
+    }
 
     public void addOriginalBlocks(long id, BlockPos blockPos, BlockState blockState) {
         originalBlocksMap.put(id, new OriginalBlocks(

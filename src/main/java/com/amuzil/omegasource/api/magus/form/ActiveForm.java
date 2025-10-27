@@ -63,7 +63,7 @@ public class ActiveForm {
 
     @Override
     public int hashCode() {
-        return Objects.hash(form);
+        return Objects.hash(form, active);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class ActiveForm {
         } else if (!(obj instanceof ActiveForm other)) {
             return false;
         } else {
-            return form.name().equals(other.form.name());
+            return hashCode() == obj.hashCode();
         }
     }
 

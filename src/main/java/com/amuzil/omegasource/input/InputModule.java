@@ -134,6 +134,10 @@ public class InputModule {
                 glfwKeysDown.put(key, heldTicks + 1);
                 if (heldTicks == 0)
                     checkForm(form);
+            } else {
+//                if (glfwKeysDown.containsKey(key)) {
+//                    releaseForm(form, key);
+//                }
             }
         });
 
@@ -196,7 +200,7 @@ public class InputModule {
 
     private void releaseForm(BendingForm form, int key) {
         glfwKeysDown.remove(key);
-        if (!form.type().equals(BendingForm.Type.INITIALIZER)) {
+        if (!form.type().equals(BendingForm.Type.INITIALIZER) && form.name().equals(currentForm.name())) {
             sendFormPacket(form, true);
         }
     }
@@ -216,7 +220,7 @@ public class InputModule {
     }
 
     private void checkDash(BendingForm.Type.Motion dashDirection) {
-        if (isDoubleTap(dashDirection)) {
+        if (isDoubleTap(dashDirection) && !isHoldingCtrl && !isHoldingShift && !isHoldingAlt) {
             bender.setDeltaMovement(bender.getEntity().getDeltaMovement());
             bender.syncDeltaMovementToServer();
             sendFormPacket(BendingForms.STEP, false);

@@ -32,8 +32,7 @@ public class FlameStepSkill extends FireSkill {
         addTrait(new StringTrait(Constants.FX, "fire_bloom_perma5"));
 
         this.startPaths = SkillPathBuilder.getInstance()
-                .simple(new ActiveForm(STEP, true))
-                .complex(new ActiveForm(STEP, true))
+                .add(STEP)
                 .build();
     }
 
@@ -42,16 +41,16 @@ public class FlameStepSkill extends FireSkill {
         super.start(bender);
 
         LivingEntity entity = bender.getEntity();
-        BendingForm.Type.Motion motion;
-        if (!bender.getFormPath().complex().isEmpty())
-            motion = bender.getFormPath().complex().get(0).direction();
-        else
-            motion = BendingForm.Type.Motion.FORWARD; // Default to forward if no motion is specified
+
+        BendingForm.Type.Motion motion = bender.getStepDirection();
+        if (motion == null)
+            motion = BendingForm.Type.Motion.FORWARD;
+
         int lifetime = skillData.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime();
         TimedTrait time = skillData.getTrait(Constants.RUNTIME, TimedTrait.class);
         time.setTime(0); // Reset fall damage nullification timer
         AvatarEntity bound = new AvatarBoundProjectile(entity.level());
-        bound.setElement(Elements.FIRE);
+        bound.setElement(Elements.FIRE.get());
         bound.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
         bound.setOwner(entity);
         bound.setMaxLifetime(lifetime / 3);

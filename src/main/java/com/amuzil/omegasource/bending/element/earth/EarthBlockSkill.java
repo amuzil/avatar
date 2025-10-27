@@ -1,8 +1,6 @@
 package com.amuzil.omegasource.bending.element.earth;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.api.magus.form.ActiveForm;
-import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.KnockbackTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SizeTrait;
@@ -29,19 +27,17 @@ public class EarthBlockSkill extends EarthSkill {
         addTrait(new SizeTrait(Constants.SIZE, 1.0f));
 
         this.startPaths = SkillPathBuilder.getInstance()
-                .simple(new ActiveForm(BLOCK, true))
+                .add(BLOCK)
                 .build();
     }
 
     @Override
-    public boolean shouldStart(Bender bender, FormPath formPath) {
-        return formPath.simple().hashCode() == startPaths().simple().hashCode();
-    }
-
-    @Override
     public void start(Bender bender) {
+        System.out.println("RUNNING START");
+
         BlockPos shipyardBlockPos = assembleEarthShip(bender);
         if (shipyardBlockPos != null) {
+            System.out.println("RUNNING START - 1");
             ServerLevel level = (ServerLevel) bender.getEntity().level();
             level.getServer().execute(() -> {
                 LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, shipyardBlockPos);
@@ -56,8 +52,10 @@ public class EarthBlockSkill extends EarthSkill {
                     }
                 }
             });
-        } else
+        } else {
+            System.out.println("RUNNING START - 2");
             stopRun(); // cleanup
+        }
 //        if (bender.getEntity() instanceof AbstractClientPlayer benderPlayer) {
 //            AnimationStack animationStack = PlayerAnimationAccess.getPlayerAnimLayer(benderPlayer);
 ////            animationStack.addAnimLayer(null, true);

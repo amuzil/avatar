@@ -4,10 +4,10 @@ import com.amuzil.omegasource.api.magus.skill.SkillCategory;
 
 
 @Deprecated
-public class BendingEffect extends BendingSkill {
+public abstract class BendingEffect extends BendingSkill {
 
-    public BendingEffect(String modID, String name, SkillCategory category) {
-        super(modID, name, category);
+    public BendingEffect(String modID, String name) {
+        super(modID, name);
     }
 
 //    @Override

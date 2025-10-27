@@ -1,12 +1,17 @@
 package com.amuzil.omegasource.api.magus.skill;
 
 import com.amuzil.omegasource.api.magus.condition.conditions.EventCondition;
+import com.amuzil.omegasource.api.magus.form.Form;
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.event.SkillTickEvent;
+import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.LevelTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.TimedTrait;
+import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.XPTrait;
 import com.amuzil.omegasource.capability.Bender;
 import net.minecraft.world.entity.LivingEntity;
+
+import java.util.List;
 
 
 public abstract class SkillActive extends Skill {
@@ -23,33 +28,32 @@ public abstract class SkillActive extends Skill {
         return cd.getTime() > 0;
     });
 
-    public SkillActive(String modID, String name, SkillCategory category) {
-        super(modID, name, category);
+    public SkillActive(String modID, String name) {
+        super(modID, name);
+        addTrait(new XPTrait("xp", 0));
+        addTrait(new LevelTrait("level", 0));
+        addTrait(new LevelTrait("tier", 1));
+        addTrait(new TimedTrait("max_cooldown", 40));
+        addTrait(new TimedTrait("cooldown", 40));
     }
 
     @Override
-    public FormPath startPaths() {
+    public List<Form> startPaths() {
         return startPaths;
     }
 
     @Override
-    public FormPath runPaths() {
+    public List<Form> runPaths() {
         return runPaths;
     }
 
     @Override
-    public FormPath stopPaths() {
+    public List<Form> stopPaths() {
         return stopPaths;
     }
 
     @Override
-    public boolean shouldStart(Bender bender, FormPath formPath) {
-        return formPath.hashCode() == startPaths().hashCode();
-    }
-
-    @Override
-    public boolean shouldRun(Bender bender, FormPath formPath) {
-        SkillData skillData = bender.getSkillData(this);
+    public boolean shouldRun(Bender bender, List<Form> formPath) {
         if (skillData == null) return false;
         SkillState state = skillData.getSkillState();
         if (state == SkillState.RUN) return true;
@@ -58,8 +62,7 @@ public abstract class SkillActive extends Skill {
     }
 
     @Override
-    public boolean shouldStop(Bender bender, FormPath formPath) {
-        SkillData skillData = bender.getSkillData(this);
+    public boolean shouldStop(Bender bender, List<Form> formPath) {
         if (skillData == null) return true;
         SkillState state = skillData.getSkillState();
         if (state == SkillState.STOP) return true;

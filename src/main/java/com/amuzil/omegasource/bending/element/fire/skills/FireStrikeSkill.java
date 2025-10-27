@@ -39,12 +39,7 @@ public class FireStrikeSkill extends FireSkill {
         addTrait(new SpeedTrait(Constants.SPEED_FACTOR, 0.85d));
         addTrait(new StringTrait(Constants.FX, "fires_bloom_perma5"));
 
-        startPaths = SkillPathBuilder.getInstance().simple(new ActiveForm(STRIKE, true)).build();
-    }
-
-    @Override
-    public boolean shouldStart(Bender bender, FormPath formPath) {
-        return formPath.simple().hashCode() == startPaths().simple().hashCode();
+        startPaths = SkillPathBuilder.getInstance().add(STRIKE).build();
     }
 
     @Override

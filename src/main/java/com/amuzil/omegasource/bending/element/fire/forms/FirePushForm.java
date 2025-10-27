@@ -26,12 +26,7 @@ public class FirePushForm extends FireForm {
         addTrait(new TimedTrait(Constants.LIFETIME, 20));
         addTrait(new SpeedTrait(Constants.SPEED, 1.5d));
 
-        startPaths = SkillPathBuilder.getInstance().simple(new ActiveForm(PUSH, true)).build();
-    }
-
-    @Override
-    public boolean shouldStart(Bender bender, FormPath formPath) {
-        return formPath.simple().hashCode() == startPaths().simple().hashCode();
+        startPaths = SkillPathBuilder.getInstance().add(PUSH).build();
     }
 
     @Override
@@ -55,7 +50,7 @@ public class FirePushForm extends FireForm {
         projectile.setDamageable(false);
         projectile.setHittable(false);
 
-        projectile.addTraits(new StringTrait(Constants.BENDING_FORM, startPaths.simple().get(0).form().name()));
+        projectile.addTraits(new StringTrait(Constants.BENDING_FORM, startPaths.get(0).name()));
         projectile.addTraits(skillData.getTrait(Constants.SIZE, SizeTrait.class));
         projectile.addTraits(new CollisionTrait(Constants.COLLISION_TYPE, "Blaze", "Fireball", "AbstractArrow", "FireProjectile"));
         projectile.addCollisionModule((ICollisionModule) ModuleRegistry.create(FireEffectModule.id));

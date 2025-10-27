@@ -1,8 +1,7 @@
 package com.amuzil.omegasource.bending.element.earth;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.api.magus.form.ActiveForm;
-import com.amuzil.omegasource.api.magus.form.FormPath;
+import com.amuzil.omegasource.api.magus.form.Form;
 import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.event.SkillTickEvent;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.KnockbackTrait;
@@ -49,24 +48,13 @@ public class EarthQuakeSkill extends EarthSkill {
         addTrait(new SizeTrait(Constants.SIZE, 1.0f));
 
         this.startPaths = SkillPathBuilder.getInstance()
-//                .simple(new ActiveForm(ARC, true))
-                .complex(new ActiveForm(RAISE, true))
-                .complex(new ActiveForm(LOWER, true))
+                .add(RAISE)
+                .add(LOWER)
                 .build();
 
         this.stopPaths = SkillPathBuilder.getInstance()
-                .simple(new ActiveForm(BLOCK, true))
+                .add(BLOCK)
                 .build();
-    }
-
-    @Override
-    public boolean shouldStart(Bender bender, FormPath formPath) {
-        return formPath.complex().hashCode() == startPaths().complex().hashCode();
-    }
-
-    @Override
-    public boolean shouldStop(Bender bender, FormPath formPath) {
-        return formPath.simple().hashCode() == stopPaths().simple().hashCode();
     }
 
     @Override
@@ -195,7 +183,6 @@ public class EarthQuakeSkill extends EarthSkill {
             if (ticksStopped >= 400) {
                 originalBlocks.restore((ServerLevel) bender.getEntity().level());
                 System.out.println("EarthQuakeSkill cleanup stopped");
-                this.stopCleanup();
             }
         };
         this.listen(SkillTickEvent.class, cleanupRunnable);

@@ -8,12 +8,12 @@ import com.amuzil.omegasource.bending.element.Elements;
 public abstract class EarthSkill extends BendingSkill {
 
     public EarthSkill(String modID, String name) {
-        super(modID, name, Elements.EARTH);
+        super(modID, name);
     }
 
     @Override
     public SkillCategory getCategory() {
-        return Elements.EARTH;
+        return Elements.EARTH.get();
     }
 
 

@@ -12,13 +12,8 @@ import com.amuzil.omegasource.capability.Bender;
 
 public abstract class BendingSkill extends SkillActive {
 
-    public BendingSkill(String modID, String name, SkillCategory category) {
-        super(modID, name, category);
-        addTrait(new XPTrait("xp", 0));
-        addTrait(new LevelTrait("level", 0));
-        addTrait(new LevelTrait("tier", 1));
-        addTrait(new TimedTrait("max_cooldown", 40));
-        addTrait(new TimedTrait("cooldown", 40));
+    public BendingSkill(String modID, String name) {
+        super(modID, name);
     }
 
     public Element element() {

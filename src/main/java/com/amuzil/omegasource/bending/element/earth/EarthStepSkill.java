@@ -33,8 +33,7 @@ public class EarthStepSkill extends EarthSkill {
         addTrait(new TimedTrait(Constants.RUNTIME, 0));
         addTrait(new StringTrait(Constants.FX, "earth_bloom_perma5"));
         this.startPaths = SkillPathBuilder.getInstance()
-                .simple(new ActiveForm(STEP, true))
-                .complex(new ActiveForm(STEP, true))
+                .add(STEP)
                 .build();
     }
 
@@ -44,10 +43,9 @@ public class EarthStepSkill extends EarthSkill {
         LivingEntity entity = bender.getEntity();
         SkillData data = bender.getSkillData(this);
         data.setSkillState(SkillState.RUN);
-        BendingForm.Type.Motion motion;
-        if (!bender.getFormPath().complex().isEmpty())
-            motion = bender.getFormPath().complex().get(0).direction();
-        else
+
+        BendingForm.Type.Motion motion = bender.getStepDirection();
+        if (motion == null)
             motion = BendingForm.Type.Motion.FORWARD;
 
         if (!canEarthBend(entity)) return; // Can't earth bend if too far from ground
@@ -57,7 +55,7 @@ public class EarthStepSkill extends EarthSkill {
         time.setTime(0);
 
         AvatarEntity bound = new AvatarBoundProjectile(entity.level());
-        bound.setElement(Elements.EARTH);
+        bound.setElement(Elements.EARTH.get());
         bound.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
         bound.setOwner(entity);
         bound.setMaxLifetime(lifetime / 3);

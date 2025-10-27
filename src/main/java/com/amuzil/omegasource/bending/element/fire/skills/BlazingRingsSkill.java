@@ -43,13 +43,8 @@ public class BlazingRingsSkill extends FireSkill {
 
         startPaths = SkillPathBuilder.getInstance()
 //                .simple(new ActiveForm(BendingForms.ARC, true))
-                .simple(new ActiveForm(BendingForms.ROTATE, true))
+                .add(BendingForms.ROTATE)
                 .build();
-    }
-
-    @Override
-    public boolean shouldStart(Bender bender, FormPath formPath) {
-        return formPath.simple().hashCode() == startPaths().simple().hashCode();
     }
 
     @Override

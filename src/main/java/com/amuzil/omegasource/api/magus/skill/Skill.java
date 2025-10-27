@@ -1,11 +1,14 @@
 package com.amuzil.omegasource.api.magus.skill;
 
+import com.amuzil.omegasource.api.magus.form.Form;
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.radix.RadixTree;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
+import com.amuzil.omegasource.api.magus.skill.event.SkillExecutionEvent;
 import com.amuzil.omegasource.api.magus.skill.event.SkillTickEvent;
 import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.UseTrait;
+import com.amuzil.omegasource.bending.BendingSelection;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.skill.ActivatedSkillPacket;
@@ -27,10 +30,9 @@ import java.util.function.Predicate;
 /**
  * Basic skill class. All other skills extend this.
  */
-public abstract class Skill {
+public abstract class Skill implements Cloneable {
     private final String name;
     private final ResourceLocation id;
-    private final SkillCategory category;
     private final List<RadixTree.ActivationType> activationTypes;
     private final List<SkillType> skillTypes;
     private final List<SkillTrait> skillTraits;
@@ -39,22 +41,28 @@ public abstract class Skill {
     protected SkillData skillData;
     // How the skill was activated. Useful if you want different methods to influence the skill in different ways.
     protected RadixTree.ActivationType activatedType;
-    protected FormPath startPaths, runPaths, stopPaths;
+    protected List<Form> startPaths, runPaths, stopPaths;
     private String uuid;
 
-    public Skill(String modId, String name, SkillCategory category) {
-        this(ResourceLocation.fromNamespaceAndPath(modId, name), name, category);
+    public Skill(String modId, String name) {
+        this(ResourceLocation.fromNamespaceAndPath(modId, name), name);
     }
 
-    public Skill(ResourceLocation id, String name, SkillCategory category) {
+    public Skill(ResourceLocation id, String name) {
         this.id = id;
         this.uuid = UUID.randomUUID().toString();
         this.name = name;
-        this.category = category;
-        this.activatedType = RadixTree.ActivationType.MENU; // Menu is default
+        // Menu is default
+        this.activatedType = RadixTree.ActivationType.MENU;
         this.skillTypes = new LinkedList<>();
         this.skillTraits = new LinkedList<>();
         this.activationTypes = new LinkedList<>();
+
+        this.run = event -> {
+            if (bender != null) {
+                this.tick(bender);
+            }
+        };
 
         addTrait(new UseTrait("use_skill", false));
 //        Registries.registerSkill(this);
@@ -62,8 +70,31 @@ public abstract class Skill {
 
     public Skill create(Bender bender) {
         this.bender = bender;
-        this.skillData = bender.getSkillData(this);
-        return this;
+//        this.skillData = bender.getSkillData(this);
+        // Should we be making another SkillData instance?
+        // Probs not since we have instances of Skills now
+        var newInstance = this.clone();
+        newInstance.skillData = new SkillData(newInstance);
+        return newInstance;
+    }
+
+    @Override
+    public Skill clone() {
+        try {
+//            Skill copy = this.getClass().getDeclaredConstructor().newInstance();
+//            for (Field f : this.getClass().getFields()) { // Never executes
+//                f.setAccessible(true);
+//                f.set(copy, f.get(this));
+//            }
+//            copy.skillData = this.skillData;
+//            copy.bender = this.bender;
+            Skill copy = (Skill) super.clone();
+            copy.setUUID(UUID.randomUUID().toString());
+            System.out.println("duplicating skill");
+            return copy;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError("Failed to clone Skill, cloning not supported!", e);
+        }
     }
 
     public boolean addTrait(SkillTrait trait) {
@@ -75,6 +106,8 @@ public abstract class Skill {
         this.skillTraits.add(trait);
         return true;
     }
+
+//    public abstract BendingSelection.Target targetType();  // todo: part of selection type refactor
 
     public void addType(SkillType type) {
         this.skillTypes.add(type);
@@ -88,9 +121,7 @@ public abstract class Skill {
         this.activationTypes.add(type);
     }
 
-    public SkillCategory getCategory() {
-        return category;
-    }
+    public abstract SkillCategory getCategory();
 
     public String name() {
         return name;
@@ -116,8 +147,7 @@ public abstract class Skill {
         return this.skillTypes;
     }
 
-    // Execute Skill on server then on client
-//    @Deprecated
+    // Execute Skill on server
 //    public void execute(Bender bender) {
 //        FormPath formPath = bender.formPath;
 //        // Remember, for some reason post only returns true upon the event being cancelled. Blame Forge.
@@ -164,6 +194,7 @@ public abstract class Skill {
     public void tick(Bender bender) {
         if (shouldStop(bender, bender.formPath)) {
             stop(bender);
+            hush(run);
         } else {
             run(bender);
         }
@@ -183,17 +214,15 @@ public abstract class Skill {
         }
     }
 
-    public abstract FormPath startPaths();
+    public abstract List<Form> startPaths();
 
-    public abstract FormPath runPaths();
+    public abstract List<Form> runPaths();
 
-    public abstract FormPath stopPaths();
+    public abstract List<Form> stopPaths();
 
-    public abstract boolean shouldStart(Bender bender, FormPath formPath);
+    public abstract boolean shouldRun(Bender bender, List<Form> formPath);
 
-    public abstract boolean shouldRun(Bender bender, FormPath formPath);
-
-    public abstract boolean shouldStop(Bender bender, FormPath formPath);
+    public abstract boolean shouldStop(Bender bender, List<Form> formPath);
 
     public abstract void start(Bender bender);
 

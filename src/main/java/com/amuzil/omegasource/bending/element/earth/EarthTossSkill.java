@@ -1,8 +1,6 @@
 package com.amuzil.omegasource.bending.element.earth;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.api.magus.form.ActiveForm;
-import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.skill.Skill;
 import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.KnockbackTrait;
@@ -38,13 +36,8 @@ public class EarthTossSkill extends EarthSkill {
         addTrait(new SizeTrait(Constants.SIZE, 1.0f));
 
         this.startPaths = SkillPathBuilder.getInstance()
-                .simple(new ActiveForm(STRIKE, true))
+                .add(STRIKE)
                 .build();
-    }
-
-    @Override
-    public boolean shouldStart(Bender bender, FormPath formPath) {
-        return formPath.simple().hashCode() == startPaths().simple().hashCode();
     }
 
     @Override

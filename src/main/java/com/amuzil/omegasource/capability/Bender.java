@@ -1,5 +1,7 @@
 package com.amuzil.omegasource.capability;
 
+import com.amuzil.omegasource.api.magus.form.ActiveForm;
+import com.amuzil.omegasource.api.magus.form.Form;
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.registry.Registries;
 import com.amuzil.omegasource.api.magus.skill.Skill;
@@ -7,9 +9,12 @@ import com.amuzil.omegasource.api.magus.skill.SkillCategory;
 import com.amuzil.omegasource.api.magus.skill.data.SkillCategoryData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.traits.DataTrait;
+import com.amuzil.omegasource.api.magus.tree.SkillTree;
+import com.amuzil.omegasource.api.magus.tree.TreeResult;
 import com.amuzil.omegasource.bending.BendingSelection;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.Elements;
+import com.amuzil.omegasource.bending.form.BendingForm;
 import com.amuzil.omegasource.events.FormActivatedEvent;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.sync.SyncBenderPacket;
@@ -47,13 +52,14 @@ public class Bender implements IBender {
     private boolean active;
     private final int timeout = 5; // Adjust clear BendingForm cache timeout here
     private int tick = timeout;
-    public final FormPath formPath = new FormPath(); // in-sync
+    public final List<Form> formPath = new ArrayList<>(); // in-sync
     private Vec3 lastDeltaMovement = Vec3.ZERO; // in-sync
     private BendingSelection selection = new BendingSelection(); // in-sync
     private final HashMap<ResourceLocation, Boolean> shouldRuns = new HashMap<>(); // in-sync
 
     // Persistent data
-    private Element activeElement = Elements.FIRE; // Currently active element // TODO - Randomize on first load
+    private Element activeElement = Elements.FIRE.get(); // Currently active element // TODO - Randomize on first load
+    private BendingForm.Type.Motion stepDirection;
     private final List<SkillCategoryData> skillCategoryData = new ArrayList<>();
     private final HashMap<String, SkillData> skillDataMap = new HashMap<>();
     private final List<DataTrait> dataTraits = new ArrayList<>();
@@ -103,30 +109,73 @@ public class Bender implements IBender {
     }
 
     private void onFormActivatedEvent(FormActivatedEvent event) {
-        if (event.getEntity().getId() == entity.getId()) {
+        if (event.getEntity().getId() == entity.getId() && event.getActiveForm().form().name() != "null") {
             active = !event.released();
-            formPath.update(event.getActiveForm());
-//            this.syncFormPathToClient(); // TODO: We probably don't need this anymore
+            ActiveForm activeForm = event.getActiveForm();
 
-            for (Skill skill: availableSkills) {
-                if (canUseSkill(skill) && skill.shouldStart(this, formPath)) {
-                    Skill newSkill = Objects.requireNonNull(Registries.getSkill(skill.getId())).create(this);
-                    newSkill.start(this);
-                    formPath.clear(); // breaks Step / Dash skills
+            if(activeForm.direction() != null) {
+                stepDirection = activeForm.direction(); // todo move to bending context
+            } else stepDirection = null;
+
+            formPath.add(event.getActiveForm().form());
+            if(active) {
+                switch (getSelection().target()) {
+                    case BLOCK, NONE, SELF, ENTITY -> checkSkillTree();
+                    case SKILL ->
+                            applyFormsToSkill(getSelection().skillIds(), formPath); // send the form to the skill.
+                }
+            } else {
+                if(getSelection().target().equals(BendingSelection.Target.SKILL)) {
+                    releaseFormsOnSkill(getSelection().skillIds(), formPath);
                 }
             }
+
             tick = timeout;
-//            printFormPath(); // Debugging purposes
+            printFormPath(); // Debugging purposes
+        }
+    }
+
+    private void releaseFormsOnSkill(List<String> strings, List<Form> formPath) {
+        // method stub for now
+    }
+
+    private void applyFormsToSkill(List<String> skillIds, List<Form> formPath) {
+        this.activeSkills.values().stream().filter(c -> skillIds.contains(c.getUUID().toString())).forEach((skill) -> {
+            // skill.ApplyForms(formPath);
+        });
+    }
+
+    private void checkSkillTree() {
+        TreeResult result = SkillTree.ExecutePath(this, formPath);
+        switch(result.resultType) {
+            case SKILL_FOUND -> {
+                LOGGER.info("Skill found: " + result.skill.name());
+                Skill skill = result.skill;
+                Skill newSkill = Objects.requireNonNull(Registries.getSkill(skill.getId())).create(this);
+				if (canUseSkill(newSkill)) {
+                	newSkill.start(this);
+                	formPath.clear();
+				}
+            }
+            case TERMINAL_NODE -> {
+                LOGGER.info("Terminal node");
+                formPath.clear();
+            } // tree reached the end and found nothing. clear the formPath
+            case SKILL_NOT_FOUND -> {
+                LOGGER.info("Skill not found");
+            } // do nothing. there may still be a combo on the next form.
         }
     }
 
     private void serverTick() {
         if (!active) {
+            LOGGER.info("Complex Forms Ticking 1");
             if (tick == 0) {
-                if (!formPath.isActive()) {
+                LOGGER.info("Complex Forms Ticking 2");
+//                if (!formPath.isActive()) {
                     formPath.clear(); // Only clear when no Forms are active
-//                    LOGGER.info("Complex Forms Timed Out");
-                }
+                    LOGGER.info("Complex Forms Timed Out");
+//                }
                 tick = timeout;
                 active = true;
             }
@@ -166,6 +215,10 @@ public class Bender implements IBender {
         this.lastDeltaMovement = lastDeltaMovement;
     }
 
+    public BendingForm.Type.Motion getStepDirection() {
+        return stepDirection;
+    }
+
     @Override
     public void register() {
         MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, formListener);
@@ -182,7 +235,7 @@ public class Bender implements IBender {
     }
 
     @Override
-    public FormPath getFormPath() {
+    public List<Form> getFormPath() {
         return formPath;
     }
 
@@ -329,9 +382,9 @@ public class Bender implements IBender {
 
     @Override
     public void syncFormPathToClient() {
-        if (!entity.level().isClientSide())
-            if (entity instanceof ServerPlayer player)
-                AvatarNetwork.sendToClient(new SyncFormPathPacket(formPath.serializeNBT()), player);
+//        if (!entity.level().isClientSide())
+//            if (entity instanceof ServerPlayer player)
+//                AvatarNetwork.sendToClient(new SyncFormPathPacket(formPath.serializeNBT()), player);
     }
 
     @Override
@@ -353,8 +406,7 @@ public class Bender implements IBender {
 //    }
 
     private void printFormPath() {
-        LOGGER.info("Simple Forms: {}", formPath.simple());
-        LOGGER.info("Complex Forms: {}", formPath.complex());
+        LOGGER.info("Forms: {}", formPath);
     }
 
     public void printNBT() {
@@ -374,7 +426,7 @@ public class Bender implements IBender {
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
         tag.putInt("DataVersion", DATA_VERSION);
-        tag.putString("Active Element", Objects.requireNonNullElse(activeElement, Elements.FIRE).getId().toString());
+        tag.putString("Active Element", Objects.requireNonNullElse(activeElement, Elements.FIRE.get()).getId().toString());
         skillCategoryData.forEach(catData -> tag.put(catData.name(), catData.serializeNBT()));
         skillDataMap.values().forEach(skillData -> tag.put(skillData.name(), skillData.serializeNBT()));
         return tag;
