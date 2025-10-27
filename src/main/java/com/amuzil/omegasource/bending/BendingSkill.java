@@ -62,5 +62,4 @@ public abstract class BendingSkill extends SkillActive {
         }
     }
 
-
 }

@@ -123,6 +123,7 @@ public class VSUtils {
                 shipyardBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipyardPos));
             }
         }
+        bender.getSelection().setBlockPos(shipyardBlockPos); // Important: Update BlockPos to the shipyard position
         return shipyardBlockPos;
     }
 

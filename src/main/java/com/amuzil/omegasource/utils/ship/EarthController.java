@@ -186,6 +186,12 @@ public final class EarthController implements ShipPhysicsListener {
         return isControlled;
     }
 
+    public void stopControl() {
+        tickCount.set(0);
+        setControlled(false);
+        bender.getSelection().reset();
+    }
+
     private record InvForceAtPos(Vector3dc force, Vector3dc pos) {}
 
     public void checkShipShipCollisions(ServerLevel level, ServerShip ship) {

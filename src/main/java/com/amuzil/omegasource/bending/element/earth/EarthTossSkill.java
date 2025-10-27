@@ -85,6 +85,7 @@ public class EarthTossSkill extends EarthSkill {
                     }
                 }
                 tossBlock(bender.getEntity(), earthController, serverShip);
+                earthController.stopControl();
             }
         }
 
