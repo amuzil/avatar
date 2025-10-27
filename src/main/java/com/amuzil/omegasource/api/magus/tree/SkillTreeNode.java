@@ -17,12 +17,6 @@ public class SkillTreeNode {
     }
 
     public TreeResult ExecutePath(List<Form> forms) {
-        if(skill != null) {
-            return new TreeResult(TreeResult.ResultType.SKILL_FOUND, skill);
-        }
-        if(children.size() == 0) {
-            return new TreeResult(TreeResult.ResultType.TERMINAL_NODE, null);
-        }
         if(forms.size() > 0) {
             SkillTreeNode branch = children.get(forms.get(0));
 
@@ -30,6 +24,14 @@ public class SkillTreeNode {
                 return new TreeResult(TreeResult.ResultType.TERMINAL_NODE, null);
 
             return branch.ExecutePath(forms.subList(1, forms.size()));
+        }
+
+        if(skill != null) {
+            return new TreeResult(TreeResult.ResultType.SKILL_FOUND, skill);
+        }
+
+        if(children.size() == 0) {
+            return new TreeResult(TreeResult.ResultType.TERMINAL_NODE, null);
         }
         return new TreeResult(TreeResult.ResultType.SKILL_NOT_FOUND, null);
     }

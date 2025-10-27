@@ -66,6 +66,8 @@ public class Bender implements IBender {
 
     public final HashMap<String, Skill> activeSkills = new HashMap<>();
     private final List<Skill> availableSkills = new ArrayList<>();
+    private Skill skillToActivate = null;
+    private int skillActivationTimer = 15;
 
     public Bender(LivingEntity entity) {
         this.entity = entity;
@@ -150,12 +152,8 @@ public class Bender implements IBender {
         switch(result.resultType) {
             case SKILL_FOUND -> {
                 LOGGER.info("Skill found: " + result.skill.name());
-                Skill skill = result.skill;
-                Skill newSkill = Objects.requireNonNull(Registries.getSkill(skill.getId())).create(this);
-				if (canUseSkill(newSkill)) {
-                	newSkill.start(this);
-                	formPath.clear();
-				}
+                skillToActivate = result.skill;
+                skillActivationTimer = 15;
             }
             case TERMINAL_NODE -> {
                 LOGGER.info("Terminal node");
@@ -168,6 +166,18 @@ public class Bender implements IBender {
     }
 
     private void serverTick() {
+        if(skillToActivate != null) {
+            skillActivationTimer--;
+            if(skillActivationTimer <= 0) {
+                Skill newSkill = Objects.requireNonNull(Registries.getSkill(skillToActivate.getId())).create(this);
+                if (canUseSkill(newSkill)) {
+                    newSkill.start(this);
+                    formPath.clear();
+                    skillToActivate = null;
+                    skillActivationTimer = 15;
+                }
+            }
+        }
         if (!active) {
             LOGGER.info("Complex Forms Ticking 1");
             if (tick == 0) {
