@@ -35,7 +35,6 @@ public class EarthWallSkill extends EarthSkill {
 
         this.startPaths = SkillPathBuilder.getInstance()
                 .add(RAISE)
-                .add(BLOCK)
                 .build();
     }
 
