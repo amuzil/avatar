@@ -43,17 +43,19 @@ public class EarthBlockSkill extends EarthSkill {
         BlockPos shipyardBlockPos = assembleEarthShip(bender);
         if (shipyardBlockPos != null) {
             ServerLevel level = (ServerLevel) bender.getEntity().level();
-            LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, shipyardBlockPos);
-            if (serverShip != null) {
-                EarthController earthController = EarthController.getOrCreate(serverShip, bender);
-                if (earthController.isControlled()) {
-                    earthController.setControlled(false);
-                    stopRun();
-                } else {
-                    earthController.setControlled(true);
-                    startRun(bender);
+            level.getServer().execute(() -> {
+                LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, shipyardBlockPos);
+                if (serverShip != null) {
+                    EarthController earthController = EarthController.getOrCreate(serverShip, bender);
+                    if (earthController.isControlled()) {
+                        earthController.setControlled(false);
+                        stopRun();
+                    } else {
+                        earthController.setControlled(true);
+                        startRun(bender);
+                    }
                 }
-            }
+            });
         } else
             stopRun(); // cleanup
 //        if (bender.getEntity() instanceof AbstractClientPlayer benderPlayer) {

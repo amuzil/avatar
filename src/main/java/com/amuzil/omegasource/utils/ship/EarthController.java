@@ -173,6 +173,8 @@ public final class EarthController implements ShipPhysicsListener {
         invPosForces.add(new InvForceAtPos(force, pos));
     }
 
+    private record InvForceAtPos(Vector3dc force, Vector3dc pos) {}
+
     public void setStatic(boolean b) {
         toBeStatic = b;
         toBeStaticUpdated = true;
@@ -191,8 +193,6 @@ public final class EarthController implements ShipPhysicsListener {
         setControlled(false);
         bender.getSelection().reset();
     }
-
-    private record InvForceAtPos(Vector3dc force, Vector3dc pos) {}
 
     public void checkShipShipCollisions(ServerLevel level, ServerShip ship) {
         String dimensionId = VSGameUtilsKt.getDimensionId(level);

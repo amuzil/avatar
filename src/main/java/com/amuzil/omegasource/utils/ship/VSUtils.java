@@ -86,7 +86,7 @@ public class VSUtils {
     public static void tossBlock(LivingEntity entity, EarthController earthController, LoadedServerShip ship) {
         double mass = ship.getInertiaData().getMass();
         Vec3 vec3 = entity.getLookAngle().normalize()
-                .multiply(300*mass, 200*mass, 300*mass);
+                .multiply(500*mass, 250*mass, 500*mass);
         Vector3d force = VectorConversionsMCKt.toJOML(vec3);
         earthController.applyInvariantForce(force);
     }
@@ -217,7 +217,7 @@ public class VSUtils {
 
         // 🔹 Compute the real center block in the ship’s chunk claim
         BlockPos shipCenterPos = VectorConversionsMCKt.toBlockPos(
-                ship.getChunkClaim().getCenterBlockCoordinates(VSGameUtilsKt.getYRange(level), new org.joml.Vector3i())
+                ship.getChunkClaim().getCenterBlockCoordinates(VSGameUtilsKt.getYRange(level), new Vector3i())
         );
 
         // 🔹 Relocate each block into the ship
