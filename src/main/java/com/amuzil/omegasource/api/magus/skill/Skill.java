@@ -30,7 +30,7 @@ import java.util.function.Predicate;
 /**
  * Basic skill class. All other skills extend this.
  */
-public abstract class Skill implements Cloneable {
+public abstract class Skill {
     private final String name;
     private final ResourceLocation id;
     private final List<RadixTree.ActivationType> activationTypes;
@@ -70,31 +70,8 @@ public abstract class Skill implements Cloneable {
 
     public Skill create(Bender bender) {
         this.bender = bender;
-//        this.skillData = bender.getSkillData(this);
-        // Should we be making another SkillData instance?
-        // Probs not since we have instances of Skills now
-        var newInstance = this.clone();
-        newInstance.skillData = new SkillData(newInstance);
-        return newInstance;
-    }
-
-    @Override
-    public Skill clone() {
-        try {
-//            Skill copy = this.getClass().getDeclaredConstructor().newInstance();
-//            for (Field f : this.getClass().getFields()) { // Never executes
-//                f.setAccessible(true);
-//                f.set(copy, f.get(this));
-//            }
-//            copy.skillData = this.skillData;
-//            copy.bender = this.bender;
-            Skill copy = (Skill) super.clone();
-            copy.setUUID(UUID.randomUUID().toString());
-            System.out.println("duplicating skill");
-            return copy;
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError("Failed to clone Skill, cloning not supported!", e);
-        }
+        this.skillData = new SkillData(this);
+        return this;
     }
 
     public boolean addTrait(SkillTrait trait) {
