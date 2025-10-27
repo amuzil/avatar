@@ -63,6 +63,7 @@ public final class EarthController implements ShipPhysicsListener {
 //                physShip.applyInvariantForce(force);
 //            }
 //        }
+//        System.out.println("physTick " + invForces);
         if (!invForces.isEmpty())
             physShip.applyInvariantForce(invForces.poll());
         if (!invTorques.isEmpty())

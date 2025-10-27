@@ -86,7 +86,7 @@ public abstract class SkillActive extends Skill {
         // one shot Skills that only use start() method. In other words, every skill would need to define or specify
         // how their skill shouldStop just to remove the listener.
         if (!shouldRun(bender, bender.formPath))
-            hush(run);
+            stop(bender);
     }
 
     @Override

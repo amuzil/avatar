@@ -4,7 +4,6 @@ import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
 import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.skill.Skill;
-import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.KnockbackTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SizeTrait;
@@ -20,6 +19,7 @@ import org.joml.Vector3dc;
 import org.joml.Vector3i;
 import org.valkyrienskies.core.api.ships.LoadedServerShip;
 import org.valkyrienskies.core.api.ships.ServerShip;
+import org.valkyrienskies.core.api.world.ServerShipWorld;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 import org.valkyrienskies.mod.common.util.VectorConversionsMCKt;
 import org.valkyrienskies.mod.util.RelocationUtilKt;
@@ -57,33 +57,24 @@ public class EarthTossSkill extends EarthSkill {
                 && blockPos != null
                 && !VSGameUtilsKt.isBlockInShipyard(level, blockPos)
                 && !level.getBlockState(blockPos).isAir()) {
+
             String dimensionId = VSGameUtilsKt.getDimensionId(level);
             ServerShip ship = VSGameUtilsKt.getShipObjectWorld(level).createNewShipAtBlock(VectorConversionsMCKt.toJOML(blockPos), false, 1, dimensionId);
             BlockPos centerPos = VectorConversionsMCKt.toBlockPos(ship.getChunkClaim().getCenterBlockCoordinates(VSGameUtilsKt.getYRange(level),new Vector3i()));
             RelocationUtilKt.relocateBlock(level, blockPos, centerPos, true, ship, Rotation.NONE);
-//                BlockPos selectedCentre = null;
-//                int deltaX, deltaY, deltaZ;
-//                for (BlockPos selectedBlock: bender.getSelection().blockPos()) {
-//                    if(selectedCentre == null) {
-//                        selectedCentre = selectedBlock;
-//                        RelocationUtilKt.relocateBlock(level, selectedCentre, centerPos, true, ship, Rotation.NONE);
-//                    } else {
-//                        deltaX = selectedCentre.getX() - selectedBlock.getX();
-//                        deltaY = selectedCentre.getY() - selectedBlock.getY();
-//                        deltaZ = selectedCentre.getZ() - selectedBlock.getZ();
-//
-//                        RelocationUtilKt.relocateBlock(level, selectedBlock, centerPos.offset(deltaX, deltaY, deltaZ), true, ship, Rotation.NONE);
-//                    }
-//                }
+
             Vector3dc shipyardPos = ship.getTransform().getPositionInShip();
             BlockPos shipyardBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipyardPos));
             bender.getSelection().setBlockPos(shipyardBlockPos);
-//                if (ship != null)
-//                    System.out.println("Ship created: " + ship.getId() + " " + bender.getSelection().blockPos());
         }
+
+        blockPos = bender.getSelection().blockPos();
         if (blockPos != null && VSGameUtilsKt.isBlockInShipyard(level, blockPos)) {
             LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, blockPos);
-            if (serverShip != null) {
+            ServerShipWorld serverShipWorld = (ServerShipWorld) VSGameUtilsKt.getVsCore().getHooks().getCurrentShipServerWorld();
+            if (serverShip != null && serverShipWorld != null) {
+//                controlBlock(serverShip, serverShipWorld, level, bender);
+                // need to call teleportShip before applying forces
                 EarthController earthController = EarthController.getOrCreate(serverShip, bender);
                 earthController.setControlled(false);
                 List<Skill> activeSkill = bender.activeSkills.values().stream().toList();
@@ -97,7 +88,6 @@ public class EarthTossSkill extends EarthSkill {
             }
         }
 
-        SkillData data = bender.getSkillData(this);
-        data.setSkillState(SkillState.IDLE);
+        skillData.setSkillState(SkillState.IDLE);
     }
 }

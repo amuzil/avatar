@@ -86,7 +86,7 @@ public class VSUtils {
     public static void tossBlock(LivingEntity entity, EarthController earthController, LoadedServerShip ship) {
         double mass = ship.getInertiaData().getMass();
         Vec3 vec3 = entity.getLookAngle().normalize()
-                .multiply(900*mass, 600*mass, 900*mass);
+                .multiply(300*mass, 200*mass, 300*mass);
         Vector3d force = VectorConversionsMCKt.toJOML(vec3);
         earthController.applyInvariantForce(force);
     }
@@ -104,7 +104,7 @@ public class VSUtils {
         BlockPos shipyardBlockPos = null;
         ServerLevel level = (ServerLevel) bender.getEntity().level();
         BlockPos blockPos = bender.getSelection().blockPos();
-        if (blockPos != null) {
+        if (blockPos != null) { // Create new ship
             BlockState blockState = level.getBlockState(blockPos);
             if (bender.getSelection().target() == BendingSelection.Target.BLOCK
                     && !VSGameUtilsKt.isBlockInShipyard(level, blockPos)
@@ -116,7 +116,7 @@ public class VSUtils {
                 RelocationUtilKt.relocateBlock(level, blockPos, centerPos, true, ship, Rotation.NONE);
                 Vector3dc shipyardPos = ship.getTransform().getPositionInShip();
                 shipyardBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipyardPos));
-            } else {
+            } else { // Get existing shipyard position
                 LoadedServerShip ship = VSGameUtilsKt.getShipObjectManagingPos(level, blockPos);
                 if (ship == null) return null;
                 Vector3dc shipyardPos = ship.getTransform().getPositionInShip();
