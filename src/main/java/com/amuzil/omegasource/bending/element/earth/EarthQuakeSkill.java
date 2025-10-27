@@ -58,11 +58,6 @@ public class EarthQuakeSkill extends EarthSkill {
     }
 
     @Override
-    public boolean shouldRun(Bender bender, List<Form> formPath) {
-        return skillData.getSkillState().equals(SkillState.RUN);
-    }
-
-    @Override
     public void start(Bender bender) {
         startRun(bender);
         System.out.println("EarthQuakeSkill started");
