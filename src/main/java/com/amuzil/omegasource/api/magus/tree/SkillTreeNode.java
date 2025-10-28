@@ -26,7 +26,10 @@ public class SkillTreeNode {
         }
 
         if(skill != null) {
-            return new TreeResult(TreeResult.ResultType.SKILL_FOUND, skill);
+            if(forms.isEmpty() && !children.isEmpty())
+                return new TreeResult(TreeResult.ResultType.SKILL_FOUND, skill);
+            else
+                return new TreeResult(TreeResult.ResultType.SKILL_FOUND_TERMINAL, skill);
         }
 
         if(children.size() == 0) {

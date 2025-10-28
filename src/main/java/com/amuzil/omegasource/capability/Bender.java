@@ -149,6 +149,11 @@ public class Bender implements IBender {
         System.out.println("[Bender] Checking Skill Tree for Forms: " + formPath);
         TreeResult result = SkillTree.ExecutePath(this, formPath);
         switch(result.resultType) {
+            case SKILL_FOUND_TERMINAL -> {
+                LOGGER.info("Skill found: " + result.skill.name());
+                skillToActivate = result.skill;
+                startSkill();
+            }
             case SKILL_FOUND -> {
                 LOGGER.info("Skill found: " + result.skill.name());
                 skillToActivate = result.skill;
@@ -168,13 +173,7 @@ public class Bender implements IBender {
         if(skillToActivate != null) {
             skillActivationTimer--;
             if(skillActivationTimer <= 0) {
-                Skill newSkill = Objects.requireNonNull(Registries.getSkill(skillToActivate.getId())).create(this);
-                if (canUseSkill(newSkill)) {
-                    newSkill.start(this);
-                    formPath.clear();
-                    skillToActivate = null;
-                    skillActivationTimer = 15;
-                }
+                startSkill();
             }
         }
         if (!active) {
@@ -186,6 +185,16 @@ public class Bender implements IBender {
             tick--;
         }
         restoreOriginalBlocks();
+    }
+
+    private void startSkill() {
+        Skill newSkill = Objects.requireNonNull(Registries.getSkill(skillToActivate.getId())).create(this);
+        if (canUseSkill(newSkill)) {
+            newSkill.start(this);
+            formPath.clear();
+            skillToActivate = null;
+            skillActivationTimer = 15;
+        }
     }
 
     public void startTickingOriginalBlocks(Long shipId) {

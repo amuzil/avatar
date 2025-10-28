@@ -13,6 +13,7 @@ public class TreeResult {
 
     public enum ResultType {
         SKILL_FOUND,
+        SKILL_FOUND_TERMINAL,
         SKILL_NOT_FOUND,
         TERMINAL_NODE
     }
