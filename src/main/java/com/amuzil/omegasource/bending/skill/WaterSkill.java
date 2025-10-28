@@ -13,6 +13,6 @@ public abstract class WaterSkill extends BendingSkill {
 
     @Override
     public SkillCategory getCategory() {
-        return Elements.WATER.get();
+        return Elements.WATER;
     }
 }

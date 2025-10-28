@@ -22,10 +22,15 @@ public class Elements {
     public static DeferredRegister<SkillCategory> SKILL_CATEGORY_REGISTER = DeferredRegister.create(ResourceLocation.parse("skill_categories"), Avatar.MOD_ID);
     public static Supplier<IForgeRegistry<SkillCategory>> SKILL_CATEGORIES = SKILL_CATEGORY_REGISTER.makeRegistry(RegistryBuilder::new);
 
-    public static final RegistryObject<Element> AIR = SKILL_CATEGORY_REGISTER.register("airbending", Airbending::new);
-    public static final RegistryObject<Element> WATER = SKILL_CATEGORY_REGISTER.register("waterbending", Waterbending::new);
-    public static final RegistryObject<Element> EARTH = SKILL_CATEGORY_REGISTER.register("earthbending", Earthbending::new);
-    public static final RegistryObject<Element> FIRE = SKILL_CATEGORY_REGISTER.register("firebending", Firebending::new);
+    public static final RegistryObject<Element> AIRBENDING = SKILL_CATEGORY_REGISTER.register("airbending", Airbending::new);
+    public static final RegistryObject<Element> WATERBENDING = SKILL_CATEGORY_REGISTER.register("waterbending", Waterbending::new);
+    public static final RegistryObject<Element> EARTHBENDING = SKILL_CATEGORY_REGISTER.register("earthbending", Earthbending::new);
+    public static final RegistryObject<Element> FIREBENDING = SKILL_CATEGORY_REGISTER.register("firebending", Firebending::new);
+
+    public static final Element AIR = AIRBENDING.get();
+    public static final Element WATER = WATERBENDING.get();
+    public static final Element EARTH = EARTHBENDING.get();
+    public static final Element FIRE = FIREBENDING.get();
 
     public static Element get(ResourceLocation id) {
         return (Element) SKILL_CATEGORIES.get().getValue(id);

@@ -13,6 +13,6 @@ public abstract class AirSkill extends BendingSkill {
 
     @Override
     public SkillCategory getCategory() {
-        return Elements.AIR.get();
+        return Elements.AIR;
     }
 }

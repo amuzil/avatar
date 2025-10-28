@@ -49,7 +49,7 @@ public class FlameStepSkill extends FireSkill {
         TimedTrait time = skillData.getTrait(Constants.RUNTIME, TimedTrait.class);
         time.setTime(0); // Reset fall damage nullification timer
         AvatarEntity bound = new AvatarBoundProjectile(entity.level());
-        bound.setElement(Elements.FIRE.get());
+        bound.setElement(Elements.FIRE);
         bound.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
         bound.setOwner(entity);
         bound.setMaxLifetime(lifetime / 3);

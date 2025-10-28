@@ -13,7 +13,7 @@ public abstract class EarthSkill extends BendingSkill {
 
     @Override
     public SkillCategory getCategory() {
-        return Elements.EARTH.get();
+        return Elements.EARTH;
     }
 
 

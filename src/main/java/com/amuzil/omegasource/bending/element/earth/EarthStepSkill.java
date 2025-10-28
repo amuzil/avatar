@@ -53,7 +53,7 @@ public class EarthStepSkill extends EarthSkill {
         time.setTime(0);
 
         AvatarEntity bound = new AvatarBoundProjectile(entity.level());
-        bound.setElement(Elements.EARTH.get());
+        bound.setElement(Elements.EARTH);
         bound.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
         bound.setOwner(entity);
         bound.setMaxLifetime(lifetime / 3);

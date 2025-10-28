@@ -13,6 +13,6 @@ public abstract class FireSkill extends BendingSkill {
 
     @Override
     public SkillCategory getCategory() {
-        return Elements.FIRE.get();
+        return Elements.FIRE;
     }
 }

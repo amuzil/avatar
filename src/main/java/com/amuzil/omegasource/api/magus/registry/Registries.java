@@ -30,6 +30,7 @@ public class Registries {
     public static DeferredRegister<Skill> SKILL_REGISTER = DeferredRegister.create(ResourceLocation.parse("skills"), Avatar.MOD_ID);
     public static Supplier<IForgeRegistry<Skill>> SKILLS = SKILL_REGISTER.makeRegistry(RegistryBuilder::new);
 
+    // Do we still need these SkillCategory registries here?
     public static DeferredRegister<SkillCategory> SKILL_CATEGORY_REGISTER = DeferredRegister.create(ResourceLocation.parse("skill_categories"), Avatar.MOD_ID);
     public static Supplier<IForgeRegistry<SkillCategory>> SKILL_CATEGORIES = SKILL_CATEGORY_REGISTER.makeRegistry(RegistryBuilder::new);
 

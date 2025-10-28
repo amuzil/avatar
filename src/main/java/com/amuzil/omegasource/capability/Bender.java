@@ -56,7 +56,7 @@ public class Bender implements IBender {
     private final HashMap<ResourceLocation, Boolean> shouldRuns = new HashMap<>(); // in-sync
 
     // Persistent data
-    private Element activeElement = Elements.FIRE.get(); // Currently active element // TODO - Randomize on first load
+    private Element activeElement = Elements.FIRE; // Currently active element // TODO - Randomize on first load
     private BendingForm.Type.Motion stepDirection;
     private final List<SkillCategoryData> skillCategoryData = new ArrayList<>();
     private final HashMap<String, SkillData> skillDataMap = new HashMap<>();
@@ -422,7 +422,7 @@ public class Bender implements IBender {
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
         tag.putInt("DataVersion", DATA_VERSION);
-        tag.putString("Active Element", Objects.requireNonNullElse(activeElement, Elements.FIRE.get()).getId().toString());
+        tag.putString("Active Element", Objects.requireNonNullElse(activeElement, Elements.FIRE).getId().toString());
         skillCategoryData.forEach(catData -> tag.put(catData.name(), catData.serializeNBT()));
         skillDataMap.values().forEach(skillData -> tag.put(skillData.name(), skillData.serializeNBT()));
         return tag;

@@ -266,7 +266,7 @@ public abstract class AvatarEntity extends Entity {
     @Override
     protected void defineSynchedData() {
         this.entityData.define(OWNER_ID, Optional.empty());
-        this.entityData.define(ELEMENT, Elements.FIRE.getId().toString());
+        this.entityData.define(ELEMENT, Elements.FIREBENDING.getId().toString());
         this.entityData.define(FX, "");
         this.entityData.define(ONE_SHOT_FX, true);
         this.entityData.define(COLLIDABLE, false);
