@@ -2,7 +2,6 @@ package com.amuzil.omegasource.entity.modules.force;
 
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.AngleTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.RangeTrait;
-import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SizeTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.SpeedTrait;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.api.IForceModule;

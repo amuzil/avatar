@@ -1,8 +1,8 @@
 package com.amuzil.omegasource.entity.projectile;
 
+import com.amuzil.omegasource.bending.form.BendingForms;
 import com.amuzil.omegasource.entity.AvatarEntities;
 import com.amuzil.omegasource.events.FormActivatedEvent;
-import com.amuzil.omegasource.bending.form.BendingForms;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -10,7 +10,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.*;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 

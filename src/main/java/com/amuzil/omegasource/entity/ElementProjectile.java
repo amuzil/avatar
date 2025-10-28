@@ -1,7 +1,7 @@
 package com.amuzil.omegasource.entity;
 
-import com.amuzil.omegasource.bending.form.BendingForm;
 import com.amuzil.omegasource.bending.element.Element;
+import com.amuzil.omegasource.bending.form.BendingForm;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;

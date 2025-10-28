@@ -2,7 +2,6 @@ package com.amuzil.omegasource.api.magus.skill;
 
 import com.amuzil.omegasource.api.magus.condition.conditions.EventCondition;
 import com.amuzil.omegasource.api.magus.form.Form;
-import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.event.SkillTickEvent;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.LevelTrait;

@@ -1,10 +1,10 @@
 package com.amuzil.omegasource.input;
 
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
-import com.amuzil.omegasource.capability.Bender;
+import com.amuzil.omegasource.bending.BendingSelection;
 import com.amuzil.omegasource.bending.form.BendingForm;
 import com.amuzil.omegasource.bending.form.BendingForms;
-import com.amuzil.omegasource.bending.BendingSelection;
+import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.form.ExecuteFormPacket;
 import com.amuzil.omegasource.network.packets.form.ReleaseFormPacket;
@@ -25,7 +25,6 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
-import static com.amuzil.omegasource.bending.BendingSelection.Target.*;
 import static com.amuzil.omegasource.input.KeyBindings.*;
 
 

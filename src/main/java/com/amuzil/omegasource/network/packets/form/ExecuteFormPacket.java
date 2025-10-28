@@ -13,7 +13,7 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-import static com.amuzil.omegasource.bending.form.BendingForms.*;
+import static com.amuzil.omegasource.bending.form.BendingForms.STEP;
 
 
 public class ExecuteFormPacket implements AvatarPacket {

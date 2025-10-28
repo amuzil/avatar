@@ -2,7 +2,6 @@ package com.amuzil.omegasource.capability;
 
 import com.amuzil.omegasource.api.magus.form.ActiveForm;
 import com.amuzil.omegasource.api.magus.form.Form;
-import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.registry.Registries;
 import com.amuzil.omegasource.api.magus.skill.Skill;
 import com.amuzil.omegasource.api.magus.skill.SkillCategory;
@@ -18,7 +17,6 @@ import com.amuzil.omegasource.bending.form.BendingForm;
 import com.amuzil.omegasource.events.FormActivatedEvent;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.sync.SyncBenderPacket;
-import com.amuzil.omegasource.network.packets.sync.SyncFormPathPacket;
 import com.amuzil.omegasource.network.packets.sync.SyncMovementPacket;
 import com.amuzil.omegasource.network.packets.sync.SyncSelectionPacket;
 import com.amuzil.omegasource.utils.ship.OriginalBlocks;
@@ -148,6 +146,7 @@ public class Bender implements IBender {
     }
 
     private void checkSkillTree() {
+        System.out.println("[Bender] Checking Skill Tree for Forms: " + formPath);
         TreeResult result = SkillTree.ExecutePath(this, formPath);
         switch(result.resultType) {
             case SKILL_FOUND -> {
@@ -382,13 +381,6 @@ public class Bender implements IBender {
     public void syncSelectionToServer() {
         if (entity.level().isClientSide())
             AvatarNetwork.sendToServer(new SyncSelectionPacket(selection.serializeNBT(), entity.getUUID()));
-    }
-
-    @Override
-    public void syncFormPathToClient() {
-//        if (!entity.level().isClientSide())
-//            if (entity instanceof ServerPlayer player)
-//                AvatarNetwork.sendToClient(new SyncFormPathPacket(formPath.serializeNBT()), player);
     }
 
     @Override

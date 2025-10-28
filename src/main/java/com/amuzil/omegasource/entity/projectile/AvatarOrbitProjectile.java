@@ -3,7 +3,6 @@ package com.amuzil.omegasource.entity.projectile;
 import com.amuzil.omegasource.entity.AvatarEntities;
 import com.amuzil.omegasource.entity.api.IForceModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
-import com.amuzil.omegasource.entity.modules.force.BindModule;
 import com.amuzil.omegasource.entity.modules.force.OrbitModule;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;

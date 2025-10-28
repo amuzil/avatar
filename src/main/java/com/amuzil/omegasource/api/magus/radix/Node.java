@@ -2,11 +2,10 @@ package com.amuzil.omegasource.api.magus.radix;
 
 import com.amuzil.omegasource.api.magus.condition.Condition;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerPlayer;
-import org.apache.logging.log4j.LogManager;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 

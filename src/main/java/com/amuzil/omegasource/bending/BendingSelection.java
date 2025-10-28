@@ -3,7 +3,10 @@ package com.amuzil.omegasource.bending;
 import com.amuzil.omegasource.utils.ship.OriginalBlock;
 import com.amuzil.omegasource.utils.ship.OriginalBlocks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.INBTSerializable;
 

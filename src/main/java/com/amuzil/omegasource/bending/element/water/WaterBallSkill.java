@@ -1,19 +1,16 @@
 package com.amuzil.omegasource.bending.element.water;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.api.magus.form.ActiveForm;
-import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.*;
-import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.skill.WaterSkill;
 import com.amuzil.omegasource.capability.Bender;
-import com.amuzil.omegasource.entity.projectile.AvatarCurveProjectile;
 import com.amuzil.omegasource.entity.api.ICollisionModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import com.amuzil.omegasource.entity.modules.collision.SimpleKnockbackModule;
 import com.amuzil.omegasource.entity.modules.collision.WaterCollisionModule;
+import com.amuzil.omegasource.entity.projectile.AvatarCurveProjectile;
 import com.amuzil.omegasource.utils.Constants;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;

@@ -1,7 +1,6 @@
 package com.amuzil.omegasource.bending.element.fire.skills;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.api.magus.form.ActiveForm;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.*;
@@ -9,8 +8,8 @@ import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.bending.form.BendingForm;
 import com.amuzil.omegasource.bending.skill.FireSkill;
 import com.amuzil.omegasource.capability.Bender;
-import com.amuzil.omegasource.entity.projectile.AvatarBoundProjectile;
 import com.amuzil.omegasource.entity.AvatarEntity;
+import com.amuzil.omegasource.entity.projectile.AvatarBoundProjectile;
 import com.amuzil.omegasource.utils.Constants;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;

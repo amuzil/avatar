@@ -3,11 +3,13 @@ package com.amuzil.omegasource.network;
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.network.packets.api.AvatarPacket;
 import com.amuzil.omegasource.network.packets.form.ActivatedFormPacket;
-import com.amuzil.omegasource.network.packets.skill.ActivatedSkillPacket;
-import com.amuzil.omegasource.network.packets.skill.SkillDataPacket;
-import com.amuzil.omegasource.network.packets.sync.*;
 import com.amuzil.omegasource.network.packets.form.ExecuteFormPacket;
 import com.amuzil.omegasource.network.packets.form.ReleaseFormPacket;
+import com.amuzil.omegasource.network.packets.skill.ActivatedSkillPacket;
+import com.amuzil.omegasource.network.packets.skill.SkillDataPacket;
+import com.amuzil.omegasource.network.packets.sync.SyncBenderPacket;
+import com.amuzil.omegasource.network.packets.sync.SyncMovementPacket;
+import com.amuzil.omegasource.network.packets.sync.SyncSelectionPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
@@ -60,12 +62,6 @@ public class AvatarNetwork {
                 .encoder(SyncBenderPacket::toBytes)
                 .decoder(SyncBenderPacket::fromBytes)
                 .consumerMainThread(SyncBenderPacket::handle)
-                .add();
-
-        CHANNEL.messageBuilder(SyncFormPathPacket.class, nextID())
-                .encoder(SyncFormPathPacket::toBytes)
-                .decoder(SyncFormPathPacket::fromBytes)
-                .consumerMainThread(SyncFormPathPacket::handle)
                 .add();
 
         CHANNEL.messageBuilder(SyncSelectionPacket.class, nextID())

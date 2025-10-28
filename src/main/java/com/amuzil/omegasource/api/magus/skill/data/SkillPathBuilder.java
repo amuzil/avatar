@@ -1,8 +1,6 @@
 package com.amuzil.omegasource.api.magus.skill.data;
 
 import com.amuzil.omegasource.api.magus.form.Form;
-import com.amuzil.omegasource.api.magus.form.FormPath;
-import com.amuzil.omegasource.api.magus.form.ActiveForm;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -36,21 +34,5 @@ public class SkillPathBuilder {
             forms = new LinkedList<>();
 
         this.forms.clear();
-    }
-
-    public static boolean checkForms(List<ActiveForm> activeForms, List<ActiveForm> skillForms) {
-        if (skillForms.size() != activeForms.size())
-            return false;
-        if (activeForms.isEmpty())
-            return false;
-        for (int i = 0; i < activeForms.size(); i++) {
-            if (!activeForms.get(i).equals(skillForms.get(i)))
-                return false;
-        }
-        return true;
-    }
-
-    public static boolean checkAllForms(FormPath first, FormPath second) {
-        return checkForms(first.complex(), second.complex());
     }
 }

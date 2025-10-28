@@ -1,8 +1,8 @@
 package com.amuzil.omegasource.api.magus.form;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.bending.form.BendingForm;
 import com.amuzil.omegasource.api.magus.registry.Registries;
+import com.amuzil.omegasource.bending.form.BendingForm;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 

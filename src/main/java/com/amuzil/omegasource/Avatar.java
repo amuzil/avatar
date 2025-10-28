@@ -1,5 +1,6 @@
 package com.amuzil.omegasource;
 
+import com.amuzil.omegasource.api.magus.registry.Registries;
 import com.amuzil.omegasource.api.magus.tree.SkillTree;
 import com.amuzil.omegasource.bending.BendingSkill;
 import com.amuzil.omegasource.bending.element.Elements;
@@ -12,11 +13,9 @@ import com.amuzil.omegasource.entity.modules.force.*;
 import com.amuzil.omegasource.entity.modules.render.PhotonModule;
 import com.amuzil.omegasource.input.InputModule;
 import com.amuzil.omegasource.network.AvatarNetwork;
-import com.amuzil.omegasource.api.magus.registry.Registries;
-import com.amuzil.omegasource.utils.sound.AvatarSounds;
 import com.amuzil.omegasource.utils.commands.AvatarCommands;
 import com.amuzil.omegasource.utils.ship.EarthController;
-import com.lowdragmc.photon.client.fx.FX;
+import com.amuzil.omegasource.utils.sound.AvatarSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;

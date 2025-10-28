@@ -1,8 +1,6 @@
 package com.amuzil.omegasource.bending.element.air;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.api.magus.form.ActiveForm;
-import com.amuzil.omegasource.api.magus.form.FormPath;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.traits.entitytraits.PointsTrait;
@@ -21,7 +19,7 @@ import com.amuzil.omegasource.utils.maths.Point;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 
-import static com.amuzil.omegasource.bending.form.BendingForms.*;
+import static com.amuzil.omegasource.bending.form.BendingForms.PULL;
 
 
 public class AirPullSkill extends AirSkill {

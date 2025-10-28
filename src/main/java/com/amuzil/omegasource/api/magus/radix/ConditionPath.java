@@ -2,7 +2,8 @@ package com.amuzil.omegasource.api.magus.radix;
 
 import com.amuzil.omegasource.api.magus.condition.Condition;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 
 public class ConditionPath {
