@@ -65,7 +65,8 @@ public class Bender implements IBender {
     public final HashMap<String, Skill> activeSkills = new HashMap<>();
     private final List<Skill> availableSkills = new ArrayList<>();
     private Skill skillToActivate = null;
-    private int skillActivationTimer = 15;
+    private final int SKILL_ACTIVATION_THRESHOLD = 10;
+    private int skillActivationTimer = SKILL_ACTIVATION_THRESHOLD;
 
     public Bender(LivingEntity entity) {
         this.entity = entity;
@@ -157,7 +158,7 @@ public class Bender implements IBender {
             case SKILL_FOUND -> {
                 LOGGER.info("Skill found: " + result.skill.name());
                 skillToActivate = result.skill;
-                skillActivationTimer = 15;
+                skillActivationTimer = SKILL_ACTIVATION_THRESHOLD;
             }
             case TERMINAL_NODE -> {
                 LOGGER.info("Terminal node");
@@ -193,7 +194,7 @@ public class Bender implements IBender {
             newSkill.start(this);
             formPath.clear();
             skillToActivate = null;
-            skillActivationTimer = 15;
+            skillActivationTimer = SKILL_ACTIVATION_THRESHOLD;
         }
     }
 
