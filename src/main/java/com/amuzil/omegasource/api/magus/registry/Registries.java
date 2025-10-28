@@ -40,9 +40,9 @@ public class Registries {
     private static final List<SkillCategory> categories = new ArrayList<>();
     private static final List<DataTrait> traits = new ArrayList<>();
 
-    public static void init() {
-        Elements.init();
-    }
+//    public static void init() {
+//        Elements.init();
+//    }
 
     public static List<DataTrait> getTraits() {
         return traits;

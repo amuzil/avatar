@@ -60,12 +60,9 @@ public class Avatar {
         AvatarEntities.register(modEventBus);
         AvatarSounds.register(modEventBus);
 
-//        Registries.init();
 //        Registries.SKILL_CATEGORY_REGISTER.register(modEventBus);
-        Elements.SKILL_CATEGORY_REGISTER.register(modEventBus);
-//        Elements.init();
+        Elements.SKILL_CATEGORY_REGISTER.register(modEventBus); // Why not register SKILL_CATEGORY_REGISTER in Registries?
         Registries.SKILL_REGISTER.register(modEventBus);
-
     }
 
     private void setup(final FMLCommonSetupEvent event) {

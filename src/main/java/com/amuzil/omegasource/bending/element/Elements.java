@@ -7,6 +7,9 @@ import com.amuzil.omegasource.bending.element.earth.Earthbending;
 import com.amuzil.omegasource.bending.element.fire.Firebending;
 import com.amuzil.omegasource.bending.element.water.Waterbending;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
@@ -16,6 +19,7 @@ import java.util.HashMap;
 import java.util.function.Supplier;
 
 
+@Mod.EventBusSubscriber(modid = Avatar.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Elements {
     public static final HashMap<String, Element> ALL_FOUR = new HashMap<>();
 
@@ -27,19 +31,19 @@ public class Elements {
     public static final RegistryObject<Element> EARTHBENDING = SKILL_CATEGORY_REGISTER.register("earthbending", Earthbending::new);
     public static final RegistryObject<Element> FIREBENDING = SKILL_CATEGORY_REGISTER.register("firebending", Firebending::new);
 
-    public static final Element AIR = AIRBENDING.get();
-    public static final Element WATER = WATERBENDING.get();
-    public static final Element EARTH = EARTHBENDING.get();
-    public static final Element FIRE = FIREBENDING.get();
+    public static Element AIR, WATER, EARTH, FIRE;
 
     public static Element get(ResourceLocation id) {
         return (Element) SKILL_CATEGORIES.get().getValue(id);
     }
 
-    public static void init() {
-        Airbending.init();
-        Waterbending.init();
-        Earthbending.init();
-        Firebending.init();
+    @SubscribeEvent
+    public static void onCommonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
+            AIR = AIRBENDING.get();
+            WATER = WATERBENDING.get();
+            EARTH = EARTHBENDING.get();
+            FIRE = FIREBENDING.get();
+        });
     }
 }
