@@ -35,6 +35,11 @@ public class AvatarEntities {
             ENTITY_TYPES.register("avatar_orbit_projectile", () -> EntityType.Builder.<AvatarOrbitProjectile>of(AvatarOrbitProjectile::new, MobCategory.MISC)
                     .sized(0.5f, 0.5f).build("avatar_orbit_projectile"));
 
+
+    public static final RegistryObject<EntityType<AvatarWaterEntity>> AVATAR_WATER_ENTITY_TYPE =
+            ENTITY_TYPES.register("avatar_water_entity", () -> EntityType.Builder.<AvatarWaterEntity>of(AvatarWaterEntity::new, MobCategory.MISC)
+                    .sized(0.5f, 0.5f).build("avatar_water_entity"));
+
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
     }

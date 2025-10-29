@@ -11,6 +11,7 @@ import com.amuzil.omegasource.entity.modules.entity.GrowModule;
 import com.amuzil.omegasource.entity.modules.entity.TimeoutModule;
 import com.amuzil.omegasource.entity.modules.force.*;
 import com.amuzil.omegasource.entity.modules.render.PhotonModule;
+import com.amuzil.omegasource.events.ClientEvents;
 import com.amuzil.omegasource.input.InputModule;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.utils.commands.AvatarCommands;
