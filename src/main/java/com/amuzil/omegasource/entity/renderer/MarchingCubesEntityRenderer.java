@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import org.joml.Matrix3f;
 import org.joml.Vector3f;
 
 import java.util.*;
@@ -41,12 +42,14 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
         pose.pushPose();
 
         // Center the generated volume around the entity origin
-        float volumeSize = (GRID_SIZE - 1) * CELL_SIZE;
-        float half = volumeSize * 0.5f;
-        pose.translate(-half, -half, -half);
+//        float volumeSize = (GRID_SIZE - 1) * CELL_SIZE;
+//        float half = volumeSize * 0.5f;
+//        pose.translate(-half, -half, -half);
 
         CachedMesh mesh = getOrBuildMesh(entity);
-        VertexConsumer vc = buffer.getBuffer(ShaderRegistry.getTriplanarRenderType(getTextureLocation(entity)));
+
+        VertexConsumer vc = buffer.getBuffer(RenderType.entityTranslucent(WHITE_TEX, true));
+//        VertexConsumer vc = buffer.getBuffer(ShaderRegistry.getTriplanarRenderType(getTextureLocation(entity)));
         var last = pose.last();
 
         for (int i = 0; i < mesh.triangles.size(); i++) {
@@ -60,6 +63,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
             float[] uv1 = uvPlanar(p1, n, TEX_SCALE);
             float[] uv2 = uvPlanar(p2, n, TEX_SCALE);
 
+//            vc.vertex( p0.x, p0.y, p0.z)
             vc.vertex(last.pose(), p0.x, p0.y, p0.z)
                     .color(255,255,255,255).uv(uv0[0], uv0[1])
                     .overlayCoords(OverlayTexture.NO_OVERLAY)
@@ -67,6 +71,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
                     .normal(last.normal(), n.x, n.y, n.z)
                     .endVertex();
 
+//            vc.vertex(p1.x, p1.y, p1.z)
             vc.vertex(last.pose(), p1.x, p1.y, p1.z)
                     .color(255,255,255,255).uv(uv1[0], uv1[1])
                     .overlayCoords(OverlayTexture.NO_OVERLAY)
@@ -74,6 +79,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
                     .normal(last.normal(), n.x, n.y, n.z)
                     .endVertex();
 
+//            vc.vertex(p2.x, p2.y, p2.z)
             vc.vertex(last.pose(), p2.x, p2.y, p2.z)
                     .color(255,255,255,255).uv(uv2[0], uv2[1])
                     .overlayCoords(OverlayTexture.NO_OVERLAY)
@@ -81,13 +87,13 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
                     .normal(last.normal(), n.x, n.y, n.z)
                     .endVertex();
 
-            // C again (degenerate 4th vertex so the QUADS mode groups correctly)
-//            vc.vertex(last.pose(), p2.x, p2.y, p2.z)
-//                    .color(255,255,255,255).uv(uv2[0], uv2[1])
-//                    .overlayCoords(OverlayTexture.NO_OVERLAY)
-//                    .uv2(packedLight)
-//                    .normal(last.normal(), n.x, n.y, n.z)
-//                    .endVertex();
+//             C again (degenerate 4th vertex so the QUADS mode groups correctly)
+            vc.vertex(last.pose(), p2.x, p2.y, p2.z)
+                    .color(255,255,255,255).uv(uv2[0], uv2[1])
+                    .overlayCoords(OverlayTexture.NO_OVERLAY)
+                    .uv2(packedLight)
+                    .normal(last.normal(), n.x, n.y, n.z)
+                    .endVertex();
         }
 
         pose.popPose();
@@ -109,16 +115,20 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
             for (int y = 0; y < GRID_SIZE; y++) {
                 for (int z = 0; z < GRID_SIZE; z++) {
                     float wx = x * CELL_SIZE, wy = y * CELL_SIZE, wz = z * CELL_SIZE;
-                    float dx = wx - cx, dy = wy - cx, dz = wz - cx;
 
+                    // relative to center for density
+                    float dx = wx - cx, dy = wy - cx, dz = wz - cx;
                     float r = (float)Math.sqrt(dx*dx + dy*dy + dz*dz);
 
-                    // --- Smooth + subtle bump ---
-                    // Small FBM in world space, then small amplitude
-                    float bump = fbmNoise(wx, wy, wz, seed) * 0.06f; // tweak 0.03..0.08 range
-                    float density = (r - 1.35f) + bump;              // <0 inside sphere
+                    // subtle noise (as you have)
+                    float bump = fbmNoise(wx, wy, wz, seed) * 0.06f;
+                    float density = (r - 1.35f) + bump;   // <0 inside sphere
 
-                    voxels[x][y][z] = new PointData(new Vector3f(wx, wy, wz), density, x, y, z);
+                    // *** store centered vertex positions ***
+                    voxels[x][y][z] = new PointData(
+                            new Vector3f(dx, dy, dz),  // centered
+                            density, x, y, z
+                    );
                 }
             }
         }

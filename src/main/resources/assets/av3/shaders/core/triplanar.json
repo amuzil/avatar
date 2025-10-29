@@ -7,10 +7,9 @@
   "vertex": "av3:triplanar",
   "fragment": "av3:triplanar",
   "attributes": [
+    "Normal",
     "Position",
-    "Color",
-    "UV0",
-    "Normal"
+    "UV0"
   ],
   "samplers": [
     { "name": "TextureSampler" }

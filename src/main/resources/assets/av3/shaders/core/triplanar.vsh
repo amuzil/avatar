@@ -1,27 +1,16 @@
 #version 150
 in vec3 Position;
-in vec4 Color;
-in vec2 UV0;
 in vec3 Normal;
+in vec2 UV0;
 
 uniform mat4 ModelViewMat;
 uniform mat4 ProjMat;
-uniform vec4 ColorModulator;
 
 out vec3 worldPos;
-out vec3 normal;
-out vec4 vertexColor;
+out vec3 worldNormal;
 
 void main() {
-
-    // Proper transformation for screen rendering
-    vec4 viewPos = ModelViewMat * vec4(Position, 1.0);
-    gl_Position = ProjMat * viewPos;
-
-    // Keep untransformed coordinates for triplanar texturing
     worldPos = Position;
-
-    // Transform normals properly for lighting
-    normal = normalize((ModelViewMat * vec4(Normal, 0.0)).xyz);
-    vertexColor = Color;
+    worldNormal = normalize(Normal);
+    gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
 }

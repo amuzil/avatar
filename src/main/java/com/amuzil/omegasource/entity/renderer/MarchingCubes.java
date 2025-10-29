@@ -50,9 +50,9 @@ public final class MarchingCubes {
                         int e1 = triRow[i + 1];
                         int e2 = triRow[i + 2];
 
-                        Vector3f vA = interpolate(c[CORNER_A_FROM_EDGE[e0]], c[CORNER_B_FROM_EDGE[e0]], iso);
-                        Vector3f vB = interpolate(c[CORNER_A_FROM_EDGE[e1]], c[CORNER_B_FROM_EDGE[e1]], iso);
-                        Vector3f vC = interpolate(c[CORNER_A_FROM_EDGE[e2]], c[CORNER_B_FROM_EDGE[e2]], iso);
+                        Vector3f vA = interpolate(c[CORNER_A_FROM_EDGE[e0]], c[CORNER_B_FROM_EDGE[e0]], iso).mul(cellSize);
+                        Vector3f vB = interpolate(c[CORNER_A_FROM_EDGE[e1]], c[CORNER_B_FROM_EDGE[e1]], iso).mul(cellSize);
+                        Vector3f vC = interpolate(c[CORNER_A_FROM_EDGE[e2]], c[CORNER_B_FROM_EDGE[e2]], iso).mul(cellSize);
 
 
                         Vector3f n = faceNormal(vA, vB, vC);
