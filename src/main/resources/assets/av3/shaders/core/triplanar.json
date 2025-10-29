@@ -1,0 +1,29 @@
+{
+  "blend": {
+    "func": "add",
+    "srcrgb": "srcalpha",
+    "dstrgb": "1-srcalpha"
+  },
+  "vertex": "av3:triplanar",
+  "fragment": "av3:triplanar",
+  "attributes": [
+    "Position",
+    "Color",
+    "UV0",
+    "Normal"
+  ],
+  "samplers": [
+    { "name": "TextureSampler" }
+  ],
+  "uniforms": [
+    { "name": "ModelViewMat", "type": "matrix4x4", "count": 16,
+      "values": []
+    },
+    { "name": "ProjMat", "type": "matrix4x4", "count": 16,
+      "values": []
+    },
+    { "name": "ColorModulator", "type": "float4", "count": 4,
+      "values": []
+    }
+  ]
+}

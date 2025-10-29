@@ -1,11 +1,14 @@
 package com.amuzil.omegasource.entity.renderer;
 
 import com.amuzil.omegasource.Avatar;
+import com.amuzil.omegasource.api.magus.registry.ShaderRegistry;
 import com.amuzil.omegasource.entity.AvatarEntity;
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.LightTexture;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -43,7 +46,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
         pose.translate(-half, -half, -half);
 
         CachedMesh mesh = getOrBuildMesh(entity);
-        VertexConsumer vc = buffer.getBuffer(RenderType.entityTranslucent(WHITE_TEX, true));
+        VertexConsumer vc = buffer.getBuffer(ShaderRegistry.getTriplanarRenderType(getTextureLocation(entity)));
         var last = pose.last();
 
         for (int i = 0; i < mesh.triangles.size(); i++) {
@@ -79,12 +82,12 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
                     .endVertex();
 
             // C again (degenerate 4th vertex so the QUADS mode groups correctly)
-            vc.vertex(last.pose(), p2.x, p2.y, p2.z)
-                    .color(255,255,255,255).uv(uv2[0], uv2[1])
-                    .overlayCoords(OverlayTexture.NO_OVERLAY)
-                    .uv2(packedLight)
-                    .normal(last.normal(), n.x, n.y, n.z)
-                    .endVertex();
+//            vc.vertex(last.pose(), p2.x, p2.y, p2.z)
+//                    .color(255,255,255,255).uv(uv2[0], uv2[1])
+//                    .overlayCoords(OverlayTexture.NO_OVERLAY)
+//                    .uv2(packedLight)
+//                    .normal(last.normal(), n.x, n.y, n.z)
+//                    .endVertex();
         }
 
         pose.popPose();
@@ -107,6 +110,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
                 for (int z = 0; z < GRID_SIZE; z++) {
                     float wx = x * CELL_SIZE, wy = y * CELL_SIZE, wz = z * CELL_SIZE;
                     float dx = wx - cx, dy = wy - cx, dz = wz - cx;
+
                     float r = (float)Math.sqrt(dx*dx + dy*dy + dz*dz);
 
                     // --- Smooth + subtle bump ---
