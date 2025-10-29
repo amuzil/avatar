@@ -1,12 +1,13 @@
 package com.amuzil.omegasource.entity.renderer;
 
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
 
 public final class Vertex {
-    public Vec3 position;
-    public Vec3 normal;
+    public Vector3f position;
+    public Vector3f normal;
 
-    public Vertex(Vec3 position, Vec3 normal) {
+    public Vertex(Vector3f position, Vector3f normal) {
         this.position = position;
         this.normal = normal;
     }
