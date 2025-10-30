@@ -73,7 +73,7 @@ public class GrowModule implements IEntityModule {
 
     @Override
     public void save(CompoundTag nbt) {
-        nbt.putString("ID", id());
+        nbt.putString("ID", id);
     }
 
     @Override

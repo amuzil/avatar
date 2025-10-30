@@ -32,6 +32,6 @@ public class BindModule implements IForceModule {
 
     @Override
     public void load(CompoundTag nbt) {
-        this.id = nbt.getString("ID");
+        id = nbt.getString("ID");
     }
 }

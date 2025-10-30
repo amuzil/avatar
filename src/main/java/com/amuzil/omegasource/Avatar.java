@@ -8,6 +8,7 @@ import com.amuzil.omegasource.entity.AvatarEntities;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import com.amuzil.omegasource.entity.modules.collision.*;
 import com.amuzil.omegasource.entity.modules.entity.GrowModule;
+import com.amuzil.omegasource.entity.modules.entity.SoundModule;
 import com.amuzil.omegasource.entity.modules.entity.TimeoutModule;
 import com.amuzil.omegasource.entity.modules.force.*;
 import com.amuzil.omegasource.entity.modules.render.PhotonModule;
@@ -72,6 +73,7 @@ public class Avatar {
         ModuleRegistry.register(MoveModule::new);
         ModuleRegistry.register(CurveModule::new);
         ModuleRegistry.register(TimeoutModule::new);
+        ModuleRegistry.register(SoundModule::new);
         ModuleRegistry.register(GrowModule::new);
         ModuleRegistry.register(SimpleKnockbackModule::new);
         ModuleRegistry.register(FireModule::new);

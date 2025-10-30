@@ -1,17 +1,16 @@
-package com.amuzil.omegasource.entity.modules.render;
+package com.amuzil.omegasource.entity.modules.entity;
 
 import com.amuzil.omegasource.entity.AvatarEntity;
-import com.amuzil.omegasource.entity.api.IRenderModule;
+import com.amuzil.omegasource.entity.api.IEntityModule;
 import com.lowdragmc.photon.client.fx.EntityEffect;
 import com.lowdragmc.photon.client.fx.FX;
 import com.lowdragmc.photon.client.fx.FXHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 
+public class SoundModule implements IEntityModule {
 
-public class PhotonModule implements IRenderModule {
-
-    public static String id = PhotonModule.class.getSimpleName();
+    public static String id = SoundModule.class.getSimpleName();
 
     @Override
     public String id() {
@@ -20,18 +19,18 @@ public class PhotonModule implements IRenderModule {
 
     @Override
     public void init(AvatarEntity entity) {
+
     }
 
     @Override
     public void tick(AvatarEntity entity) {
-        // For starting effects per tick
         if (entity.level().isClientSide && entity.fxLocation() != null) {
             if (entity.oneShotFX()) {
                 if (entity.tickCount <= 1) {
-                    startEntityEffect(FXHelper.getFX(entity.fxLocation()), entity);
+                    startSoundEffect(FXHelper.getFX(entity.fxLocation()), entity);
                 }
             } else {
-                startEntityEffect(FXHelper.getFX(entity.fxLocation()), entity);
+                startSoundEffect(FXHelper.getFX(entity.fxLocation()), entity);
             }
         }
     }
@@ -46,7 +45,7 @@ public class PhotonModule implements IRenderModule {
         id = nbt.getString("ID");
     }
 
-    public static void startEntityEffect(FX fx, Entity entity) {
+    public static void startSoundEffect(FX fx, Entity entity) {
         if (fx != null) {
             EntityEffect entityEffect = new EntityEffect(fx, entity.level(), entity);
             entityEffect.start();
