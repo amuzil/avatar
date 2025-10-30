@@ -70,8 +70,8 @@ public class EarthTossSkill extends EarthSkill {
                 // need to call teleportShip before applying forces
                 EarthController earthController = EarthController.getOrCreate(serverShip, bender);
                 earthController.stopControl();
-                List<Skill> activeSkill = bender.activeSkills.values().stream().toList();
-                for (Skill skill: activeSkill) {
+                List<Skill> activeSkills = bender.activeSkills.values().stream().toList();
+                for (Skill skill: activeSkills) {
                     if (skill.name().equals("earth_block")) {
                         skill.stop(bender);
                         break;

@@ -83,11 +83,11 @@ public abstract class SkillActive extends Skill {
     }
 
     @Override
-    public void run(Bender bender) { // If you want your Skill to run per tick don't call this super, just override!
+    public void run(Bender bender) { // If you want your Skill to run per tick, call this super when you override!
         // We should not run tick listener by default for every Skill because this causes a runaway tick runnable for
         // one shot Skills that only use start() method. In other words, every skill would need to define or specify
         // how their skill shouldStop just to remove the listener.
-        if (!shouldRun(bender, bender.formPath))
+        if (!shouldRun(bender, bender.formPath) || shouldStop(bender, bender.formPath))
             stop(bender);
     }
 
