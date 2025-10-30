@@ -10,6 +10,7 @@ import com.amuzil.omegasource.bending.skill.EarthSkill;
 import com.amuzil.omegasource.capability.Bender;
 import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.ship.EarthController;
+import com.amuzil.omegasource.utils.ship.VSUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import org.valkyrienskies.core.api.ships.LoadedServerShip;
@@ -65,8 +66,9 @@ public class EarthBlockSkill extends EarthSkill {
                     }
                 }
             });
-        } else
+        } else {
             stopRun(); // cleanup
+        }
 
 //        if (bender.getEntity() instanceof AbstractClientPlayer benderPlayer) {
 //            AnimationStack animationStack = PlayerAnimationAccess.getPlayerAnimLayer(benderPlayer);
@@ -92,8 +94,11 @@ public class EarthBlockSkill extends EarthSkill {
             LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, blockPos);
             ServerShipWorld serverShipWorld = (ServerShipWorld) VSGameUtilsKt.getVsCore().getHooks().getCurrentShipServerWorld();
             if (serverShip != null && serverShipWorld != null)
-                controlBlock(serverShip, serverShipWorld, level, bender);
-        }
+                VSUtils.controlBlock(serverShip, serverShipWorld, level, bender);
+            else
+                stopRun(); // cleanup
+        } else
+            stopRun(); // cleanup
     }
 
     @Override
