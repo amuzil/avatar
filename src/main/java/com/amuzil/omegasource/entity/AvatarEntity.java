@@ -239,6 +239,10 @@ public abstract class AvatarEntity extends Entity {
         this.fxName = this.entityData.get(FX); // Doesn't live to see the next tick
     }
 
+    public String fxName() {
+        return this.entityData.get(FX);
+    }
+
     public ResourceLocation fxLocation() {
         String fxName = this.entityData.get(FX);
         if (fxName.isEmpty())

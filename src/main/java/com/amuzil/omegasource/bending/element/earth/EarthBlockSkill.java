@@ -103,6 +103,8 @@ public class EarthBlockSkill extends EarthSkill {
 
         ServerLevel level = (ServerLevel) bender.getEntity().level();
         BlockPos blockPos = bender.getSelection().blockPos();
+        if (blockPos == null)
+            blockPos = blockPosCache;
         if (blockPos != null && VSGameUtilsKt.isBlockInShipyard(level, blockPos)) {
             LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, blockPos);
             if (serverShip != null) {
