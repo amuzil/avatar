@@ -4,8 +4,8 @@ import net.minecraft.world.phys.AABB;
 import org.joml.Vector3f;
 
 public interface SignedDistanceFunction {
-    /** Signed distance in *entity local/object space*. Negative = inside. */
-    float sd(Vector3f p);
+    /** Return signed distance at world-space p and time t. Negative = inside. */
+    float sd(Vector3f pWorld, float t);
 
     /** Optional tight AABB for culling (entity local space). */
     default AABB aabb() { return AABB.INF; }

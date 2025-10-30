@@ -1,23 +1,19 @@
 package com.amuzil.omegasource.entity.renderer;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.api.magus.registry.ShaderRegistry;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.IHasSDF;
+import com.amuzil.omegasource.entity.renderer.sdf.SDFScene;
 import com.amuzil.omegasource.entity.renderer.sdf.SignedDistanceFunction;
+import com.amuzil.omegasource.entity.renderer.sdf.channels.Channels;
 import com.amuzil.omegasource.entity.renderer.sdf.shapes.SDFSphere;
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import org.joml.Matrix3f;
 import org.joml.Vector3f;
 
 import java.util.*;
@@ -105,14 +101,38 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
     @Override
     public ResourceLocation getTextureLocation(AvatarEntity pEntity) { return WHITE_TEX; }
 
+    public float nowSeconds(float partialTick, T entity) {
+        // or use Minecraft.getInstance().level.getGameTime()
+        long ticks = entity.level().getGameTime();
+        return ticks / 20.0f + partialTick / 20.0f;
+    }
+
     private CachedMesh getOrBuildMesh(T entity) {
         long now = System.currentTimeMillis();
         UUID id = entity.getUUID();
         CachedMesh cached = meshCache.get(id);
         if (cached != null && (now - cached.builtAtMs) < MESH_TTL_MS) return cached;
 
-        SignedDistanceFunction sdf = (entity instanceof IHasSDF has) ? has.rootSDF() : new SDFSphere(new Vector3f(0,0,0), 1.35f);
+        float time = nowSeconds(0f, entity); // or pass partialTick from render()
+
+//        SignedDistanceFunction sdf = (entity instanceof IHasSDF has) ? has.rootSDF() : new SDFSphere(new Vector3f(0,0,0), 1.35f);
         long seed = random.nextLong();
+        SDFScene sdf = new SDFScene().add(new SDFSphere()); // will replace after config
+
+        SDFSphere core = new SDFSphere();
+        core.radius = Channels.pulse(1.2f, 0.15f, 0.35f, 0f); // gentle breathing
+        core.a.pos = (t,out)->out.set(0,0,0);
+        core.a.rot = Channels.spinY(4f); // optional slow spin visual
+        core.a.scl = (t,out)->out.set(1,1,1);
+
+        SDFSphere moon = new SDFSphere();
+        moon.radius = Channels.constant(0.45f);
+        moon.a.pos = Channels.orbitXZ(new Vector3f(0,0,0), 1.7f, 0.2f); // orbit radius 1.7, 0.2 Hz
+        moon.a.rot = (t,out)->out.identity();
+        moon.a.scl = (t,out)->out.set(1,1,1);
+
+        sdf = new SDFScene().add(core).add(moon);
+        sdf.unionK = 0.35f;
 
         float cx = (GRID_SIZE - 1) * CELL_SIZE * 0.5f;
         for (int x = 0; x < GRID_SIZE; x++) {
@@ -125,7 +145,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
                     Vector3f p = new Vector3f(dx, dy, dz);
 
                     // density from entity SDF (iso=0)
-                    float d = sdf.sd(p);           // signed distance in world units
+                    float d = sdf.sd(p, time);           // signed distance in world units
 
                     // optional subtle noise modulation (keep tiny)
                     float bump = fbmNoise(wx, wy, wz, seed) * 0.03f;

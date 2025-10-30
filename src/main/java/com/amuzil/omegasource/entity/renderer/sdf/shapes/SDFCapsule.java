@@ -1,20 +1,40 @@
 package com.amuzil.omegasource.entity.renderer.sdf.shapes;
 
 import com.amuzil.omegasource.entity.renderer.sdf.SignedDistanceFunction;
+import com.amuzil.omegasource.entity.renderer.sdf.channels.Channels;
+import com.amuzil.omegasource.entity.renderer.sdf.channels.IFloatChannel;
+import com.amuzil.omegasource.entity.renderer.sdf.transforms.AnimatedTransform;
 import org.joml.Vector3f;
 
 public class SDFCapsule implements SignedDistanceFunction {
-    public final Vector3f a,b; public final float r;
-    public SDFCapsule(Vector3f a, Vector3f b, float r){ this.a=new Vector3f(a); this.b=new Vector3f(b); this.r=r; }
-    @Override public float sd(Vector3f p){
-        Vector3f pa = new Vector3f(p).sub(a);
-        Vector3f ba = new Vector3f(b).sub(a);
-        float h = Math.max(0f, Math.min(1f, pa.dot(ba) / ba.dot(ba)));
-        return new Vector3f(pa).sub(new Vector3f(ba).mul(h)).length() - r;
-    }
-    @Override public AABB aabb(){
-        float minX=Math.min(a.x,b.x)-r, minY=Math.min(a.y,b.y)-r, minZ=Math.min(a.z,b.z)-r;
-        float maxX=Math.max(a.x,b.x)+r, maxY=Math.max(a.y,b.y)+r, maxZ=Math.max(a.z,b.z)+r;
-        return new AABB(minX,minY,minZ,maxX,maxY,maxZ);
+    public final AnimatedTransform a = new AnimatedTransform();
+    public IFloatChannel halfHeight = Channels.constant(1.0f);
+    public IFloatChannel radius = Channels.constant(0.3f);
+
+    private final Vector3f q = new Vector3f();
+    private final Vector3f local = new Vector3f();
+
+    @Override
+    public float sd(Vector3f pWorld, float t) {
+        a.update(t);
+        a.xform.worldToLocal(pWorld, local);
+
+        float h = halfHeight.eval(t);
+        float r = radius.eval(t);
+
+        // Capsule aligned to Y axis: two sphere caps joined by a cylinder
+        // Adapted from Inigo Quilez's SDF formulation
+        q.set(local.x, Math.abs(local.y) - h, local.z);
+
+        // Outside part: distance from surface when beyond the cylindrical core
+        float dx = Math.max(q.x, 0f);
+        float dy = Math.max(q.y, 0f);
+        float dz = Math.max(q.z, 0f);
+        float outside = (float)Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+        // Inside part: signed distance inside the capsule volume
+        float inside = Math.min(Math.max(q.x, Math.max(q.y, q.z)), 0f);
+
+        return outside + inside - r;
     }
 }
