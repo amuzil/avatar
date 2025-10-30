@@ -7,7 +7,9 @@ import com.amuzil.omegasource.entity.renderer.sdf.SDFScene;
 import com.amuzil.omegasource.entity.renderer.sdf.SignedDistanceFunction;
 import com.amuzil.omegasource.entity.renderer.sdf.channels.Channels;
 import com.amuzil.omegasource.entity.renderer.sdf.shapes.SDFSphere;
+import com.amuzil.omegasource.entity.renderer.sdf.shapes.SDFTorus;
 import com.mojang.blaze3d.vertex.PoseStack;
+import kotlinx.coroutines.channels.Channel;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -45,7 +47,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
 //        float half = volumeSize * 0.5f;
 //        pose.translate(-half, -half, -half);
 
-        CachedMesh mesh = getOrBuildMesh(entity);
+        CachedMesh mesh = getOrBuildMesh(partialTick, entity);
 
         VertexConsumer vc = buffer.getBuffer(RenderType.entityTranslucent(WHITE_TEX, true));
 //        VertexConsumer vc = buffer.getBuffer(ShaderRegistry.getTriplanarRenderType(getTextureLocation(entity)));
@@ -107,13 +109,13 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
         return ticks / 20.0f + partialTick / 20.0f;
     }
 
-    private CachedMesh getOrBuildMesh(T entity) {
+    private CachedMesh getOrBuildMesh(float partialTicks, T entity) {
         long now = System.currentTimeMillis();
         UUID id = entity.getUUID();
         CachedMesh cached = meshCache.get(id);
         if (cached != null && (now - cached.builtAtMs) < MESH_TTL_MS) return cached;
 
-        float time = nowSeconds(0f, entity); // or pass partialTick from render()
+        float time = nowSeconds(partialTicks, entity); // or pass partialTick from render()
 
 //        SignedDistanceFunction sdf = (entity instanceof IHasSDF has) ? has.rootSDF() : new SDFSphere(new Vector3f(0,0,0), 1.35f);
         long seed = random.nextLong();
@@ -125,13 +127,20 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
         core.a.rot = Channels.spinY(4f); // optional slow spin visual
         core.a.scl = (t,out)->out.set(1,1,1);
 
+        SDFTorus ring = new SDFTorus();
+        ring.majorRadius = Channels.constant(2f);
+        ring.minorRadius = Channels.constant(0.25f);
+        ring.a.pos = (t,out)->out.set(0,0,0);
+        ring.a.rot = (t,out)->out.identity();
+        ring.a.scl = (t,out)->out.set(1,1,1);
+
         SDFSphere moon = new SDFSphere();
         moon.radius = Channels.constant(0.45f);
         moon.a.pos = Channels.orbitXZ(new Vector3f(0,0,0), 1.7f, 0.2f); // orbit radius 1.7, 0.2 Hz
         moon.a.rot = (t,out)->out.identity();
         moon.a.scl = (t,out)->out.set(1,1,1);
 
-        sdf = new SDFScene().add(core).add(moon);
+        sdf = new SDFScene().add(core).add(ring).add(moon);
         sdf.unionK = 0.35f;
 
         float cx = (GRID_SIZE - 1) * CELL_SIZE * 0.5f;
