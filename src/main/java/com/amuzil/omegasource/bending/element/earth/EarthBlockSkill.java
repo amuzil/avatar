@@ -50,7 +50,6 @@ public class EarthBlockSkill extends EarthSkill {
                     List<Skill> activeSkills = bender.activeSkills.values().stream().toList();
                     BendingSkill activeSkill = this;
                     for (Skill skill: activeSkills) {
-                        System.out.println(((EarthBlockSkill) skill).blockPosCache + " " + blockPosCache);
                         if (skill instanceof EarthBlockSkill earthBlockSkill
                                 && earthBlockSkill.blockPosCache.equals(blockPosCache)) {
                             activeSkill = earthBlockSkill;
