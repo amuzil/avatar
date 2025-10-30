@@ -107,7 +107,7 @@ public class VSUtils {
         BlockPos shipyardBlockPos = null;
         ServerLevel level = (ServerLevel) bender.getEntity().level();
         BlockPos blockPos = bender.getSelection().blockPos();
-        if (blockPos != null) { // Create new ship
+        if (blockPos != null) { // Assemble ship if target is block
             BlockState blockState = level.getBlockState(blockPos);
             if (bender.getSelection().target() == BendingSelection.Target.BLOCK
                     && !VSGameUtilsKt.isBlockInShipyard(level, blockPos)
@@ -125,8 +125,17 @@ public class VSUtils {
                 Vector3dc shipyardPos = ship.getTransform().getPositionInShip();
                 shipyardBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipyardPos));
             }
+        } else { // Assemble ship nearby if no target block
+            shipyardBlockPos = assembleEarthShipNearby(bender);
         }
         bender.getSelection().setBlockPos(shipyardBlockPos); // Important: Update BlockPos to the shipyard position
+        return shipyardBlockPos;
+    }
+
+    private static BlockPos assembleEarthShipNearby(Bender bender) {
+        BlockPos shipyardBlockPos = null;
+        ServerLevel level = (ServerLevel) bender.getEntity().level();
+
         return shipyardBlockPos;
     }
 

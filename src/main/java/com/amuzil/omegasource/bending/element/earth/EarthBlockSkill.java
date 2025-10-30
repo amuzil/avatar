@@ -25,7 +25,8 @@ import static com.amuzil.omegasource.utils.ship.VSUtils.controlBlock;
 
 
 public class EarthBlockSkill extends EarthSkill {
-    // TODO: Add auto block selection feature
+    // TODO: Add auto-block selection feature
+    //  and multi-block control feature
     BlockPos blockPosCache = null;
 
     public EarthBlockSkill() {
