@@ -1,2 +1,24 @@
-package com.amuzil.omegasource.entity.renderer.sdf;public interface SignedDistanceFunction {
+package com.amuzil.omegasource.entity.renderer.sdf;
+
+import net.minecraft.world.phys.AABB;
+import org.joml.Vector3f;
+
+public interface SignedDistanceFunction {
+    /** Signed distance in *entity local/object space*. Negative = inside. */
+    float sd(Vector3f p);
+
+    /** Optional tight AABB for culling (entity local space). */
+    default AABB aabb() { return AABB.INF; }
+
+    public final class AABB {
+        public final float minX,minY,minZ,maxX,maxY,maxZ;
+        public static final AABB INF = new AABB(-1e9f,-1e9f,-1e9f, 1e9f,1e9f,1e9f);
+        public AABB(float minX,float minY,float minZ,float maxX,float maxY,float maxZ){
+            this.minX=minX; this.minY=minY; this.minZ=minZ;
+            this.maxX=maxX; this.maxY=maxY; this.maxZ=maxZ;
+        }
+        public boolean contains(float x,float y,float z){
+            return (x>=minX && y>=minY && z>=minZ && x<=maxX && y<=maxY && z<=maxZ);
+        }
+    }
 }

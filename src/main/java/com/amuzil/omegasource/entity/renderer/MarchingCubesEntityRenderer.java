@@ -3,6 +3,9 @@ package com.amuzil.omegasource.entity.renderer;
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.registry.ShaderRegistry;
 import com.amuzil.omegasource.entity.AvatarEntity;
+import com.amuzil.omegasource.entity.IHasSDF;
+import com.amuzil.omegasource.entity.renderer.sdf.SignedDistanceFunction;
+import com.amuzil.omegasource.entity.renderer.sdf.shapes.SDFSphere;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -25,7 +28,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
 //    private static final ResourceLocation WHITE_TEX = ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "textures/misc/white.png");
     private static final ResourceLocation WHITE_TEX = ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "textures/water.png");
 
-    private static final int GRID_SIZE = 16;
+    private static final int GRID_SIZE = 32;
     private static final float CELL_SIZE = 0.25f;
     private static final float ISOLEVEL = 0.0f;
     private static final long MESH_TTL_MS = 50L;
@@ -108,6 +111,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
         CachedMesh cached = meshCache.get(id);
         if (cached != null && (now - cached.builtAtMs) < MESH_TTL_MS) return cached;
 
+        SignedDistanceFunction sdf = (entity instanceof IHasSDF has) ? has.rootSDF() : new SDFSphere(new Vector3f(0,0,0), 1.35f);
         long seed = random.nextLong();
 
         float cx = (GRID_SIZE - 1) * CELL_SIZE * 0.5f;
@@ -116,19 +120,18 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
                 for (int z = 0; z < GRID_SIZE; z++) {
                     float wx = x * CELL_SIZE, wy = y * CELL_SIZE, wz = z * CELL_SIZE;
 
-                    // relative to center for density
+                    // centered object-space (entity local)
                     float dx = wx - cx, dy = wy - cx, dz = wz - cx;
-                    float r = (float)Math.sqrt(dx*dx + dy*dy + dz*dz);
+                    Vector3f p = new Vector3f(dx, dy, dz);
 
-                    // subtle noise (as you have)
-                    float bump = fbmNoise(wx, wy, wz, seed) * 0.06f;
-                    float density = (r - 1.35f) + bump;   // <0 inside sphere
+                    // density from entity SDF (iso=0)
+                    float d = sdf.sd(p);           // signed distance in world units
 
-                    // *** store centered vertex positions ***
-                    voxels[x][y][z] = new PointData(
-                            new Vector3f(dx, dy, dz),  // centered
-                            density, x, y, z
-                    );
+                    // optional subtle noise modulation (keep tiny)
+                    float bump = fbmNoise(wx, wy, wz, seed) * 0.03f;
+                    float density = d + bump;
+
+                    voxels[x][y][z] = new PointData(p, density, x, y, z);
                 }
             }
         }
