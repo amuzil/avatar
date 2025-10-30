@@ -1,9 +1,16 @@
 package com.amuzil.omegasource.entity.modules.entity;
 
+import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.api.IEntityModule;
+import com.amuzil.omegasource.utils.sound.AvatarEntitySound;
+import com.amuzil.omegasource.utils.sound.AvatarSounds;
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class SoundModule implements IEntityModule {
 
@@ -42,9 +49,13 @@ public class SoundModule implements IEntityModule {
         id = nbt.getString("ID");
     }
 
-    public static void startSoundEffect(String sfx, Entity entity) {
-        if (sfx != null) {
-
+    public static void startSoundEffect(String sfxName, AvatarEntity entity) {
+        if (sfxName != null) {
+            ResourceLocation id = ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, sfxName);
+            SoundEvent soundEvent = ForgeRegistries.SOUND_EVENTS.getValue(id);
+            if (soundEvent != null)
+                Minecraft.getInstance().getSoundManager()
+                        .play(new AvatarEntitySound(entity, soundEvent, entity.maxLifetime()));
         }
     }
 }

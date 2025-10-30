@@ -15,7 +15,7 @@ public class AvatarSounds {
 
     public static final RegistryObject<SoundEvent> AIR_GUST = register("air_gust");
 
-    public static final RegistryObject<SoundEvent> FIRE_STRIKE = register("fire_strike");
+    public static final RegistryObject<SoundEvent> FIRE_STRIKE = register("fires_bloom_perma5");
 
     private static RegistryObject<SoundEvent> register(String name) {
         return SOUND_EVENTS.register(name,

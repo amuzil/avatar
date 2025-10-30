@@ -1,4 +1,4 @@
-package com.amuzil.omegasource.bending.element.fire.skills;
+package com.amuzil.omegasource.bending.element.fire;
 
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
@@ -12,6 +12,7 @@ import com.amuzil.omegasource.entity.modules.collision.FireCollisionModule;
 import com.amuzil.omegasource.entity.modules.collision.FireModule;
 import com.amuzil.omegasource.entity.modules.collision.SimpleKnockbackModule;
 import com.amuzil.omegasource.entity.modules.entity.GrowModule;
+import com.amuzil.omegasource.entity.modules.entity.SoundModule;
 import com.amuzil.omegasource.entity.projectile.AvatarDirectProjectile;
 import com.amuzil.omegasource.utils.Constants;
 import com.amuzil.omegasource.utils.maths.Point;

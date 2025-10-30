@@ -5,10 +5,6 @@ import com.amuzil.omegasource.api.magus.registry.Registries;
 import com.amuzil.omegasource.api.magus.skill.Skill;
 import com.amuzil.omegasource.bending.element.Element;
 import com.amuzil.omegasource.bending.element.fire.forms.FirePushForm;
-import com.amuzil.omegasource.bending.element.fire.skills.BlazingRingsSkill;
-import com.amuzil.omegasource.bending.element.fire.skills.FireStrikeSkill;
-import com.amuzil.omegasource.bending.element.fire.skills.FlameStepSkill;
-import com.amuzil.omegasource.bending.element.fire.skills.FlameStreamSkill;
 import net.minecraftforge.registries.RegistryObject;
 
 
