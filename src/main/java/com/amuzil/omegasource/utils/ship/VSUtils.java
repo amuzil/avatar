@@ -84,10 +84,12 @@ public class VSUtils {
     }
 
     public static void tossBlock(LivingEntity entity, EarthController earthController, LoadedServerShip ship) {
+        // TODO: Discover why force seemingly accumulates when applied to blocks making them eventually go mach 2
         double mass = ship.getInertiaData().getMass();
         Vec3 vec3 = entity.getLookAngle().normalize()
-                .multiply(500*mass, 250*mass, 500*mass);
-//        System.out.printf("Applying force %.4f on mass %f\n", vec3.y, mass);
+                .multiply(600*mass, 500*mass, 600*mass);
+//        System.out.printf("Applying force %.2f on mass %f\n", vec3.y, mass);
+//        System.out.println(vec3.length());
         Vector3d force = VectorConversionsMCKt.toJOML(vec3);
         earthController.applyInvariantForce(force);
     }

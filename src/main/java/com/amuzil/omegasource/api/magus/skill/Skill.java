@@ -168,7 +168,6 @@ public abstract class Skill {
     public void tick(Bender bender) {
         if (shouldStop(bender, bender.formPath)) {
             stop(bender);
-            hush(run);
         } else {
             run(bender);
         }

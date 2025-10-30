@@ -106,7 +106,7 @@ public class Bender implements IBender {
     private boolean canUseSkill(Skill skill) {
         return getSkillCategoryData(skill.getCategory().getId()).canUse()
 //                && getSkillData(skill).canUse()
-                && getElement() == skill.getCategory(); // Make SkillCategory part of Skill RadixTree
+                && getElement() == skill.getCategory();
     }
 
     private void onFormActivatedEvent(FormActivatedEvent event) {
@@ -147,25 +147,24 @@ public class Bender implements IBender {
     }
 
     private void checkSkillTree() {
-        System.out.println("[Bender] Checking Skill Tree for Forms: " + formPath);
         TreeResult result = SkillTree.ExecutePath(this, formPath);
         switch(result.resultType) {
             case SKILL_FOUND_TERMINAL -> {
-                LOGGER.info("Skill found: " + result.skill.name());
+//                LOGGER.info("Skill found: " + result.skill.name());
                 skillToActivate = result.skill;
                 startSkill();
             }
             case SKILL_FOUND -> {
-                LOGGER.info("Skill found: " + result.skill.name());
+//                LOGGER.info("Skill found: " + result.skill.name());
                 skillToActivate = result.skill;
                 skillActivationTimer = SKILL_ACTIVATION_THRESHOLD;
             }
             case TERMINAL_NODE -> {
-                LOGGER.info("Terminal node");
+//                LOGGER.info("Terminal node");
                 formPath.clear();
             } // tree reached the end and found nothing. clear the formPath
             case SKILL_NOT_FOUND -> {
-                LOGGER.info("Skill not found");
+//                LOGGER.info("Skill not found");
             } // do nothing. there may still be a combo on the next form.
         }
     }

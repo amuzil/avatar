@@ -21,6 +21,8 @@ import static com.amuzil.omegasource.utils.ship.VSUtils.controlBlock;
 
 public class EarthBlockSkill extends EarthSkill {
     // TODO: Add auto block selection feature
+    BlockPos blockPosCache = null;
+
     public EarthBlockSkill() {
         super(Avatar.MOD_ID, "earth_block");
         addTrait(new KnockbackTrait(Constants.KNOCKBACK, 1.5f));
@@ -34,18 +36,21 @@ public class EarthBlockSkill extends EarthSkill {
     @Override
     public void start(Bender bender) {
         BlockPos shipyardBlockPos = assembleEarthShip(bender);
+        blockPosCache = bender.getSelection().blockPos();
+        super.start(bender);
         if (shipyardBlockPos != null) {
             ServerLevel level = (ServerLevel) bender.getEntity().level();
             level.getServer().execute(() -> {
                 LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, shipyardBlockPos);
                 if (serverShip != null) {
                     EarthController earthController = EarthController.getOrCreate(serverShip, bender);
+                    System.out.println("TOGGLED EARTH BLOCK CONTROL " + earthController.isControlled());
                     if (earthController.isControlled()) {
                         earthController.setControlled(false);
                         stopRun();
                     } else {
                         earthController.setControlled(true);
-                        startRun(bender);
+                        startRun();
                     }
                 }
             });
@@ -54,7 +59,7 @@ public class EarthBlockSkill extends EarthSkill {
 
 //        if (bender.getEntity() instanceof AbstractClientPlayer benderPlayer) {
 //            AnimationStack animationStack = PlayerAnimationAccess.getPlayerAnimLayer(benderPlayer);
-////            animationStack.addAnimLayer(null, true);
+//            animationStack.addAnimLayer(null, true);
 //            var animation = (ModifierLayer<IAnimation>) PlayerAnimationAccess.getPlayerAssociatedData(benderPlayer).get(
 //                    ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "animation"));
 //            if (animation != null) {
@@ -75,6 +80,8 @@ public class EarthBlockSkill extends EarthSkill {
             ServerShipWorld serverShipWorld = (ServerShipWorld) VSGameUtilsKt.getVsCore().getHooks().getCurrentShipServerWorld();
             if (serverShip != null && serverShipWorld != null)
                 controlBlock(serverShip, serverShipWorld, level, bender);
+        } else {
+            stopRun();
         }
     }
 
@@ -84,11 +91,15 @@ public class EarthBlockSkill extends EarthSkill {
 
         ServerLevel level = (ServerLevel) bender.getEntity().level();
         BlockPos blockPos = bender.getSelection().blockPos();
+        if (blockPos == null)
+            blockPos = blockPosCache;
+        System.out.println("blockPos: " + blockPos);
         if (blockPos != null && VSGameUtilsKt.isBlockInShipyard(level, blockPos)) {
             LoadedServerShip serverShip = VSGameUtilsKt.getShipObjectManagingPos(level, blockPos);
             if (serverShip != null) {
                 EarthController earthController = EarthController.getOrCreate(serverShip, bender);
                 earthController.stopControl();
+                System.out.println("ACTUALLY STOPPED EARTH BLOCK");
             }
         }
     }
