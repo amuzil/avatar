@@ -6,21 +6,21 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
 import org.joml.primitives.AABBdc;
-import org.valkyrienskies.core.api.ships.*;
+import org.valkyrienskies.core.api.ships.LoadedServerShip;
+import org.valkyrienskies.core.api.ships.PhysShip;
+import org.valkyrienskies.core.api.ships.ServerShip;
+import org.valkyrienskies.core.api.ships.ShipPhysicsListener;
 import org.valkyrienskies.core.api.world.PhysLevel;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 import org.valkyrienskies.mod.common.util.VectorConversionsMCKt;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -64,8 +64,10 @@ public final class EarthController implements ShipPhysicsListener {
 //            }
 //        }
 //        System.out.println("physTick " + invForces);
-        if (!invForces.isEmpty())
+        if (!invForces.isEmpty()) {
+//            System.out.printf("Applying inv force %.2f \n", invForces.peek().length());
             physShip.applyInvariantForce(invForces.poll());
+        }
         if (!invTorques.isEmpty())
             physShip.applyInvariantTorque(invTorques.poll());
         if (!rotForces.isEmpty())

@@ -61,7 +61,7 @@ public class EarthQuakeSkill extends EarthSkill {
 
     @Override
     public void start(Bender bender) {
-        startRun(bender);
+        startRun();
         System.out.println("EarthQuakeSkill started");
 
         epicenter = bender.getEntity().blockPosition().below();

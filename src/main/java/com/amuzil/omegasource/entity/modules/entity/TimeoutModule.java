@@ -25,11 +25,11 @@ public class TimeoutModule implements IEntityModule {
 
     @Override
     public void save(CompoundTag nbt) {
-
+        nbt.putString("ID", id);
     }
 
     @Override
     public void load(CompoundTag nbt) {
-
+        id = nbt.getString("ID");
     }
 }

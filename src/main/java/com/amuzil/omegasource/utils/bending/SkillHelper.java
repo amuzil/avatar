@@ -1,4 +1,4 @@
-package com.amuzil.omegasource.utils;
+package com.amuzil.omegasource.utils.bending;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.ClipContext;

@@ -1,7 +1,6 @@
-package com.amuzil.omegasource.bending.element.fire.skills;
+package com.amuzil.omegasource.bending.element.fire;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.*;
 import com.amuzil.omegasource.bending.element.Elements;
@@ -37,12 +36,11 @@ public class FlameStepSkill extends FireSkill {
 
     @Override
     public void start(Bender bender) {
-        super.start(bender);
-
+        super.startRun();
         LivingEntity entity = bender.getEntity();
 
         BendingForm.Type.Motion motion = bender.getStepDirection();
-        if (motion == null)
+        if (motion == BendingForm.Type.Motion.NONE)
             motion = BendingForm.Type.Motion.FORWARD;
 
         int lifetime = skillData.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime();
@@ -82,17 +80,14 @@ public class FlameStepSkill extends FireSkill {
             entity.hurtMarked = true;
             entity.hasImpulse = true;
         }
-
-        skillData.setSkillState(SkillState.RUN);
     }
 
     @Override
     public void run(Bender bender) {
         super.run(bender);
         if (!bender.getEntity().level().isClientSide()) {
-            SkillData data = bender.getSkillData(this);
             bender.getEntity().fallDistance = 0.0F;
-            incrementTimedTrait(data, Constants.RUNTIME, data.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime());
+            incrementTimedTrait(skillData, Constants.RUNTIME, skillData.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime());
         }
     }
 }

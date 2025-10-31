@@ -84,10 +84,12 @@ public class VSUtils {
     }
 
     public static void tossBlock(LivingEntity entity, EarthController earthController, LoadedServerShip ship) {
+        // TODO: Discover why force seemingly accumulates when applied to blocks making them eventually go mach 2
         double mass = ship.getInertiaData().getMass();
         Vec3 vec3 = entity.getLookAngle().normalize()
-                .multiply(500*mass, 250*mass, 500*mass);
-//        System.out.printf("Applying force %.4f on mass %f\n", vec3.y, mass);
+                .multiply(600*mass, 500*mass, 600*mass);
+//        System.out.printf("Applying force %.2f on mass %f\n", vec3.y, mass);
+//        System.out.println(vec3.length());
         Vector3d force = VectorConversionsMCKt.toJOML(vec3);
         earthController.applyInvariantForce(force);
     }
@@ -105,7 +107,7 @@ public class VSUtils {
         BlockPos shipyardBlockPos = null;
         ServerLevel level = (ServerLevel) bender.getEntity().level();
         BlockPos blockPos = bender.getSelection().blockPos();
-        if (blockPos != null) { // Create new ship
+        if (blockPos != null) { // Assemble ship if target is block
             BlockState blockState = level.getBlockState(blockPos);
             if (bender.getSelection().target() == BendingSelection.Target.BLOCK
                     && !VSGameUtilsKt.isBlockInShipyard(level, blockPos)
@@ -123,8 +125,17 @@ public class VSUtils {
                 Vector3dc shipyardPos = ship.getTransform().getPositionInShip();
                 shipyardBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipyardPos));
             }
+        } else { // Assemble ship nearby if no target block
+            shipyardBlockPos = assembleEarthShipNearby(bender);
         }
         bender.getSelection().setBlockPos(shipyardBlockPos); // Important: Update BlockPos to the shipyard position
+        return shipyardBlockPos;
+    }
+
+    private static BlockPos assembleEarthShipNearby(Bender bender) {
+        BlockPos shipyardBlockPos = null;
+        ServerLevel level = (ServerLevel) bender.getEntity().level();
+
         return shipyardBlockPos;
     }
 

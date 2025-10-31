@@ -43,7 +43,7 @@ public class PhotonModule implements IRenderModule {
 
     @Override
     public void load(CompoundTag nbt) {
-        this.id = nbt.getString("ID");
+        id = nbt.getString("ID");
     }
 
     public static void startEntityEffect(FX fx, Entity entity) {

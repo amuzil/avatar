@@ -53,7 +53,12 @@ public class Bender implements IBender {
     public final List<Form> formPath = new ArrayList<>(); // in-sync
     private Vec3 lastDeltaMovement = Vec3.ZERO; // in-sync
     private BendingSelection selection = new BendingSelection(); // in-sync
-    private final HashMap<ResourceLocation, Boolean> shouldRuns = new HashMap<>(); // in-sync
+
+    public final HashMap<String, Skill> activeSkills = new HashMap<>();
+    private final List<Skill> availableSkills = new ArrayList<>();
+    private Skill skillToActivate = null;
+    private final int SKILL_ACTIVATION_THRESHOLD = 10;
+    private int skillActivationTimer = SKILL_ACTIVATION_THRESHOLD;
 
     // Persistent data
     private Element activeElement = Elements.FIRE; // Currently active element // TODO - Randomize on first load
@@ -62,12 +67,6 @@ public class Bender implements IBender {
     private final HashMap<String, SkillData> skillDataMap = new HashMap<>();
     private final List<DataTrait> dataTraits = new ArrayList<>();
 
-    public final HashMap<String, Skill> activeSkills = new HashMap<>();
-    private final List<Skill> availableSkills = new ArrayList<>();
-    private Skill skillToActivate = null;
-    private final int SKILL_ACTIVATION_THRESHOLD = 10;
-    private int skillActivationTimer = SKILL_ACTIVATION_THRESHOLD;
-
     public Bender(LivingEntity entity) {
         this.entity = entity;
         this.formListener = this::onFormActivatedEvent;
@@ -75,11 +74,8 @@ public class Bender implements IBender {
         for (SkillCategory category: Registries.getSkillCategories())
             skillCategoryData.add(new SkillCategoryData(category));
         this.availableSkills.addAll(Registries.getSkills());
-        for (Skill skill : availableSkills) {
+        for (Skill skill: availableSkills)
             skillDataMap.put(skill.name(), new SkillData(skill));
-            if (skill.runPaths() != null)
-                shouldRuns.put(skill.getId(), false); // Initialize shouldRuns map
-        }
         dataTraits.addAll(Registries.getTraits());
 
         // Allow use of all Elements & Skills for testing!
@@ -106,17 +102,18 @@ public class Bender implements IBender {
     private boolean canUseSkill(Skill skill) {
         return getSkillCategoryData(skill.getCategory().getId()).canUse()
 //                && getSkillData(skill).canUse()
-                && getElement() == skill.getCategory(); // Make SkillCategory part of Skill RadixTree
+                && getElement() == skill.getCategory();
     }
 
     private void onFormActivatedEvent(FormActivatedEvent event) {
-        if (event.getEntity().getId() == entity.getId() && event.getActiveForm().form().name() != "null") {
+        if (event.getEntity().getId() == entity.getId() && event.getActiveForm().form().notNull()) {
             active = !event.released();
             ActiveForm activeForm = event.getActiveForm();
 
-            if(activeForm.direction() != null) {
-                stepDirection = activeForm.direction(); // todo move to bending context
-            } else stepDirection = null;
+            if (activeForm.direction() != null)
+                stepDirection = activeForm.direction(); // TODO: Move to bending context
+            else
+                stepDirection = BendingForm.Type.Motion.NONE;
 
             formPath.add(event.getActiveForm().form());
             if (active) {
@@ -147,25 +144,24 @@ public class Bender implements IBender {
     }
 
     private void checkSkillTree() {
-        System.out.println("[Bender] Checking Skill Tree for Forms: " + formPath);
         TreeResult result = SkillTree.ExecutePath(this, formPath);
         switch(result.resultType) {
             case SKILL_FOUND_TERMINAL -> {
-                LOGGER.info("Skill found: " + result.skill.name());
+//                LOGGER.info("Skill found: " + result.skill.name());
                 skillToActivate = result.skill;
                 startSkill();
             }
             case SKILL_FOUND -> {
-                LOGGER.info("Skill found: " + result.skill.name());
+//                LOGGER.info("Skill found: " + result.skill.name());
                 skillToActivate = result.skill;
                 skillActivationTimer = SKILL_ACTIVATION_THRESHOLD;
             }
             case TERMINAL_NODE -> {
-                LOGGER.info("Terminal node");
+//                LOGGER.info("Terminal node");
                 formPath.clear();
             } // tree reached the end and found nothing. clear the formPath
             case SKILL_NOT_FOUND -> {
-                LOGGER.info("Skill not found");
+//                LOGGER.info("Skill not found");
             } // do nothing. there may still be a combo on the next form.
         }
     }
@@ -192,7 +188,7 @@ public class Bender implements IBender {
         Skill newSkill = Objects.requireNonNull(Registries.getSkill(skillToActivate.getId())).create(this);
         if (canUseSkill(newSkill)) {
             newSkill.start(this);
-            formPath.clear();
+//            formPath.clear(); // Please don't clear formPath until `applyFormsToSkill()` is implemented
             skillToActivate = null;
             skillActivationTimer = SKILL_ACTIVATION_THRESHOLD;
         }

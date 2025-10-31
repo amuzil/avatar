@@ -25,28 +25,28 @@ public class SkillTreeNode {
             return branch.ExecutePath(forms.subList(1, forms.size()));
         }
 
-        if(skill != null) {
-            if(forms.isEmpty() && !children.isEmpty())
+        if (skill != null) {
+            if (forms.isEmpty() && !children.isEmpty())
                 return new TreeResult(TreeResult.ResultType.SKILL_FOUND, skill);
             else
                 return new TreeResult(TreeResult.ResultType.SKILL_FOUND_TERMINAL, skill);
         }
 
-        if(children.size() == 0) {
+        if (children.size() == 0) {
             return new TreeResult(TreeResult.ResultType.TERMINAL_NODE, null);
         }
         return new TreeResult(TreeResult.ResultType.SKILL_NOT_FOUND, null);
     }
 
     public void addChild(List<Form> formPath, Skill skill) {
-        if(formPath.isEmpty()) {
+        if (formPath.isEmpty()) {
             this.skill = skill;
         } else {
             Form currentForm = formPath.get(0);
             List<Form> newList = formPath.size() > 1 ? formPath.subList(1, formPath.size()) : new ArrayList<>();
             // add a new node.
             SkillTreeNode branch = children.get(currentForm);
-            if(branch != null) { // branch exists already, recurse.
+            if (branch != null) { // branch exists already, recurse.
                 branch.addChild(newList, skill);
             } else { // create branch then recurse.
                 SkillTreeNode newNode = new SkillTreeNode(null);

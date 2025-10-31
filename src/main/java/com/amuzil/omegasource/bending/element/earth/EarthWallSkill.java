@@ -51,7 +51,7 @@ public class EarthWallSkill extends EarthSkill {
                         stopRun();
                     } else {
                         earthController.setControlled(true);
-                        startRun(bender);
+                        startRun();
                     }
                 }
             });

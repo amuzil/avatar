@@ -4,7 +4,6 @@ import com.amuzil.omegasource.api.magus.skill.SkillActive;
 import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.TimedTrait;
 import com.amuzil.omegasource.bending.element.Element;
-import com.amuzil.omegasource.capability.Bender;
 
 
 public abstract class BendingSkill extends SkillActive {
@@ -18,13 +17,14 @@ public abstract class BendingSkill extends SkillActive {
     }
 
     // Ensure SkillState gets set to RUN before super.start() is called so run() executes on 1st try
-    public void startRun(Bender bender) {
+    public void startRun() {
         skillData.setSkillState(SkillState.RUN);
         super.start(bender);
     }
 
     public void stopRun() {
         skillData.setSkillState(SkillState.STOP);
+        this.stop(bender);
     }
 
     // TODO: Update cooldown methods to use cooldown runnable in Skill

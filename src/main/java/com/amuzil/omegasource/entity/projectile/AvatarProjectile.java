@@ -5,6 +5,7 @@ import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.api.IAvatarProjectile;
 import com.amuzil.omegasource.entity.api.IRenderModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
+import com.amuzil.omegasource.entity.modules.entity.SoundModule;
 import com.amuzil.omegasource.entity.modules.entity.TimeoutModule;
 import com.amuzil.omegasource.entity.modules.render.PhotonModule;
 import com.google.common.base.MoreObjects;
@@ -47,6 +48,7 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
         super(pEntityType, pLevel);
         // NOTE: Modules are not synced between client and server unless added to the entity's constructor!
         addRenderModule((IRenderModule) ModuleRegistry.create(PhotonModule.id));
+        addModule(ModuleRegistry.create(SoundModule.id));
         addModule(ModuleRegistry.create(TimeoutModule.id));
     }
 

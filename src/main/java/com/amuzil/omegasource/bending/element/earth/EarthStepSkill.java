@@ -1,7 +1,6 @@
 package com.amuzil.omegasource.bending.element.earth;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.*;
 import com.amuzil.omegasource.bending.element.Elements;
@@ -17,7 +16,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.Objects;
 
 import static com.amuzil.omegasource.bending.form.BendingForms.STEP;
-import static com.amuzil.omegasource.utils.SkillHelper.canEarthBend;
+import static com.amuzil.omegasource.utils.bending.SkillHelper.canEarthBend;
 
 
 public class EarthStepSkill extends EarthSkill {
@@ -37,24 +36,22 @@ public class EarthStepSkill extends EarthSkill {
 
     @Override
     public void start(Bender bender) {
-        super.start(bender);
+        super.startRun();
         LivingEntity entity = bender.getEntity();
-        SkillData data = bender.getSkillData(this);
-        data.setSkillState(SkillState.RUN);
 
         BendingForm.Type.Motion motion = bender.getStepDirection();
-        if (motion == null)
+        if (motion == BendingForm.Type.Motion.NONE)
             motion = BendingForm.Type.Motion.FORWARD;
 
         if (!canEarthBend(entity)) return; // Can't earth bend if too far from ground
 
-        int lifetime = data.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime();
-        TimedTrait time = data.getTrait(Constants.RUNTIME, TimedTrait.class);
+        int lifetime = skillData.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime();
+        TimedTrait time = skillData.getTrait(Constants.RUNTIME, TimedTrait.class);
         time.setTime(0);
 
         AvatarEntity bound = new AvatarBoundProjectile(entity.level());
         bound.setElement(Elements.EARTH);
-        bound.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
+        bound.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
         bound.setOwner(entity);
         bound.setMaxLifetime(lifetime / 3);
         bound.setNoGravity(true);
@@ -65,7 +62,7 @@ public class EarthStepSkill extends EarthSkill {
             entity.level().addFreshEntity(bound);
 
             float dashSpeed = (float) Objects.requireNonNull(
-                    data.getTrait(Constants.DASH_SPEED, SpeedTrait.class)).getSpeed();
+                    skillData.getTrait(Constants.DASH_SPEED, SpeedTrait.class)).getSpeed();
             Vec3 dashVec = Vec3.ZERO;
             switch (motion) {
                 case FORWARD -> dashVec = entity.getLookAngle().multiply(1, 0, 1).normalize().scale(dashSpeed);
@@ -88,10 +85,9 @@ public class EarthStepSkill extends EarthSkill {
     public void run(Bender bender) {
         super.run(bender);
         if (!bender.getEntity().level().isClientSide()) {
-            SkillData data = bender.getSkillData(this);
             bender.getEntity().fallDistance = 0.0F;
-            incrementTimedTrait(data, Constants.RUNTIME,
-                    data.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime());
+            incrementTimedTrait(skillData, Constants.RUNTIME,
+                    skillData.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime());
         }
     }
 }

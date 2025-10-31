@@ -7,11 +7,7 @@ import com.amuzil.omegasource.api.magus.skill.event.SkillTickEvent;
 import com.amuzil.omegasource.api.magus.skill.traits.SkillTrait;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.UseTrait;
 import com.amuzil.omegasource.capability.Bender;
-import com.amuzil.omegasource.network.AvatarNetwork;
-import com.amuzil.omegasource.network.packets.skill.ActivatedSkillPacket;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
@@ -21,7 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 
 /**
@@ -168,25 +163,24 @@ public abstract class Skill {
     public void tick(Bender bender) {
         if (shouldStop(bender, bender.formPath)) {
             stop(bender);
-            hush(run);
         } else {
             run(bender);
         }
     }
 
     // Execute Skill on client(s) and sync SkillState
-    public void executeOnClient(LivingEntity entity, SkillData skillData, SkillState skillState) {
-        // Handle which player clients should receive the packet based on Skill
-        if (!entity.level().isClientSide()) {
-            skillData.setSkillState(skillState); // Set SkillState on server
-            ServerLevel level = (ServerLevel) entity.level();
-            ActivatedSkillPacket packet = new ActivatedSkillPacket(id, skillState.ordinal());
-            Predicate<ServerPlayer> predicate = (serverPlayer) -> entity.distanceToSqr(serverPlayer) < 2500;
-            for (ServerPlayer nearbyPlayer : level.getPlayers(predicate.and(LivingEntity::isAlive))) {
-                AvatarNetwork.sendToClient(packet, nearbyPlayer);
-            }
-        }
-    }
+//    public void executeOnClient(LivingEntity entity, SkillData skillData, SkillState skillState) {
+//        // Handle which player clients should receive the packet based on Skill
+//        if (!entity.level().isClientSide()) {
+//            skillData.setSkillState(skillState); // Set SkillState on server
+//            ServerLevel level = (ServerLevel) entity.level();
+//            ActivatedSkillPacket packet = new ActivatedSkillPacket(id, skillState.ordinal());
+//            Predicate<ServerPlayer> predicate = (serverPlayer) -> entity.distanceToSqr(serverPlayer) < 2500;
+//            for (ServerPlayer nearbyPlayer : level.getPlayers(predicate.and(LivingEntity::isAlive))) {
+//                AvatarNetwork.sendToClient(packet, nearbyPlayer);
+//            }
+//        }
+//    }
 
     public abstract List<Form> startPaths();
 
