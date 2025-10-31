@@ -1,7 +1,6 @@
 package com.amuzil.omegasource.bending.element.water;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.*;
 import com.amuzil.omegasource.bending.element.Elements;
@@ -40,7 +39,7 @@ public class WaterStepSkill extends WaterSkill {
         LivingEntity entity = bender.getEntity();
 
         BendingForm.Type.Motion motion = bender.getStepDirection();
-        if (motion == null)
+        if (motion == BendingForm.Type.Motion.NONE)
             motion = BendingForm.Type.Motion.FORWARD;
 
         int lifetime = skillData.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime();

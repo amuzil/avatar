@@ -21,7 +21,6 @@ import java.util.List;
 
 import static com.amuzil.omegasource.bending.form.BendingForms.BLOCK;
 import static com.amuzil.omegasource.utils.ship.VSUtils.assembleEarthShip;
-import static com.amuzil.omegasource.utils.ship.VSUtils.controlBlock;
 
 
 public class EarthBlockSkill extends EarthSkill {

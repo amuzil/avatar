@@ -4,12 +4,10 @@ import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.api.IEntityModule;
 import com.amuzil.omegasource.utils.sound.AvatarEntitySound;
-import com.amuzil.omegasource.utils.sound.AvatarSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.entity.Entity;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class SoundModule implements IEntityModule {

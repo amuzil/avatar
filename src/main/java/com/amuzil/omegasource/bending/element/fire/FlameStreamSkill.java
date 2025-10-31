@@ -49,15 +49,10 @@ public class FlameStreamSkill extends FireSkill {
 
     @Override
     public void start(Bender bender) {
-        super.start(bender);
+        super.startRun();
 
         LivingEntity entity = bender.getEntity();
         Level level = bender.getEntity().level();
-
-        if (skillData == null) {
-            System.out.println("SkillData is null in FlameStreamSkill.start");
-            return;
-        }
 
         int lifetime = skillData.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
         double speed = skillData.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
@@ -116,17 +111,13 @@ public class FlameStreamSkill extends FireSkill {
         projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
         projectile.init();
 
-        bender.formPath.clear();
-        skillData.setSkillState(SkillState.RUN);
-
-        if (!bender.getEntity().level().isClientSide) {
-            bender.getEntity().level().addFreshEntity(projectile);
-        }
+        bender.getEntity().level().addFreshEntity(projectile);
     }
 
     @Override
     public void run(Bender bender) {
         super.run(bender);
+        // TODO: Limit rate of fire and how many entities play sound
         LivingEntity entity = bender.getEntity();
         Level level = bender.getEntity().level();
 
@@ -188,7 +179,6 @@ public class FlameStreamSkill extends FireSkill {
         projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 5.0);
         projectile.init();
 
-        bender.formPath.clear();
         ServerLevel serverLevel = (ServerLevel) bender.getEntity().level();
         // Ensure entity is added on the main server thread after current tick
         serverLevel.getServer().execute(() -> serverLevel.addFreshEntity(projectile));

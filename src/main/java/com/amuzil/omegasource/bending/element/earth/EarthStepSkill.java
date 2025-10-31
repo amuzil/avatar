@@ -1,7 +1,6 @@
 package com.amuzil.omegasource.bending.element.earth;
 
 import com.amuzil.omegasource.Avatar;
-import com.amuzil.omegasource.api.magus.skill.data.SkillData;
 import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.*;
 import com.amuzil.omegasource.bending.element.Elements;
@@ -41,7 +40,7 @@ public class EarthStepSkill extends EarthSkill {
         LivingEntity entity = bender.getEntity();
 
         BendingForm.Type.Motion motion = bender.getStepDirection();
-        if (motion == null)
+        if (motion == BendingForm.Type.Motion.NONE)
             motion = BendingForm.Type.Motion.FORWARD;
 
         if (!canEarthBend(entity)) return; // Can't earth bend if too far from ground
