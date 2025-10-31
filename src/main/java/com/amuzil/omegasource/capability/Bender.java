@@ -75,7 +75,7 @@ public class Bender implements IBender {
         for (SkillCategory category: Registries.getSkillCategories())
             skillCategoryData.add(new SkillCategoryData(category));
         this.availableSkills.addAll(Registries.getSkills());
-        for (Skill skill : availableSkills) {
+        for (Skill skill: availableSkills) {
             skillDataMap.put(skill.name(), new SkillData(skill));
             if (skill.runPaths() != null)
                 shouldRuns.put(skill.getId(), false); // Initialize shouldRuns map
@@ -110,7 +110,7 @@ public class Bender implements IBender {
     }
 
     private void onFormActivatedEvent(FormActivatedEvent event) {
-        if (event.getEntity().getId() == entity.getId() && event.getActiveForm().form().name() != "null") {
+        if (event.getEntity().getId() == entity.getId() && event.getActiveForm().form().notNull()) {
             active = !event.released();
             ActiveForm activeForm = event.getActiveForm();
 

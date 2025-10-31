@@ -16,10 +16,8 @@ public class ActiveForm {
     private BendingForm.Type.Motion motion = BendingForm.Type.Motion.NONE;
 
     public ActiveForm(String formName, boolean active) {
-        this(
-            (BendingForm) Registries.FORMS.get().getValue(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, formName)),
-            active
-        );
+        this((BendingForm) Registries.FORMS.get().getValue(
+                ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, formName)), active);
     }
 
     public ActiveForm(BendingForm form, boolean active) {

@@ -41,6 +41,10 @@ public class BendingForm extends Form {
         }
     }
 
+    public boolean notNull() {
+        return !name.equals("null");
+    }
+
     public Type type() {
         return type;
     }
