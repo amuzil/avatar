@@ -1,6 +1,7 @@
 package com.amuzil.omegasource.entity.projectile;
 
 import com.amuzil.omegasource.entity.AvatarEntities;
+import com.amuzil.omegasource.entity.IHasSDF;
 import com.amuzil.omegasource.entity.api.IForceModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import com.amuzil.omegasource.entity.modules.force.CurveModule;
@@ -46,6 +47,6 @@ public class AvatarWaterProjectile extends AvatarProjectile implements IHasSDF {
         this(AvatarEntities.AVATAR_WATER_PROJECTILE_ENTITY_TYPE.get(), pLevel);
     }
 
-    public SDFScene rootSDF(){ return root; }
+    public SignedDistanceFunction rootSDF(){ return root; }
 
 }
