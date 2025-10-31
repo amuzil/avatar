@@ -18,7 +18,7 @@ public class SkillTree {
     public static void RegisterSkill(Element element, /* BendingSelection.Target targetType, */List<Form> formPath, Skill skill) {
         SkillTreeNode root = branches.get(element);
 
-        if(root == null) {
+        if (root == null) {
             root = new SkillTreeNode(null);
             branches.put(element, root);
         }
