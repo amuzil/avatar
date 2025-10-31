@@ -4,14 +4,14 @@ import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.IHasSDF;
 import com.amuzil.omegasource.entity.renderer.sdf.SignedDistanceFunction;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.*;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import org.joml.Vector3f;
 
 import java.util.*;

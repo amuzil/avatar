@@ -1,8 +1,8 @@
 package com.amuzil.omegasource.entity.renderer.sdf.transforms;
 
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import org.joml.*;
 
 public class Transform {
     public final Vector3f position = new Vector3f();

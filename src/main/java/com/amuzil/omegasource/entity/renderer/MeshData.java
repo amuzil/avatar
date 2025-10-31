@@ -1,6 +1,5 @@
 package com.amuzil.omegasource.entity.renderer;
 
-import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 import java.util.List;

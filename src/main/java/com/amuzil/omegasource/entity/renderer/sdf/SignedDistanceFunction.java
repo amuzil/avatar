@@ -1,6 +1,5 @@
 package com.amuzil.omegasource.entity.renderer.sdf;
 
-import net.minecraft.world.phys.AABB;
 import org.joml.Vector3f;
 
 public interface SignedDistanceFunction {
