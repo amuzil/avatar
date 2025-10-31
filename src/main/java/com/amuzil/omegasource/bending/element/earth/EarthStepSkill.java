@@ -16,7 +16,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.Objects;
 
 import static com.amuzil.omegasource.bending.form.BendingForms.STEP;
-import static com.amuzil.omegasource.utils.SkillHelper.canEarthBend;
+import static com.amuzil.omegasource.utils.bending.SkillHelper.canEarthBend;
 
 
 public class EarthStepSkill extends EarthSkill {

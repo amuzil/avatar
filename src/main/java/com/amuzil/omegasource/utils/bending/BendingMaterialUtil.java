@@ -1,4 +1,4 @@
-package com.amuzil.omegasource.bending;
+package com.amuzil.omegasource.utils.bending;
 
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.bending.element.Element;
