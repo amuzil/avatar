@@ -110,9 +110,10 @@ public class Bender implements IBender {
             active = !event.released();
             ActiveForm activeForm = event.getActiveForm();
 
-            if (activeForm.direction() != null) {
-                stepDirection = activeForm.direction(); // todo move to bending context
-            } else stepDirection = null;
+            if (activeForm.direction() != null)
+                stepDirection = activeForm.direction(); // TODO: Move to bending context
+            else
+                stepDirection = BendingForm.Type.Motion.NONE;
 
             formPath.add(event.getActiveForm().form());
             if (active) {
