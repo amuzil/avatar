@@ -3,13 +3,9 @@ package com.amuzil.omegasource.entity.renderer;
 import com.amuzil.omegasource.Avatar;
 import com.amuzil.omegasource.entity.AvatarEntity;
 import com.amuzil.omegasource.entity.IHasSDF;
-import com.amuzil.omegasource.entity.renderer.sdf.SDFScene;
 import com.amuzil.omegasource.entity.renderer.sdf.SignedDistanceFunction;
-import com.amuzil.omegasource.entity.renderer.sdf.channels.Channels;
-import com.amuzil.omegasource.entity.renderer.sdf.shapes.SDFSphere;
-import com.amuzil.omegasource.entity.renderer.sdf.shapes.SDFTorus;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import kotlinx.coroutines.channels.Channel;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -29,7 +25,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
     private static final int GRID_SIZE = 32;
     private static final float CELL_SIZE = 0.25f;
     private static final float ISOLEVEL = 0.0f;
-    private static final long MESH_TTL_MS = 50L;
+    private static final long MESH_TTL_MS = 100L;
     final float TEX_SCALE = 2.0f; // e.g. 2 repeats per block
 
     PointData[][][] voxels = new PointData[GRID_SIZE][GRID_SIZE][GRID_SIZE];
@@ -117,31 +113,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
 
         float time = nowSeconds(partialTicks, entity); // or pass partialTick from render()
 
-//        SignedDistanceFunction sdf = (entity instanceof IHasSDF has) ? has.rootSDF() : new SDFSphere(new Vector3f(0,0,0), 1.35f);
-        long seed = random.nextLong();
-        SDFScene sdf = new SDFScene().add(new SDFSphere()); // will replace after config
-
-        SDFSphere core = new SDFSphere();
-        core.radius = Channels.pulse(1.2f, 0.15f, 0.35f, 0f); // gentle breathing
-        core.a.pos = (t,out)->out.set(0,0,0);
-        core.a.rot = Channels.spinY(4f); // optional slow spin visual
-        core.a.scl = (t,out)->out.set(1,1,1);
-
-        SDFTorus ring = new SDFTorus();
-        ring.majorRadius = Channels.constant(2f);
-        ring.minorRadius = Channels.constant(0.25f);
-        ring.a.pos = (t,out)->out.set(0,0,0);
-        ring.a.rot = (t,out)->out.identity();
-        ring.a.scl = (t,out)->out.set(1,1,1);
-
-        SDFSphere moon = new SDFSphere();
-        moon.radius = Channels.constant(0.45f);
-        moon.a.pos = Channels.orbitXZ(new Vector3f(0,0,0), 1.7f, 0.2f); // orbit radius 1.7, 0.2 Hz
-        moon.a.rot = (t,out)->out.identity();
-        moon.a.scl = (t,out)->out.set(1,1,1);
-
-        sdf = new SDFScene().add(core).add(ring).add(moon);
-        sdf.unionK = 0.35f;
+        SignedDistanceFunction sdf = (entity instanceof IHasSDF has) ? has.rootSDF() : null;
 
         float cx = (GRID_SIZE - 1) * CELL_SIZE * 0.5f;
         for (int x = 0; x < GRID_SIZE; x++) {
@@ -156,11 +128,11 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
                     // density from entity SDF (iso=0)
                     float d = sdf.sd(p, time);           // signed distance in world units
 
-                    // optional subtle noise modulation (keep tiny)
-                    float bump = fbmNoise(wx, wy, wz, seed) * 0.03f;
-                    float density = d + bump;
+//                    // optional subtle noise modulation (keep tiny)
+//                    float bump = fbmNoise(wx, wy, wz, seed) * 0.03f;
+//                    float density = d + bump;
 
-                    voxels[x][y][z] = new PointData(p, density, x, y, z);
+                    voxels[x][y][z] = new PointData(p, d, x, y, z);
                 }
             }
         }
