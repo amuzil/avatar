@@ -12,6 +12,7 @@ import com.amuzil.omegasource.entity.renderer.sdf.shapes.SDFSphere;
 import com.amuzil.omegasource.entity.renderer.sdf.shapes.SDFTorus;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
+import org.joml.Vector3f;
 
 public class AvatarWaterProjectile extends AvatarProjectile implements IHasSDF {
     private SDFScene root;
