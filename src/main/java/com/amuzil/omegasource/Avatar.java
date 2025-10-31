@@ -94,9 +94,8 @@ public class Avatar {
     }
 
     private void setupClient(final FMLClientSetupEvent event) {
-        // Register the input modules
+        // Initialize the input modules
         inputModule = new InputModule();
-
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {}
