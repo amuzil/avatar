@@ -6,11 +6,11 @@ import com.amuzil.omegasource.api.magus.skill.data.SkillPathBuilder;
 import com.amuzil.omegasource.api.magus.skill.traits.skilltraits.*;
 import com.amuzil.omegasource.bending.skill.WaterSkill;
 import com.amuzil.omegasource.capability.Bender;
+import com.amuzil.omegasource.entity.projectile.AvatarWaterProjectile;
 import com.amuzil.omegasource.entity.api.ICollisionModule;
 import com.amuzil.omegasource.entity.modules.ModuleRegistry;
 import com.amuzil.omegasource.entity.modules.collision.SimpleKnockbackModule;
 import com.amuzil.omegasource.entity.modules.collision.WaterCollisionModule;
-import com.amuzil.omegasource.entity.projectile.AvatarCurveProjectile;
 import com.amuzil.omegasource.utils.Constants;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
@@ -27,10 +27,12 @@ public class WaterBallSkill extends WaterSkill {
         addTrait(new SizeTrait(Constants.SIZE, 0.3F));
         addTrait(new SizeTrait(Constants.MAX_SIZE, 1.25f));
         addTrait(new KnockbackTrait(Constants.KNOCKBACK, 0.2f));
-        addTrait(new SpeedTrait(Constants.SPEED, 0.475d));
-        addTrait(new TimedTrait(Constants.LIFETIME, 35)); // Ticks not seconds...
+        addTrait(new SpeedTrait(Constants.SPEED, 0.1d));
+        addTrait(new TimedTrait(Constants.LIFETIME, 200)); // Ticks not seconds...
         addTrait(new SpeedTrait(Constants.SPEED_FACTOR, 0.85d));
         addTrait(new StringTrait(Constants.FX, "water1"));
+        addTrait(new AngleTrait(Constants.ANGLE, 0));
+        addTrait(new RangeTrait(Constants.RANGE, 2.0d));
 
         startPaths = SkillPathBuilder.getInstance().add(STRIKE).build();
     }
@@ -47,9 +49,9 @@ public class WaterBallSkill extends WaterSkill {
         double speed = data.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
         double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
-        AvatarCurveProjectile projectile = new AvatarCurveProjectile(level);
+        AvatarWaterProjectile projectile = new AvatarWaterProjectile(level);
         projectile.setElement(element());
-        projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
+//        projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
         projectile.setOwner(entity);
         projectile.setMaxLifetime(lifetime);
         projectile.setWidth((float) size);
@@ -57,6 +59,10 @@ public class WaterBallSkill extends WaterSkill {
         projectile.setNoGravity(true);
         projectile.setDamageable(false);
         projectile.setHittable(true);
+
+        projectile.addTraits(skillData.getTrait(Constants.ANGLE, AngleTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.SPEED, SpeedTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.RANGE, RangeTrait.class));
 
         projectile.addTraits(data.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
         projectile.addTraits(new DirectionTrait(Constants.KNOCKBACK_DIRECTION, new Vec3(0, 0.45, 0)));

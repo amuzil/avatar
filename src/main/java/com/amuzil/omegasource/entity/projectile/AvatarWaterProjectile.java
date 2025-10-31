@@ -1,5 +1,9 @@
-package com.amuzil.omegasource.entity;
+package com.amuzil.omegasource.entity.projectile;
 
+import com.amuzil.omegasource.entity.AvatarEntities;
+import com.amuzil.omegasource.entity.api.IForceModule;
+import com.amuzil.omegasource.entity.modules.ModuleRegistry;
+import com.amuzil.omegasource.entity.modules.force.CurveModule;
 import com.amuzil.omegasource.entity.renderer.sdf.SDFScene;
 import com.amuzil.omegasource.entity.renderer.sdf.SignedDistanceFunction;
 import com.amuzil.omegasource.entity.renderer.sdf.channels.Channels;
@@ -7,13 +11,13 @@ import com.amuzil.omegasource.entity.renderer.sdf.shapes.SDFSphere;
 import com.amuzil.omegasource.entity.renderer.sdf.shapes.SDFTorus;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
-import org.joml.Vector3f;
 
-public class AvatarWaterEntity extends AvatarEntity implements IHasSDF {
+public class AvatarWaterProjectile extends AvatarProjectile implements IHasSDF {
     private SDFScene root;
 
-    public AvatarWaterEntity(EntityType<?> pEntityType, Level pLevel) {
+    public AvatarWaterProjectile(EntityType<AvatarWaterProjectile> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
+        addForceModule((IForceModule) ModuleRegistry.create(CurveModule.id)); // Can hotswap to OrbitModule.id
 
         SDFSphere core = new SDFSphere();
         core.radius = Channels.pulse(1.2f, 0.15f, 0.35f, 0f); // gentle breathing
@@ -37,6 +41,11 @@ public class AvatarWaterEntity extends AvatarEntity implements IHasSDF {
         root = new SDFScene().add(core).add(ring).add(moon);
         root.unionK = 0.35f;
     }
-    public SignedDistanceFunction rootSDF(){ return root; }
+
+    public AvatarWaterProjectile(Level pLevel) {
+        this(AvatarEntities.AVATAR_WATER_PROJECTILE_ENTITY_TYPE.get(), pLevel);
+    }
+
+    public SDFScene rootSDF(){ return root; }
 
 }
