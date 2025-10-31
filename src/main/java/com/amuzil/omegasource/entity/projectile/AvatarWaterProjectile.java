@@ -1,17 +1,21 @@
-package com.amuzil.omegasource.entity;
+package com.amuzil.omegasource.entity.projectile;
 
+import com.amuzil.omegasource.entity.AvatarEntities;
+import com.amuzil.omegasource.entity.IHasSDF;
+import com.amuzil.omegasource.entity.api.IForceModule;
+import com.amuzil.omegasource.entity.modules.ModuleRegistry;
+import com.amuzil.omegasource.entity.modules.force.CurveModule;
 import com.amuzil.omegasource.entity.renderer.sdf.SignedDistanceFunction;
-import com.amuzil.omegasource.entity.renderer.sdf.operators.SDFSmoothUnion;
-import com.amuzil.omegasource.entity.renderer.sdf.operators.SDFSubtract;
-import com.amuzil.omegasource.entity.renderer.sdf.shapes.SDFSphere;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
-import org.joml.Vector3f;
 
-public class AvatarWaterEntity extends AvatarEntity implements IHasSDF {
+public class AvatarWaterProjectile extends AvatarProjectile implements IHasSDF {
     private SignedDistanceFunction root;
-    public AvatarWaterEntity(EntityType<?> pEntityType, Level pLevel) {
+
+    public AvatarWaterProjectile(EntityType<AvatarWaterProjectile> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
+        addForceModule((IForceModule) ModuleRegistry.create(CurveModule.id)); // Can hotswap to OrbitModule.id
+
 //        SignedDistanceFunction body = new SDFSphere(new Vector3f(0,0,0), 1.25f);
 //        SignedDistanceFunction dent = new SDFSphere(new Vector3f(1f,0f,0.0f), 1f);
 //        SignedDistanceFunction dent2 = new SDFSphere(new Vector3f(1.75f,0f,0.0f), 0.75f);
@@ -22,5 +26,10 @@ public class AvatarWaterEntity extends AvatarEntity implements IHasSDF {
 //        root = new SDFSmoothUnion(root, dent3, 0.1f);
 //        root = new SDFSmoothUnion(root, dent4, 0.1f);
     }
+
+    public AvatarWaterProjectile(Level pLevel) {
+        this(AvatarEntities.AVATAR_WATER_PROJECTILE_ENTITY_TYPE.get(), pLevel);
+    }
+
     public SignedDistanceFunction rootSDF(){ return root; }
 }
