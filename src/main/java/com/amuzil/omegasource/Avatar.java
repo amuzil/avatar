@@ -2,6 +2,14 @@ package com.amuzil.omegasource;
 
 import com.amuzil.omegasource.api.magus.registry.Registries;
 import com.amuzil.omegasource.api.magus.tree.SkillTree;
+import com.amuzil.omegasource.api.rayon.impl.bullet.collision.space.generator.PressureGenerator;
+import com.amuzil.omegasource.api.rayon.impl.bullet.collision.space.generator.TerrainGenerator;
+import com.amuzil.omegasource.api.rayon.impl.bullet.natives.NativeLoader;
+import com.amuzil.omegasource.api.rayon.impl.event.ClientEventHandler;
+import com.amuzil.omegasource.api.rayon.impl.event.ServerEventHandler;
+import com.amuzil.omegasource.api.rayon.impl.example.client.init.RayonExampleEntityRenderers;
+import com.amuzil.omegasource.api.rayon.impl.example.init.RayonExampleEntities;
+import com.amuzil.omegasource.api.rayon.impl.packet.RayonPacketHandlers;
 import com.amuzil.omegasource.bending.BendingSkill;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.entity.AvatarEntities;
@@ -39,6 +47,7 @@ public class Avatar {
     public static InputModule inputModule;
 
     public Avatar(FMLJavaModLoadingContext context) {
+        NativeLoader.load();
         IEventBus modEventBus = context.getModEventBus();
         // Register the setup method for mod loading
         modEventBus.addListener(this::setup);
@@ -48,6 +57,11 @@ public class Avatar {
         modEventBus.addListener(this::processIMC);
         // Register the setupClient method for mod loading
         modEventBus.addListener(this::setupClient);
+
+        // Rayon Rigid Body Physics
+        modEventBus.addListener(RayonExampleEntityRenderers::registerEntityRenderers);
+        RayonExampleEntities.register(modEventBus);
+        java.util.logging.LogManager.getLogManager().reset(); // prevent annoying libbulletjme spam
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
@@ -80,11 +94,22 @@ public class Avatar {
         ModuleRegistry.register(FireCollisionModule::new);
         ModuleRegistry.register(WaterCollisionModule::new);
         ModuleRegistry.register(FireEffectModule::new);
+
+        // Rayon Rigid Body Physics
+        IEventBus forgeBus = MinecraftForge.EVENT_BUS;
+        forgeBus.register(ServerEventHandler.class);
+        forgeBus.register(PressureGenerator.class);
+        forgeBus.register(TerrainGenerator.class);
     }
 
     private void setupClient(final FMLClientSetupEvent event) {
         // Initialize the input modules
         inputModule = new InputModule();
+
+        // Rayon Rigid Body Physics
+        IEventBus forgeBus = MinecraftForge.EVENT_BUS;
+        forgeBus.register(ClientEventHandler.class);
+        RayonPacketHandlers.registerPackets();
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {}

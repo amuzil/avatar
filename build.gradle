@@ -125,9 +125,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 mixin {
     add sourceSets.main, "av3.refmap.json"
-    add sourceSets.main, 'rayon.refmap.json'
     config "av3.mixins.json"
-//    config 'rayon.mixins.json'
 }
 
 repositories {
