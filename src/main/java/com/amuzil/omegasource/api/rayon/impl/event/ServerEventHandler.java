@@ -57,7 +57,7 @@ public final class ServerEventHandler
 		{
 			MinecraftSpace space = MinecraftSpace.get(event.level);
 			space.step();
-			
+
 			EntityCollisionGenerator.step(space);
 
 			for (var rigidBody : space.getRigidBodiesByClass(EntityRigidBody.class)) {

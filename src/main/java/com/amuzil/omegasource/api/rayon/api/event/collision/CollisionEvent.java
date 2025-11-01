@@ -31,8 +31,8 @@ public class CollisionEvent extends Event {
 	public float getImpulse() {
 		return this.impulse;
 	}
-	
-	public static enum Type {
+
+	public enum Type {
 		BLOCK,
 		FLUID,
 		ELEMENT;
