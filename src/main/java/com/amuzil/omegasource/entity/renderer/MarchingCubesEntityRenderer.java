@@ -6,6 +6,7 @@ import com.amuzil.omegasource.entity.IHasSDF;
 import com.amuzil.omegasource.entity.renderer.sdf.SignedDistanceFunction;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.Util;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -48,6 +49,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
         CachedMesh mesh = getOrBuildMesh(partialTick, entity);
 
         VertexConsumer vc = buffer.getBuffer(RenderType.entityTranslucent(WHITE_TEX, true));
+//        vc.defaultColor(255, 255, 255, 255);
 //        VertexConsumer vc = buffer.getBuffer(ShaderRegistry.getTriplanarRenderType(getTextureLocation(entity)));
         PoseStack.Pose last = pose.last();
         Matrix4f poseMatrix = last.pose();
@@ -117,7 +119,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
     }
 
     private CachedMesh getOrBuildMesh(float partialTicks, T entity) {
-        long now = System.currentTimeMillis();
+        long now = Util.getMillis();
         UUID id = entity.getUUID();
         CachedMesh cached = meshCache.get(id);
         if (cached != null && (now - cached.builtAtMs) < MESH_TTL_MS) return cached;

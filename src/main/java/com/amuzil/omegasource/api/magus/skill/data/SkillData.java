@@ -117,8 +117,10 @@ public class SkillData implements DataTrait {
             canUse = tag.getBoolean("Can Use");
             if (!skillTraits.isEmpty())
                 skillTraits.forEach(skillTrait -> {
-                    skillTrait.deserializeNBT((CompoundTag) Objects.requireNonNull(tag.get(skillTrait.name() + "_" + skillTrait.getClass().getSimpleName())));
-                    skillTrait.markClean();
+                    if (skillTrait != null) {
+                        skillTrait.deserializeNBT((CompoundTag) Objects.requireNonNull(tag.get(skillTrait.name() + "_" + skillTrait.getClass().getSimpleName())));
+                        skillTrait.markClean();
+                    }
                 });
         } catch (NullPointerException e) {
             LOGGER.error("Something has gone wrong, a skill trait hasn't been carried over from the registry.");
