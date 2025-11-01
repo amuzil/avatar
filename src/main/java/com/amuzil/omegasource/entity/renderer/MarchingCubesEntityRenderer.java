@@ -12,6 +12,8 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.*;
@@ -47,9 +49,12 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
 
         VertexConsumer vc = buffer.getBuffer(RenderType.entityTranslucent(WHITE_TEX, true));
 //        VertexConsumer vc = buffer.getBuffer(ShaderRegistry.getTriplanarRenderType(getTextureLocation(entity)));
-        var last = pose.last();
+        PoseStack.Pose last = pose.last();
+        Matrix4f poseMatrix = last.pose();
+        Matrix3f poseNormal = last.normal();
 
         float[] uv0 = new float[2], uv1 = new float[2], uv2 = new float[2];
+        float nx, ny, nz;
 
         for (int i = 0; i < mesh.triangles.size(); i++) {
             Triangle tri = mesh.triangles.get(i);
@@ -62,36 +67,40 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
             uvPlanar(p1, n, TEX_SCALE, uv1);
             uvPlanar(p2, n, TEX_SCALE, uv2);
 
+            nx = n.x;
+            ny = n.y;
+            nz = n.z;
+
 //            vc.vertex( p0.x, p0.y, p0.z)
-            vc.vertex(last.pose(), p0.x, p0.y, p0.z)
+            vc.vertex(poseMatrix, p0.x, p0.y, p0.z)
                     .color(255,255,255,255).uv(uv0[0], uv0[1])
                     .overlayCoords(OverlayTexture.NO_OVERLAY)
                     .uv2(packedLight)
-                    .normal(last.normal(), n.x, n.y, n.z)
+                    .normal(poseNormal, nx, ny, nz)
                     .endVertex();
 
 //            vc.vertex(p1.x, p1.y, p1.z)
-            vc.vertex(last.pose(), p1.x, p1.y, p1.z)
+            vc.vertex(poseMatrix, p1.x, p1.y, p1.z)
                     .color(255,255,255,255).uv(uv1[0], uv1[1])
                     .overlayCoords(OverlayTexture.NO_OVERLAY)
                     .uv2(packedLight)
-                    .normal(last.normal(), n.x, n.y, n.z)
+                    .normal(poseNormal, nx, ny, nz)
                     .endVertex();
 
 //            vc.vertex(p2.x, p2.y, p2.z)
-            vc.vertex(last.pose(), p2.x, p2.y, p2.z)
+            vc.vertex(poseMatrix, p2.x, p2.y, p2.z)
                     .color(255,255,255,255).uv(uv2[0], uv2[1])
                     .overlayCoords(OverlayTexture.NO_OVERLAY)
                     .uv2(packedLight)
-                    .normal(last.normal(), n.x, n.y, n.z)
+                    .normal(poseNormal, nx, ny, nz)
                     .endVertex();
 
 //             C again (degenerate 4th vertex so the QUADS mode groups correctly)
-            vc.vertex(last.pose(), p2.x, p2.y, p2.z)
+            vc.vertex(poseMatrix, p2.x, p2.y, p2.z)
                     .color(255,255,255,255).uv(uv2[0], uv2[1])
                     .overlayCoords(OverlayTexture.NO_OVERLAY)
                     .uv2(packedLight)
-                    .normal(last.normal(), n.x, n.y, n.z)
+                    .normal(poseNormal, nx, ny, nz)
                     .endVertex();
         }
 
