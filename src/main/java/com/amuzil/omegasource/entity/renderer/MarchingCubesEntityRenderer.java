@@ -49,6 +49,8 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
 //        VertexConsumer vc = buffer.getBuffer(ShaderRegistry.getTriplanarRenderType(getTextureLocation(entity)));
         var last = pose.last();
 
+        float[] uv0 = new float[2], uv1 = new float[2], uv2 = new float[2];
+
         for (int i = 0; i < mesh.triangles.size(); i++) {
             Triangle tri = mesh.triangles.get(i);
             Vector3f p0 = tri.vertexA.position;
@@ -56,9 +58,9 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
             Vector3f p2 = tri.vertexC.position;
             Vector3f n  = tri.vertexA.normal;
 
-            float[] uv0 = uvPlanar(p0, n, TEX_SCALE);
-            float[] uv1 = uvPlanar(p1, n, TEX_SCALE);
-            float[] uv2 = uvPlanar(p2, n, TEX_SCALE);
+            uvPlanar(p0, n, TEX_SCALE, uv0);
+            uvPlanar(p1, n, TEX_SCALE, uv1);
+            uvPlanar(p2, n, TEX_SCALE, uv2);
 
 //            vc.vertex( p0.x, p0.y, p0.z)
             vc.vertex(last.pose(), p0.x, p0.y, p0.z)
@@ -148,7 +150,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
     /** Return (u,v) for a vertex using dominant-axis planar mapping.
      *  texScale: repeats per world unit (e.g. 1f means texture tiles every 1 block).
      */
-    private static float[] uvPlanar(Vector3f p, Vector3f n, float texScale) {
+    private static void uvPlanar(Vector3f p, Vector3f n, float texScale, float[] uvOut) {
         float ax = Math.abs(n.x), ay = Math.abs(n.y), az = Math.abs(n.z);
         float u, v;
 
@@ -167,8 +169,11 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
         }
 
         // wrap to [0,1) to avoid huge UVs; small bias to reduce seams
-        return new float[]{ fract(u) + 1e-4f, fract(v) + 1e-4f };
-    }
+
+        uvOut[0] = fract(u) + 1e-4f;
+        uvOut[1] = fract(v) + 1e-4f;
+
+      }
 
     private static float fbmNoise(float x, float y, float z, long seed) {
         // Small, smooth, subtle FBM: 3 octaves
