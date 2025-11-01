@@ -38,8 +38,7 @@ public class PhysicsThread extends Thread implements Executor
 	public volatile Throwable throwable;
 	public volatile boolean running = true;
 
-	public PhysicsThread(Executor parentExecutor, Thread parentThread, LevelSupplier levelSupplier, EntitySupplier entitySupplier, String name)
-	{
+	public PhysicsThread(Executor parentExecutor, Thread parentThread, LevelSupplier levelSupplier, EntitySupplier entitySupplier, String name) {
 		this.parentExecutor = parentExecutor;
 		this.parentThread = parentThread;
 		this.levelSupplier = levelSupplier;
@@ -60,8 +59,7 @@ public class PhysicsThread extends Thread implements Executor
 	 * The worker loop. Waits for tasks and executes right away.
 	 */
 	@Override
-	public void run()
-	{
+	public void run() {
 		while (this.running)
 		{
 			if (!ClientUtil.isPaused())
@@ -80,8 +78,7 @@ public class PhysicsThread extends Thread implements Executor
 	 * @param task the task to run
 	 */
 	@Override
-	public void execute(@NotNull Runnable task)
-	{
+	public void execute(@NotNull Runnable task) {
 		this.tasks.add(task);
 	}
 
@@ -92,16 +89,14 @@ public class PhysicsThread extends Thread implements Executor
 	 * 
 	 * @return the {@link LevelSupplier}
 	 */
-	public LevelSupplier getLevelSupplier()
-	{
+	public LevelSupplier getLevelSupplier() {
 		return this.levelSupplier;
 	}
 
 	/**
 	 * A utility class for getting entity information.
 	 */
-	public EntitySupplier getEntitySupplier()
-	{
+	public EntitySupplier getEntitySupplier() {
 		return this.entitySupplier;
 	}
 
@@ -111,8 +106,7 @@ public class PhysicsThread extends Thread implements Executor
 	 * 
 	 * @return the original {@link Executor} object
 	 */
-	public Executor getParentExecutor()
-	{
+	public Executor getParentExecutor() {
 		return this.parentExecutor;
 	}
 
@@ -123,16 +117,14 @@ public class PhysicsThread extends Thread implements Executor
 	 * @see EntitySupplier
 	 * @return the parent {@link Thread} object
 	 */
-	public Thread getParentThread()
-	{
+	public Thread getParentThread() {
 		return this.parentThread;
 	}
 
 	/**
 	 * Join the thread when the game closes.
 	 */
-	public void destroy()
-	{
+	public void destroy() {
 		this.running = false;
 		Rayon.LOGGER.info("Stopping " + this.getName());
 

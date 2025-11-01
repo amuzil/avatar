@@ -17,8 +17,7 @@ import java.util.Optional;
 public record ClientLevelSupplier(Minecraft minecraft) implements LevelSupplier
 {
 	@Override
-	public List<Level> getAll()
-	{
+	public List<Level> getAll() {
 		final var out = new ArrayList<Level>();
 
 		if (this.minecraft.level != null)
@@ -28,8 +27,7 @@ public record ClientLevelSupplier(Minecraft minecraft) implements LevelSupplier
 	}
 
 	@Override
-	public Level get(ResourceKey<Level> key)
-	{
+	public Level get(ResourceKey<Level> key) {
 		if (this.minecraft.level != null && this.minecraft.level.dimension().equals(key))
 			return this.minecraft.level;
 
@@ -37,8 +35,7 @@ public record ClientLevelSupplier(Minecraft minecraft) implements LevelSupplier
 	}
 
 	@Override
-	public Optional<Level> getOptional(ResourceKey<Level> key)
-	{
+	public Optional<Level> getOptional(ResourceKey<Level> key) {
 		return Optional.ofNullable(this.get(key));
 	}
 }

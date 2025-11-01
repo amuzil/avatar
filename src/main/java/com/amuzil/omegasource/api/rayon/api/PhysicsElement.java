@@ -43,8 +43,7 @@ public interface PhysicsElement<T>
 	 * @param tickDelta the delta time between ticks
 	 * @return the lerped vector
 	 */
-	default Vector3f getPhysicsLocation(Vector3f store, float tickDelta)
-	{
+	default Vector3f getPhysicsLocation(Vector3f store, float tickDelta) {
 		var rigidBody = this.getRigidBody();
 		if (rigidBody == null)
 			return new Vector3f();
@@ -58,8 +57,7 @@ public interface PhysicsElement<T>
 	 * @param tickDelta the delta time between ticks
 	 * @return the "slerped" quaternion
 	 */
-	default Quaternion getPhysicsRotation(Quaternion store, float tickDelta)
-	{
+	default Quaternion getPhysicsRotation(Quaternion store, float tickDelta) {
 		var rigidBody = this.getRigidBody();
 		if (rigidBody == null)
 			return new Quaternion();
@@ -73,8 +71,7 @@ public interface PhysicsElement<T>
 	 * @return this as {@link T}
 	 */
 	@SuppressWarnings("unchecked")
-	default T cast()
-	{
+	default T cast() {
 		return (T) this;
 	}
 }

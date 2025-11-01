@@ -14,8 +14,7 @@ import java.util.List;
 
 public interface EntitySupplier
 {
-	default List<Entity> getInsideOf(ElementRigidBody rigidBody, AABB box)
-	{
+	default List<Entity> getInsideOf(ElementRigidBody rigidBody, AABB box) {
 		if (!rigidBody.isInWorld())
 			return List.of();
 

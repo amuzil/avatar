@@ -35,8 +35,7 @@ public abstract class ElementRigidBody extends MinecraftRigidBody
 	private BoundingBox currentBoundingBox = new BoundingBox();
 	private AABB currentMinecraftBoundingBox = new AABB(0, 0, 0, 0, 0, 0);
 
-	public ElementRigidBody(PhysicsElement<?> element, MinecraftSpace space, MinecraftShape shape, float mass, float dragCoefficient, float friction, float restitution)
-	{
+	public ElementRigidBody(PhysicsElement<?> element, MinecraftSpace space, MinecraftShape shape, float mass, float dragCoefficient, float friction, float restitution) {
 		super(space, shape, mass);
 
 		if (shape instanceof MinecraftShape.Concave)
@@ -54,13 +53,11 @@ public abstract class ElementRigidBody extends MinecraftRigidBody
 		this.setDragType(DragType.SIMPLE);
 	}
 
-	public PhysicsElement<?> getElement()
-	{
+	public PhysicsElement<?> getElement() {
 		return this.element;
 	}
 	
-	public CompoundTag writeTagInfo()
-	{
+	public CompoundTag writeTagInfo() {
 		CompoundTag tag = new CompoundTag();
 		tag.put("orientation", PrimitiveHelper.quaternionToTag(Convert.toMinecraft(this.getPhysicsRotation(new Quaternion()))));
 		tag.put("linearVelocity", PrimitiveHelper.vector3fToTag(Convert.toMinecraft(this.getLinearVelocity(new Vector3f()))));
@@ -75,8 +72,7 @@ public abstract class ElementRigidBody extends MinecraftRigidBody
 		return tag;
 	}
 
-	public void readTagInfo(CompoundTag tag)
-	{
+	public void readTagInfo(CompoundTag tag) {
 		try
 		{
 			if (tag.contains("orientation", 10))
@@ -114,8 +110,7 @@ public abstract class ElementRigidBody extends MinecraftRigidBody
 		
 	}
 	
-	private static <T> void readOptionalAndCatchInvalid(CompoundTag tag, String name, int tagId, BiFunction<CompoundTag, String, T> valueGetter, Consumer<T> consumer)
-	{
+	private static <T> void readOptionalAndCatchInvalid(CompoundTag tag, String name, int tagId, BiFunction<CompoundTag, String, T> valueGetter, Consumer<T> consumer) {
 		try
 		{
 			if (tag.contains(name, tagId))
@@ -127,116 +122,94 @@ public abstract class ElementRigidBody extends MinecraftRigidBody
 		}
 	}
 	
-	public boolean terrainLoadingEnabled()
-	{
+	public boolean terrainLoadingEnabled() {
 		return this.terrainLoading && !this.isStatic();
 	}
 
-	public void setTerrainLoadingEnabled(boolean terrainLoading)
-	{
+	public void setTerrainLoadingEnabled(boolean terrainLoading) {
 		this.terrainLoading = terrainLoading;
 	}
 
-	public float getDragCoefficient()
-	{
+	public float getDragCoefficient() {
 		return dragCoefficient;
 	}
 
-	public void setDragCoefficient(float dragCoefficient)
-	{
+	public void setDragCoefficient(float dragCoefficient) {
 		this.dragCoefficient = dragCoefficient;
 	}
 
-	public BuoyancyType getBuoyancyType()
-	{
+	public BuoyancyType getBuoyancyType() {
 		return this.buoyancyType;
 	}
 
-	public void setBuoyancyType(BuoyancyType buoyancyType)
-	{
+	public void setBuoyancyType(BuoyancyType buoyancyType) {
 		this.buoyancyType = buoyancyType;
 	}
 
-	public DragType getDragType()
-	{
+	public DragType getDragType() {
 		return this.dragType;
 	}
 
-	public void setDragType(DragType dragType)
-	{
+	public void setDragType(DragType dragType) {
 		this.dragType = dragType;
 	}
 
-	public Frame getFrame()
-	{
+	public Frame getFrame() {
 		return this.frame;
 	}
 
-	public Clock getSleepTimer()
-	{
+	public Clock getSleepTimer() {
 		return this.sleepTimer;
 	}
 
 	@Override
-	public Vector3f getOutlineColor()
-	{
+	public Vector3f getOutlineColor() {
 		return this.isActive() ? new Vector3f(1.0f, 1.0f, 1.0f) : new Vector3f(1.0f, 0.0f, 0.0f);
 	}
 
-	public void updateFrame()
-	{
+	public void updateFrame() {
 		getFrame().from(getFrame(), getPhysicsLocation(new Vector3f()), getPhysicsRotation(new Quaternion()));
 		this.updateBoundingBox();
 	}
 
-	public boolean isNear(BlockPos blockPos)
-	{
+	public boolean isNear(BlockPos blockPos) {
 		return this.currentMinecraftBoundingBox.intersects(new AABB(blockPos).inflate(0.5f));
 	}
 
-	public boolean isNear(SectionPos blockPos)
-	{
+	public boolean isNear(SectionPos blockPos) {
 		return this.currentMinecraftBoundingBox.intersects(new AABB(blockPos.center()).inflate(8.5f));
 	}
 
-	public boolean isWaterBuoyancyEnabled()
-	{
+	public boolean isWaterBuoyancyEnabled() {
 		return this.buoyancyType.isWaterBuoyancy();
 	}
 
-	public boolean isAirBuoyancyEnabled()
-	{
+	public boolean isAirBuoyancyEnabled() {
 		return this.buoyancyType.isAirBuoyancy();
 	}
 
-	public boolean isWaterDragEnabled()
-	{
+	public boolean isWaterDragEnabled() {
 		return this.dragType.isWaterDrag();
 	}
 
-	public boolean isAirDragEnabled()
-	{
+	public boolean isAirDragEnabled() {
 		return this.dragType.isAirDrag();
 	}
 
-	public void updateBoundingBox()
-	{
+	public void updateBoundingBox() {
 		this.currentBoundingBox = this.boundingBox(this.currentBoundingBox);
 		this.currentMinecraftBoundingBox = Convert.toMinecraft(this.currentBoundingBox);
 	}
 
-	public AABB getCurrentMinecraftBoundingBox()
-	{
+	public AABB getCurrentMinecraftBoundingBox() {
 		return this.currentMinecraftBoundingBox;
 	}
 
-	public BoundingBox getCurrentBoundingBox()
-	{
+	public BoundingBox getCurrentBoundingBox() {
 		return this.currentBoundingBox;
 	}
 
-	public enum BuoyancyType
-	{
+	public enum BuoyancyType {
 		NONE(false, false), 
 		AIR(false, true), 
 		WATER(true, false), 
@@ -262,8 +235,7 @@ public abstract class ElementRigidBody extends MinecraftRigidBody
 		}
 	}
 
-	public enum DragType
-	{
+	public enum DragType {
 		NONE(false, false), 
 		AIR(false, true), 
 		WATER(true, false), 

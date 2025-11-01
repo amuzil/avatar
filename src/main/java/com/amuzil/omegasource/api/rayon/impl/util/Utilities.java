@@ -28,8 +28,7 @@ public class Utilities
 	 * @param t  the delta time
 	 * @return the slerped {@link Quaternionf}
 	 */
-	public static Quaternionf slerp(Quaternionf q1, Quaternionf q2, float t)
-	{
+	public static Quaternionf slerp(Quaternionf q1, Quaternionf q2, float t) {
 		q1.normalize();
 		q2.normalize();
 
@@ -70,8 +69,7 @@ public class Utilities
 	 * @param delta minecraft tick delta
 	 * @return the newly lerped {@link Vector3f}
 	 */
-	public static Vector3f lerp(Vector3f vec1, Vector3f vec2, float delta)
-	{
+	public static Vector3f lerp(Vector3f vec1, Vector3f vec2, float delta) {
 		return new Vector3f(Mth.lerp(delta, vec1.x(), vec2.x()), Mth.lerp(delta, vec1.y(), vec2.y()), Mth.lerp(delta, vec1.z(), vec2.z()));
 	}
 
@@ -83,8 +81,7 @@ public class Utilities
 	 * @param delta minecraft tick delta
 	 * @return the newly lerped {@link Vec3}
 	 */
-	public static Vec3 lerp(Vec3 vec1, Vec3 vec2, float delta)
-	{
+	public static Vec3 lerp(Vec3 vec1, Vec3 vec2, float delta) {
 		return new Vec3(Mth.lerp(delta, vec1.x, vec2.x), Mth.lerp(delta, vec1.y, vec2.y), Mth.lerp(delta, vec1.z, vec2.z));
 	}
 
@@ -95,8 +92,7 @@ public class Utilities
 	 * @param quat the {@link Quaternionf} to extract the euler angles from
 	 * @return a new vector containing three rotations in degrees
 	 */
-	public static Vector3f toEulerAngles(Quaternionf quat)
-	{
+	public static Vector3f toEulerAngles(Quaternionf quat) {
 		final var q = new Quaternionf(0, 0, 0, 1);
 		q.set(quat.x(), quat.y(), quat.z(), quat.w());
 

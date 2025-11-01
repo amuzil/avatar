@@ -17,8 +17,7 @@ public class PhysicsFallingBlock extends FallingBlockEntity implements EntityPhy
 	}
 	
 	@Override
-	public @Nullable EntityRigidBody getRigidBody()
-	{
+	public @Nullable EntityRigidBody getRigidBody() {
 		return this.rigidBody;
 	}
 }

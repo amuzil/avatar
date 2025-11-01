@@ -17,8 +17,7 @@ public class Triangle
 	private final Vector3f centroid;
 	private final Vector3f area;
 
-	public static List<Triangle> getMeshOf(BoundingBox box)
-	{
+	public static List<Triangle> getMeshOf(BoundingBox box) {
 		final var x = box.getXExtent() * 0.5f;
 		final var y = box.getYExtent() * 0.5f;
 		final var z = box.getZExtent() * 0.5f;
@@ -27,8 +26,7 @@ public class Triangle
 		return triangles;
 	}
 
-	public static List<Triangle> getMeshOf(VoxelShape voxelShape)
-	{
+	public static List<Triangle> getMeshOf(VoxelShape voxelShape) {
 		if (voxelShape.isEmpty())
 			return List.of();
 
@@ -49,8 +47,7 @@ public class Triangle
 
 	}
 
-	public static void createBoxMesh(final float x, final float y, final float z, final Vector3f offset, Consumer<Triangle> consumer)
-	{
+	public static void createBoxMesh(final float x, final float y, final float z, final Vector3f offset, Consumer<Triangle> consumer) {
 		final var points = new Vector3f[]
 		{
 			// south
@@ -71,8 +68,7 @@ public class Triangle
 			consumer.accept(new Triangle(points[i].add(offset), points[i + 1].add(offset), points[i + 2].add(offset)));
 	}
 
-	public Triangle(Vector3f v1, Vector3f v2, Vector3f v3)
-	{
+	public Triangle(Vector3f v1, Vector3f v2, Vector3f v3) {
 		this.vertices = new Vector3f[] { v1, v2, v3 };
 		this.centroid = new Vector3f().add(v1).add(v2).add(v3).divideLocal(3.0f);
 
@@ -83,28 +79,23 @@ public class Triangle
 		this.area.multLocal(Math.signum(centroid.dot(area))); // make sure it faces outward
 	}
 
-	public Vector3f[] getVertices()
-	{
+	public Vector3f[] getVertices() {
 		return this.vertices;
 	}
 
-	public Vector3f getCentroid()
-	{
+	public Vector3f getCentroid() {
 		return this.centroid;
 	}
 
-	public Vector3f getArea()
-	{
+	public Vector3f getArea() {
 		return this.area;
 	}
 
-	public Triangle transform(Quaternion quaternion)
-	{
+	public Triangle transform(Quaternion quaternion) {
 		return new Triangle(transform(vertices[0].clone(), quaternion), transform(vertices[1].clone(), quaternion), transform(vertices[2].clone(), quaternion));
 	}
 
-	private static Vector3f transform(Vector3f vector, Quaternion quaternion)
-	{
+	private static Vector3f transform(Vector3f vector, Quaternion quaternion) {
 		return Convert.toBullet(Convert.toMinecraft(vector).mulTransposeDirection(Convert.toMinecraft(quaternion).get(new Matrix4f())));
 	}
 }

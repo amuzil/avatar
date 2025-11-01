@@ -10,24 +10,20 @@ public abstract class MinecraftRigidBody extends PhysicsRigidBody
 {
 	protected final MinecraftSpace space;
 
-	public MinecraftRigidBody(MinecraftSpace space, MinecraftShape shape, float mass)
-	{
+	public MinecraftRigidBody(MinecraftSpace space, MinecraftShape shape, float mass) {
 		super((CollisionShape) shape, mass);
 		this.space = space;
 	}
 
-	public MinecraftRigidBody(MinecraftSpace space, MinecraftShape shape)
-	{
+	public MinecraftRigidBody(MinecraftSpace space, MinecraftShape shape) {
 		this(space, shape, massForStatic);
 	}
 
-	public MinecraftSpace getSpace()
-	{
+	public MinecraftSpace getSpace() {
 		return this.space;
 	}
 
-	public MinecraftShape getMinecraftShape()
-	{
+	public MinecraftShape getMinecraftShape() {
 		return (MinecraftShape) super.getCollisionShape();
 	}
 

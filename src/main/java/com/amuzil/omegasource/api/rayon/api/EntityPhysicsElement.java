@@ -12,13 +12,11 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface EntityPhysicsElement extends PhysicsElement<Entity>
 {
-	static boolean is(Entity entity)
-	{
+	static boolean is(Entity entity) {
 		return entity instanceof EntityPhysicsElement element && element.getRigidBody() != null;
 	}
 
-	static EntityPhysicsElement get(Entity entity)
-	{
+	static EntityPhysicsElement get(Entity entity) {
 		return (EntityPhysicsElement) entity;
 	}
 
@@ -27,13 +25,11 @@ public interface EntityPhysicsElement extends PhysicsElement<Entity>
 	EntityRigidBody getRigidBody();
 
 	@Override
-	default MinecraftShape.Convex createShape()
-	{
+	default MinecraftShape.Convex createShape() {
 		return MinecraftShape.convex(this.cast().getBoundingBox());
 	}
 
-	default boolean skipVanillaEntityCollisions()
-	{
+	default boolean skipVanillaEntityCollisions() {
 		return false;
 	}
 }

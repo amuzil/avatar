@@ -31,33 +31,28 @@ import net.minecraftforge.network.PacketDistributor;
 @SuppressWarnings("deprecation")
 public final class ServerEventHandler
 {
-	public static void onBlockUpdate(Level level, BlockState blockState, BlockPos blockPos)
-	{
+	public static void onBlockUpdate(Level level, BlockState blockState, BlockPos blockPos) {
 		MinecraftSpace.getOptional(level).ifPresent(space -> space.doBlockUpdate(blockPos));
 	}
 
 	@SubscribeEvent
-	public static void onServerStart(ServerAboutToStartEvent event)
-	{
+	public static void onServerStart(ServerAboutToStartEvent event) {
 		PhysicsThreadStore.INSTANCE.createServerThread(event.getServer(), Thread.currentThread(), new ServerLevelSupplier(event.getServer()), new ServerEntitySupplier());
 	}
 	
 	@SubscribeEvent
-	public static void onServerStopped(ServerStoppedEvent event)
-	{
+	public static void onServerStopped(ServerStoppedEvent event) {
 		PhysicsThreadStore.INSTANCE.destroyServerThread();
 	}
 
 	@SubscribeEvent
-	public static void onServerTick(TickEvent.ServerTickEvent event)
-	{
+	public static void onServerTick(TickEvent.ServerTickEvent event) {
 		if (event.phase == TickEvent.Phase.END)
 			PhysicsThreadStore.checkThrowable(PhysicsThreadStore.INSTANCE.getServerThread());
 	}
 
 	@SubscribeEvent
-	public static void onStartLevelTick(TickEvent.LevelTickEvent event)
-	{
+	public static void onStartLevelTick(TickEvent.LevelTickEvent event) {
 		if (!event.level.isClientSide && event.phase == TickEvent.Phase.START)
 		{
 			MinecraftSpace space = MinecraftSpace.get(event.level);
@@ -65,8 +60,7 @@ public final class ServerEventHandler
 			
 			EntityCollisionGenerator.step(space);
 
-			for (var rigidBody : space.getRigidBodiesByClass(EntityRigidBody.class))
-			{
+			for (var rigidBody : space.getRigidBodiesByClass(EntityRigidBody.class)) {
 				if (rigidBody.isActive())
 				{
 					/* Movement */
@@ -79,7 +73,7 @@ public final class ServerEventHandler
 				}
 
 				/* Set entity position */
-				var location = rigidBody.getFrame().getLocation(new Vector3f(), 1.0f);
+				var location = rigidBody.getFrame().getLocation(new Vector3f(), 10.0f);
 				rigidBody.getElement().cast().absMoveTo(location.x, location.y, location.z);
 			}
 		}
@@ -95,8 +89,7 @@ public final class ServerEventHandler
 	}
 
 	@SubscribeEvent
-	public static void onElementAddedToSpace(PhysicsSpaceEvent.ElementAdded event)
-	{
+	public static void onElementAddedToSpace(PhysicsSpaceEvent.ElementAdded event) {
 		if (event.getRigidBody() instanceof EntityRigidBody entityBody)
 		{
 			final var pos = entityBody.getElement().cast().position();
@@ -104,25 +97,8 @@ public final class ServerEventHandler
 		}
 	}
 
-	//Might not need this, since the below method should fire
-	//TODO: Test
-//	@SubscribeEvent
-//	public static void onEntityLoad(EntityJoinLevelEvent event)
-//	{
-//		if (!event.getLevel().isClientSide())
-//		{
-//			Entity entity = event.getEntity();
-//			if (EntityPhysicsElement.is(entity) && !PlayerUtil.tracking(entity).isEmpty())
-//			{
-//				var space = MinecraftSpace.get(entity.level);
-//				space.getWorkerThread().execute(() -> space.addCollisionObject(EntityPhysicsElement.get(entity).getRigidBody()));
-//			}
-//		}
-//	}
-
 	@SubscribeEvent
-	public static void onStartTrackingEntity(PlayerEvent.StartTracking event)
-	{
+	public static void onStartTrackingEntity(PlayerEvent.StartTracking event) {
 		Entity entity = event.getTarget();
 		if (EntityPhysicsElement.is(entity))
 		{
@@ -132,8 +108,7 @@ public final class ServerEventHandler
 	}
 
 	@SubscribeEvent
-	public static void onStopTrackingEntity(PlayerEvent.StopTracking event)
-	{
+	public static void onStopTrackingEntity(PlayerEvent.StopTracking event) {
 		Entity entity = event.getTarget();
 		if (EntityPhysicsElement.is(entity) && Utilities.getTracking(entity).isEmpty())
 		{

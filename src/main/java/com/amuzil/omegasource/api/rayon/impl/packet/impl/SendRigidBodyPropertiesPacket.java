@@ -22,8 +22,7 @@ public class SendRigidBodyPropertiesPacket extends Packet
 	private ElementRigidBody.DragType dragType;
 	private @Nullable UUID priorityPlayer;
 	
-	public SendRigidBodyPropertiesPacket(EntityRigidBody body)
-	{
+	public SendRigidBodyPropertiesPacket(EntityRigidBody body) {
 		super(true);
 		this.id = body.getElement().cast().getId();
 		this.mass = body.getMass();
@@ -36,59 +35,48 @@ public class SendRigidBodyPropertiesPacket extends Packet
 		this.priorityPlayer = body.getPriorityPlayer() != null ? body.getPriorityPlayer().getUUID() : null;
 	}
 	
-	public SendRigidBodyPropertiesPacket()
-	{
+	public SendRigidBodyPropertiesPacket() {
 		super(false);
 	}
 
-	public int getId()
-	{
+	public int getId() {
 		return this.id;
 	}
 
-	public float getMass()
-	{
+	public float getMass() {
 		return this.mass;
 	}
 
-	public float getDragCoefficient()
-	{
+	public float getDragCoefficient() {
 		return this.dragCoefficient;
 	}
 
-	public float getFriction()
-	{
+	public float getFriction() {
 		return this.friction;
 	}
 
-	public float getRestitution()
-	{
+	public float getRestitution() {
 		return this.restitution;
 	}
 
-	public boolean isTerrainLoadingEnabled()
-	{
+	public boolean isTerrainLoadingEnabled() {
 		return this.terrainLoadingEnabled;
 	}
 
-	public ElementRigidBody.BuoyancyType getBuoyancyType()
-	{
+	public ElementRigidBody.BuoyancyType getBuoyancyType() {
 		return this.buoyancyType;
 	}
 
-	public ElementRigidBody.DragType getDragType()
-	{
+	public ElementRigidBody.DragType getDragType() {
 		return this.dragType;
 	}
 	
-	public @Nullable UUID getPriorityPlayer()
-	{
+	public @Nullable UUID getPriorityPlayer() {
 		return this.priorityPlayer;
 	}
 	
 	@Override
-	protected void decode(FriendlyByteBuf buffer)
-	{
+	protected void decode(FriendlyByteBuf buffer) {
 		this.id = buffer.readVarInt();
 		this.mass = buffer.readFloat();
 		this.dragCoefficient = buffer.readFloat();
@@ -101,8 +89,7 @@ public class SendRigidBodyPropertiesPacket extends Packet
 	}
 	
 	@Override
-	protected void encode(FriendlyByteBuf buffer)
-	{
+	protected void encode(FriendlyByteBuf buffer) {
 		buffer.writeVarInt(this.id);
 		buffer.writeFloat(this.mass);
 		buffer.writeFloat(this.dragCoefficient);
@@ -115,8 +102,7 @@ public class SendRigidBodyPropertiesPacket extends Packet
 	}
 	
 	@Override
-	public Runnable getProcessor(Context context)
-	{
+	public Runnable getProcessor(Context context) {
 		return client(() -> RayonClientPacketHandler.handleSendRigidBodyPropertiesPacket(this));
 	}
 }

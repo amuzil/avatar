@@ -17,58 +17,49 @@ public class Frame
 	private Quaternion prevRotation;
 	private Quaternion tickRotation;
 
-	public Frame()
-	{
+	public Frame() {
 		this(new Vector3f(), new Quaternion());
 	}
 
-	public Frame(Vector3f location, Quaternion rotation)
-	{
+	public Frame(Vector3f location, Quaternion rotation) {
 		this.set(location, location, rotation, rotation);
 	}
 
-	public void set(Vector3f prevLocation, Vector3f tickLocation, Quaternion prevRotation, Quaternion tickRotation)
-	{
+	public void set(Vector3f prevLocation, Vector3f tickLocation, Quaternion prevRotation, Quaternion tickRotation) {
 		this.prevLocation = prevLocation;
 		this.tickLocation = tickLocation;
 		this.prevRotation = prevRotation;
 		this.tickRotation = tickRotation;
 	}
 
-	public void from(Frame frame)
-	{
+	public void from(Frame frame) {
 		this.set(frame.prevLocation, frame.tickLocation, frame.prevRotation, frame.tickRotation);
 	}
 
-	public void from(Frame prevFrame, Vector3f tickLocation, Quaternion tickRotation)
-	{
+	public void from(Frame prevFrame, Vector3f tickLocation, Quaternion tickRotation) {
 		this.set(prevFrame.tickLocation, tickLocation, prevFrame.tickRotation, tickRotation);
 	}
 
-	public Vector3f getLocation(Vector3f store, float tickDelta)
-	{
+	public Vector3f getLocation(Vector3f store, float tickDelta) {
 		var prevLocation = Convert.toMinecraft(this.prevLocation);
 		var tickLocation = Convert.toMinecraft(this.tickLocation);
 		var lerp = Utilities.lerp(prevLocation, tickLocation, tickDelta);
 		return store.set(Convert.toBullet(lerp));
 	}
 
-	public Quaternion getRotation(Quaternion store, float tickDelta)
-	{
+	public Quaternion getRotation(Quaternion store, float tickDelta) {
 		var prevRotation = Convert.toMinecraft(this.prevRotation);
 		var tickRotation = Convert.toMinecraft(this.tickRotation);
 		var slerp = Utilities.slerp(prevRotation, tickRotation, tickDelta);
 		return store.set(Convert.toBullet(slerp));
 	}
 
-	public Vector3f getLocationDelta(Vector3f store)
-	{
+	public Vector3f getLocationDelta(Vector3f store) {
 		store.set(tickLocation.subtract(prevLocation));
 		return store;
 	}
 
-	public Vector3f getRotationDelta(Vector3f store)
-	{
+	public Vector3f getRotationDelta(Vector3f store) {
 		final var tickRotation = Convert.toMinecraft(this.tickRotation);
 		final var prevRotation = Convert.toMinecraft(this.prevRotation);
 		final var tickAngles = Utilities.toEulerAngles(tickRotation);

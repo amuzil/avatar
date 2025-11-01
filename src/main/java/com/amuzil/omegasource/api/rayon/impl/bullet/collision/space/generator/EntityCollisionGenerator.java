@@ -10,8 +10,7 @@ import com.amuzil.omegasource.api.rayon.impl.bullet.math.Convert;
  */
 public class EntityCollisionGenerator
 {
-	public static void step(MinecraftSpace space)
-	{
+	public static void step(MinecraftSpace space) {
 		for (var rigidBody : space.getRigidBodiesByClass(EntityRigidBody.class))
 		{
 			if (rigidBody.getElement().skipVanillaEntityCollisions())

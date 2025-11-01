@@ -20,22 +20,19 @@ public class PhysicsThreadStore
 	
 	private PhysicsThreadStore() {}
 	
-	private static void ensureThreadValid(@Nullable PhysicsThread thread)
-	{
+	private static void ensureThreadValid(@Nullable PhysicsThread thread) {
 		if (thread == null)
 			throw new NullPointerException("Physics thread does not exist");
 		if (!thread.isAlive())
 			throw new IllegalStateException("Physics thread is no longer valid");
 	}
 	
-	public static void checkThrowable(@Nullable PhysicsThread thread)
-	{
+	public static void checkThrowable(@Nullable PhysicsThread thread) {
 		if (thread != null && thread.throwable != null)
 			throw new RuntimeException(thread.throwable);
 	}
 	
-	public MinecraftSpace createPhysicsSpace(Level level)
-	{
+	public MinecraftSpace createPhysicsSpace(Level level) {
 		PhysicsThread thread = this.getPhysicsThread(level.isClientSide());
 		ensureThreadValid(thread);
 		return new MinecraftSpace(thread, level);
@@ -44,51 +41,43 @@ public class PhysicsThreadStore
 	/**
 	 * @see MinecraftSpace#getWorkerThread() 
 	 */
-	public @Nullable PhysicsThread getPhysicsThread(boolean client)
-	{
+	public @Nullable PhysicsThread getPhysicsThread(boolean client) {
 		return client ? this.client : this.server;
 	}
 	
 	/**
 	 * @see MinecraftSpace#getWorkerThread() 
 	 */
-	public @Nullable PhysicsThread getClientThread()
-	{
+	public @Nullable PhysicsThread getClientThread() {
 		return this.client;
 	}
 	
 	/**
 	 * @see MinecraftSpace#getWorkerThread() 
 	 */
-	public @Nullable PhysicsThread getServerThread()
-	{
+	public @Nullable PhysicsThread getServerThread() {
 		return this.server;
 	}
 	
-	public void createServerThread(Executor parentExecutor, Thread parentThread, LevelSupplier levelSupplier, EntitySupplier entitySupplier)
-	{
+	public void createServerThread(Executor parentExecutor, Thread parentThread, LevelSupplier levelSupplier, EntitySupplier entitySupplier) {
 		this.server = createThread(this.server, parentExecutor, parentThread, levelSupplier, entitySupplier, "Server Physics Thread");
 	}
 	
-	public void destroyServerThread()
-	{
+	public void destroyServerThread() {
 		destroyThread(this.server);
 		this.server = null;
 	}
 	
-	public void createClientThread(Executor parentExecutor, Thread parentThread, LevelSupplier levelSupplier, EntitySupplier entitySupplier)
-	{
+	public void createClientThread(Executor parentExecutor, Thread parentThread, LevelSupplier levelSupplier, EntitySupplier entitySupplier) {
 		this.client = createThread(this.client, parentExecutor, parentThread, levelSupplier, entitySupplier, "Client Physics Thread");
 	}
 	
-	public void destroyClientThread()
-	{
+	public void destroyClientThread() {
 		destroyThread(this.client);
 		this.client = null;
 	}
 	
-	private static PhysicsThread createThread(@Nullable PhysicsThread thread, Executor parentExecutor, Thread parentThread, LevelSupplier levelSupplier, EntitySupplier entitySupplier, String name)
-	{
+	private static PhysicsThread createThread(@Nullable PhysicsThread thread, Executor parentExecutor, Thread parentThread, LevelSupplier levelSupplier, EntitySupplier entitySupplier, String name) {
 		if (thread != null && !thread.isAlive())
 		{
 			LOGGER.warn("The previous {} thread was not destroyed", thread.getName());
@@ -97,8 +86,7 @@ public class PhysicsThreadStore
 		return new PhysicsThread(parentExecutor, parentThread, levelSupplier, entitySupplier, name);
 	}
 	
-	private static void destroyThread(@Nullable PhysicsThread thread)
-	{
+	private static void destroyThread(@Nullable PhysicsThread thread) {
 		ensureThreadValid(thread);
 		thread.destroy();
 	}

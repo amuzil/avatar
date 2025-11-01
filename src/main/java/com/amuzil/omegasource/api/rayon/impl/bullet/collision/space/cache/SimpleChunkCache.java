@@ -42,8 +42,7 @@ public class SimpleChunkCache implements ChunkCache
 	private final LongSet activePositions;
 	private final Long2ObjectMap<List<BlockPos>> activeColumn;
 
-	SimpleChunkCache(MinecraftSpace space)
-	{
+	SimpleChunkCache(MinecraftSpace space) {
 		this.space = space;
 		this.blockData = new ConcurrentHashMap<>();
 		this.fluidColumns = new ArrayList<>();
@@ -53,8 +52,7 @@ public class SimpleChunkCache implements ChunkCache
 	}
 
 	@Override
-	public void loadFluidData(BlockPos blockPos)
-	{
+	public void loadFluidData(BlockPos blockPos) {
 		final var level = this.space.getLevel();
 
 		if (!level.getFluidState(blockPos).isEmpty())
@@ -71,16 +69,14 @@ public class SimpleChunkCache implements ChunkCache
 	}
 
 	@Override
-	public void loadBlockData(BlockPos blockPos)
-	{
+	public void loadBlockData(BlockPos blockPos) {
 		final var level = this.space.getLevel();
 		final var blockState = level.getBlockState(blockPos);
 
 		this.loadBlockData(blockPos.immutable(), level, blockState);
 	}
 
-	private void loadBlockData(BlockPos blockPos, Level level, BlockState blockState)
-	{
+	private void loadBlockData(BlockPos blockPos, Level level, BlockState blockState) {
 		if (ChunkCache.isValidBlock(blockState))
 			this.blockData.put(blockPos, new BlockData(level, blockPos, blockState, ShapeCache.getShapeFor(blockState, level, blockPos)));
 		else
@@ -88,21 +84,18 @@ public class SimpleChunkCache implements ChunkCache
 	}
 
 	@Override
-	public void refreshAll()
-	{
+	public void refreshAll() {
 		final var level = space.getLevel();
 		this.activePositions.clear();
 		this.activeColumn.clear();
 
-		for (var rigidBody : this.space.getRigidBodiesByClass(ElementRigidBody.class))
-		{
+		for (var rigidBody : this.space.getRigidBodiesByClass(ElementRigidBody.class)) {
 			if (!rigidBody.terrainLoadingEnabled() || !rigidBody.isActive())
 				continue;
 
 			final var aabb = rigidBody.getCurrentMinecraftBoundingBox().inflate(1.0f + Mth.sqrt(rigidBody.getSquaredSpeed()) / 20);
 
-			BlockPos.betweenClosedStream(aabb).forEach(blockPos ->
-			{
+			BlockPos.betweenClosedStream(aabb).forEach(blockPos -> {
 				if (this.activePositions.contains(blockPos.asLong()))
 					return;
 
@@ -144,13 +137,11 @@ public class SimpleChunkCache implements ChunkCache
 		});
 	}
 
-	private static long columnIndex(BlockPos blockPos)
-	{
+	private static long columnIndex(BlockPos blockPos) {
 		return Integer.toUnsignedLong(blockPos.getX()) << 32l | Integer.toUnsignedLong(blockPos.getZ());
 	}
 
-	private boolean isInActiveColumn(FluidColumn column)
-	{
+	private boolean isInActiveColumn(FluidColumn column) {
 		var list = this.activeColumn.get(column.getIndex());
 		if (list == null)
 			return false;
@@ -164,32 +155,27 @@ public class SimpleChunkCache implements ChunkCache
 	}
 
 	@Override
-	public MinecraftSpace getSpace()
-	{
+	public MinecraftSpace getSpace() {
 		return this.space;
 	}
 
 	@Override
-	public List<BlockData> getBlockData()
-	{
+	public List<BlockData> getBlockData() {
 		return new ArrayList<>(this.blockData.values());
 	}
 
 	@Override
-	public List<FluidColumn> getFluidColumns()
-	{
+	public List<FluidColumn> getFluidColumns() {
 		return new ArrayList<>(this.fluidColumns);
 	}
 
 	@Override
-	public Optional<BlockData> getBlockData(BlockPos blockPos)
-	{
+	public Optional<BlockData> getBlockData(BlockPos blockPos) {
 		return Optional.ofNullable(this.blockData.get(blockPos));
 	}
 
 	@Override
-	public Optional<FluidColumn> getFluidColumn(BlockPos blockPos)
-	{
+	public Optional<FluidColumn> getFluidColumn(BlockPos blockPos) {
 		var allColumns = this.fluidColumnByIndex.get(columnIndex(blockPos));
 
 		if (allColumns != null)
@@ -205,8 +191,7 @@ public class SimpleChunkCache implements ChunkCache
 	}
 
 	@Override
-	public boolean isActive(BlockPos blockPos)
-	{
+	public boolean isActive(BlockPos blockPos) {
 		return this.activePositions.contains(blockPos.asLong());
 	}
 }

@@ -19,15 +19,13 @@ public class PhysicsFallingBlockRenderer extends EntityRenderer<PhysicsFallingBl
 {
 	private final BlockRenderDispatcher blockRenderer;
 	
-	public PhysicsFallingBlockRenderer(EntityRendererProvider.Context context)
-	{
+	public PhysicsFallingBlockRenderer(EntityRendererProvider.Context context) {
 		super(context);
 		this.blockRenderer = context.getBlockRenderDispatcher();
 	}
 	
 	@Override
-	public void render(PhysicsFallingBlock block, float yRot, float partialTick, PoseStack stack, MultiBufferSource bufferSource, int packedLight)
-	{
+	public void render(PhysicsFallingBlock block, float yRot, float partialTick, PoseStack stack, MultiBufferSource bufferSource, int packedLight) {
 		BlockState state = block.getBlockState();
 		if (state.getRenderShape() == RenderShape.MODEL)
 		{
@@ -42,8 +40,7 @@ public class PhysicsFallingBlockRenderer extends EntityRenderer<PhysicsFallingBl
 	}
 	
 	@Override
-	public ResourceLocation getTextureLocation(PhysicsFallingBlock block)
-	{
+	public ResourceLocation getTextureLocation(PhysicsFallingBlock block) {
 		return null;
 	}
 }

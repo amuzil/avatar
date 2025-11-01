@@ -18,8 +18,7 @@ import java.util.HashSet;
 public class TerrainGenerator
 {
 	@SubscribeEvent
-	public static void onPhysicsStep(PhysicsSpaceEvent.Step event)
-	{
+	public static void onPhysicsStep(PhysicsSpaceEvent.Step event) {
 		MinecraftSpace space = event.getSpace();
 		
 		final var chunkCache = space.getChunkCache();

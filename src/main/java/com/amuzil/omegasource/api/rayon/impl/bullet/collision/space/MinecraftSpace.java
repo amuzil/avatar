@@ -62,18 +62,15 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
 	 * @param level the level to get the physics space from
 	 * @return the {@link MinecraftSpace}
 	 */
-	public static MinecraftSpace get(Level level)
-	{
+	public static MinecraftSpace get(Level level) {
 		return ((SpaceStorage) level).getSpace();
 	}
 
-	public static Optional<MinecraftSpace> getOptional(Level level)
-	{
+	public static Optional<MinecraftSpace> getOptional(Level level) {
 		return Optional.ofNullable(get(level));
 	}
 
-	public MinecraftSpace(PhysicsThread thread, Level level)
-	{
+	public MinecraftSpace(PhysicsThread thread, Level level) {
 		super(BroadphaseType.DBVT);
 		this.thread = thread;
 		this.level = level;
@@ -100,8 +97,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
 	 * @see TerrainGenerator
 	 * @see PhysicsSpaceEvents
 	 */
-	public void step()
-	{
+	public void step() {
 		MinecraftSpace.get(this.level).getRigidBodiesByClass(ElementRigidBody.class).forEach(ElementRigidBody::updateFrame);
 
 		if (!this.isStepping() && !this.isEmpty())
@@ -115,10 +111,8 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
 					continue;
 				}
 
-				for (var blockPos : this.previousBlockUpdates)
-				{
-					if (rigidBody.isNear(blockPos))
-					{
+				for (var blockPos : this.previousBlockUpdates) {
+					if (rigidBody.isNear(blockPos)) {
 						rigidBody.activate();
 						break;
 					}
@@ -150,8 +144,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
 	}
 
 	@Override
-	public void addCollisionObject(PhysicsCollisionObject collisionObject)
-	{
+	public void addCollisionObject(PhysicsCollisionObject collisionObject) {
 		if (!collisionObject.isInWorld())
 		{
 			if (collisionObject instanceof ElementRigidBody rigidBody)
@@ -181,8 +174,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
 	}
 
 	@Override
-	public void removeCollisionObject(PhysicsCollisionObject collisionObject)
-	{
+	public void removeCollisionObject(PhysicsCollisionObject collisionObject) {
 		if (collisionObject.isInWorld())
 		{
 			super.removeCollisionObject(collisionObject);
@@ -194,23 +186,19 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
 		}
 	}
 
-	public boolean isServer()
-	{
+	public boolean isServer() {
 		return this.getWorkerThread().getParentExecutor() instanceof MinecraftServer;
 	}
 
-	public boolean isStepping()
-	{
+	public boolean isStepping() {
 		return this.stepping;
 	}
 
-	public void doBlockUpdate(BlockPos blockPos)
-	{
+	public void doBlockUpdate(BlockPos blockPos) {
 		this.previousBlockUpdates.add(SectionPos.of(blockPos));
 	}
 
-	public void wakeNearbyElementRigidBodies(BlockPos blockPos)
-	{
+	public void wakeNearbyElementRigidBodies(BlockPos blockPos) {
 		for (var rigidBody : this.getRigidBodiesByClass(ElementRigidBody.class))
 		{
 			if (!rigidBody.terrainLoadingEnabled())
@@ -221,26 +209,22 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
 		}
 	}
 
-	public Map<BlockPos, TerrainRigidBody> getTerrainMap()
-	{
+	public Map<BlockPos, TerrainRigidBody> getTerrainMap() {
 		return new HashMap<>(this.terrainMap);
 	}
 
-	public Optional<TerrainRigidBody> getTerrainObjectAt(BlockPos blockPos)
-	{
+	public Optional<TerrainRigidBody> getTerrainObjectAt(BlockPos blockPos) {
 		return Optional.ofNullable(this.terrainMap.get(blockPos));
 	}
 
-	public void removeTerrainObjectAt(BlockPos blockPos)
-	{
+	public void removeTerrainObjectAt(BlockPos blockPos) {
 		final var removed = this.terrainMap.remove(blockPos);
 
 		if (removed != null)
 			this.removeCollisionObject(removed);
 	}
 
-	public <T> List<T> getRigidBodiesByClass(Class<T> type)
-	{
+	public <T> List<T> getRigidBodiesByClass(Class<T> type) {
 		var out = new ArrayList<T>();
 
 		for (var body : getRigidBodyList())
@@ -252,18 +236,15 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
 		return out;
 	}
 
-	public PhysicsThread getWorkerThread()
-	{
+	public PhysicsThread getWorkerThread() {
 		return this.thread;
 	}
 
-	public Level getLevel()
-	{
+	public Level getLevel() {
 		return this.level;
 	}
 
-	public ChunkCache getChunkCache()
-	{
+	public ChunkCache getChunkCache() {
 		return this.chunkCache;
 	}
 
@@ -273,8 +254,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
 	 * @param event the event context
 	 */
 	@Override
-	public void collision(PhysicsCollisionEvent event)
-	{
+	public void collision(PhysicsCollisionEvent event) {
 		float impulse = event.getAppliedImpulse();
 
 		/* Element on Element */

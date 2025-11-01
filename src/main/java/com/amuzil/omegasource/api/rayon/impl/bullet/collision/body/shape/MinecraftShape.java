@@ -22,48 +22,39 @@ public interface MinecraftShape
 
 	float getVolume();
 
-	static Box box(AABB box)
-	{
+	static Box box(AABB box) {
 		return MinecraftShape.box(Convert.toBullet(box));
 	}
 
-	static Box box(BoundingBox box)
-	{
+	static Box box(BoundingBox box) {
 		return new Box(box);
 	}
 
-	static Convex convex(AABB box)
-	{
+	static Convex convex(AABB box) {
 		return MinecraftShape.convex(Convert.toBullet(box));
 	}
 
-	static Convex convex(VoxelShape voxelShape)
-	{
+	static Convex convex(VoxelShape voxelShape) {
 		return new Convex(Triangle.getMeshOf(voxelShape));
 	}
 
-	static Convex convex(BoundingBox box)
-	{
+	static Convex convex(BoundingBox box) {
 		return new Convex(Triangle.getMeshOf(box));
 	}
 
-	static Concave concave(AABB box)
-	{
+	static Concave concave(AABB box) {
 		return MinecraftShape.concave(Convert.toBullet(box));
 	}
 
-	static Concave concave(BoundingBox box)
-	{
+	static Concave concave(BoundingBox box) {
 		return new Concave(Triangle.getMeshOf(box));
 	}
 
 	/* Mostly stable */
-	final class Box extends BoxCollisionShape implements MinecraftShape
-	{
+	final class Box extends BoxCollisionShape implements MinecraftShape {
 		private final List<Triangle> triangles;
 
-		public Box(BoundingBox boundingBox)
-		{
+		public Box(BoundingBox boundingBox) {
 			super(boundingBox.getExtent(new Vector3f()).mult(0.5f));
 			this.triangles = new ArrayList<>(MinecraftShape.convex(boundingBox).triangles); // a lil hacky
 		}
@@ -82,12 +73,10 @@ public interface MinecraftShape
 	}
 
 	/* Recommended */
-	final class Convex extends HullCollisionShape implements MinecraftShape
-	{
+	final class Convex extends HullCollisionShape implements MinecraftShape {
 		private final List<Triangle> triangles;
 
-		public Convex(List<Triangle> triangles)
-		{
+		public Convex(List<Triangle> triangles) {
 			super(triangles.stream().flatMap(triangle -> Stream.of(triangle.getVertices())).toList());
 			this.triangles = triangles;
 		}
@@ -106,8 +95,7 @@ public interface MinecraftShape
 	}
 
 	/* Less stable :( */
-	final class Concave extends MeshCollisionShape implements MinecraftShape
-	{
+	final class Concave extends MeshCollisionShape implements MinecraftShape {
 		private final List<Triangle> triangles;
 
 		public Concave(List<Triangle> triangles)

@@ -6,20 +6,17 @@ import net.minecraftforge.fml.loading.FMLLoader;
 
 public class ClientUtil
 {
-	public static boolean isClient()
-	{
+	public static boolean isClient() {
 		return FMLLoader.getDist() == Dist.CLIENT;
 	}
 
-	public static boolean isPaused()
-	{
+	public static boolean isPaused() {
 		if (isClient())
 			return Minecraft.getInstance().isPaused();
 		return false;
 	}
 
-	public static boolean isConnectedToServer()
-	{
+	public static boolean isConnectedToServer() {
 		if (isClient())
 			return Minecraft.getInstance().getConnection() != null;
 		return false;

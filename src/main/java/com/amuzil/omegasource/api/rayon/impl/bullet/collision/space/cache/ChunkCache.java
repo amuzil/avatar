@@ -23,13 +23,11 @@ import java.util.Optional;
  */
 public interface ChunkCache
 {
-	static ChunkCache create(MinecraftSpace space)
-	{
+	static ChunkCache create(MinecraftSpace space) {
 		return new SimpleChunkCache(space);
 	}
 
-	static boolean isValidBlock(BlockState blockState)
-	{
+	static boolean isValidBlock(BlockState blockState) {
 		if (blockState == null)
 			return false;
 
@@ -62,8 +60,7 @@ public interface ChunkCache
 
 	record FluidData(Level level, BlockPos blockPos, FluidState fluidState) {}
 
-	class FluidColumn
-	{
+	class FluidColumn {
 		private final FluidData top;
 		private final FluidData bottom;
 		private final Vector3f flow;

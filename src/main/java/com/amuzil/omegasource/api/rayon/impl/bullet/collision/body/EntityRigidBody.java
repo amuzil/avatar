@@ -11,13 +11,11 @@ public class EntityRigidBody extends ElementRigidBody
 	private Player priorityPlayer;
 	private boolean dirtyProperties = true;
 
-	public EntityRigidBody(EntityPhysicsElement element, MinecraftSpace space, MinecraftShape shape, float mass, float dragCoefficient, float friction, float restitution)
-	{
+	public EntityRigidBody(EntityPhysicsElement element, MinecraftSpace space, MinecraftShape shape, float mass, float dragCoefficient, float friction, float restitution) {
 		super(element, space, shape, mass, dragCoefficient, friction, restitution);
 	}
 
-	public EntityRigidBody(EntityPhysicsElement element, MinecraftSpace space, MinecraftShape shape)
-	{
+	public EntityRigidBody(EntityPhysicsElement element, MinecraftSpace space, MinecraftShape shape) {
 		this(element, space, shape, 10.0f, 0.25f, 1.0f, 0.5f);
 	}
 
@@ -26,74 +24,62 @@ public class EntityRigidBody extends ElementRigidBody
 	 * 
 	 * @param element the element to base this body around
 	 */
-	public EntityRigidBody(EntityPhysicsElement element)
-	{
+	public EntityRigidBody(EntityPhysicsElement element) {
 		this(element, MinecraftSpace.get(element.cast().level()), element.createShape());
 	}
 
 	@Override
-	public EntityPhysicsElement getElement()
-	{
+	public EntityPhysicsElement getElement() {
 		return (EntityPhysicsElement) super.getElement();
 	}
 
-	public Player getPriorityPlayer()
-	{
+	public Player getPriorityPlayer() {
 		return this.priorityPlayer;
 	}
 
-	public boolean isPositionDirty()
-	{
+	public boolean isPositionDirty() {
 		return this.getFrame() != null && (this.getFrame().getLocationDelta(new Vector3f()).length() > 0.1f || this.getFrame().getRotationDelta(new Vector3f()).length() > 0.01f);
 	}
 
-	public boolean arePropertiesDirty()
-	{
+	public boolean arePropertiesDirty() {
 		return this.dirtyProperties;
 	}
 
-	public void setPropertiesDirty(boolean dirtyProperties)
-	{
+	public void setPropertiesDirty(boolean dirtyProperties) {
 		this.dirtyProperties = dirtyProperties;
 	}
 
-	public void prioritize(Player priorityPlayer)
-	{
+	public void prioritize(Player priorityPlayer) {
 		this.priorityPlayer = priorityPlayer;
 		this.dirtyProperties = true;
 	}
 
 	@Override
-	public void setMass(float mass)
-	{
+	public void setMass(float mass) {
 		super.setMass(mass);
 		this.dirtyProperties = true;
 	}
 
 	@Override
-	public void setDragCoefficient(float dragCoefficient)
-	{
+	public void setDragCoefficient(float dragCoefficient) {
 		super.setDragCoefficient(dragCoefficient);
 		this.dirtyProperties = true;
 	}
 
 	@Override
-	public void setFriction(float friction)
-	{
+	public void setFriction(float friction) {
 		super.setFriction(friction);
 		this.dirtyProperties = true;
 	}
 
 	@Override
-	public void setRestitution(float restitution)
-	{
+	public void setRestitution(float restitution) {
 		super.setRestitution(restitution);
 		this.dirtyProperties = true;
 	}
 
 	@Override
-	public void setTerrainLoadingEnabled(boolean doTerrainLoading)
-	{
+	public void setTerrainLoadingEnabled(boolean doTerrainLoading) {
 		super.setTerrainLoadingEnabled(doTerrainLoading);
 		this.dirtyProperties = true;
 	}

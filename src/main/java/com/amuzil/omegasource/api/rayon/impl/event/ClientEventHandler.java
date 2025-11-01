@@ -26,8 +26,7 @@ import net.minecraftforge.network.PacketDistributor;
 public final class ClientEventHandler
 {
 	@SubscribeEvent
-	public static void onLevelTick(TickEvent.LevelTickEvent event)
-	{
+	public static void onLevelTick(TickEvent.LevelTickEvent event) {
 		if (event.level.isClientSide && event.phase == TickEvent.Phase.END)
 		{
 			MinecraftSpace space = MinecraftSpace.get(event.level);
@@ -49,26 +48,22 @@ public final class ClientEventHandler
 		}
 	}
 
-	public static void onGameJoin(Minecraft minecraft)
-	{
+	public static void onGameJoin(Minecraft minecraft) {
 		PhysicsThreadStore.INSTANCE.createClientThread(minecraft, Thread.currentThread(), new ClientLevelSupplier(minecraft), new ClientEntitySupplier());
 	}
 	
-	public static void onDisconnect(Minecraft minecraft, ClientLevel level)
-	{
+	public static void onDisconnect(Minecraft minecraft, ClientLevel level) {
 		PhysicsThreadStore.INSTANCE.destroyClientThread();
 	}
 	
 	@SubscribeEvent
-	public static void onClientTick(TickEvent.ClientTickEvent event)
-	{
+	public static void onClientTick(TickEvent.ClientTickEvent event) {
 		if (event.phase == TickEvent.Phase.END)
 			PhysicsThreadStore.checkThrowable(PhysicsThreadStore.INSTANCE.getClientThread());
 	}
 
 	@SubscribeEvent
-	public static void onDebugRender(RenderLevelStageEvent event)
-	{
+	public static void onDebugRender(RenderLevelStageEvent event) {
 		if (CollisionObjectDebugger.isEnabled())
 		{
 			Minecraft mc = Minecraft.getInstance();
@@ -77,8 +72,7 @@ public final class ClientEventHandler
 	}
 
 	@SubscribeEvent
-	public static void onEntityLoad(EntityJoinLevelEvent event)
-	{
+	public static void onEntityLoad(EntityJoinLevelEvent event) {
 		if (event.getLevel().isClientSide())
 		{
 			Entity entity = event.getEntity();
@@ -93,8 +87,7 @@ public final class ClientEventHandler
 	}
 
 	@SubscribeEvent
-	public static void onEntityUnload(EntityLeaveLevelEvent event)
-	{
+	public static void onEntityUnload(EntityLeaveLevelEvent event) {
 		if (event.getLevel().isClientSide())
 		{
 			Entity entity = event.getEntity();

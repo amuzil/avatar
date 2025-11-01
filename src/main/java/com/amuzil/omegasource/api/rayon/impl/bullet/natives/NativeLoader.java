@@ -17,8 +17,7 @@ import java.util.NoSuchElementException;
  */
 public class NativeLoader
 {
-	public static void load()
-	{
+	public static void load() {
 		final var fileName = getPlatformSpecificName();
 		final var nativesFolder = getGameDir().resolve("natives/");
 		final var url = NativeLoader.class.getResource("/assets/natives/" + fileName);
@@ -54,13 +53,11 @@ public class NativeLoader
 		}
 	}
 
-	static Path getGameDir()
-	{
+	static Path getGameDir() {
 		return FMLLoader.getGamePath();
 	}
 
-	static String getPlatformSpecificName()
-	{
+	static String getPlatformSpecificName() {
 		final var platform = JmeSystem.getPlatform();
 
 		final var name = switch (platform)

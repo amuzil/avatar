@@ -34,8 +34,7 @@ public class PressureGenerator
 	public static final int SEA_LEVEL = 62; // m
 
 	@SubscribeEvent
-	public static void onPhysicsStep(PhysicsSpaceEvent.Step event)
-	{
+	public static void onPhysicsStep(PhysicsSpaceEvent.Step event) {
 		MinecraftSpace space = event.getSpace();
 		
 		final var chunkCache = space.getChunkCache();
@@ -234,8 +233,7 @@ public class PressureGenerator
 		}
 	}
 
-	public static float getAddedMassForceAdjustment(List<Triangle> triangles, float mass)
-	{
+	public static float getAddedMassForceAdjustment(List<Triangle> triangles, float mass) {
 		final var n = triangles.size();
 		final var sum = triangles.stream().mapToDouble(triangle -> triangle.getArea().length() * triangle.getCentroid().length()).sum();
 		final var addedMass = WATER_DENSITY / (6 * n) * sum;

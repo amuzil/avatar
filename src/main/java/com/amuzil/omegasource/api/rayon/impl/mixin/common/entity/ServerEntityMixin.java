@@ -24,22 +24,19 @@ public class ServerEntityMixin
 	private Entity entity;
 
 	@Redirect(method = "sendChanges", at = @At(value = "INVOKE", target = "Ljava/util/function/Consumer;accept(Ljava/lang/Object;)V", ordinal = 1))
-	public void rayon$overrideRotation_sendChanges(Consumer consumer, Object object)
-	{
+	public void rayon$overrideRotation_sendChanges(Consumer consumer, Object object) {
 		if (!EntityPhysicsElement.is(this.entity))
 			consumer.accept(object);
 	}
 
 	@Redirect(method = "sendChanges", at = @At(value = "INVOKE", target = "Ljava/util/function/Consumer;accept(Ljava/lang/Object;)V", ordinal = 2))
-	public void rayon$overrideVelocity_sendChanges(Consumer consumer, Object object)
-	{
+	public void rayon$overrideVelocity_sendChanges(Consumer consumer, Object object) {
 		if (!EntityPhysicsElement.is(this.entity))
 			consumer.accept(object);
 	}
 
 	@Redirect(method = "sendChanges", at = @At(value = "INVOKE", target = "Ljava/util/function/Consumer;accept(Ljava/lang/Object;)V", ordinal = 3))
-	public void rayon$overrideMultiple_sendChanges(Consumer consumer, Object object)
-	{
+	public void rayon$overrideMultiple_sendChanges(Consumer consumer, Object object) {
 		if (!EntityPhysicsElement.is(this.entity))
 			consumer.accept(object);
 	}

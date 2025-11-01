@@ -9,34 +9,29 @@ public abstract class PhysicsSpaceEvent extends Event
 	private final MinecraftSpace space;
 	
 	public PhysicsSpaceEvent(MinecraftSpace space)
-	
-	{
+	 {
 		this.space = space;
 	}
 	
-	public MinecraftSpace getSpace()
-	{
+	public MinecraftSpace getSpace() {
 		return this.space;
 	}
 	
-	public static class Init extends PhysicsSpaceEvent
-	{
+	public static class Init extends PhysicsSpaceEvent {
 		public Init(MinecraftSpace space)
 		{
 			super(space);
 		}
 	}
 	
-	public static class Step extends PhysicsSpaceEvent
-	{
+	public static class Step extends PhysicsSpaceEvent {
 		public Step(MinecraftSpace space)
 		{
 			super(space);
 		}
 	}
 	
-	public static class ElementAdded extends PhysicsSpaceEvent
-	{
+	public static class ElementAdded extends PhysicsSpaceEvent {
 		private final ElementRigidBody rigidBody;
 		
 		public ElementAdded(MinecraftSpace space, ElementRigidBody rigidBody)
@@ -51,8 +46,7 @@ public abstract class PhysicsSpaceEvent extends Event
 		}
 	}
 	
-	public static class ElementRemoved extends PhysicsSpaceEvent
-	{
+	public static class ElementRemoved extends PhysicsSpaceEvent {
 		private final ElementRigidBody rigidBody;
 		
 		public ElementRemoved(MinecraftSpace space, ElementRigidBody rigidBody)

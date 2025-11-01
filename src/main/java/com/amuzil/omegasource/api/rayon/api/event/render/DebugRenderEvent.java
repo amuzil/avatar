@@ -14,8 +14,7 @@ public class DebugRenderEvent extends Event
 	private final Vec3 cameraPos;
 	private final float partialTick;
 	
-	public DebugRenderEvent(MinecraftSpace space, VertexConsumer vertexConsumer, PoseStack stack, Vec3 cameraPos, float partialTick)
-	{
+	public DebugRenderEvent(MinecraftSpace space, VertexConsumer vertexConsumer, PoseStack stack, Vec3 cameraPos, float partialTick) {
 		this.space = space;
 		this.vertexConsumer = vertexConsumer;
 		this.stack = stack;
@@ -23,28 +22,23 @@ public class DebugRenderEvent extends Event
 		this.partialTick = partialTick;
 	}
 
-	public MinecraftSpace getSpace()
-	{
+	public MinecraftSpace getSpace() {
 		return this.space;
 	}
 
-	public VertexConsumer getVertexConsumer()
-	{
+	public VertexConsumer getVertexConsumer() {
 		return this.vertexConsumer;
 	}
 
-	public PoseStack getStack()
-	{
+	public PoseStack getStack() {
 		return this.stack;
 	}
 
-	public Vec3 getCameraPos()
-	{
+	public Vec3 getCameraPos() {
 		return this.cameraPos;
 	}
 
-	public float getPartialTick()
-	{
+	public float getPartialTick() {
 		return this.partialTick;
 	}
 }

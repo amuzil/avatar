@@ -18,14 +18,12 @@ public class LevelMixin implements SpaceStorage {
 	private MinecraftSpace space;
 
 	@Override
-	public void setSpace(MinecraftSpace space)
-	{
+	public void setSpace(MinecraftSpace space) {
 		this.space = space;
 	}
 
 	@Override
-	public MinecraftSpace getSpace()
-	{
+	public MinecraftSpace getSpace() {
 		return this.space;
 	}
 }

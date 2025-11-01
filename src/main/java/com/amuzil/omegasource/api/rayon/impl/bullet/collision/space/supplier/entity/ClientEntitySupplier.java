@@ -7,8 +7,7 @@ import net.minecraft.world.level.GameType;
 public class ClientEntitySupplier implements EntitySupplier
 {
 	@Override
-	public GameType getGameType(Player player)
-	{
+	public GameType getGameType(Player player) {
 		var client = Minecraft.getInstance();
 		var id = player.getUUID();
 

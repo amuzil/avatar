@@ -24,19 +24,16 @@ public final class CollisionObjectDebugger
 
 	private CollisionObjectDebugger() {}
 
-	public static boolean toggle()
-	{
+	public static boolean toggle() {
 		enabled = !enabled;
 		return enabled;
 	}
 
-	public static boolean isEnabled()
-	{
+	public static boolean isEnabled() {
 		return enabled;
 	}
 
-	public static void renderSpace(MinecraftSpace space, PoseStack stack, float tickDelta)
-	{
+	public static void renderSpace(MinecraftSpace space, PoseStack stack, float tickDelta) {
 		final var cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
 		final var builder = Tesselator.getInstance().getBuilder();
 
@@ -49,15 +46,13 @@ public final class CollisionObjectDebugger
 		Tesselator.getInstance().end();
 	}
 
-	public static void renderBody(MinecraftRigidBody rigidBody, BufferBuilder builder, PoseStack stack, float tickDelta)
-	{
+	public static void renderBody(MinecraftRigidBody rigidBody, BufferBuilder builder, PoseStack stack, float tickDelta) {
 		final var position = rigidBody.isStatic() ? rigidBody.getPhysicsLocation(new Vector3f()) : ((ElementRigidBody) rigidBody).getFrame().getLocation(new Vector3f(), tickDelta);
 		final var rotation = rigidBody.isStatic() ? rigidBody.getPhysicsRotation(new Quaternion()) : ((ElementRigidBody) rigidBody).getFrame().getRotation(new Quaternion(), tickDelta);
 		renderShape(rigidBody.getMinecraftShape(), position, rotation, builder, stack, rigidBody.getOutlineColor(), 1.0f);
 	}
 
-	public static void renderShape(MinecraftShape shape, Vector3f position, Quaternion rotation, BufferBuilder builder, PoseStack stack, Vector3f color, float alpha)
-	{
+	public static void renderShape(MinecraftShape shape, Vector3f position, Quaternion rotation, BufferBuilder builder, PoseStack stack, Vector3f color, float alpha) {
 		final var triangles = shape.getTriangles(Quaternion.IDENTITY);
 		final var cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
 

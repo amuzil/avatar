@@ -11,8 +11,7 @@ import net.minecraft.world.entity.Entity;
 
 public class RayonClientPacketHandler
 {
-	public static void handleSendRigidBodyMovementPacket(SendRigidBodyMovementPacket packet)
-	{
+	public static void handleSendRigidBodyMovementPacket(SendRigidBodyMovementPacket packet) {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.level != null)
 		{
@@ -33,8 +32,7 @@ public class RayonClientPacketHandler
 		}
 	}
 	
-	public static void handleSendRigidBodyPropertiesPacket(SendRigidBodyPropertiesPacket packet)
-	{
+	public static void handleSendRigidBodyPropertiesPacket(SendRigidBodyPropertiesPacket packet) {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.level != null)
 		{

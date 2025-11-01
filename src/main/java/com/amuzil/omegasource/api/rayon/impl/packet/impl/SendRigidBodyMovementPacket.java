@@ -18,8 +18,7 @@ public class SendRigidBodyMovementPacket extends Packet
 	private Vector3f linearVel;
 	private Vector3f angularVel;
 	
-	public SendRigidBodyMovementPacket(EntityRigidBody body)
-	{
+	public SendRigidBodyMovementPacket(EntityRigidBody body) {
 		super(true);
 		this.id = body.getElement().cast().getId();
 		this.rotation = Convert.toMinecraft(body.getPhysicsRotation(new Quaternion()));
@@ -28,39 +27,32 @@ public class SendRigidBodyMovementPacket extends Packet
 		this.angularVel = Convert.toMinecraft(body.getAngularVelocity(new com.jme3.math.Vector3f()));
 	}
 	
-	public SendRigidBodyMovementPacket()
-	{
+	public SendRigidBodyMovementPacket() {
 		super(false);
 	}
 
-	public int getId()
-	{
+	public int getId() {
 		return this.id;
 	}
 
-	public Quaternionf getRotation()
-	{
+	public Quaternionf getRotation() {
 		return this.rotation;
 	}
 
-	public Vector3f getPos()
-	{
+	public Vector3f getPos() {
 		return this.pos;
 	}
 
-	public Vector3f getLinearVel()
-	{
+	public Vector3f getLinearVel() {
 		return this.linearVel;
 	}
 
-	public Vector3f getAngularVel()
-	{
+	public Vector3f getAngularVel() {
 		return this.angularVel;
 	}
 	
 	@Override
-	protected void decode(FriendlyByteBuf buffer)
-	{
+	protected void decode(FriendlyByteBuf buffer) {
 		this.id = buffer.readVarInt();
 		this.rotation = buffer.readQuaternion();
 		this.pos = buffer.readVector3f();
@@ -69,8 +61,7 @@ public class SendRigidBodyMovementPacket extends Packet
 	}
 	
 	@Override
-	protected void encode(FriendlyByteBuf buffer)
-	{
+	protected void encode(FriendlyByteBuf buffer) {
 		buffer.writeVarInt(this.id);
 		buffer.writeQuaternion(this.rotation);
 		buffer.writeVector3f(this.pos);
@@ -79,8 +70,7 @@ public class SendRigidBodyMovementPacket extends Packet
 	}
 	
 	@Override
-	public Runnable getProcessor(NetworkEvent.Context context)
-	{
+	public Runnable getProcessor(NetworkEvent.Context context) {
 		return client(() -> RayonClientPacketHandler.handleSendRigidBodyMovementPacket(this));
 	}
 }

@@ -17,8 +17,7 @@ public final class ShapeCache
 	private static final IdentityHashMap<BlockState, MinecraftShape> SHAPES_SERVER = new IdentityHashMap<>();
 	private static final IdentityHashMap<BlockState, MinecraftShape> SHAPES_CLIENT = new IdentityHashMap<>();
 
-	public static MinecraftShape getShapeFor(BlockState blockState, Level level, BlockPos blockPos)
-	{
+	public static MinecraftShape getShapeFor(BlockState blockState, Level level, BlockPos blockPos) {
 		if (blockState.getBlock().hasDynamicShape())
 			return createShapeFor(blockState, level, blockPos);
 
@@ -34,14 +33,12 @@ public final class ShapeCache
 		return shape;
 	}
 
-	private static Map<BlockState, MinecraftShape> getShapes(boolean isClientSide)
-	{
+	private static Map<BlockState, MinecraftShape> getShapes(boolean isClientSide) {
 		return isClientSide ? SHAPES_CLIENT : SHAPES_SERVER;
 	}
 
 	@Nullable
-	private static MinecraftShape createShapeFor(BlockState blockState, Level level, BlockPos blockPos)
-	{
+	private static MinecraftShape createShapeFor(BlockState blockState, Level level, BlockPos blockPos) {
 //		final var properties = BlockProperty.getBlockProperty(blockState.getBlock());
 		MinecraftShape shape = null;
 
