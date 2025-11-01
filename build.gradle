@@ -125,7 +125,9 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 mixin {
     add sourceSets.main, "av3.refmap.json"
+    add sourceSets.main, 'rayon.refmap.json'
     config "av3.mixins.json"
+//    config 'rayon.mixins.json'
 }
 
 repositories {
@@ -149,18 +151,13 @@ repositories {
     }
 
     maven {
-        name = 'Kotlin for Forge'
-        url = 'https://thedarkcolour.github.io/KotlinForForge/'
-    }
-
-    maven {
-        name = 'Valkyrien Skies Internal'
-        url = 'https://maven.valkyrienskies.org'
-    }
-
-    maven {
         name = "KosmX's maven"
         url = 'https://maven.kosmx.dev/'
+    }
+
+    maven {
+        name "nonamecrackers2Maven"
+        url "https://maven.nonamecrackers2.dev/releases"
     }
 }
 
@@ -178,11 +175,18 @@ dependencies {
     testImplementation('org.junit.jupiter:junit-jupiter')
 //    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${minecraft_version}:${geckolib_version}")
 //    implementation("com.eliotlash.mclib:mclib:20")
-    implementation fg.deobf("org.valkyrienskies:valkyrienskies-120-forge:${vs2_version}")
-    implementation("org.valkyrienskies.core:api:${vs_core_version}")
-    implementation "thedarkcolour:kotlinforforge:4.11.0"
     implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${player_anim_version}")
 //    implementation fg.deobf(files('libs/bendy-lib-4.1.0-forge.jar'))
+
+    jarJar("com.github.stephengold:Libbulletjme:${libbulletjme_version}") {
+        jarJar.ranged(it, "${libbulletjme_version_range}")
+    }
+    minecraftLibrary "com.github.stephengold:Libbulletjme:${libbulletjme_version}"
+    jarJar("nonamecrackers2:crackerslib-forge:${crackerslib_version}") {
+        jarJar.ranged(it, "${crackerslib_version_range}")
+    }
+    implementation fg.deobf("nonamecrackers2:crackerslib-forge:${crackerslib_version}")
+
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings

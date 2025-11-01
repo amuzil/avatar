@@ -15,9 +15,9 @@ import com.amuzil.omegasource.entity.modules.render.PhotonModule;
 import com.amuzil.omegasource.input.InputModule;
 import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.utils.commands.AvatarCommands;
-import com.amuzil.omegasource.utils.ship.EarthController;
 import com.amuzil.omegasource.utils.sound.AvatarSounds;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -30,15 +30,11 @@ import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.valkyrienskies.core.api.attachment.AttachmentRegistration;
-import org.valkyrienskies.mod.api.ValkyrienSkies;
 
 
 @Mod(Avatar.MOD_ID)
 public class Avatar {
-    // MOD ID reference
     public static final String MOD_ID = "av3";
-    // Directly reference a log4j logger.
     public static final Logger LOGGER = LogManager.getLogger();
     public static InputModule inputModule;
 
@@ -84,11 +80,6 @@ public class Avatar {
         ModuleRegistry.register(FireCollisionModule::new);
         ModuleRegistry.register(WaterCollisionModule::new);
         ModuleRegistry.register(FireEffectModule::new);
-
-        AttachmentRegistration<EarthController> attachmentRegistration = ValkyrienSkies.api()
-                .newAttachmentRegistrationBuilder(EarthController.class)
-                .build();
-        ValkyrienSkies.api().registerAttachment(attachmentRegistration);
     }
 
     private void setupClient(final FMLClientSetupEvent event) {
@@ -100,11 +91,9 @@ public class Avatar {
 
     private void processIMC(final InterModProcessEvent event) {}
 
-    // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
-        // Do something when the server starts
-        LOGGER.info("Setting up Avatar commands...");
+        LOGGER.info("Setting up Avatar Mod commands...");
         AvatarCommands.register(event.getServer().getCommands().getDispatcher());
 
         SkillTree.clear();
@@ -115,13 +104,17 @@ public class Avatar {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-            LOGGER.info("Setting up Avatar client...");
+            LOGGER.info("Setting up Avatar Mod client...");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
 
 //            PlayerAnimationFactory.ANIMATION_DATA_FACTORY.registerFactory(
 //                    ResourceLocation.fromNamespaceAndPath(MOD_ID, "animation"),
 //                    42, Avatar::registerPlayerAnimation);
         }
+    }
+
+    public static ResourceLocation id(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 
     public static String isClientOrServer(boolean isClient) {

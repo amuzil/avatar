@@ -19,7 +19,7 @@ import com.amuzil.omegasource.network.AvatarNetwork;
 import com.amuzil.omegasource.network.packets.sync.SyncBenderPacket;
 import com.amuzil.omegasource.network.packets.sync.SyncMovementPacket;
 import com.amuzil.omegasource.network.packets.sync.SyncSelectionPacket;
-import com.amuzil.omegasource.utils.ship.OriginalBlocks;
+import com.amuzil.omegasource.utils.bending.OriginalBlocks;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;

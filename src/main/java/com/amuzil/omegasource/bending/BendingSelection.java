@@ -1,7 +1,7 @@
 package com.amuzil.omegasource.bending;
 
-import com.amuzil.omegasource.utils.ship.OriginalBlock;
-import com.amuzil.omegasource.utils.ship.OriginalBlocks;
+import com.amuzil.omegasource.utils.bending.OriginalBlock;
+import com.amuzil.omegasource.utils.bending.OriginalBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
