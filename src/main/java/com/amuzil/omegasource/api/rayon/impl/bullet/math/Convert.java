@@ -25,7 +25,7 @@ public class Convert
 	}
 
 	public static Vector3f toBullet(BlockPos blockPos) {
-		return new Vector3f(blockPos.getX() + 0.5f, blockPos.getY() + 0.5f, blockPos.getZ() + 0.5f);
+		return new Vector3f(blockPos.getX(), blockPos.getY(), blockPos.getZ());
 	}
 
 	public static Quaternionf toMinecraft(Quaternion quat) {

@@ -11,6 +11,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 
+
 public class PhysicsFallingBlock extends FallingBlockEntity implements EntityPhysicsElement {
 	private final EntityRigidBody rigidBody;
     private static final EntityDataAccessor<Float> WIDTH = SynchedEntityData.defineId(PhysicsFallingBlock.class, EntityDataSerializers.FLOAT);
@@ -40,7 +41,7 @@ public class PhysicsFallingBlock extends FallingBlockEntity implements EntityPhy
     public AABB getSize() {
         return new AABB(xo - width() / 2, yo - height() / 2, zo - width() / 2, xo + width() / 2, yo + height() / 2, zo + width() / 2);
     }
-	
+
 	@Override
 	public @Nullable EntityRigidBody getRigidBody() {
 		return this.rigidBody;
@@ -54,7 +55,7 @@ public class PhysicsFallingBlock extends FallingBlockEntity implements EntityPhy
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(HEIGHT, 0.95f);
-        this.entityData.define(WIDTH, 0.95f);
+        this.entityData.define(HEIGHT, 1.0f);
+        this.entityData.define(WIDTH, 1.0f);
     }
 }
