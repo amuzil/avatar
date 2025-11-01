@@ -13,7 +13,8 @@ public abstract class MinecraftRigidBody extends PhysicsRigidBody
 	public MinecraftRigidBody(MinecraftSpace space, MinecraftShape shape, float mass) {
 		super((CollisionShape) shape, mass);
 		this.space = space;
-	}
+        CollisionShape.setDefaultMargin(0.001f); // TODO: move this to get called once
+    }
 
 	public MinecraftRigidBody(MinecraftSpace space, MinecraftShape shape) {
 		this(space, shape, massForStatic);
