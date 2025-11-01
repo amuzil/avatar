@@ -52,6 +52,6 @@ public abstract class EntityMixin
 	@Inject(method = "makeBoundingBox", at = @At("HEAD"), cancellable = true)
 	public void rayon$centerBoundingBox_makeBoundingBox(CallbackInfoReturnable<AABB> ci) {
 		if (EntityPhysicsElement.is((Entity)(Object)this))
-			ci.setReturnValue(this.dimensions.makeBoundingBox(this.position.subtract(0.0D, (double)(this.dimensions.height / 2.0F), 0.0D)));
+			ci.setReturnValue(this.dimensions.makeBoundingBox(this.position.subtract(0.0D, this.dimensions.height / 2.0F, 0.0D)));
 	}
 }

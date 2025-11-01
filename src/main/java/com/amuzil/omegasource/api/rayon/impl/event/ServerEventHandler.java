@@ -73,7 +73,7 @@ public final class ServerEventHandler
 				}
 
 				/* Set entity position */
-				var location = rigidBody.getFrame().getLocation(new Vector3f(), 10.0f);
+				var location = rigidBody.getFrame().getLocation(new Vector3f(), 1.0f);
 				rigidBody.getElement().cast().absMoveTo(location.x, location.y, location.z);
 			}
 		}
