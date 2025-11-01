@@ -32,7 +32,6 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
     final float TEX_SCALE = 2.0f; // e.g. 2 repeats per block
 
     PointData[][][] voxels = new PointData[GRID_SIZE][GRID_SIZE][GRID_SIZE];
-    Random random = new Random();
 
     public MarchingCubesEntityRenderer(EntityRendererProvider.Context ctx) { super(ctx); }
 
@@ -126,29 +125,26 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
 
         float time = nowSeconds(partialTicks, entity); // or pass partialTick from render()
 
-        SignedDistanceFunction sdf = (entity instanceof IHasSDF has) ? has.rootSDF() : null;
+//        SignedDistanceFunction sdf = (entity instanceof IHasSDF has) ? has.rootSDF() : null;
 
-        float cx = (GRID_SIZE - 1) * CELL_SIZE * 0.5f;
-        for (int x = 0; x < GRID_SIZE; x++) {
-            for (int y = 0; y < GRID_SIZE; y++) {
-                for (int z = 0; z < GRID_SIZE; z++) {
-                    float wx = x * CELL_SIZE, wy = y * CELL_SIZE, wz = z * CELL_SIZE;
-
-                    // centered object-space (entity local)
-                    float dx = wx - cx, dy = wy - cx, dz = wz - cx;
-                    Vector3f p = new Vector3f(dx, dy, dz);
-
-                    // density from entity SDF (iso=0)
-                    float d = sdf.sd(p, time);           // signed distance in world units
-
-//                    // optional subtle noise modulation (keep tiny)
-//                    float bump = fbmNoise(wx, wy, wz, seed) * 0.03f;
-//                    float density = d + bump;
-
-                    voxels[x][y][z] = new PointData(p, d, x, y, z);
-                }
-            }
-        }
+//        float cx = (GRID_SIZE - 1) * CELL_SIZE * 0.5f;
+//        for (int x = 0; x < GRID_SIZE; x++) {
+//            for (int y = 0; y < GRID_SIZE; y++) {
+//                for (int z = 0; z < GRID_SIZE; z++) {
+//                    float wx = x * CELL_SIZE, wy = y * CELL_SIZE, wz = z * CELL_SIZE;
+//
+//                    // centered object-space (entity local)
+//                    float dx = wx - cx, dy = wy - cx, dz = wz - cx;
+//                    Vector3f p = new Vector3f(dx, dy, dz);
+//
+//                    // density from entity SDF (iso=0)
+//                    float d = sdf.sd(p, time);           // signed distance in world units
+//
+//
+//                    voxels[x][y][z] = new PointData(p, d, x, y, z);
+//                }
+//            }
+//        }
 
         List<Triangle> triangles = MarchingCubes.polygonize(voxels, ISOLEVEL, CELL_SIZE);
         CachedMesh out = new CachedMesh(triangles, now);
