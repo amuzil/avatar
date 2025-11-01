@@ -145,27 +145,22 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
 
 	@Override
 	public void addCollisionObject(PhysicsCollisionObject collisionObject) {
-		if (!collisionObject.isInWorld())
-		{
-			if (collisionObject instanceof ElementRigidBody rigidBody)
-			{
+		if (!collisionObject.isInWorld()) {
+			if (collisionObject instanceof ElementRigidBody rigidBody) {
 				MinecraftForge.EVENT_BUS.post(new PhysicsSpaceEvent.ElementAdded(this, rigidBody));
 
-				if (!rigidBody.isInWorld())
-				{
+				if (!rigidBody.isInWorld()) {
 					rigidBody.activate();
 					rigidBody.getFrame().set(rigidBody.getPhysicsLocation(new Vector3f()), rigidBody.getPhysicsLocation(new Vector3f()), rigidBody.getPhysicsRotation(new Quaternion()), rigidBody.getPhysicsRotation(new Quaternion()));
 					rigidBody.updateBoundingBox();
 				}
 
-				if (this.isServer() && rigidBody instanceof EntityRigidBody entityRigidBody)
-				{
+				if (this.isServer() && rigidBody instanceof EntityRigidBody entityRigidBody) {
 					RayonPacketHandlers.MAIN.send(PacketDistributor.TRACKING_ENTITY.with(entityRigidBody.getElement()::cast), new SendRigidBodyMovementPacket(entityRigidBody));
 					RayonPacketHandlers.MAIN.send(PacketDistributor.TRACKING_ENTITY.with(entityRigidBody.getElement()::cast), new SendRigidBodyPropertiesPacket(entityRigidBody));
 				}
 			}
-			else if (collisionObject instanceof TerrainRigidBody terrain)
-			{
+			else if (collisionObject instanceof TerrainRigidBody terrain) {
 				this.terrainMap.put(terrain.getBlockPos(), terrain);
 			}
 
