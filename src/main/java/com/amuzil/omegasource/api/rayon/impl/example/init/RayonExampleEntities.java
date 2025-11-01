@@ -14,7 +14,10 @@ public class RayonExampleEntities
 {
 	private static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, Rayon.MOD_ID);
 	
-	public static final RegistryObject<EntityType<PhysicsFallingBlock>> PHYSICS_FALLING_BLOCK = register("physics_falling_block", EntityType.Builder.of(PhysicsFallingBlock::new, MobCategory.MISC).clientTrackingRange(10).sized(1.0F, 1.0F).updateInterval(4));
+	public static final RegistryObject<EntityType<PhysicsFallingBlock>> PHYSICS_FALLING_BLOCK = register("physics_falling_block",
+            EntityType.Builder.of(PhysicsFallingBlock::new, MobCategory.MISC)
+                    .clientTrackingRange(10)
+                    .sized(1.0F, 1.0F).updateInterval(4));
 	
 	private static <T extends Entity> RegistryObject<EntityType<T>> register(String id, EntityType.Builder<T> builder) {
 		return ENTITY_TYPES.register(id, () -> builder.build(Rayon.id(id).toString()));
