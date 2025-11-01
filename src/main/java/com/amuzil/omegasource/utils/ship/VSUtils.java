@@ -5,7 +5,7 @@ import com.amuzil.omegasource.capability.Bender;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -49,14 +49,6 @@ public class VSUtils {
                 relativeVector3.toEulerRotationFromMCEntity(0, bender.getEntity().getYRot()),
                 c, c, VSGameUtilsKt.getDimensionId(level), null, null);
         ValkyrienSkiesMod.getVsCore().teleportShip(serverShipWorld, serverShip, shipTeleportData);
-    }
-
-    public static ServerShip createNewShipAtBlock(ServerLevel level, Vector3i joml, boolean makeImmediately, int scale, String dimensionId) {
-        return VSGameUtilsKt.getShipObjectWorld(level).createNewShipAtBlock(joml, makeImmediately, scale, dimensionId);
-    }
-
-    public static void relocateBlock(Level level, BlockPos pos, BlockPos centerPos, boolean b, ServerShip ship, Rotation rotation) {
-        RelocationUtilKt.relocateBlock(level, pos, centerPos, b, ship, rotation);
     }
 
     private static void getPivot(Bender bender) {
@@ -112,13 +104,7 @@ public class VSUtils {
             if (bender.getSelection().target() == BendingSelection.Target.BLOCK
                     && !VSGameUtilsKt.isBlockInShipyard(level, blockPos)
                     && !blockState.isAir()) {
-                String dimensionId = VSGameUtilsKt.getDimensionId(level);
-                ServerShip ship = VSGameUtilsKt.getShipObjectWorld(level).createNewShipAtBlock(VectorConversionsMCKt.toJOML(blockPos), false, 1, dimensionId);
-                BlockPos centerPos = VectorConversionsMCKt.toBlockPos(ship.getChunkClaim().getCenterBlockCoordinates(VSGameUtilsKt.getYRange(level), new Vector3i()));
-                bender.getSelection().addOriginalBlocks(ship.getId(), blockPos, blockState);
-                RelocationUtilKt.relocateBlock(level, blockPos, centerPos, true, ship, Rotation.NONE);
-                Vector3dc shipyardPos = ship.getTransform().getPositionInShip();
-                shipyardBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipyardPos));
+                shipyardBlockPos = createNewShip(bender, level, blockPos, blockState);
             } else { // Get existing shipyard position
                 LoadedServerShip ship = VSGameUtilsKt.getShipObjectManagingPos(level, blockPos);
                 if (ship == null) return null;
@@ -132,9 +118,39 @@ public class VSUtils {
         return shipyardBlockPos;
     }
 
+    private static @NotNull BlockPos createNewShip(Bender bender, ServerLevel level, BlockPos blockPos, BlockState blockState) {
+        BlockPos shipyardBlockPos;
+        String dimensionId = VSGameUtilsKt.getDimensionId(level);
+        ServerShip ship = VSGameUtilsKt.getShipObjectWorld(level).createNewShipAtBlock(VectorConversionsMCKt.toJOML(blockPos), false, 1, dimensionId);
+        BlockPos centerPos = VectorConversionsMCKt.toBlockPos(ship.getChunkClaim().getCenterBlockCoordinates(VSGameUtilsKt.getYRange(level), new Vector3i()));
+        bender.getSelection().addOriginalBlocks(ship.getId(), blockPos, blockState);
+        RelocationUtilKt.relocateBlock(level, blockPos, centerPos, true, ship, Rotation.NONE);
+        Vector3dc shipyardPos = ship.getTransform().getPositionInShip();
+        shipyardBlockPos = BlockPos.containing(VectorConversionsMCKt.toMinecraft(shipyardPos));
+        return shipyardBlockPos;
+    }
+
     private static BlockPos assembleEarthShipNearby(Bender bender) {
-        BlockPos shipyardBlockPos = null;
+        BlockPos shipyardBlockPos;
         ServerLevel level = (ServerLevel) bender.getEntity().level();
+        LivingEntity entity = bender.getEntity();
+        // 1. Get the player's position and facing direction
+        Vec3 lookDir = entity.getLookAngle();
+        BlockPos entityPos = entity.blockPosition().below();
+
+        // 2. Find a position ~1 block in front of the player
+        BlockPos blockPos = entityPos.offset(
+                lookDir.x > 0 ? 1 : (lookDir.x < 0 ? -1 : 0),
+                0,
+                lookDir.z > 0 ? 1 : (lookDir.z < 0 ? -1 : 0)
+        );
+
+        // 3. Place an earth block if air
+        if (level.isEmptyBlock(blockPos))
+            level.setBlockAndUpdate(blockPos, Blocks.DIRT.defaultBlockState()); // or custom Earth block
+
+        BlockState blockState = level.getBlockState(blockPos);
+        shipyardBlockPos = createNewShip(bender, level, blockPos, blockState);
 
         return shipyardBlockPos;
     }

@@ -23,7 +23,6 @@ public class ShaderRegistry {
 
     @SubscribeEvent
     public static void onRegisterShaders(RegisterShadersEvent event) throws IOException {
-        System.out.println("registering shaders for av3");
         event.registerShader(
                 new ShaderInstance(
                         event.getResourceProvider(),
