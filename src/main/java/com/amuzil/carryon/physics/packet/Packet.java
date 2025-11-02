@@ -2,9 +2,7 @@ package com.amuzil.carryon.physics.packet;
 
 import io.netty.handler.codec.DecoderException;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.api.distmarker.Dist;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

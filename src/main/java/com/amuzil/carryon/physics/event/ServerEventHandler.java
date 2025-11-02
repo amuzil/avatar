@@ -19,14 +19,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.event.server.ServerAboutToStartEvent;
-import net.minecraftforge.event.server.ServerStoppedEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.level.LevelEvent;
+import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
+import net.neoforged.neoforge.event.server.ServerStoppedEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 @SuppressWarnings("deprecation")
 public final class ServerEventHandler {
@@ -81,7 +80,7 @@ public final class ServerEventHandler {
         if (event.getLevel() instanceof Level level) {
             MinecraftSpace space = PhysicsThreadStore.INSTANCE.createPhysicsSpace(level);
             ((SpaceStorage)level).setSpace(space);
-            MinecraftForge.EVENT_BUS.post(new PhysicsSpaceEvent.Init(space));
+            NeoForge.EVENT_BUS.post(new PhysicsSpaceEvent.Init(space));
         }
     }
 

@@ -1,7 +1,6 @@
 package com.amuzil.av3.network.packets.api;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 

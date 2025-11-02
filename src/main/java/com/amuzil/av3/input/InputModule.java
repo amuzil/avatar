@@ -17,10 +17,10 @@ import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.HashMap;
 import java.util.function.Consumer;
@@ -31,7 +31,7 @@ import static com.amuzil.av3.input.KeyBindings.*;
 public class InputModule {
     private final Consumer<InputEvent.Key> keyboardListener;
     private final Consumer<InputEvent.MouseButton> mouseListener;
-    private final Consumer<TickEvent.ClientTickEvent> tickEventConsumer;
+    private final Consumer<ClientTickEvent> tickEventConsumer;
 
     private boolean isSelecting = false;
     private boolean isHoldingShift = false;
@@ -89,7 +89,7 @@ public class InputModule {
         };
 
         this.tickEventConsumer = tickEvent -> {
-            if (tickEvent.phase == TickEvent.ClientTickEvent.Phase.START &&
+            if (tickEvent.phase == ClientTickEvent.Phase.START &&
                     Minecraft.getInstance().getConnection() != null &&
                     Minecraft.getInstance().getOverlay() == null &&
                     Minecraft.getInstance().screen == null) {
@@ -249,15 +249,15 @@ public class InputModule {
 
     public void registerListeners() {
         bender = (Bender) Bender.getBender(Minecraft.getInstance().player);
-        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, InputEvent.Key.class, keyboardListener);
-        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, InputEvent.MouseButton.class, mouseListener);
-        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, TickEvent.ClientTickEvent.class, tickEventConsumer);
+        NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, InputEvent.Key.class, keyboardListener);
+        NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, InputEvent.MouseButton.class, mouseListener);
+        NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, ClientTickEvent.class, tickEventConsumer);
     }
 
     public void unRegisterListeners() {
-        MinecraftForge.EVENT_BUS.unregister(keyboardListener);
-        MinecraftForge.EVENT_BUS.unregister(mouseListener);
-        MinecraftForge.EVENT_BUS.unregister(tickEventConsumer);
+        NeoForge.EVENT_BUS.unregister(keyboardListener);
+        NeoForge.EVENT_BUS.unregister(mouseListener);
+        NeoForge.EVENT_BUS.unregister(tickEventConsumer);
     }
 
     public void terminate() {

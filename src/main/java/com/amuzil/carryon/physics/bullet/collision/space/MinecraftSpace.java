@@ -23,8 +23,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -126,7 +126,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
                     this.distributeEvents();
 
                     /* World Step Event */
-                    MinecraftForge.EVENT_BUS.post(new PhysicsSpaceEvent.Step(this));
+                    NeoForge.EVENT_BUS.post(new PhysicsSpaceEvent.Step(this));
 
                     /* Step the Simulation */
                     this.update(1 / 60f);
@@ -141,7 +141,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
     public void addCollisionObject(PhysicsCollisionObject collisionObject) {
         if (!collisionObject.isInWorld()) {
             if (collisionObject instanceof ElementRigidBody rigidBody) {
-                MinecraftForge.EVENT_BUS.post(new PhysicsSpaceEvent.ElementAdded(this, rigidBody));
+                NeoForge.EVENT_BUS.post(new PhysicsSpaceEvent.ElementAdded(this, rigidBody));
 
                 if (!rigidBody.isInWorld()) {
                     rigidBody.activate();
@@ -168,7 +168,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
             super.removeCollisionObject(collisionObject);
 
             if (collisionObject instanceof ElementRigidBody rigidBody)
-                MinecraftForge.EVENT_BUS.post(new PhysicsSpaceEvent.ElementRemoved(this, rigidBody));
+                NeoForge.EVENT_BUS.post(new PhysicsSpaceEvent.ElementRemoved(this, rigidBody));
             else if (collisionObject instanceof TerrainRigidBody terrain)
                 this.removeTerrainObjectAt(terrain.getBlockPos());
         }
@@ -245,12 +245,12 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
 
         /* Element on Element */
         if (event.getObjectA() instanceof ElementRigidBody rigidBodyA && event.getObjectB() instanceof ElementRigidBody rigidBodyB)
-            MinecraftForge.EVENT_BUS.post(new CollisionEvent(CollisionEvent.Type.ELEMENT, rigidBodyA, rigidBodyB, impulse));
+            NeoForge.EVENT_BUS.post(new CollisionEvent(CollisionEvent.Type.ELEMENT, rigidBodyA, rigidBodyB, impulse));
         /* Block on Element */
         else if (event.getObjectA() instanceof TerrainRigidBody terrain && event.getObjectB() instanceof ElementRigidBody rigidBody)
-            MinecraftForge.EVENT_BUS.post(new CollisionEvent(CollisionEvent.Type.BLOCK, rigidBody, terrain, impulse));
+            NeoForge.EVENT_BUS.post(new CollisionEvent(CollisionEvent.Type.BLOCK, rigidBody, terrain, impulse));
         /* Element on Block */
         else if (event.getObjectA() instanceof ElementRigidBody rigidBody && event.getObjectB() instanceof TerrainRigidBody terrain)
-            MinecraftForge.EVENT_BUS.post(new CollisionEvent(CollisionEvent.Type.BLOCK, rigidBody, terrain, impulse));
+            NeoForge.EVENT_BUS.post(new CollisionEvent(CollisionEvent.Type.BLOCK, rigidBody, terrain, impulse));
     }
 }

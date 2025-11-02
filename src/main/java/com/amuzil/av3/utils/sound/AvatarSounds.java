@@ -1,23 +1,24 @@
 package com.amuzil.av3.utils.sound;
 
 import com.amuzil.av3.Avatar;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.function.Supplier;
 
 // Avatar Sound Effects
 public class AvatarSounds {
     public static final DeferredRegister<SoundEvent> SOUND_EVENTS =
-            DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, Avatar.MOD_ID);
+            DeferredRegister.create(Registries.SOUND_EVENT, Avatar.MOD_ID);
 
-    public static final RegistryObject<SoundEvent> AIR_GUST = register("air_gust");
+    public static final Supplier<SoundEvent> AIR_GUST = register("air_gust");
 
-    public static final RegistryObject<SoundEvent> FIRE_STRIKE = register("fires_bloom_perma5");
+    public static final Supplier<SoundEvent> FIRE_STRIKE = register("fires_bloom_perma5");
 
-    private static RegistryObject<SoundEvent> register(String name) {
+    private static Supplier<SoundEvent> register(String name) {
         return SOUND_EVENTS.register(name,
                 () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, name)));
     }

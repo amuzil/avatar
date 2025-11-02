@@ -6,7 +6,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.extensions.IForgeBlockState;
 
 
 /**
@@ -14,12 +13,12 @@ import net.minecraftforge.common.extensions.IForgeBlockState;
  */
 public class BlockTrait extends SkillTrait {
 
-    private IForgeBlockState state;
+    private BlockState state;
     private BlockPos pos;
 
     // Note: If you want to know how long a usable BlockState has been selected, use another
     // TimedTrait.
-    public BlockTrait(String name, IForgeBlockState state, BlockPos pos) {
+    public BlockTrait(String name, BlockState state, BlockPos pos) {
         super(name);
         this.state = state;
         this.pos = pos;
@@ -55,10 +54,6 @@ public class BlockTrait extends SkillTrait {
 
     public BlockState getState() {
         return (BlockState) state;
-    }
-
-    public IForgeBlockState getForgeState() {
-        return this.state;
     }
 
     public BlockPos getPos() {

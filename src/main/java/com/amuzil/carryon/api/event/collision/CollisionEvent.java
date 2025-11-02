@@ -1,7 +1,7 @@
 package com.amuzil.carryon.api.event.collision;
 
 import com.amuzil.carryon.physics.bullet.collision.body.MinecraftRigidBody;
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.bus.api.Event;
 
 
 public class CollisionEvent extends Event {

@@ -29,6 +29,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -127,7 +128,7 @@ public class Avatar {
         Registries.SKILLS.get().getValues().forEach(c -> SkillTree.RegisterSkill(((BendingSkill)c).element(), /* toRegister.targetType(), */c.startPaths(), c));
     }
 
-    @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(modid = MOD_ID)
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {

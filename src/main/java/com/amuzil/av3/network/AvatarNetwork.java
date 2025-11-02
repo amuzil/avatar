@@ -12,11 +12,10 @@ import com.amuzil.av3.network.packets.sync.SyncMovementPacket;
 import com.amuzil.av3.network.packets.sync.SyncSelectionPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.registration.NetworkRegistry;
 
 
 public class AvatarNetwork {

@@ -20,6 +20,7 @@ import com.amuzil.av3.network.packets.sync.SyncBenderPacket;
 import com.amuzil.av3.network.packets.sync.SyncMovementPacket;
 import com.amuzil.av3.network.packets.sync.SyncSelectionPacket;
 import com.amuzil.av3.utils.bending.OriginalBlocks;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -28,8 +29,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.EventPriority;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.neoforge.common.NeoForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
@@ -230,12 +231,12 @@ public class Bender implements IBender {
 
     @Override
     public void register() {
-        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, formListener);
+        NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, formListener);
     }
 
     @Override
     public void unregister() {
-        MinecraftForge.EVENT_BUS.unregister(formListener);
+        NeoForge.EVENT_BUS.unregister(formListener);
     }
 
     @Override
@@ -393,7 +394,7 @@ public class Bender implements IBender {
     public void syncToClient() {
         if (!entity.level().isClientSide())
             if (entity instanceof ServerPlayer player)
-                AvatarNetwork.sendToClient(new SyncBenderPacket(this.serializeNBT(), player.getUUID()), player);
+                AvatarNetwork.sendToClient(new SyncBenderPacket(this.serializeNBT(null), player.getUUID()), player);
     }
 
     // TODO - Create generic method to check & return if data in NBT tag exists & warn if it doesn't
@@ -412,7 +413,7 @@ public class Bender implements IBender {
     }
 
     public void printNBT() {
-        CompoundTag tag = this.serializeNBT();
+        CompoundTag tag = this.serializeNBT(null);
         StringBuilder sb = new StringBuilder();
         sb.append(String.format(
                 """
@@ -425,11 +426,11 @@ public class Bender implements IBender {
     }
 
     @Override
-    public CompoundTag serializeNBT() {
+    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
         tag.putInt("DataVersion", DATA_VERSION);
         tag.putString("Active Element", Objects.requireNonNullElse(activeElement, Elements.FIRE).getId().toString());
-        skillCategoryData.forEach(catData -> tag.put(catData.name(), catData.serializeNBT()));
+        skillCategoryData.forEach(catData -> tag.put(catData.name(), catData.serializeNBT(provider)));
         skillDataMap.values().forEach(skillData -> tag.put(skillData.name(), skillData.serializeNBT()));
         return tag;
     }
@@ -441,7 +442,7 @@ public class Bender implements IBender {
      After that, modify the previous case to handle the migration by loading up the old data to fit into the new.
      */
     @Override
-    public void deserializeNBT(CompoundTag tag) {
+    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
 //        System.out.println("[Bender] Deserializing NBT: " + tag);
         int version = tag.contains("DataVersion") ? tag.getInt("DataVersion") : 0; // Default to version 0 if not present
         switch (version) {
@@ -450,7 +451,7 @@ public class Bender implements IBender {
                 this.activeElement = Elements.get(ResourceLocation.parse(tag.getString("Active Element")));
                 for (SkillCategoryData catData : skillCategoryData) {
                     if (tag.contains(catData.name(), Tag.TAG_COMPOUND)) {
-                        catData.deserializeNBT(tag.getCompound(catData.name()));
+                        catData.deserializeNBT(provider, tag.getCompound(catData.name()));
                     } else {
                         LOGGER.warn("Missing skill category data for: {}", catData.name());
                     }
@@ -473,8 +474,7 @@ public class Bender implements IBender {
     public static @Nullable IBender getBender(LivingEntity entity) {
         if (entity == null)
             return null;
-        return entity.getCapability(AvatarCapabilities.BENDER)
-                .orElse(null);
+        return entity.getCapability(AvatarCapabilities.BENDER);
     }
 
 }

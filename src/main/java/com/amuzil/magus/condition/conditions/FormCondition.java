@@ -2,8 +2,8 @@ package com.amuzil.magus.condition.conditions;
 
 import com.amuzil.magus.condition.Condition;
 import com.amuzil.av3.events.FormActivatedEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.EventPriority;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.function.Consumer;
 
@@ -27,13 +27,13 @@ public class FormCondition extends Condition {
     @Override
     public void registerRunnables() {
         super.registerRunnables();
-        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, listener);
+        NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, listener);
     }
 
     @Override
     public void unregister() {
         super.unregister();
-        MinecraftForge.EVENT_BUS.unregister(listener);
+        NeoForge.EVENT_BUS.unregister(listener);
     }
 
     @Override

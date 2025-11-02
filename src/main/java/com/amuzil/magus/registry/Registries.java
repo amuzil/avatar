@@ -8,9 +8,12 @@ import com.amuzil.magus.skill.traits.DataTrait;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.*;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NewRegistryEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
+import net.neoforged.neoforge.registries.RegistryBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,9 +25,9 @@ import java.util.function.Supplier;
 /**
  * All custom registries go here.
  */
-@Mod.EventBusSubscriber(modid = Avatar.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Avatar.MOD_ID)
 public class Registries {
-    public static Supplier<IForgeRegistry<Form>> FORMS;
+    public static Registry<Form> FORMS;
 
     public static DeferredRegister<Skill> SKILL_REGISTER = DeferredRegister.create(ResourceLocation.parse("skills"), Avatar.MOD_ID);
     public static Supplier<IForgeRegistry<Skill>> SKILLS = SKILL_REGISTER.makeRegistry(RegistryBuilder::new);
@@ -35,7 +38,7 @@ public class Registries {
 
     private static final HashMap<String, Form> forms = new HashMap<>();
     private static final Map<String, Supplier<? extends Skill>> skillSuppliers = new HashMap<>();
-    private static final HashMap<String, RegistryObject<Skill>> skills = new HashMap<>();
+    private static final HashMap<String, Supplier<Skill>> skills = new HashMap<>();
     private static final List<SkillCategory> categories = new ArrayList<>();
     private static final List<DataTrait> traits = new ArrayList<>();
 
@@ -77,9 +80,9 @@ public class Registries {
         forms.put(form.name(), form);
     }
 
-    public static RegistryObject<? extends Skill> registerSkill(Supplier<? extends Skill> skillSup) {
+    public static Supplier<? extends Skill> registerSkill(Supplier<? extends Skill> skillSup) {
         String name = skillSup.get().name();
-        RegistryObject<Skill> skillRegistryObject = SKILL_REGISTER.register(name, skillSup);
+        Supplier<Skill> skillRegistryObject = SKILL_REGISTER.register(name, skillSup);
         String namespace = ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, name).toString();
         skills.put(namespace, skillRegistryObject);
         skillSuppliers.put(namespace, skillSup);
@@ -98,7 +101,7 @@ public class Registries {
     public static void onRegistryRegister(NewRegistryEvent event) {
         // Forms
         RegistryBuilder<Form> formRegistryBuilder = new RegistryBuilder<>();
-        formRegistryBuilder.setName(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "forms"));
+        formRegistryBuilder.defaultKey(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "forms"));
         FORMS = event.create(formRegistryBuilder);
     }
 
@@ -106,7 +109,7 @@ public class Registries {
     public static void gameRegistry(RegisterEvent event) {
         // Forms
         if (event.getRegistryKey().equals(FORMS.get().getRegistryKey())) {
-            IForgeRegistry<Form> registry = FORMS.get();
+            Registry<Form> registry = FORMS.get();
             ResourceKey<Registry<Form>> resKey = registry.getRegistryKey();
             event.register(resKey, helper -> {
                 for (Form form: forms.values())

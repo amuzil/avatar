@@ -1,9 +1,9 @@
 package com.amuzil.magus.condition.conditions;
 
 import com.amuzil.magus.condition.Condition;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.EventPriority;
+import net.neoforged.bus.api.Event;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -34,13 +34,13 @@ public class EventCondition<E extends Event> extends Condition {
     public void registerRunnables() {
         super.registerRunnables();
         //This is required because a class type check isn't built-in, for some reason.
-        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, eventType, listener);
+        NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, eventType, listener);
     }
 
     @Override
     public void unregister() {
         super.unregister();
-        MinecraftForge.EVENT_BUS.unregister(listener);
+        NeoForge.EVENT_BUS.unregister(listener);
     }
 
     @Override

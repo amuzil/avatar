@@ -4,18 +4,14 @@ import com.amuzil.av3.Avatar;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.CapabilityToken;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 
-@Mod.EventBusSubscriber(modid = Avatar.MOD_ID)
+@EventBusSubscriber(modid = Avatar.MOD_ID)
 public class AvatarCapabilities {
     public static final Capability<IBender> BENDER = CapabilityManager.get(new CapabilityToken<>() {});
 

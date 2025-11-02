@@ -2,8 +2,7 @@ package com.amuzil.carryon.api.event.space;
 
 import com.amuzil.carryon.physics.bullet.collision.body.ElementRigidBody;
 import com.amuzil.carryon.physics.bullet.collision.space.MinecraftSpace;
-import net.minecraftforge.eventbus.api.Event;
-
+import net.neoforged.bus.api.Event;
 
 public abstract class PhysicsSpaceEvent extends Event {
     private final MinecraftSpace space;

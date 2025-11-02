@@ -3,6 +3,7 @@ package com.amuzil.magus.skill.data;
 import com.amuzil.magus.registry.Registries;
 import com.amuzil.magus.skill.SkillCategory;
 import com.amuzil.magus.skill.traits.DataTrait;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
@@ -59,7 +60,7 @@ public class SkillCategoryData implements DataTrait {
     }
 
     @Override
-    public CompoundTag serializeNBT() {
+    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
         tag.putString("Skill Category", id.toString());
         tag.putBoolean("Can Use", canUse);
@@ -67,7 +68,7 @@ public class SkillCategoryData implements DataTrait {
     }
 
     @Override
-    public void deserializeNBT(CompoundTag tag) {
+    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
         id = ResourceLocation.tryParse(tag.getString("Skill Category"));
         canUse = tag.getBoolean("Can Use");
     }

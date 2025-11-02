@@ -8,7 +8,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class SoundModule implements IEntityModule {
 

@@ -2,10 +2,7 @@ package com.amuzil.carryon.physics.packet;
 
 import com.google.common.collect.Maps;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.neoforged.fml.LogicalSide;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

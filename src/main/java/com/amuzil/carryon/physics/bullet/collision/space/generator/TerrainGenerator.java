@@ -5,7 +5,7 @@ import com.amuzil.carryon.physics.bullet.collision.body.ElementRigidBody;
 import com.amuzil.carryon.physics.bullet.collision.body.TerrainRigidBody;
 import com.amuzil.carryon.physics.bullet.collision.space.MinecraftSpace;
 import net.minecraft.core.BlockPos;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 
 import java.util.HashSet;
 

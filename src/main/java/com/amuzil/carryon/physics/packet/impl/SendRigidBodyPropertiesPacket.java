@@ -5,7 +5,6 @@ import com.amuzil.carryon.physics.bullet.collision.body.EntityRigidBody;
 import com.amuzil.carryon.physics.packet.Packet;
 import com.amuzil.carryon.physics.packet.RayonClientPacketHandler;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent.Context;
 
 import javax.annotation.Nullable;
 import java.util.UUID;

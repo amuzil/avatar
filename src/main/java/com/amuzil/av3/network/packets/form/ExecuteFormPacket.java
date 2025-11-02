@@ -7,8 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -29,7 +28,7 @@ public class ExecuteFormPacket implements AvatarPacket {
         ActiveForm activeForm = new ActiveForm(tag);
 //        Avatar.LOGGER.info("Form Executed: {}", activeForm.form().name());
 
-        MinecraftForge.EVENT_BUS.post(new FormActivatedEvent(activeForm, player, false));
+        NeoForge.EVENT_BUS.post(new FormActivatedEvent(activeForm, player, false));
 
         // Extra case for step
         if (activeForm.form().equals(STEP)) {

@@ -15,12 +15,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 @SuppressWarnings({"removal", "deprecation"})
 public final class ClientEventHandler {

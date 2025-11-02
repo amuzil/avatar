@@ -1,5 +1,6 @@
 package com.amuzil.av3.utils.commands;
 
+import com.amuzil.av3.capability.IBender;
 import com.amuzil.magus.form.ActiveForm;
 import com.amuzil.magus.form.Form;
 import com.amuzil.magus.skill.Skill;
@@ -23,11 +24,12 @@ class CommandUtils {
         if (player == null)
             player = ctx.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = player;
-        player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
+        IBender bender = player.getCapability(AvatarCapabilities.BENDER);
+        if(bender  != null) {
             bender.setElement(element);
             bender.syncToClient();
             targetPlayer.sendSystemMessage(Component.literal("Active Bending set to " + element.name()));
-        });
+        }
         return 1;
     }
 
@@ -44,7 +46,9 @@ class CommandUtils {
     static int triggerSkill(CommandContext<CommandSourceStack> ctx, Skill skill, Skill.SkillState state, ServerPlayer player) throws CommandSyntaxException {
         if (player == null)
             player = ctx.getSource().getPlayerOrException();
-        player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
+        IBender bender = player.getCapability(AvatarCapabilities.BENDER);
+        if(bender  != null)
+        {
             Skill newSkill = skill.create((Bender) bender);
             switch (state) {
                 case START -> newSkill.start((Bender) bender);
@@ -55,7 +59,7 @@ class CommandUtils {
                             activeSkill.stop((Bender) bender);
                 }
             }
-        });
+        }
         return 1;
     }
 
@@ -63,7 +67,9 @@ class CommandUtils {
         if (player == null)
             player = ctx.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = player;
-        player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
+        IBender bender = player.getCapability(AvatarCapabilities.BENDER);
+        if(bender  != null)
+        {
             String action;
             if (skill != null) {
                 bender.resetSkillData(skill);
@@ -74,7 +80,7 @@ class CommandUtils {
             }
             bender.syncToClient();
             targetPlayer.sendSystemMessage(Component.literal(action));
-        });
+        }
         return 1;
     }
 
@@ -82,14 +88,14 @@ class CommandUtils {
         if (player == null)
             player = ctx.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = player;
-        player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
-            bender.setCanUseElement(canUse, element);
-            bender.syncToClient();
-            String action = canUse
-                    ? String.format("Granted the power of %s. May the element of %s protect you.", element.name(), element.nickName())
-                    : String.format("Taken %s away.", element.name());
-            targetPlayer.sendSystemMessage(Component.literal(action));
-        });
+        IBender bender = player.getCapability(AvatarCapabilities.BENDER);
+        if(bender == null) return 1;
+        bender.setCanUseElement(canUse, element);
+        bender.syncToClient();
+        String action = canUse
+                ? String.format("Granted the power of %s. May the element of %s protect you.", element.name(), element.nickName())
+                : String.format("Taken %s away.", element.name());
+        targetPlayer.sendSystemMessage(Component.literal(action));
         return 1;
     }
 
@@ -97,14 +103,14 @@ class CommandUtils {
         if (player == null)
             player = ctx.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = player;
-        player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
-            bender.setCanUseSkill(canUse, skill.name());
-            bender.syncToClient();
-            String action = canUse
-                    ? String.format("Learned %s skill", skill.name())
-                    : String.format("Forgot %s skill", skill.name());
-            targetPlayer.sendSystemMessage(Component.literal(action));
-        });
+        IBender bender = player.getCapability(AvatarCapabilities.BENDER);
+        if(bender == null) return 1;
+        bender.setCanUseSkill(canUse, skill.name());
+        bender.syncToClient();
+        String action = canUse
+                ? String.format("Learned %s skill", skill.name())
+                : String.format("Forgot %s skill", skill.name());
+        targetPlayer.sendSystemMessage(Component.literal(action));
         return 1;
     }
 
@@ -112,11 +118,12 @@ class CommandUtils {
         if (player == null)
             player = ctx.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = player;
-        player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
-            bender.setCanUseAllSkills(element);
-            bender.syncToClient();
-            targetPlayer.sendSystemMessage(Component.literal("Mastered the element of " + element.nickName() + "."));
-        });
+        IBender bender = player.getCapability(AvatarCapabilities.BENDER);
+        if(bender == null) return 1;
+        bender.setCanUseAllSkills(element);
+        bender.syncToClient();
+        targetPlayer.sendSystemMessage(Component.literal("Mastered the element of " + element.nickName() + "."));
+
         return 1;
     }
 
@@ -124,16 +131,16 @@ class CommandUtils {
         if (player == null)
             player = ctx.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = player;
-        player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
-            bender.setCanUseSkill(canUse, skill.name());
-            Bender ben = (Bender) bender;
-            ben.getSkillData(skill.name()).getSkillTraits().forEach(trait -> {
-                if (trait.name().equals(tag.getString("name"))) {
-                    trait.deserializeNBT(tag);
-                    bender.syncToClient();
-                    targetPlayer.sendSystemMessage(Component.literal("Updated " + trait.name() + " SkillTrait for " + skill.name()));
-                }
-            });
+        IBender bender = player.getCapability(AvatarCapabilities.BENDER);
+        if(bender == null) return 1;
+        bender.setCanUseSkill(canUse, skill.name());
+        Bender ben = (Bender) bender;
+        ben.getSkillData(skill.name()).getSkillTraits().forEach(trait -> {
+            if (trait.name().equals(tag.getString("name"))) {
+                trait.deserializeNBT(tag);
+                bender.syncToClient();
+                targetPlayer.sendSystemMessage(Component.literal("Updated " + trait.name() + " SkillTrait for " + skill.name()));
+            }
         });
         return 1;
     }

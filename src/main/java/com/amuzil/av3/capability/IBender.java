@@ -7,12 +7,12 @@ import com.amuzil.magus.skill.data.SkillData;
 import com.amuzil.av3.bending.BendingSelection;
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.network.packets.sync.SyncBenderPacket;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.capabilities.AutoRegisterCapability;
-import net.minecraftforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 
 import java.util.List;
 
@@ -87,8 +87,8 @@ public interface IBender extends INBTSerializable<CompoundTag> {
     void syncToClient();
 
     // Save data
-    CompoundTag serializeNBT();
+    CompoundTag serializeNBT(HolderLookup.Provider provider);
 
     // Load data
-    void deserializeNBT(CompoundTag tag);
+    void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag);
 }

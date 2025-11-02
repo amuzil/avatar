@@ -23,6 +23,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -66,6 +67,19 @@ public abstract class AvatarEntity extends Entity {
 
     public AvatarEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
+
+        SynchedEntityData.Builder synchedentitydata$builder = new SynchedEntityData.Builder(this);
+        synchedentitydata$builder.define(DATA_SHARED_FLAGS_ID, (byte)0);
+        synchedentitydata$builder.define(OWNER_ID, Optional.empty());
+        synchedentitydata$builder.define(ELEMENT, Elements.FIRE.getId().toString());
+        synchedentitydata$builder.define(FX, "");
+        synchedentitydata$builder.define(ONE_SHOT_FX, true);
+        synchedentitydata$builder.define(COLLIDABLE, false);
+        synchedentitydata$builder.define(DAMAGEABLE, false);
+        synchedentitydata$builder.define(PHYSICS, false);
+        synchedentitydata$builder.define(TIER, 0);
+        synchedentitydata$builder.define(MAX_LIFETIME, 100);
+        this.defineSynchedData(synchedentitydata$builder);
     }
 
     /** Call this after adding it to a world.
@@ -267,19 +281,6 @@ public abstract class AvatarEntity extends Entity {
         return this.entityData.get(PHYSICS);
     }
 
-    @Override
-    protected void defineSynchedData() {
-        this.entityData.define(OWNER_ID, Optional.empty());
-        this.entityData.define(ELEMENT, Elements.FIREBENDING.getId().toString());
-        this.entityData.define(FX, "");
-        this.entityData.define(ONE_SHOT_FX, true);
-        this.entityData.define(COLLIDABLE, false);
-        this.entityData.define(DAMAGEABLE, false);
-        this.entityData.define(PHYSICS, false);
-        this.entityData.define(TIER, 0);
-        this.entityData.define(MAX_LIFETIME, 100);
-    }
-
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      *
@@ -363,7 +364,7 @@ public abstract class AvatarEntity extends Entity {
         for (DataTrait trait : traits) {
             CompoundTag tTag = new CompoundTag();
             // TODO: check whether ensuring ID is included is necessary
-            tTag.put("Trait Data", trait.serializeNBT());
+            tTag.put("Trait Data", trait.serializeNBT(null));
             list.add(tTag);
         }
         parent.put("DataTraits", list);
@@ -375,7 +376,7 @@ public abstract class AvatarEntity extends Entity {
         int limit = Math.min(list.size(), traits.size());
         for (int i = 0; i < limit; i++) {
             CompoundTag tTag = list.getCompound(i);
-            traits.get(i).deserializeNBT(tTag.getCompound("Trait Data"));
+            traits.get(i).deserializeNBT(null, tTag.getCompound("Trait Data"));
         }
     }
 
@@ -427,7 +428,7 @@ public abstract class AvatarEntity extends Entity {
         if (entity instanceof Player) {
             return entity.mayInteract(pLevel, pPos);
         } else {
-            return entity == null || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(pLevel, entity);
+            return entity == null || ForgeEventFactory.getMobGriefingEvent(pLevel, entity);
         }
     }
 

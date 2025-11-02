@@ -12,8 +12,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.common.NeoForge;
 
 @Deprecated
 public class FireProjectile extends AvatarProjectile {
@@ -22,7 +22,7 @@ public class FireProjectile extends AvatarProjectile {
 
     public FireProjectile(EntityType<AvatarProjectile> type, Level level) {
         super(type, level);
-        MinecraftForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.register(this);
     }
 
 //    public FireProjectile(double x, double y, double z, Level level) {
