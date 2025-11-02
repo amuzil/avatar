@@ -121,6 +121,7 @@ public class Avatar {
         LOGGER.info("Setting up Avatar Mod commands...");
         AvatarCommands.register(event.getServer().getCommands().getDispatcher());
 
+        // Initialize Skill Tree
         SkillTree.clear();
         Registries.SKILLS.get().getValues().forEach(c -> SkillTree.RegisterSkill(((BendingSkill)c).element(), /* toRegister.targetType(), */c.startPaths(), c));
     }
