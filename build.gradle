@@ -75,7 +75,7 @@ minecraft {
             // Recommended logging level for the console
             // You can set various levels here.
             // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
-            property 'forge.logging.console.level', 'debug'
+            property 'forge.logging.console.level', 'info'
 
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             property 'forge.enabledGameTestNamespaces', mod_id
@@ -90,12 +90,16 @@ minecraft {
         client {
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             property 'forge.enabledGameTestNamespaces', mod_id
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             // Set custom username
             args "--username", "Dev###", "--mixin.config=av3.mixins.json"
         }
 
         server {
             property 'forge.enabledGameTestNamespaces', mod_id
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             args '--nogui'
         }
 
@@ -120,12 +124,15 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 mixin {
-    add sourceSets.main, "av3.mixins.json"
+    add sourceSets.main, "av3.refmap.json"
+    config "av3.mixins.json"
 }
 
 repositories {
+    mavenCentral()
     // Put repositories for dependencies here
     // ForgeGradle automatically adds the Forge maven and Maven Central for you
+    maven { url = "https://repo.spongepowered.org/maven" }
     maven { url = "https://maven.firstdarkdev.xyz/snapshots" } // LDLib, Photon
     // If you have mod jar dependencies in ./libs, you can declare them as a repository like so.
     // See https://docs.gradle.org/current/userguide/declaring_repositories.html#sub:flat_dir_resolver
@@ -139,6 +146,16 @@ repositories {
             includeGroupByRegex("software\\.bernie.*")
             includeGroup("com.eliotlash.mclib")
         }
+    }
+
+    maven {
+        name = "KosmX's maven"
+        url = 'https://maven.kosmx.dev/'
+    }
+
+    maven {
+        name "nonamecrackers2Maven"
+        url "https://maven.nonamecrackers2.dev/releases"
     }
 }
 
@@ -154,8 +171,17 @@ dependencies {
     implementation fg.deobf("com.lowdragmc.ldlib:ldlib-forge-1.20.1:1.0.21.a") { transitive = false }
     testImplementation(platform('org.junit:junit-bom:5.11.2'))
     testImplementation('org.junit.jupiter:junit-jupiter')
-    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${minecraft_version}:${geckolib_version}")
-    implementation("com.eliotlash.mclib:mclib:20")
+//    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${minecraft_version}:${geckolib_version}")
+//    implementation("com.eliotlash.mclib:mclib:20")
+    implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${player_anim_version}")
+//    implementation fg.deobf(files('libs/bendy-lib-4.1.0-forge.jar'))
+
+    jarJar("com.github.stephengold:Libbulletjme:${libbulletjme_version}") {
+        jarJar.ranged(it, "${libbulletjme_version_range}")
+    }
+    minecraftLibrary "com.github.stephengold:Libbulletjme:${libbulletjme_version}"
+
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
@@ -197,11 +223,11 @@ tasks.named('jar', Jar).configure {
     manifest {
         attributes([
                 'Specification-Title'     : mod_id,
-                'Specification-Vendor'    : "Omega Source",
+                'Specification-Vendor'    : mod_authors,
                 'Specification-Version'   : '1', // We are version 1 of ourselves
                 'Implementation-Title'    : project.name,
                 'Implementation-Version'  : project.jar.archiveVersion,
-                'Implementation-Vendor'   : "omegasource",
+                'Implementation-Vendor'   : mod_authors,
                 'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                 'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
                 'MixinConfigs': 'av3.mixins.json',

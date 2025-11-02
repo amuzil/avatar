@@ -1,0 +1,20 @@
+{
+  "air_gust": {
+    "sounds": [
+      {
+        "attenuation_distance": 4,
+        "name": "av3:air_gust",
+        "stream": false
+      }
+    ]
+  },
+  "fires_bloom_perma5": {
+    "sounds": [
+      {
+        "attenuation_distance": 4,
+        "name": "av3:fires_bloom_perma5",
+        "stream": false
+      }
+    ]
+  }
+}

@@ -1,0 +1,43 @@
+package com.amuzil.magus.skill.traits.skilltraits;
+
+import com.amuzil.magus.skill.traits.SkillTrait;
+import net.minecraft.nbt.CompoundTag;
+
+
+public class RangeTrait extends SkillTrait {
+
+    private double range;
+
+    public RangeTrait(String name, double range) {
+        super(name);
+        this.range = range;
+    }
+
+    @Override
+    public CompoundTag serializeNBT() {
+        CompoundTag tag = super.serializeNBT();
+        tag.putDouble("value", range);
+        return tag;
+    }
+
+    @Override
+    public void deserializeNBT(CompoundTag nbt) {
+        super.deserializeNBT(nbt);
+        range = nbt.getDouble("value");
+    }
+
+    public void setRange(double range) {
+        this.range = range;
+        markDirty();
+    }
+
+    public double getRange() {
+        return range;
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+        setRange(0);
+    }
+}
