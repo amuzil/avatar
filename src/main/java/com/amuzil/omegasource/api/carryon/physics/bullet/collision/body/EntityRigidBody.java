@@ -1,9 +1,9 @@
 package com.amuzil.omegasource.api.carryon.physics.bullet.collision.body;
 
-import com.jme3.math.Vector3f;
 import com.amuzil.omegasource.api.carryon.api.EntityPhysicsElement;
 import com.amuzil.omegasource.api.carryon.physics.bullet.collision.body.shape.MinecraftShape;
 import com.amuzil.omegasource.api.carryon.physics.bullet.collision.space.MinecraftSpace;
+import com.jme3.math.Vector3f;
 import net.minecraft.world.entity.player.Player;
 
 public class EntityRigidBody extends ElementRigidBody {

@@ -1,8 +1,8 @@
 package com.amuzil.omegasource.api.carryon.physics.bullet.natives;
 
+import com.amuzil.omegasource.api.carryon.physics.CarryOn;
 import com.jme3.system.JmeSystem;
 import com.jme3.system.NativeLibraryLoader;
-import com.amuzil.omegasource.api.carryon.physics.CarryOn;
 import net.minecraftforge.fml.loading.FMLLoader;
 import org.apache.commons.io.FileUtils;
 

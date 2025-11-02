@@ -1,10 +1,10 @@
 package com.amuzil.omegasource.api.carryon.physics.bullet.collision.body;
 
+import com.amuzil.omegasource.api.carryon.physics.bullet.collision.body.shape.MinecraftShape;
+import com.amuzil.omegasource.api.carryon.physics.bullet.collision.space.MinecraftSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Vector3f;
-import com.amuzil.omegasource.api.carryon.physics.bullet.collision.body.shape.MinecraftShape;
-import com.amuzil.omegasource.api.carryon.physics.bullet.collision.space.MinecraftSpace;
 
 public abstract class MinecraftRigidBody extends PhysicsRigidBody {
     protected final MinecraftSpace space;

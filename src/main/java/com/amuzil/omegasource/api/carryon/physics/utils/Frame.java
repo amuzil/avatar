@@ -1,9 +1,9 @@
 package com.amuzil.omegasource.api.carryon.physics.utils;
 
-import com.jme3.math.Quaternion;
-import com.jme3.math.Vector3f;
 import com.amuzil.omegasource.api.carryon.api.PhysicsElement;
 import com.amuzil.omegasource.api.carryon.physics.bullet.math.Convert;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Vector3f;
 
 /**
  * A {@link Frame} can be used for interpolation on the render thread.
