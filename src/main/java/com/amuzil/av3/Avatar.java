@@ -27,9 +27,15 @@ import com.amuzil.av3.utils.sound.AvatarSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.event.lifecycle.InterModEnqueueEvent;
+import net.neoforged.fml.event.lifecycle.InterModProcessEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -91,7 +97,7 @@ public class Avatar {
         ModuleRegistry.register(FireEffectModule::new);
 
         // Rayon Rigid Body Physics
-        IEventBus forgeBus = MinecraftForge.EVENT_BUS;
+        IEventBus forgeBus = NeoForge.EVENT_BUS;
         forgeBus.register(ServerEventHandler.class);
         forgeBus.register(PressureGenerator.class);
         forgeBus.register(TerrainGenerator.class);
@@ -102,7 +108,7 @@ public class Avatar {
         inputModule = new InputModule();
 
         // Rayon Rigid Body Physics
-        IEventBus forgeBus = MinecraftForge.EVENT_BUS;
+        IEventBus forgeBus = NeoForge.EVENT_BUS;
         forgeBus.register(ClientEventHandler.class);
         RayonPacketHandlers.registerPackets();
     }
