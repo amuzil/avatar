@@ -15,9 +15,7 @@ import org.joml.Vector3f;
 
 import java.util.List;
 
-/**
- * From Lazurite-Toolbox {@link https://github.com/LazuriteMC/Lazurite-Toolbox}
- */
+
 public class Utilities {
     /**
      * Lerp, but for spherical stuff (hence Slerp).
@@ -133,5 +131,19 @@ public class Utilities {
         {
             throw new IllegalArgumentException("Can only fetch players tracking entity on the server");
         }
+    }
+
+    public static Vector3f vec3ToVector3f(Vec3 vec) {
+        return new Vector3f((float)vec.x, (float)vec.y, (float)vec.z);
+    }
+
+    public static Vec3 vector3fToVec3(Vector3f vec) {
+        return new Vec3(vec);
+    }
+
+    public static Vec3 rotate(Vec3 vec, Quaternionf rotation) {
+        Vector3f vecF = vec3ToVector3f(vec);
+        vecF.rotate(rotation);
+        return vector3fToVec3(vecF);
     }
 }

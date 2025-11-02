@@ -6,7 +6,7 @@ import com.amuzil.av3.api.carryon.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.av3.api.carryon.physics.bullet.math.Convert;
 import com.amuzil.av3.api.carryon.physics.bullet.thread.util.Clock;
 import com.amuzil.av3.api.carryon.physics.utils.Frame;
-import com.amuzil.av3.utils.maths.VectorHelper;
+import com.amuzil.av3.api.carryon.physics.utils.VectorHelper;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;

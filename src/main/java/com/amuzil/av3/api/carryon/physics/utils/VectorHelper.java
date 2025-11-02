@@ -1,4 +1,4 @@
-package com.amuzil.av3.utils.maths;
+package com.amuzil.av3.api.carryon.physics.utils;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -101,19 +101,5 @@ public class VectorHelper {
             return values[ordinal];
         else
             return values[0];
-    }
-
-    public static Vector3f vec3ToVector3f(Vec3 vec) {
-        return new Vector3f((float)vec.x, (float)vec.y, (float)vec.z);
-    }
-
-    public static Vec3 vector3fToVec3(Vector3f vec) {
-        return new Vec3(vec);
-    }
-
-    public static Vec3 rotate(Vec3 vec, Quaternionf rotation) {
-        Vector3f vecF = vec3ToVector3f(vec);
-        vecF.rotate(rotation);
-        return vector3fToVec3(vecF);
     }
 }
