@@ -6,39 +6,38 @@ import com.amuzil.omegasource.api.rayon.impl.bullet.collision.space.MinecraftSpa
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.eventbus.api.Event;
 
-public class DebugRenderEvent extends Event
-{
-	private final MinecraftSpace space;
-	private final VertexConsumer vertexConsumer;
-	private final PoseStack stack;
-	private final Vec3 cameraPos;
-	private final float partialTick;
-	
-	public DebugRenderEvent(MinecraftSpace space, VertexConsumer vertexConsumer, PoseStack stack, Vec3 cameraPos, float partialTick) {
-		this.space = space;
-		this.vertexConsumer = vertexConsumer;
-		this.stack = stack;
-		this.cameraPos = cameraPos;
-		this.partialTick = partialTick;
-	}
+public class DebugRenderEvent extends Event {
+    private final MinecraftSpace space;
+    private final VertexConsumer vertexConsumer;
+    private final PoseStack stack;
+    private final Vec3 cameraPos;
+    private final float partialTick;
+    
+    public DebugRenderEvent(MinecraftSpace space, VertexConsumer vertexConsumer, PoseStack stack, Vec3 cameraPos, float partialTick) {
+        this.space = space;
+        this.vertexConsumer = vertexConsumer;
+        this.stack = stack;
+        this.cameraPos = cameraPos;
+        this.partialTick = partialTick;
+    }
 
-	public MinecraftSpace getSpace() {
-		return this.space;
-	}
+    public MinecraftSpace getSpace() {
+        return this.space;
+    }
 
-	public VertexConsumer getVertexConsumer() {
-		return this.vertexConsumer;
-	}
+    public VertexConsumer getVertexConsumer() {
+        return this.vertexConsumer;
+    }
 
-	public PoseStack getStack() {
-		return this.stack;
-	}
+    public PoseStack getStack() {
+        return this.stack;
+    }
 
-	public Vec3 getCameraPos() {
-		return this.cameraPos;
-	}
+    public Vec3 getCameraPos() {
+        return this.cameraPos;
+    }
 
-	public float getPartialTick() {
-		return this.partialTick;
-	}
+    public float getPartialTick() {
+        return this.partialTick;
+    }
 }

@@ -15,63 +15,62 @@ import org.jetbrains.annotations.Nullable;
  * 
  * @since 1.0.0
  */
-public interface PhysicsElement<T>
-{
+public interface PhysicsElement<T> {
 
-	/**
-	 * Gets {@link ElementRigidBody} object associated with this element. You should
-	 * create and store this in your {@link PhysicsElement} implementation in the
-	 * constructor. You're able to set up the attributes and settings of your rigid
-	 * body however you like that way.
-	 * 
-	 * @return the {@link ElementRigidBody}
-	 */
-	@Nullable
-	ElementRigidBody getRigidBody();
+    /**
+     * Gets {@link ElementRigidBody} object associated with this element. You should
+     * create and store this in your {@link PhysicsElement} implementation in the
+     * constructor. You're able to set up the attributes and settings of your rigid
+     * body however you like that way.
+     * 
+     * @return the {@link ElementRigidBody}
+     */
+    @Nullable
+    ElementRigidBody getRigidBody();
 
-	/**
-	 * For generating a new {@link MinecraftShape.Convex}.
-	 * 
-	 * @return the newly created {@link MinecraftShape.Convex}
-	 */
-	MinecraftShape.Convex createShape();
+    /**
+     * For generating a new {@link MinecraftShape.Convex}.
+     * 
+     * @return the newly created {@link MinecraftShape.Convex}
+     */
+    MinecraftShape.Convex createShape();
 
-	/**
-	 * Mainly used for lerping within your renderer.
-	 * 
-	 * @param store     any vector to store the output in
-	 * @param tickDelta the delta time between ticks
-	 * @return the lerped vector
-	 */
-	default Vector3f getPhysicsLocation(Vector3f store, float tickDelta) {
-		var rigidBody = this.getRigidBody();
-		if (rigidBody == null)
-			return new Vector3f();
-		return rigidBody.getFrame().getLocation(store, tickDelta);
-	}
+    /**
+     * Mainly used for lerping within your renderer.
+     * 
+     * @param store     any vector to store the output in
+     * @param tickDelta the delta time between ticks
+     * @return the lerped vector
+     */
+    default Vector3f getPhysicsLocation(Vector3f store, float tickDelta) {
+        var rigidBody = this.getRigidBody();
+        if (rigidBody == null)
+            return new Vector3f();
+        return rigidBody.getFrame().getLocation(store, tickDelta);
+    }
 
-	/**
-	 * Mainly used for lerping within your renderer.
-	 * 
-	 * @param store     the quaternion to store the output in
-	 * @param tickDelta the delta time between ticks
-	 * @return the "slerped" quaternion
-	 */
-	default Quaternion getPhysicsRotation(Quaternion store, float tickDelta) {
-		var rigidBody = this.getRigidBody();
-		if (rigidBody == null)
-			return new Quaternion();
-		return rigidBody.getFrame().getRotation(store, tickDelta);
-	}
+    /**
+     * Mainly used for lerping within your renderer.
+     * 
+     * @param store     the quaternion to store the output in
+     * @param tickDelta the delta time between ticks
+     * @return the "slerped" quaternion
+     */
+    default Quaternion getPhysicsRotation(Quaternion store, float tickDelta) {
+        var rigidBody = this.getRigidBody();
+        if (rigidBody == null)
+            return new Quaternion();
+        return rigidBody.getFrame().getRotation(store, tickDelta);
+    }
 
-	/**
-	 * Returns the object as its generic type. (e.g. {@link EntityPhysicsElement} ->
-	 * {@link Entity})
-	 * 
-	 * @return this as {@link T}
-	 */
-	@SuppressWarnings("unchecked")
-	default T cast() {
-		return (T) this;
-	}
+    /**
+     * Returns the object as its generic type. (e.g. {@link EntityPhysicsElement} ->
+     * {@link Entity})
+     * 
+     * @return this as {@link T}
+     */
+    @SuppressWarnings("unchecked")
+    default T cast() {
+        return (T) this;
+    }
 }

@@ -10,26 +10,25 @@ import org.jetbrains.annotations.Nullable;
  * 
  * @see PhysicsElement
  */
-public interface EntityPhysicsElement extends PhysicsElement<Entity>
-{
-	static boolean is(Entity entity) {
-		return entity instanceof EntityPhysicsElement element && element.getRigidBody() != null;
-	}
+public interface EntityPhysicsElement extends PhysicsElement<Entity> {
+    static boolean is(Entity entity) {
+        return entity instanceof EntityPhysicsElement element && element.getRigidBody() != null;
+    }
 
-	static EntityPhysicsElement get(Entity entity) {
-		return (EntityPhysicsElement) entity;
-	}
+    static EntityPhysicsElement get(Entity entity) {
+        return (EntityPhysicsElement) entity;
+    }
 
-	@Override
-	@Nullable
-	EntityRigidBody getRigidBody();
+    @Override
+    @Nullable
+    EntityRigidBody getRigidBody();
 
-	@Override
-	default MinecraftShape.Convex createShape() {
-		return MinecraftShape.convex(this.cast().getBoundingBox());
-	}
+    @Override
+    default MinecraftShape.Convex createShape() {
+        return MinecraftShape.convex(this.cast().getBoundingBox());
+    }
 
-	default boolean skipVanillaEntityCollisions() {
-		return false;
-	}
+    default boolean skipVanillaEntityCollisions() {
+        return false;
+    }
 }

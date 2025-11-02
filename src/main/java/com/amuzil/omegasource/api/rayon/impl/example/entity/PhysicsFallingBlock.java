@@ -13,14 +13,14 @@ import org.jetbrains.annotations.Nullable;
 
 
 public class PhysicsFallingBlock extends FallingBlockEntity implements EntityPhysicsElement {
-	private final EntityRigidBody rigidBody;
+    private final EntityRigidBody rigidBody;
     private static final EntityDataAccessor<Float> WIDTH = SynchedEntityData.defineId(PhysicsFallingBlock.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> HEIGHT = SynchedEntityData.defineId(PhysicsFallingBlock.class, EntityDataSerializers.FLOAT);
 
     public PhysicsFallingBlock(EntityType<? extends FallingBlockEntity> type, Level level) {
-		super(type, level);
-		this.rigidBody = new EntityRigidBody(this);
-	}
+        super(type, level);
+        this.rigidBody = new EntityRigidBody(this);
+    }
 
     public void setWidth(float width) {
         entityData.set(WIDTH, width);
@@ -42,10 +42,10 @@ public class PhysicsFallingBlock extends FallingBlockEntity implements EntityPhy
         return new AABB(xo - width() / 2, yo - height() / 2, zo - width() / 2, xo + width() / 2, yo + height() / 2, zo + width() / 2);
     }
 
-	@Override
-	public @Nullable EntityRigidBody getRigidBody() {
-		return this.rigidBody;
-	}
+    @Override
+    public @Nullable EntityRigidBody getRigidBody() {
+        return this.rigidBody;
+    }
 
     @Override
     protected AABB makeBoundingBox() {

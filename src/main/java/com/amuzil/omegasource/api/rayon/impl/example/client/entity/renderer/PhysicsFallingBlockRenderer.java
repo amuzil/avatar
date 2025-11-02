@@ -15,32 +15,31 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.ModelData;
 import org.joml.Quaternionf;
 
-public class PhysicsFallingBlockRenderer extends EntityRenderer<PhysicsFallingBlock>
-{
-	private final BlockRenderDispatcher blockRenderer;
-	
-	public PhysicsFallingBlockRenderer(EntityRendererProvider.Context context) {
-		super(context);
-		this.blockRenderer = context.getBlockRenderDispatcher();
-	}
-	
-	@Override
-	public void render(PhysicsFallingBlock block, float yRot, float partialTick, PoseStack stack, MultiBufferSource bufferSource, int packedLight) {
-		BlockState state = block.getBlockState();
-		if (state.getRenderShape() == RenderShape.MODEL)
-		{
-			stack.pushPose();
-			Quaternionf rot = Convert.toMinecraft(block.getPhysicsRotation(new Quaternion(), partialTick));
-			stack.mulPose(rot);
-			stack.translate(-0.5D, -0.5D, -0.5D);
-			this.blockRenderer.renderSingleBlock(state, stack, bufferSource, packedLight, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, null);
-			stack.popPose();
-			super.render(block, yRot, partialTick, stack, bufferSource, packedLight);
-		}
-	}
-	
-	@Override
-	public ResourceLocation getTextureLocation(PhysicsFallingBlock block) {
-		return null;
-	}
+public class PhysicsFallingBlockRenderer extends EntityRenderer<PhysicsFallingBlock> {
+    private final BlockRenderDispatcher blockRenderer;
+    
+    public PhysicsFallingBlockRenderer(EntityRendererProvider.Context context) {
+        super(context);
+        this.blockRenderer = context.getBlockRenderDispatcher();
+    }
+    
+    @Override
+    public void render(PhysicsFallingBlock block, float yRot, float partialTick, PoseStack stack, MultiBufferSource bufferSource, int packedLight) {
+        BlockState state = block.getBlockState();
+        if (state.getRenderShape() == RenderShape.MODEL)
+        {
+            stack.pushPose();
+            Quaternionf rot = Convert.toMinecraft(block.getPhysicsRotation(new Quaternion(), partialTick));
+            stack.mulPose(rot);
+            stack.translate(-0.5D, -0.5D, -0.5D);
+            this.blockRenderer.renderSingleBlock(state, stack, bufferSource, packedLight, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, null);
+            stack.popPose();
+            super.render(block, yRot, partialTick, stack, bufferSource, packedLight);
+        }
+    }
+    
+    @Override
+    public ResourceLocation getTextureLocation(PhysicsFallingBlock block) {
+        return null;
+    }
 }

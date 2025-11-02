@@ -6,27 +6,29 @@ import com.jme3.math.Vector3f;
 import com.amuzil.omegasource.api.rayon.impl.bullet.collision.body.shape.MinecraftShape;
 import com.amuzil.omegasource.api.rayon.impl.bullet.collision.space.MinecraftSpace;
 
-public abstract class MinecraftRigidBody extends PhysicsRigidBody
-{
-	protected final MinecraftSpace space;
+public abstract class MinecraftRigidBody extends PhysicsRigidBody {
+    protected final MinecraftSpace space;
 
-	public MinecraftRigidBody(MinecraftSpace space, MinecraftShape shape, float mass) {
-		super((CollisionShape) shape, mass);
-		this.space = space;
-        CollisionShape.setDefaultMargin(0.001f); // TODO: move this to get called once
+    static {
+        CollisionShape.setDefaultMargin(0.001f);
     }
 
-	public MinecraftRigidBody(MinecraftSpace space, MinecraftShape shape) {
-		this(space, shape, massForStatic);
-	}
+    public MinecraftRigidBody(MinecraftSpace space, MinecraftShape shape, float mass) {
+        super((CollisionShape) shape, mass);
+        this.space = space;
+    }
 
-	public MinecraftSpace getSpace() {
-		return this.space;
-	}
+    public MinecraftRigidBody(MinecraftSpace space, MinecraftShape shape) {
+        this(space, shape, massForStatic);
+    }
 
-	public MinecraftShape getMinecraftShape() {
-		return (MinecraftShape) super.getCollisionShape();
-	}
+    public MinecraftSpace getSpace() {
+        return this.space;
+    }
 
-	public abstract Vector3f getOutlineColor();
+    public MinecraftShape getMinecraftShape() {
+        return (MinecraftShape) super.getCollisionShape();
+    }
+
+    public abstract Vector3f getOutlineColor();
 }

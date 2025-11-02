@@ -44,222 +44,221 @@ import java.util.concurrent.ConcurrentHashMap;
  * @see PhysicsSpaceEvents
  */
 @SuppressWarnings("deprecation")
-public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionListener
-{
-	private final CompletableFuture<?>[] futures = new CompletableFuture[3];
-	private final Map<BlockPos, TerrainRigidBody> terrainMap;
-	private final PhysicsThread thread;
-	private final Level level;
-	private final ChunkCache chunkCache;
+public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionListener {
+    private final CompletableFuture<?>[] futures = new CompletableFuture[3];
+    private final Map<BlockPos, TerrainRigidBody> terrainMap;
+    private final PhysicsThread thread;
+    private final Level level;
+    private final ChunkCache chunkCache;
 
-	private volatile boolean stepping;
-	private final Set<SectionPos> previousBlockUpdates;
+    private volatile boolean stepping;
+    private final Set<SectionPos> previousBlockUpdates;
 
-	/**
-	 * Allows users to retrieve the {@link MinecraftSpace} associated with any given
-	 * {@link Level} object (client or server).
-	 * 
-	 * @param level the level to get the physics space from
-	 * @return the {@link MinecraftSpace}
-	 */
-	public static MinecraftSpace get(Level level) {
-		return ((SpaceStorage) level).getSpace();
-	}
+    /**
+     * Allows users to retrieve the {@link MinecraftSpace} associated with any given
+     * {@link Level} object (client or server).
+     * 
+     * @param level the level to get the physics space from
+     * @return the {@link MinecraftSpace}
+     */
+    public static MinecraftSpace get(Level level) {
+        return ((SpaceStorage) level).getSpace();
+    }
 
-	public static Optional<MinecraftSpace> getOptional(Level level) {
-		return Optional.ofNullable(get(level));
-	}
+    public static Optional<MinecraftSpace> getOptional(Level level) {
+        return Optional.ofNullable(get(level));
+    }
 
-	public MinecraftSpace(PhysicsThread thread, Level level) {
-		super(BroadphaseType.DBVT);
-		this.thread = thread;
-		this.level = level;
-		this.previousBlockUpdates = new HashSet<>();
-		this.chunkCache = ChunkCache.create(this);
-		this.terrainMap = new ConcurrentHashMap<>();
-		this.setGravity(new Vector3f(0, -9.807f, 0));
-		this.addCollisionListener(this);
-		this.setAccuracy(1f / 60f);
-	}
+    public MinecraftSpace(PhysicsThread thread, Level level) {
+        super(BroadphaseType.DBVT);
+        this.thread = thread;
+        this.level = level;
+        this.previousBlockUpdates = new HashSet<>();
+        this.chunkCache = ChunkCache.create(this);
+        this.terrainMap = new ConcurrentHashMap<>();
+        this.setGravity(new Vector3f(0, -9.807f, 0));
+        this.addCollisionListener(this);
+        this.setAccuracy(1f / 60f);
+    }
 
-	/**
-	 * This method performs the following steps:
-	 * <ul>
-	 * <li>Fires world step events in {@link PhysicsSpaceEvents}.</li>
-	 * <li>Steps {@link ElementRigidBody}s.</li>
-	 * <li>Steps the simulation asynchronously.</li>
-	 * <li>Triggers collision events.</li>
-	 * </ul>
-	 *
-	 * Additionally, none of the above steps execute when either the world is empty
-	 * (no {@link PhysicsRigidBody}s) or when the game is paused.
-	 *
-	 * @see TerrainGenerator
-	 * @see PhysicsSpaceEvents
-	 */
-	public void step() {
-		MinecraftSpace.get(this.level).getRigidBodiesByClass(ElementRigidBody.class).forEach(ElementRigidBody::updateFrame);
+    /**
+     * This method performs the following steps:
+     * <ul>
+     * <li>Fires world step events in {@link PhysicsSpaceEvents}.</li>
+     * <li>Steps {@link ElementRigidBody}s.</li>
+     * <li>Steps the simulation asynchronously.</li>
+     * <li>Triggers collision events.</li>
+     * </ul>
+     *
+     * Additionally, none of the above steps execute when either the world is empty
+     * (no {@link PhysicsRigidBody}s) or when the game is paused.
+     *
+     * @see TerrainGenerator
+     * @see PhysicsSpaceEvents
+     */
+    public void step() {
+        MinecraftSpace.get(this.level).getRigidBodiesByClass(ElementRigidBody.class).forEach(ElementRigidBody::updateFrame);
 
-		if (!this.isStepping() && !this.isEmpty())
-		{
-			this.stepping = true;
+        if (!this.isStepping() && !this.isEmpty())
+        {
+            this.stepping = true;
 
-			for (var rigidBody : this.getRigidBodiesByClass(ElementRigidBody.class))
-			{
-				if (!rigidBody.terrainLoadingEnabled())
-				{
-					continue;
-				}
+            for (var rigidBody : this.getRigidBodiesByClass(ElementRigidBody.class))
+            {
+                if (!rigidBody.terrainLoadingEnabled())
+                {
+                    continue;
+                }
 
-				for (var blockPos : this.previousBlockUpdates) {
-					if (rigidBody.isNear(blockPos)) {
-						rigidBody.activate();
-						break;
-					}
-				}
-			}
-			this.previousBlockUpdates.clear();
+                for (var blockPos : this.previousBlockUpdates) {
+                    if (rigidBody.isNear(blockPos)) {
+                        rigidBody.activate();
+                        break;
+                    }
+                }
+            }
+            this.previousBlockUpdates.clear();
 
-			this.chunkCache.refreshAll();
+            this.chunkCache.refreshAll();
 
-			// Step 3 times per tick, re-evaluating forces each step
-			for (int i = 0; i < 3; ++i)
-			{
-				// Hop threads...
-				this.futures[i] = CompletableFuture.runAsync(() ->
-				{
-					/* Call collision events */
-					this.distributeEvents();
+            // Step 3 times per tick, re-evaluating forces each step
+            for (int i = 0; i < 3; ++i)
+            {
+                // Hop threads...
+                this.futures[i] = CompletableFuture.runAsync(() ->
+                {
+                    /* Call collision events */
+                    this.distributeEvents();
 
-					/* World Step Event */
-					MinecraftForge.EVENT_BUS.post(new PhysicsSpaceEvent.Step(this));
+                    /* World Step Event */
+                    MinecraftForge.EVENT_BUS.post(new PhysicsSpaceEvent.Step(this));
 
-					/* Step the Simulation */
-					this.update(1 / 60f);
-				}, this.getWorkerThread());
-			}
+                    /* Step the Simulation */
+                    this.update(1 / 60f);
+                }, this.getWorkerThread());
+            }
 
-			CompletableFuture.allOf(this.futures).thenRun(() -> this.stepping = false);
-		}
-	}
+            CompletableFuture.allOf(this.futures).thenRun(() -> this.stepping = false);
+        }
+    }
 
-	@Override
-	public void addCollisionObject(PhysicsCollisionObject collisionObject) {
-		if (!collisionObject.isInWorld()) {
-			if (collisionObject instanceof ElementRigidBody rigidBody) {
-				MinecraftForge.EVENT_BUS.post(new PhysicsSpaceEvent.ElementAdded(this, rigidBody));
+    @Override
+    public void addCollisionObject(PhysicsCollisionObject collisionObject) {
+        if (!collisionObject.isInWorld()) {
+            if (collisionObject instanceof ElementRigidBody rigidBody) {
+                MinecraftForge.EVENT_BUS.post(new PhysicsSpaceEvent.ElementAdded(this, rigidBody));
 
-				if (!rigidBody.isInWorld()) {
-					rigidBody.activate();
-					rigidBody.getFrame().set(rigidBody.getPhysicsLocation(new Vector3f()), rigidBody.getPhysicsLocation(new Vector3f()), rigidBody.getPhysicsRotation(new Quaternion()), rigidBody.getPhysicsRotation(new Quaternion()));
-					rigidBody.updateBoundingBox();
-				}
+                if (!rigidBody.isInWorld()) {
+                    rigidBody.activate();
+                    rigidBody.getFrame().set(rigidBody.getPhysicsLocation(new Vector3f()), rigidBody.getPhysicsLocation(new Vector3f()), rigidBody.getPhysicsRotation(new Quaternion()), rigidBody.getPhysicsRotation(new Quaternion()));
+                    rigidBody.updateBoundingBox();
+                }
 
-				if (this.isServer() && rigidBody instanceof EntityRigidBody entityRigidBody) {
-					RayonPacketHandlers.MAIN.send(PacketDistributor.TRACKING_ENTITY.with(entityRigidBody.getElement()::cast), new SendRigidBodyMovementPacket(entityRigidBody));
-					RayonPacketHandlers.MAIN.send(PacketDistributor.TRACKING_ENTITY.with(entityRigidBody.getElement()::cast), new SendRigidBodyPropertiesPacket(entityRigidBody));
-				}
-			}
-			else if (collisionObject instanceof TerrainRigidBody terrain) {
-				this.terrainMap.put(terrain.getBlockPos(), terrain);
-			}
+                if (this.isServer() && rigidBody instanceof EntityRigidBody entityRigidBody) {
+                    RayonPacketHandlers.MAIN.send(PacketDistributor.TRACKING_ENTITY.with(entityRigidBody.getElement()::cast), new SendRigidBodyMovementPacket(entityRigidBody));
+                    RayonPacketHandlers.MAIN.send(PacketDistributor.TRACKING_ENTITY.with(entityRigidBody.getElement()::cast), new SendRigidBodyPropertiesPacket(entityRigidBody));
+                }
+            }
+            else if (collisionObject instanceof TerrainRigidBody terrain) {
+                this.terrainMap.put(terrain.getBlockPos(), terrain);
+            }
 
-			super.addCollisionObject(collisionObject);
-		}
-	}
+            super.addCollisionObject(collisionObject);
+        }
+    }
 
-	@Override
-	public void removeCollisionObject(PhysicsCollisionObject collisionObject) {
-		if (collisionObject.isInWorld())
-		{
-			super.removeCollisionObject(collisionObject);
+    @Override
+    public void removeCollisionObject(PhysicsCollisionObject collisionObject) {
+        if (collisionObject.isInWorld())
+        {
+            super.removeCollisionObject(collisionObject);
 
-			if (collisionObject instanceof ElementRigidBody rigidBody)
-				MinecraftForge.EVENT_BUS.post(new PhysicsSpaceEvent.ElementRemoved(this, rigidBody));
-			else if (collisionObject instanceof TerrainRigidBody terrain)
-				this.removeTerrainObjectAt(terrain.getBlockPos());
-		}
-	}
+            if (collisionObject instanceof ElementRigidBody rigidBody)
+                MinecraftForge.EVENT_BUS.post(new PhysicsSpaceEvent.ElementRemoved(this, rigidBody));
+            else if (collisionObject instanceof TerrainRigidBody terrain)
+                this.removeTerrainObjectAt(terrain.getBlockPos());
+        }
+    }
 
-	public boolean isServer() {
-		return this.getWorkerThread().getParentExecutor() instanceof MinecraftServer;
-	}
+    public boolean isServer() {
+        return this.getWorkerThread().getParentExecutor() instanceof MinecraftServer;
+    }
 
-	public boolean isStepping() {
-		return this.stepping;
-	}
+    public boolean isStepping() {
+        return this.stepping;
+    }
 
-	public void doBlockUpdate(BlockPos blockPos) {
-		this.previousBlockUpdates.add(SectionPos.of(blockPos));
-	}
+    public void doBlockUpdate(BlockPos blockPos) {
+        this.previousBlockUpdates.add(SectionPos.of(blockPos));
+    }
 
-	public void wakeNearbyElementRigidBodies(BlockPos blockPos) {
-		for (var rigidBody : this.getRigidBodiesByClass(ElementRigidBody.class))
-		{
-			if (!rigidBody.terrainLoadingEnabled())
-				continue;
+    public void wakeNearbyElementRigidBodies(BlockPos blockPos) {
+        for (var rigidBody : this.getRigidBodiesByClass(ElementRigidBody.class))
+        {
+            if (!rigidBody.terrainLoadingEnabled())
+                continue;
 
-			if (rigidBody.isNear(blockPos))
-				rigidBody.activate();
-		}
-	}
+            if (rigidBody.isNear(blockPos))
+                rigidBody.activate();
+        }
+    }
 
-	public Map<BlockPos, TerrainRigidBody> getTerrainMap() {
-		return new HashMap<>(this.terrainMap);
-	}
+    public Map<BlockPos, TerrainRigidBody> getTerrainMap() {
+        return new HashMap<>(this.terrainMap);
+    }
 
-	public Optional<TerrainRigidBody> getTerrainObjectAt(BlockPos blockPos) {
-		return Optional.ofNullable(this.terrainMap.get(blockPos));
-	}
+    public Optional<TerrainRigidBody> getTerrainObjectAt(BlockPos blockPos) {
+        return Optional.ofNullable(this.terrainMap.get(blockPos));
+    }
 
-	public void removeTerrainObjectAt(BlockPos blockPos) {
-		final var removed = this.terrainMap.remove(blockPos);
+    public void removeTerrainObjectAt(BlockPos blockPos) {
+        final var removed = this.terrainMap.remove(blockPos);
 
-		if (removed != null)
-			this.removeCollisionObject(removed);
-	}
+        if (removed != null)
+            this.removeCollisionObject(removed);
+    }
 
-	public <T> List<T> getRigidBodiesByClass(Class<T> type) {
-		var out = new ArrayList<T>();
+    public <T> List<T> getRigidBodiesByClass(Class<T> type) {
+        var out = new ArrayList<T>();
 
-		for (var body : getRigidBodyList())
-		{
-			if (type.isAssignableFrom(body.getClass()))
-				out.add(type.cast(body));
-		}
+        for (var body : getRigidBodyList())
+        {
+            if (type.isAssignableFrom(body.getClass()))
+                out.add(type.cast(body));
+        }
 
-		return out;
-	}
+        return out;
+    }
 
-	public PhysicsThread getWorkerThread() {
-		return this.thread;
-	}
+    public PhysicsThread getWorkerThread() {
+        return this.thread;
+    }
 
-	public Level getLevel() {
-		return this.level;
-	}
+    public Level getLevel() {
+        return this.level;
+    }
 
-	public ChunkCache getChunkCache() {
-		return this.chunkCache;
-	}
+    public ChunkCache getChunkCache() {
+        return this.chunkCache;
+    }
 
-	/**
-	 * Trigger all collision events (e.g. block/element or element/element).
-	 * 
-	 * @param event the event context
-	 */
-	@Override
-	public void collision(PhysicsCollisionEvent event) {
-		float impulse = event.getAppliedImpulse();
+    /**
+     * Trigger all collision events (e.g. block/element or element/element).
+     * 
+     * @param event the event context
+     */
+    @Override
+    public void collision(PhysicsCollisionEvent event) {
+        float impulse = event.getAppliedImpulse();
 
-		/* Element on Element */
-		if (event.getObjectA() instanceof ElementRigidBody rigidBodyA && event.getObjectB() instanceof ElementRigidBody rigidBodyB)
-			MinecraftForge.EVENT_BUS.post(new CollisionEvent(CollisionEvent.Type.ELEMENT, rigidBodyA, rigidBodyB, impulse));
-		/* Block on Element */
-		else if (event.getObjectA() instanceof TerrainRigidBody terrain && event.getObjectB() instanceof ElementRigidBody rigidBody)
-			MinecraftForge.EVENT_BUS.post(new CollisionEvent(CollisionEvent.Type.BLOCK, rigidBody, terrain, impulse));
-		/* Element on Block */
-		else if (event.getObjectA() instanceof ElementRigidBody rigidBody && event.getObjectB() instanceof TerrainRigidBody terrain)
-			MinecraftForge.EVENT_BUS.post(new CollisionEvent(CollisionEvent.Type.BLOCK, rigidBody, terrain, impulse));
-	}
+        /* Element on Element */
+        if (event.getObjectA() instanceof ElementRigidBody rigidBodyA && event.getObjectB() instanceof ElementRigidBody rigidBodyB)
+            MinecraftForge.EVENT_BUS.post(new CollisionEvent(CollisionEvent.Type.ELEMENT, rigidBodyA, rigidBodyB, impulse));
+        /* Block on Element */
+        else if (event.getObjectA() instanceof TerrainRigidBody terrain && event.getObjectB() instanceof ElementRigidBody rigidBody)
+            MinecraftForge.EVENT_BUS.post(new CollisionEvent(CollisionEvent.Type.BLOCK, rigidBody, terrain, impulse));
+        /* Element on Block */
+        else if (event.getObjectA() instanceof ElementRigidBody rigidBody && event.getObjectB() instanceof TerrainRigidBody terrain)
+            MinecraftForge.EVENT_BUS.post(new CollisionEvent(CollisionEvent.Type.BLOCK, rigidBody, terrain, impulse));
+    }
 }

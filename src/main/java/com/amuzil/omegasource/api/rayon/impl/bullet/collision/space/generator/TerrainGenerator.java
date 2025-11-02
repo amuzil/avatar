@@ -15,58 +15,57 @@ import java.util.HashSet;
  * 
  * @see MinecraftSpace
  */
-public class TerrainGenerator
-{
-	@SubscribeEvent
-	public static void onPhysicsStep(PhysicsSpaceEvent.Step event) {
-		MinecraftSpace space = event.getSpace();
-		
-		final var chunkCache = space.getChunkCache();
-		final var keep = new HashSet<TerrainRigidBody>();
+public class TerrainGenerator {
+    @SubscribeEvent
+    public static void onPhysicsStep(PhysicsSpaceEvent.Step event) {
+        MinecraftSpace space = event.getSpace();
+        
+        final var chunkCache = space.getChunkCache();
+        final var keep = new HashSet<TerrainRigidBody>();
 
-		for (var rigidBody : space.getRigidBodiesByClass(ElementRigidBody.class))
-		{
-			if (!rigidBody.terrainLoadingEnabled() || !rigidBody.isActive())
-			{
-				continue;
-			}
+        for (var rigidBody : space.getRigidBodiesByClass(ElementRigidBody.class))
+        {
+            if (!rigidBody.terrainLoadingEnabled() || !rigidBody.isActive())
+            {
+                continue;
+            }
 
-			final var aabb = rigidBody.getCurrentMinecraftBoundingBox().inflate(0.5f);
+            final var aabb = rigidBody.getCurrentMinecraftBoundingBox().inflate(0.5f);
 
-			BlockPos.betweenClosedStream(aabb).forEach(blockPos ->
-			{
-				chunkCache.getBlockData(blockPos).ifPresent(blockData ->
-				{
-					space.getTerrainObjectAt(blockPos).ifPresentOrElse(terrain ->
-					{
-						if (blockData.blockState() != terrain.getBlockState())
-						{
-							space.removeCollisionObject(terrain);
+            BlockPos.betweenClosedStream(aabb).forEach(blockPos ->
+            {
+                chunkCache.getBlockData(blockPos).ifPresent(blockData ->
+                {
+                    space.getTerrainObjectAt(blockPos).ifPresentOrElse(terrain ->
+                    {
+                        if (blockData.blockState() != terrain.getBlockState())
+                        {
+                            space.removeCollisionObject(terrain);
 
-							final var terrain2 = TerrainRigidBody.from(blockData);
-							space.addCollisionObject(terrain2);
-							keep.add(terrain2);
-						}
-						else
-						{
-							keep.add(terrain);
-						}
-					}, () ->
-					{
-						final var terrain = TerrainRigidBody.from(blockData);
-						space.addCollisionObject(terrain);
-						keep.add(terrain);
-					});
-				});
-			});
-		}
+                            final var terrain2 = TerrainRigidBody.from(blockData);
+                            space.addCollisionObject(terrain2);
+                            keep.add(terrain2);
+                        }
+                        else
+                        {
+                            keep.add(terrain);
+                        }
+                    }, () ->
+                    {
+                        final var terrain = TerrainRigidBody.from(blockData);
+                        space.addCollisionObject(terrain);
+                        keep.add(terrain);
+                    });
+                });
+            });
+        }
 
-		space.getTerrainMap().forEach((blockPos, terrain) ->
-		{
-			if (!keep.contains(terrain))
-			{
-				space.removeTerrainObjectAt(blockPos);
-			}
-		});
-	}
+        space.getTerrainMap().forEach((blockPos, terrain) ->
+        {
+            if (!keep.contains(terrain))
+            {
+                space.removeTerrainObjectAt(blockPos);
+            }
+        });
+    }
 }

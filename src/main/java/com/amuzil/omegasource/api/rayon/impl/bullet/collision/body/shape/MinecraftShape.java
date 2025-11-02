@@ -16,116 +16,115 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public interface MinecraftShape
-{
-	List<Triangle> getTriangles(Quaternion quaternion);
+public interface MinecraftShape {
+    List<Triangle> getTriangles(Quaternion quaternion);
 
-	float getVolume();
+    float getVolume();
 
-	static Box box(AABB box) {
-		return MinecraftShape.box(Convert.toBullet(box));
-	}
+    static Box box(AABB box) {
+        return MinecraftShape.box(Convert.toBullet(box));
+    }
 
-	static Box box(BoundingBox box) {
-		return new Box(box);
-	}
+    static Box box(BoundingBox box) {
+        return new Box(box);
+    }
 
-	static Convex convex(AABB box) {
-		return MinecraftShape.convex(Convert.toBullet(box));
-	}
+    static Convex convex(AABB box) {
+        return MinecraftShape.convex(Convert.toBullet(box));
+    }
 
-	static Convex convex(VoxelShape voxelShape) {
-		return new Convex(Triangle.getMeshOf(voxelShape));
-	}
+    static Convex convex(VoxelShape voxelShape) {
+        return new Convex(Triangle.getMeshOf(voxelShape));
+    }
 
-	static Convex convex(BoundingBox box) {
-		return new Convex(Triangle.getMeshOf(box));
-	}
+    static Convex convex(BoundingBox box) {
+        return new Convex(Triangle.getMeshOf(box));
+    }
 
-	static Concave concave(AABB box) {
-		return MinecraftShape.concave(Convert.toBullet(box));
-	}
+    static Concave concave(AABB box) {
+        return MinecraftShape.concave(Convert.toBullet(box));
+    }
 
-	static Concave concave(BoundingBox box) {
-		return new Concave(Triangle.getMeshOf(box));
-	}
+    static Concave concave(BoundingBox box) {
+        return new Concave(Triangle.getMeshOf(box));
+    }
 
-	/* Mostly stable */
-	final class Box extends BoxCollisionShape implements MinecraftShape {
-		private final List<Triangle> triangles;
+    /* Mostly stable */
+    final class Box extends BoxCollisionShape implements MinecraftShape {
+        private final List<Triangle> triangles;
 
-		public Box(BoundingBox boundingBox) {
-			super(boundingBox.getExtent(new Vector3f()).mult(0.5f));
-			this.triangles = new ArrayList<>(MinecraftShape.convex(boundingBox).triangles); // a lil hacky
-		}
+        public Box(BoundingBox boundingBox) {
+            super(boundingBox.getExtent(new Vector3f()).mult(0.5f));
+            this.triangles = new ArrayList<>(MinecraftShape.convex(boundingBox).triangles); // a lil hacky
+        }
 
-		@Override
-		public List<Triangle> getTriangles(Quaternion quaternion)
-		{
-			return this.triangles;
-		}
+        @Override
+        public List<Triangle> getTriangles(Quaternion quaternion)
+        {
+            return this.triangles;
+        }
 
-		@Override
-		public float getVolume()
-		{
-			return this.toHullShape().aabbVolume();
-		}
-	}
+        @Override
+        public float getVolume()
+        {
+            return this.toHullShape().aabbVolume();
+        }
+    }
 
-	/* Recommended */
-	final class Convex extends HullCollisionShape implements MinecraftShape {
-		private final List<Triangle> triangles;
+    /* Recommended */
+    final class Convex extends HullCollisionShape implements MinecraftShape {
+        private final List<Triangle> triangles;
 
-		public Convex(List<Triangle> triangles) {
-			super(triangles.stream().flatMap(triangle -> Stream.of(triangle.getVertices())).toList());
-			this.triangles = triangles;
-		}
+        public Convex(List<Triangle> triangles) {
+            super(triangles.stream().flatMap(triangle -> Stream.of(triangle.getVertices())).toList());
+            this.triangles = triangles;
+        }
 
-		@Override
-		public List<Triangle> getTriangles(Quaternion quaternion)
-		{
-			return this.triangles.stream().map(triangle -> triangle.transform(quaternion)).toList();
-		}
+        @Override
+        public List<Triangle> getTriangles(Quaternion quaternion)
+        {
+            return this.triangles.stream().map(triangle -> triangle.transform(quaternion)).toList();
+        }
 
-		@Override
-		public float getVolume()
-		{
-			return this.aabbVolume();
-		}
-	}
+        @Override
+        public float getVolume()
+        {
+            return this.aabbVolume();
+        }
+    }
 
-	/* Less stable :( */
-	final class Concave extends MeshCollisionShape implements MinecraftShape {
-		private final List<Triangle> triangles;
+    /* Less stable :( */
+    final class Concave extends MeshCollisionShape implements MinecraftShape {
+        private final List<Triangle> triangles;
 
-		public Concave(List<Triangle> triangles)
-		{
-			super(false, ((Supplier<IndexedMesh>) () ->
-			{
-				final var vertices = triangles.stream().flatMap(triangle -> Stream.of(triangle.getVertices())).toArray(Vector3f[]::new);
-				final var indices = new int[vertices.length];
+        public Concave(List<Triangle> triangles)
+        {
+            super(false, ((Supplier<IndexedMesh>) () ->
+            {
+                final var vertices = triangles.stream().flatMap(triangle -> Stream.of(triangle.getVertices())).toArray(Vector3f[]::new);
+                final var indices = new int[vertices.length];
 
-				for (var i = 0; i < vertices.length; i++)
-				{
-					indices[i] = i;
-				}
+                for (var i = 0; i < vertices.length; i++)
+                {
+                    indices[i] = i;
+                }
 
-				return new IndexedMesh(vertices, indices);
-			}).get());
-			this.triangles = triangles;
-		}
+                return new IndexedMesh(vertices, indices);
+            }).get());
+            this.triangles = triangles;
+        }
 
-		@Override
-		public List<Triangle> getTriangles(Quaternion quaternion)
-		{
-			return this.triangles.stream().map(triangle -> triangle.transform(quaternion)).toList();
-		}
+        @Override
+        public List<Triangle> getTriangles(Quaternion quaternion)
+        {
+            return this.triangles.stream().map(triangle -> triangle.transform(quaternion)).toList();
+        }
 
-		@Override
-		public float getVolume()
-		{
-			final var box = boundingBox(new Vector3f(), new Quaternion(), new BoundingBox());
-			return box.getXExtent() * box.getYExtent() * box.getZExtent();
-		}
-	}
+        @Override
+        public float getVolume()
+        {
+            final var box = boundingBox(new Vector3f(), new Quaternion(), new BoundingBox());
+            return box.getXExtent() * box.getYExtent() * box.getZExtent();
+        }
+    }
 }

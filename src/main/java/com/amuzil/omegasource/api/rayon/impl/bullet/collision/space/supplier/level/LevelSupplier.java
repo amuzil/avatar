@@ -18,29 +18,28 @@ import java.util.Optional;
  * @see ServerLevelSupplier
  */
 @Deprecated
-public interface LevelSupplier
-{
-	/**
-	 * Provides the complete list of {@link Level}s. If there aren't any, it will
-	 * return an empty list.
-	 * 
-	 * @return the list of {@link Level}s.
-	 */
-	List<Level> getAll();
+public interface LevelSupplier {
+    /**
+     * Provides the complete list of {@link Level}s. If there aren't any, it will
+     * return an empty list.
+     * 
+     * @return the list of {@link Level}s.
+     */
+    List<Level> getAll();
 
-	/**
-	 * Provides a specific {@link Level} based on the given {@link ResourceKey}.
-	 * 
-	 * @param key the {@link ResourceKey} to identify the Level with
-	 * @return a {@link Level}
-	 */
-	Level get(ResourceKey<Level> key);
+    /**
+     * Provides a specific {@link Level} based on the given {@link ResourceKey}.
+     * 
+     * @param key the {@link ResourceKey} to identify the Level with
+     * @return a {@link Level}
+     */
+    Level get(ResourceKey<Level> key);
 
-	/**
-	 * Provides a specific {@link Level} based on the given {@link ResourceKey}.
-	 * 
-	 * @param key the {@link ResourceKey} to identify the Level with
-	 * @return an optional {@link Level}
-	 */
-	Optional<Level> getOptional(ResourceKey<Level> key);
+    /**
+     * Provides a specific {@link Level} based on the given {@link ResourceKey}.
+     * 
+     * @param key the {@link ResourceKey} to identify the Level with
+     * @return an optional {@link Level}
+     */
+    Optional<Level> getOptional(ResourceKey<Level> key);
 }

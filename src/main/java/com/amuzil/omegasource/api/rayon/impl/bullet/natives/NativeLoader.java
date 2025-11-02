@@ -15,59 +15,58 @@ import java.util.NoSuchElementException;
  * Facilitates copying of natives outside the jar so that LibBulletJME can load
  * them.
  */
-public class NativeLoader
-{
-	public static void load() {
-		final var fileName = getPlatformSpecificName();
-		final var nativesFolder = getGameDir().resolve("natives/");
-		final var url = NativeLoader.class.getResource("/assets/natives/" + fileName);
+public class NativeLoader {
+    public static void load() {
+        final var fileName = getPlatformSpecificName();
+        final var nativesFolder = getGameDir().resolve("natives/");
+        final var url = NativeLoader.class.getResource("/assets/natives/" + fileName);
 
-		try
-		{
-			if (!Files.exists(nativesFolder))
-				Files.createDirectory(nativesFolder);
+        try
+        {
+            if (!Files.exists(nativesFolder))
+                Files.createDirectory(nativesFolder);
 
-			final var destination = nativesFolder.resolve(fileName);
-			final var destinationFile = destination.toFile();
+            final var destination = nativesFolder.resolve(fileName);
+            final var destinationFile = destination.toFile();
 
-			if (Files.exists(destination))
-			{
-				if (!destinationFile.delete())
-					Rayon.LOGGER.warn("Failed to remove old bullet natives.");
-			}
+            if (Files.exists(destination))
+            {
+                if (!destinationFile.delete())
+                    Rayon.LOGGER.warn("Failed to remove old bullet natives.");
+            }
 
-			try {
-				FileUtils.copyURLToFile(url, destinationFile);
-			} catch (IOException e) {
-				Rayon.LOGGER.warn("Unable to copy natives.");
-			}
+            try {
+                FileUtils.copyURLToFile(url, destinationFile);
+            } catch (IOException e) {
+                Rayon.LOGGER.warn("Unable to copy natives.");
+            }
 
-			NativeLibraryLoader.loadLibbulletjme(true, nativesFolder.toFile(), "Release", "Sp");
-			
-			Rayon.LOGGER.debug("Loaded LibBulletJME natives.");
-		}
-		catch (IOException | NoSuchElementException e)
-		{
-			e.printStackTrace();
-			throw new RuntimeException("Unable to load bullet natives.");
-		}
-	}
+            NativeLibraryLoader.loadLibbulletjme(true, nativesFolder.toFile(), "Release", "Sp");
+            
+            Rayon.LOGGER.debug("Loaded LibBulletJME natives.");
+        }
+        catch (IOException | NoSuchElementException e)
+        {
+            e.printStackTrace();
+            throw new RuntimeException("Unable to load bullet natives.");
+        }
+    }
 
-	static Path getGameDir() {
-		return FMLLoader.getGamePath();
-	}
+    static Path getGameDir() {
+        return FMLLoader.getGamePath();
+    }
 
-	static String getPlatformSpecificName() {
-		final var platform = JmeSystem.getPlatform();
+    static String getPlatformSpecificName() {
+        final var platform = JmeSystem.getPlatform();
 
-		final var name = switch (platform)
-		{
-		case Windows32, Windows64 -> "bulletjme.dll";
-		case Android_ARM7, Android_ARM8, Linux_ARM32, Linux_ARM64, Linux32, Linux64 -> "libbulletjme.so";
-		case MacOSX32, MacOSX64, MacOSX_ARM64 -> "libbulletjme.dylib";
-		default -> throw new RuntimeException("Invalid platform " + platform);
-		};
+        final var name = switch (platform)
+        {
+        case Windows32, Windows64 -> "bulletjme.dll";
+        case Android_ARM7, Android_ARM8, Linux_ARM32, Linux_ARM64, Linux32, Linux64 -> "libbulletjme.so";
+        case MacOSX32, MacOSX64, MacOSX_ARM64 -> "libbulletjme.dylib";
+        default -> throw new RuntimeException("Invalid platform " + platform);
+        };
 
-		return platform + "Release" + "Sp" + "_" + name;
-	}
+        return platform + "Release" + "Sp" + "_" + name;
+    }
 }

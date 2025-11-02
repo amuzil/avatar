@@ -19,37 +19,37 @@ import org.apache.logging.log4j.Logger;
 
 
 public class Rayon {
-	public static final String MOD_ID = "crayon";
-	public static final Logger LOGGER = LogManager.getLogger("Crayon");
+    public static final String MOD_ID = "carryon";
+    public static final Logger LOGGER = LogManager.getLogger("CarryOn");
 
-	public Rayon(FMLJavaModLoadingContext context) {
-		NativeLoader.load();
+    public Rayon(FMLJavaModLoadingContext context) {
+        NativeLoader.load();
 
         IEventBus modBus = context.getModEventBus();
-		modBus.addListener(this::clientInit);
-		modBus.addListener(this::commonInit);
-		modBus.addListener(RayonExampleEntityRenderers::registerEntityRenderers);
+        modBus.addListener(this::clientInit);
+        modBus.addListener(this::commonInit);
+        modBus.addListener(RayonExampleEntityRenderers::registerEntityRenderers);
 
-		RayonExampleEntities.register(modBus);
+        RayonExampleEntities.register(modBus);
 
-		// prevent annoying libbulletjme spam
-		java.util.logging.LogManager.getLogManager().reset();
-	}
-	
-	private void clientInit(FMLClientSetupEvent event) {
-		IEventBus forgeBus = MinecraftForge.EVENT_BUS;
-		forgeBus.register(ClientEventHandler.class);
-		RayonPacketHandlers.registerPackets();
-	}
-	
-	private void commonInit(FMLCommonSetupEvent event) {
-		IEventBus forgeBus = MinecraftForge.EVENT_BUS;
-		forgeBus.register(ServerEventHandler.class);
-		forgeBus.register(PressureGenerator.class);
-		forgeBus.register(TerrainGenerator.class);
-	}
-	
-	public static ResourceLocation id(String path) {
-		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
-	}
+        // prevent annoying libbulletjme spam
+        java.util.logging.LogManager.getLogManager().reset();
+    }
+    
+    private void clientInit(FMLClientSetupEvent event) {
+        IEventBus forgeBus = MinecraftForge.EVENT_BUS;
+        forgeBus.register(ClientEventHandler.class);
+        RayonPacketHandlers.registerPackets();
+    }
+    
+    private void commonInit(FMLCommonSetupEvent event) {
+        IEventBus forgeBus = MinecraftForge.EVENT_BUS;
+        forgeBus.register(ServerEventHandler.class);
+        forgeBus.register(PressureGenerator.class);
+        forgeBus.register(TerrainGenerator.class);
+    }
+    
+    public static ResourceLocation id(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+    }
 }

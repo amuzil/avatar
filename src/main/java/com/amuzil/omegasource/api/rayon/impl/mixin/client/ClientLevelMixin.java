@@ -11,12 +11,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientLevel.class)
-public class ClientLevelMixin
-{
-	@Shadow @Final private Minecraft minecraft;
-	
-	@Inject(method = "disconnect", at = @At("HEAD"))
-	public void rayon$onDisconnect_disconnect(CallbackInfo ci) {
-		ClientEventHandler.onDisconnect(this.minecraft, (ClientLevel)(Object)this);
-	}
+public class ClientLevelMixin {
+    @Shadow @Final private Minecraft minecraft;
+    
+    @Inject(method = "disconnect", at = @At("HEAD"))
+    public void rayon$onDisconnect_disconnect(CallbackInfo ci) {
+        ClientEventHandler.onDisconnect(this.minecraft, (ClientLevel)(Object)this);
+    }
 }

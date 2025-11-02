@@ -14,16 +14,16 @@ import org.spongepowered.asm.mixin.Unique;
  */
 @Mixin(Level.class)
 public class LevelMixin implements SpaceStorage {
-	@Unique
-	private MinecraftSpace space;
+    @Unique
+    private MinecraftSpace space;
 
-	@Override
-	public void setSpace(MinecraftSpace space) {
-		this.space = space;
-	}
+    @Override
+    public void setSpace(MinecraftSpace space) {
+        this.space = space;
+    }
 
-	@Override
-	public MinecraftSpace getSpace() {
-		return this.space;
-	}
+    @Override
+    public MinecraftSpace getSpace() {
+        return this.space;
+    }
 }

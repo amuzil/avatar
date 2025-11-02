@@ -14,23 +14,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * {@link PhysicsRigidBody} objects.
  */
 @Mixin(KeyboardHandler.class)
-public abstract class KeyboardMixin
-{
-	@Shadow
-	protected abstract void debugFeedbackTranslated(String string, Object... objects);
+public abstract class KeyboardMixin {
+    @Shadow
+    protected abstract void debugFeedbackTranslated(String string, Object... objects);
 
-	@Inject(method = "handleDebugKeys", at = @At("HEAD"), cancellable = true)
-	private void rayon$processExtraF3_handleDebugKeys(int key, CallbackInfoReturnable<Boolean> info) {
-		if (key == 82) // 'r' key
-		{
-			boolean enabled = CollisionObjectDebugger.toggle();
+    @Inject(method = "handleDebugKeys", at = @At("HEAD"), cancellable = true)
+    private void rayon$processExtraF3_handleDebugKeys(int key, CallbackInfoReturnable<Boolean> info) {
+        if (key == 82) // 'r' key
+        {
+            boolean enabled = CollisionObjectDebugger.toggle();
 
-			if (enabled)
-				this.debugFeedbackTranslated("debug.rayon.on");
-			else
-				this.debugFeedbackTranslated("debug.rayon.off");
+            if (enabled)
+                this.debugFeedbackTranslated("debug.rayon.on");
+            else
+                this.debugFeedbackTranslated("debug.rayon.off");
 
-			info.setReturnValue(true);
-		}
-	}
+            info.setReturnValue(true);
+        }
+    }
 }

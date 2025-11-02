@@ -15,20 +15,19 @@ import java.util.Optional;
  * running on the {@link MinecraftServer}.
  */
 @Deprecated
-public record ServerLevelSupplier(MinecraftServer server) implements LevelSupplier
-{
-	@Override
-	public List<Level> getAll() {
-		return new ArrayList<>((Collection<? extends Level>)this.server.getAllLevels());
-	}
+public record ServerLevelSupplier(MinecraftServer server) implements LevelSupplier {
+    @Override
+    public List<Level> getAll() {
+        return new ArrayList<>((Collection<? extends Level>)this.server.getAllLevels());
+    }
 
-	@Override
-	public Level get(ResourceKey<Level> key) {
-		return this.server.getLevel(key);
-	}
+    @Override
+    public Level get(ResourceKey<Level> key) {
+        return this.server.getLevel(key);
+    }
 
-	@Override
-	public Optional<Level> getOptional(ResourceKey<Level> key) {
-		return Optional.ofNullable(this.get(key));
-	}
+    @Override
+    public Optional<Level> getOptional(ResourceKey<Level> key) {
+        return Optional.ofNullable(this.get(key));
+    }
 }
