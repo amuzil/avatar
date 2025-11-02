@@ -1,0 +1,175 @@
+package com.amuzil.av3.utils.commands;
+
+import com.amuzil.av3.api.magus.form.Form;
+import com.amuzil.av3.api.magus.registry.Registries;
+import com.amuzil.av3.api.magus.skill.Skill;
+import com.amuzil.av3.bending.element.Element;
+import com.amuzil.av3.bending.element.Elements;
+import com.amuzil.av3.input.InputModule;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.CompoundTagArgument;
+import net.minecraft.commands.arguments.EntityArgument;
+
+import static com.amuzil.av3.utils.commands.CommandUtils.*;
+
+
+public class AvatarCommands {
+    // Class for registering the '/avatar' commands
+    private static final LiteralArgumentBuilder<CommandSourceStack> builder =  Commands.literal("avatar");
+
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+        builder.then(Commands.literal("tree")
+                .then(Commands.literal("reset")
+                        .executes(c -> {
+                            // Default message when no args are provided.
+                            InputModule.sendDebugMsg("Options: activate, grant, take, element");
+                            return 1;
+                        })));
+        createFormCommands();
+        createSkillCommands();
+        createElementCommands();
+        createMasterCommands();
+//        createElementCommand("activate", activateElementCommand);
+//        createElementCommand("grant", grantElementCommand);
+//        createElementCommand("take", takeElementCommand);
+        dispatcher.register(builder);
+    }
+
+    private static void createFormCommands() {
+        for (Form form : Registries.getForms().values()) {
+            builder.then(triggerFormCommand(form));
+        }
+    }
+
+    private static void createSkillCommands() {
+        builder.then(resetSkillCommand(null)); // Pass null to reset all
+        for (Skill skill : Registries.getSkills()) {
+            builder.then(resetSkillCommand(skill));
+            builder.then(setCanUseSkillCommand(skill, "grant"));
+            builder.then(setCanUseSkillCommand(skill, "take"));
+            for (Skill.SkillState state : Skill.SkillState.values())
+                builder.then(triggerSkillCommand(skill, state));
+        }
+    }
+
+    private static void createElementCommands() {
+        for (Element elem : Elements.ALL_FOUR.values()) {
+            builder.then(activateElementCommand(elem));
+            builder.then(setCanUseElementCommand(elem, "grant"));
+            builder.then(setCanUseElementCommand(elem, "take"));
+        }
+    }
+
+    private static void createMasterCommands() {
+        for (Element elem : Elements.ALL_FOUR.values()) {
+            builder.then(masterElementCommand(elem));
+        }
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> triggerFormCommand(Form form) {
+        return Commands.literal("trigger").then(Commands.literal("form")
+                .then(Commands.literal(form.name())
+                        .executes(c -> triggerForm(c, form, null))
+                        .then(Commands.argument("target", EntityArgument.player())
+                                .executes(c -> triggerForm(c, form, EntityArgument.getPlayer(c, "target")))
+                        )
+                ));
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> triggerSkillCommand(Skill skill, Skill.SkillState action) {
+        return Commands.literal("trigger").then(Commands.literal("skill").then(Commands.literal(action.name().toLowerCase())
+                .then(Commands.literal(skill.name())
+                        .executes(c -> triggerSkill(c, skill, action, null))
+                        .then(Commands.argument("target", EntityArgument.player())
+                                .executes(c -> triggerSkill(c, skill, action, EntityArgument.getPlayer(c, "target")))
+                        )
+                )));
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> activateElementCommand(Element elem) {
+        return Commands.literal("activate")
+                .then(Commands.literal(elem.nickName())
+                        .executes(c -> activateElement(c, elem, null))
+                        .then(Commands.argument("target", EntityArgument.player())
+                                .executes(c -> activateElement(c, elem, EntityArgument.getPlayer(c, "target")))
+                        )
+                );
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> setCanUseElementCommand(Element elem, String action) {
+        boolean canUse = action.equals("grant");
+        return Commands.literal(action).then(Commands.literal("element")
+                .then(Commands.literal(elem.nickName())
+                        .executes(c -> setCanUseElement(c, elem, canUse, null))
+                        .then(Commands.argument("target", EntityArgument.player())
+                                .executes(c -> setCanUseElement(c, elem, canUse, EntityArgument.getPlayer(c, "target")))
+                        )
+                ));
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> setCanUseSkillCommand(Skill skill, String action) {
+        boolean canUse = action.equals("grant");
+        return Commands.literal(action).then(Commands.literal("skill")
+                .then(Commands.literal(skill.name())
+                        .executes(c -> setCanUseSkill(c, skill, canUse, null))
+                        .then(Commands.argument("target", EntityArgument.player())
+                                .executes(c -> setCanUseSkill(c, skill, canUse, EntityArgument.getPlayer(c, "target")))
+                                .then(Commands.argument("nbt", CompoundTagArgument.compoundTag())
+                                        .executes(c -> setSkillTrait(c, skill, canUse, EntityArgument.getPlayer(c, "target"), CompoundTagArgument.getCompoundTag(c, "nbt")))
+                                )
+                        )
+                ));
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> resetSkillCommand(Skill skill) {
+        String skillName;
+        if (skill == null)
+            skillName = "all";
+        else
+            skillName = skill.name();
+        return Commands.literal("reset").then(Commands.literal("skill")
+                .then(Commands.literal(skillName)
+                        .executes(c -> resetSkill(c, skill, null))
+                        .then(Commands.argument("target", EntityArgument.player())
+                                .executes(c -> resetSkill(c, skill, EntityArgument.getPlayer(c, "target")))
+                        )
+                ));
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> masterElementCommand(Element elem) {
+        return Commands.literal("master")
+                .then(Commands.literal(elem.nickName())
+                        .executes(c -> masterElement(c, elem, null))
+                        .then(Commands.argument("target", EntityArgument.player())
+                                .executes(c -> masterElement(c, elem, EntityArgument.getPlayer(c, "target")))
+                        )
+                );
+    }
+
+//        private static void createElementCommand(String action, Command<CommandSourceStack> subCommand) {
+//        boolean canUse = action.equals("grant");
+//        LiteralArgumentBuilder<CommandSourceStack> elementCommand = Commands.literal(action);
+//        Elements.ALL_FOUR.values().forEach(elem -> {
+//            elementCommand.then(Commands.literal(elem.nickName())
+//                    .executes(subCommand)
+//                    .then(Commands.argument("target", EntityArgument.player())
+//                            .executes(subCommand)
+//                    )
+//            );
+//        });
+//        builder.then(elementCommand);
+//    }
+
+//    private static final Command<CommandSourceStack> activateElementCommand = c -> {
+//        String elemName = c.getNodes().get(2).getNode().getName();
+//        Element element = Elements.ALL_FOUR.get(elemName);
+//        boolean hasTarget = c.getNodes().stream()
+//                .anyMatch(node -> "target".equals(node.getNode().getName()));
+//        ServerPlayer target = hasTarget ? EntityArgument.getPlayer(c, "target") : null;
+//        return activateElement(c, element, target);
+//    };
+
+}
