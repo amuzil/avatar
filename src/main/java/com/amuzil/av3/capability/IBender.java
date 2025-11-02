@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  * This interface is used to define the capability of bending elements.
- * It allows for serialization and deserialization of the element & skill data.
+ * It allows for serialization and deserialization of the element & bending skill data.
  * Remember to call markDirty() or send {@link SyncBenderPacket} after every data update to ensure proper syncing
  */
 @AutoRegisterCapability
