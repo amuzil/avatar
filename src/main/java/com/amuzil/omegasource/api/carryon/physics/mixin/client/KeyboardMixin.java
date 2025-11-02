@@ -25,9 +25,9 @@ public abstract class KeyboardMixin {
             boolean enabled = CollisionObjectDebugger.toggle();
 
             if (enabled)
-                this.debugFeedbackTranslated("debug.rayon.on");
+                this.debugFeedbackTranslated("debug.carryon.on");
             else
-                this.debugFeedbackTranslated("debug.rayon.off");
+                this.debugFeedbackTranslated("debug.carryon.off");
 
             info.setReturnValue(true);
         }
