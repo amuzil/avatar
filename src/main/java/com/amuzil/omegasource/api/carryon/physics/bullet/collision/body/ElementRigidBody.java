@@ -22,7 +22,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 public abstract class ElementRigidBody extends MinecraftRigidBody {
-    private static final Logger LOGGER = LogManager.getLogger("dev/lazurite/rayon/ElementRigidBody");
+    private static final Logger LOGGER = LogManager.getLogger();
     public static final float SLEEP_TIME_IN_SECONDS = 2.0f;
     protected final PhysicsElement<?> element;
     private final Frame frame;

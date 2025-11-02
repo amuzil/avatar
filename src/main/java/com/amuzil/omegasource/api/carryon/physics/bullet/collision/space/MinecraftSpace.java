@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This is the main physics simulation used by Rayon. Each bullet simulation
- * update happens asynchronously while all of the setup, input, or otherwise
+ * update happens asynchronously while all the setup, input, or otherwise
  * user defined behavior happens on the game logic thread. <br>
  * <br>
  * It is also worth noting that another simulation step will not be performed if

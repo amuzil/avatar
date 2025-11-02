@@ -12,7 +12,7 @@ import java.util.concurrent.Executor;
 
 @SuppressWarnings("deprecation")
 public class PhysicsThreadStore {
-    private static final Logger LOGGER = LogManager.getLogger("dev/lazurite/rayon/PhysicsThreadStore");
+    private static final Logger LOGGER = LogManager.getLogger();
     public static final PhysicsThreadStore INSTANCE = new PhysicsThreadStore();
     private PhysicsThread client;
     private PhysicsThread server;
