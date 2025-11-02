@@ -5,8 +5,8 @@ import com.amuzil.av3.api.carryon.physics.bullet.collision.body.shape.MinecraftS
 import com.amuzil.av3.api.carryon.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.av3.api.carryon.physics.bullet.math.Convert;
 import com.amuzil.av3.api.carryon.physics.bullet.thread.util.Clock;
-import com.amuzil.av3.api.carryon.physics.utils.Frame;
-import com.amuzil.av3.api.carryon.physics.utils.VectorHelper;
+import com.amuzil.av3.api.carryon.physics.utils.maths.Frame;
+import com.amuzil.av3.api.carryon.physics.utils.maths.VectorSerializer;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
@@ -58,16 +58,16 @@ public abstract class ElementRigidBody extends MinecraftRigidBody {
 
     public CompoundTag writeTagInfo() {
         CompoundTag tag = new CompoundTag();
-        tag.put("orientation", VectorHelper.quaternionToTag(Convert.toMinecraft(this.getPhysicsRotation(new Quaternion()))));
-        tag.put("linearVelocity", VectorHelper.vector3fToTag(Convert.toMinecraft(this.getLinearVelocity(new Vector3f()))));
-        tag.put("angularVelocity", VectorHelper.vector3fToTag(Convert.toMinecraft(this.getAngularVelocity(new Vector3f()))));
+        tag.put("orientation", VectorSerializer.quaternionToTag(Convert.toMinecraft(this.getPhysicsRotation(new Quaternion()))));
+        tag.put("linearVelocity", VectorSerializer.vector3fToTag(Convert.toMinecraft(this.getLinearVelocity(new Vector3f()))));
+        tag.put("angularVelocity", VectorSerializer.vector3fToTag(Convert.toMinecraft(this.getAngularVelocity(new Vector3f()))));
         tag.putFloat("mass", this.getMass());
         tag.putFloat("dragCoefficient", this.getDragCoefficient());
         tag.putFloat("friction", this.getFriction());
         tag.putFloat("restitution", this.getRestitution());
         tag.putBoolean("terrainLoadingEnabled", this.terrainLoadingEnabled());
-        VectorHelper.saveEnum(this.getBuoyancyType(), tag, "buoyancyType");
-        VectorHelper.saveEnum(this.getDragType(), tag, "dragType");
+        VectorSerializer.saveEnum(this.getBuoyancyType(), tag, "buoyancyType");
+        VectorSerializer.saveEnum(this.getDragType(), tag, "dragType");
         return tag;
     }
 
@@ -75,7 +75,7 @@ public abstract class ElementRigidBody extends MinecraftRigidBody {
         try
         {
             if (tag.contains("orientation", 10))
-                this.setPhysicsRotation(Convert.toBullet(VectorHelper.quaternionFromTag(tag.getCompound("orientation"))));
+                this.setPhysicsRotation(Convert.toBullet(VectorSerializer.quaternionFromTag(tag.getCompound("orientation"))));
         }
         catch (IllegalArgumentException e)
         {
@@ -84,7 +84,7 @@ public abstract class ElementRigidBody extends MinecraftRigidBody {
         try
         {
             if (tag.contains("linearVelocity", 10))
-                this.setLinearVelocity(Convert.toBullet(VectorHelper.vector3fFromTag(tag.getCompound("linearVelocity"))));
+                this.setLinearVelocity(Convert.toBullet(VectorSerializer.vector3fFromTag(tag.getCompound("linearVelocity"))));
         }
         catch (IllegalArgumentException e)
         {
@@ -93,7 +93,7 @@ public abstract class ElementRigidBody extends MinecraftRigidBody {
         try
         {
             if (tag.contains("angularVelocity", 10))
-                this.setAngularVelocity(Convert.toBullet(VectorHelper.vector3fFromTag(tag.getCompound("angularVelocity"))));
+                this.setAngularVelocity(Convert.toBullet(VectorSerializer.vector3fFromTag(tag.getCompound("angularVelocity"))));
         }
         catch (IllegalArgumentException e)
         {
@@ -104,8 +104,8 @@ public abstract class ElementRigidBody extends MinecraftRigidBody {
         readOptionalAndCatchInvalid(tag, "friction", 5, CompoundTag::getFloat, this::setFriction);
         readOptionalAndCatchInvalid(tag, "restitution", 5, CompoundTag::getFloat, this::setRestitution);
         readOptionalAndCatchInvalid(tag, "terrainLoadingEnabled", 1, CompoundTag::getBoolean, this::setTerrainLoadingEnabled);
-        VectorHelper.readEnum(BuoyancyType.class, tag, "buoyancyType");
-        VectorHelper.readEnum(DragType.class, tag, "dragType");
+        VectorSerializer.readEnum(BuoyancyType.class, tag, "buoyancyType");
+        VectorSerializer.readEnum(DragType.class, tag, "dragType");
 
     }
 

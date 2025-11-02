@@ -1,4 +1,4 @@
-package com.amuzil.av3.api.carryon.physics.utils;
+package com.amuzil.av3.api.carryon.physics.utils.maths;
 
 import com.amuzil.av3.api.carryon.physics.mixin.common.ChunkMapMixin;
 import com.amuzil.av3.api.carryon.physics.mixin.common.entity.TrackedEntityMixin;

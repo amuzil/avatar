@@ -1,4 +1,4 @@
-package com.amuzil.av3.api.carryon.physics.utils;
+package com.amuzil.av3.api.carryon.physics.utils.maths;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -9,7 +9,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 
-public class VectorHelper {
+public class VectorSerializer {
     public static CompoundTag quaternionToTag(Quaternionf quaternion) {
         CompoundTag tag = new CompoundTag();
         tag.putFloat("x", quaternion.x());

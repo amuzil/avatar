@@ -13,7 +13,7 @@ import com.amuzil.av3.api.carryon.physics.bullet.thread.PhysicsThreadStore;
 import com.amuzil.av3.api.carryon.physics.packet.RayonPacketHandlers;
 import com.amuzil.av3.api.carryon.physics.packet.impl.SendRigidBodyMovementPacket;
 import com.amuzil.av3.api.carryon.physics.packet.impl.SendRigidBodyPropertiesPacket;
-import com.amuzil.av3.api.carryon.physics.utils.Utilities;
+import com.amuzil.av3.api.carryon.physics.utils.maths.Utilities;
 import com.jme3.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
