@@ -19,7 +19,5 @@
   "key.av3.form.arc": "Arc",
   "key.av3.form.shape": "Shape",
   "key.av3.form.target": "Target",
-  "key.av3.form.focus": "Focus",
-  "debug.carryon.on": "Rigid Body Hitboxes: shown",
-  "debug.carryon.off": "Rigid Body Hitboxes: hidden"
+  "key.av3.form.focus": "Focus"
 }

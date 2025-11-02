@@ -24,9 +24,9 @@ public abstract class KeyboardMixin {
             boolean enabled = CollisionObjectDebugger.toggle();
 
             if (enabled)
-                this.debugFeedbackTranslated("debug.carryon.on");
+                this.debugFeedbackTranslated("Rigid Body Hitboxes: shown");
             else
-                this.debugFeedbackTranslated("debug.carryon.off");
+                this.debugFeedbackTranslated("Rigid Body Hitboxes: hidden");
 
             info.setReturnValue(true);
         }
