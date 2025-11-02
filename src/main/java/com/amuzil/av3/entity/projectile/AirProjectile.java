@@ -188,10 +188,10 @@ public class AirProjectile extends AvatarProjectile {
 //    }
 
     @Override
-    protected void defineSynchedData() {
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData();
-        this.entityData.define(ID_FLAGS, (byte)0);
-        this.entityData.define(PIERCE_LEVEL, (byte)0);
+        builder.define(ID_FLAGS, (byte)0);
+        builder.define(PIERCE_LEVEL, (byte)0);
     }
 
     public boolean isNoPhysics() {

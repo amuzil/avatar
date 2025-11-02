@@ -16,16 +16,18 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 @SuppressWarnings({"removal", "deprecation"})
 public final class ClientEventHandler {
     @SubscribeEvent
-    public static void onLevelTick(TickEvent.LevelTickEvent event) {
-        if (event.level.isClientSide && event.phase == TickEvent.Phase.END) {
+    public static void onLevelTick(LevelTickEvent event) {
+        if (event.getLevel().isClientSide && event.phase == LevelTickEvent.Phase.END) {
             MinecraftSpace space = MinecraftSpace.get(event.level);
             space.step();
             EntityCollisionGenerator.step(space);
@@ -53,7 +55,7 @@ public final class ClientEventHandler {
     }
 
     @SubscribeEvent
-    public static void onClientTick(TickEvent.ClientTickEvent event) {
+    public static void onClientTick(ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.END)
             PhysicsThreadStore.checkThrowable(PhysicsThreadStore.INSTANCE.getClientThread());
     }

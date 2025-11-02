@@ -7,12 +7,10 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Supplier;
-
 
 public class SyncBenderPacket implements AvatarPacket {
     private final CompoundTag tag; // The NBT data to sync
