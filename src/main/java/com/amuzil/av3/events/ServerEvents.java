@@ -1,7 +1,7 @@
 package com.amuzil.av3.events;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.av3.api.magus.skill.event.SkillTickEvent;
+import com.amuzil.magus.skill.event.SkillTickEvent;
 import com.amuzil.av3.bending.element.Elements;
 import com.amuzil.av3.capability.AvatarCapabilities;
 import com.amuzil.av3.capability.Bender;

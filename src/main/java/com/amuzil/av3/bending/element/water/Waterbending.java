@@ -1,8 +1,8 @@
 package com.amuzil.av3.bending.element.water;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.av3.api.magus.registry.Registries;
-import com.amuzil.av3.api.magus.skill.Skill;
+import com.amuzil.magus.registry.Registries;
+import com.amuzil.magus.skill.Skill;
 import com.amuzil.av3.bending.element.Element;
 import net.minecraftforge.registries.RegistryObject;
 

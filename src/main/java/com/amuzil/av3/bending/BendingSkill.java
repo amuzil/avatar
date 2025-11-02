@@ -1,8 +1,8 @@
 package com.amuzil.av3.bending;
 
-import com.amuzil.av3.api.magus.skill.SkillActive;
-import com.amuzil.av3.api.magus.skill.data.SkillData;
-import com.amuzil.av3.api.magus.skill.traits.skilltraits.TimedTrait;
+import com.amuzil.magus.skill.SkillActive;
+import com.amuzil.magus.skill.data.SkillData;
+import com.amuzil.magus.skill.traits.skilltraits.TimedTrait;
 import com.amuzil.av3.bending.element.Element;
 
 

@@ -1,6 +1,6 @@
 package com.amuzil.av3.bending.form;
 
-import com.amuzil.av3.api.magus.registry.Registries;
+import com.amuzil.magus.registry.Registries;
 
 import static com.amuzil.av3.bending.form.BendingForm.Type;
 

@@ -1,8 +1,8 @@
 package com.amuzil.av3.entity.modules.entity;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.av3.api.magus.skill.traits.entitytraits.PointsTrait;
-import com.amuzil.av3.api.magus.skill.traits.skilltraits.SizeTrait;
+import com.amuzil.magus.skill.traits.entitytraits.PointsTrait;
+import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.IEntityModule;
 import com.amuzil.av3.entity.projectile.AvatarProjectile;

@@ -1,7 +1,7 @@
 package com.amuzil.av3.entity;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.av3.api.magus.skill.traits.DataTrait;
+import com.amuzil.magus.skill.traits.DataTrait;
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.bending.element.Elements;
 import com.amuzil.av3.entity.api.ICollisionModule;

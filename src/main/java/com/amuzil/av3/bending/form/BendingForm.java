@@ -1,6 +1,6 @@
 package com.amuzil.av3.bending.form;
 
-import com.amuzil.av3.api.magus.form.Form;
+import com.amuzil.magus.form.Form;
 
 
 public class BendingForm extends Form {

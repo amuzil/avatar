@@ -1,9 +1,9 @@
 package com.amuzil.av3.entity.modules.collision;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.av3.api.magus.skill.traits.skilltraits.CollisionTrait;
-import com.amuzil.av3.api.magus.skill.traits.skilltraits.SizeTrait;
-import com.amuzil.av3.api.magus.skill.traits.skilltraits.StringTrait;
+import com.amuzil.magus.skill.traits.skilltraits.CollisionTrait;
+import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
+import com.amuzil.magus.skill.traits.skilltraits.StringTrait;
 import com.amuzil.av3.bending.element.Elements;
 import com.amuzil.av3.bending.form.BendingForm;
 import com.amuzil.av3.bending.form.BendingForms;

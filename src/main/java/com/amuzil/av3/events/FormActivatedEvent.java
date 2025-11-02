@@ -1,6 +1,6 @@
 package com.amuzil.av3.events;
 
-import com.amuzil.av3.api.magus.form.ActiveForm;
+import com.amuzil.magus.form.ActiveForm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.eventbus.api.Event;
 

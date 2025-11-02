@@ -1,7 +1,7 @@
 package com.amuzil.av3.bending.element;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.av3.api.magus.skill.SkillCategory;
+import com.amuzil.magus.skill.SkillCategory;
 import com.amuzil.av3.bending.element.air.Airbending;
 import com.amuzil.av3.bending.element.earth.Earthbending;
 import com.amuzil.av3.bending.element.fire.Firebending;

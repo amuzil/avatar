@@ -1,15 +1,15 @@
 package com.amuzil.av3.capability;
 
-import com.amuzil.av3.api.magus.form.ActiveForm;
-import com.amuzil.av3.api.magus.form.Form;
-import com.amuzil.av3.api.magus.registry.Registries;
-import com.amuzil.av3.api.magus.skill.Skill;
-import com.amuzil.av3.api.magus.skill.SkillCategory;
-import com.amuzil.av3.api.magus.skill.data.SkillCategoryData;
-import com.amuzil.av3.api.magus.skill.data.SkillData;
-import com.amuzil.av3.api.magus.skill.traits.DataTrait;
-import com.amuzil.av3.api.magus.tree.SkillTree;
-import com.amuzil.av3.api.magus.tree.TreeResult;
+import com.amuzil.magus.form.ActiveForm;
+import com.amuzil.magus.form.Form;
+import com.amuzil.magus.registry.Registries;
+import com.amuzil.magus.skill.Skill;
+import com.amuzil.magus.skill.SkillCategory;
+import com.amuzil.magus.skill.data.SkillCategoryData;
+import com.amuzil.magus.skill.data.SkillData;
+import com.amuzil.magus.skill.traits.DataTrait;
+import com.amuzil.magus.tree.SkillTree;
+import com.amuzil.magus.tree.TreeResult;
 import com.amuzil.av3.bending.BendingSelection;
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.bending.element.Elements;

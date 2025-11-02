@@ -1,6 +1,6 @@
 package com.amuzil.av3.bending.element;
 
-import com.amuzil.av3.api.magus.skill.SkillCategory;
+import com.amuzil.magus.skill.SkillCategory;
 
 
 public abstract class Element extends SkillCategory {

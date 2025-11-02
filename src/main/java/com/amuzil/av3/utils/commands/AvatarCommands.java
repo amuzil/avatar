@@ -1,8 +1,8 @@
 package com.amuzil.av3.utils.commands;
 
-import com.amuzil.av3.api.magus.form.Form;
-import com.amuzil.av3.api.magus.registry.Registries;
-import com.amuzil.av3.api.magus.skill.Skill;
+import com.amuzil.magus.form.Form;
+import com.amuzil.magus.registry.Registries;
+import com.amuzil.magus.skill.Skill;
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.bending.element.Elements;
 import com.amuzil.av3.input.InputModule;

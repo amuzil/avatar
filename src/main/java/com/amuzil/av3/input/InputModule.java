@@ -1,6 +1,6 @@
 package com.amuzil.av3.input;
 
-import com.amuzil.av3.api.magus.form.ActiveForm;
+import com.amuzil.magus.form.ActiveForm;
 import com.amuzil.av3.bending.BendingSelection;
 import com.amuzil.av3.bending.form.BendingForm;
 import com.amuzil.av3.bending.form.BendingForms;

@@ -1,6 +1,6 @@
 package com.amuzil.av3.bending.skill;
 
-import com.amuzil.av3.api.magus.skill.SkillCategory;
+import com.amuzil.magus.skill.SkillCategory;
 import com.amuzil.av3.bending.BendingSkill;
 import com.amuzil.av3.bending.element.Elements;
 

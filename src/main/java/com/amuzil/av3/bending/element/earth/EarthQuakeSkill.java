@@ -1,10 +1,10 @@
 package com.amuzil.av3.bending.element.earth;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.av3.api.magus.skill.data.SkillPathBuilder;
-import com.amuzil.av3.api.magus.skill.event.SkillTickEvent;
-import com.amuzil.av3.api.magus.skill.traits.skilltraits.KnockbackTrait;
-import com.amuzil.av3.api.magus.skill.traits.skilltraits.SizeTrait;
+import com.amuzil.magus.skill.data.SkillPathBuilder;
+import com.amuzil.magus.skill.event.SkillTickEvent;
+import com.amuzil.magus.skill.traits.skilltraits.KnockbackTrait;
+import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
 import com.amuzil.av3.bending.skill.EarthSkill;
 import com.amuzil.av3.capability.Bender;
 import com.amuzil.av3.utils.Constants;

@@ -1,8 +1,8 @@
 package com.amuzil.av3.utils.commands;
 
-import com.amuzil.av3.api.magus.form.ActiveForm;
-import com.amuzil.av3.api.magus.form.Form;
-import com.amuzil.av3.api.magus.skill.Skill;
+import com.amuzil.magus.form.ActiveForm;
+import com.amuzil.magus.form.Form;
+import com.amuzil.magus.skill.Skill;
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.bending.form.BendingForm;
 import com.amuzil.av3.capability.AvatarCapabilities;

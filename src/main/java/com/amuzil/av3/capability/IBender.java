@@ -1,9 +1,9 @@
 package com.amuzil.av3.capability;
 
-import com.amuzil.av3.api.magus.form.Form;
-import com.amuzil.av3.api.magus.skill.Skill;
-import com.amuzil.av3.api.magus.skill.data.SkillCategoryData;
-import com.amuzil.av3.api.magus.skill.data.SkillData;
+import com.amuzil.magus.form.Form;
+import com.amuzil.magus.skill.Skill;
+import com.amuzil.magus.skill.data.SkillCategoryData;
+import com.amuzil.magus.skill.data.SkillData;
 import com.amuzil.av3.bending.BendingSelection;
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.network.packets.sync.SyncBenderPacket;

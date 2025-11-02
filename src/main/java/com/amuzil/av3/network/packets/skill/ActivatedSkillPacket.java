@@ -1,7 +1,7 @@
 package com.amuzil.av3.network.packets.skill;
 
-import com.amuzil.av3.api.magus.registry.Registries;
-import com.amuzil.av3.api.magus.skill.Skill;
+import com.amuzil.magus.registry.Registries;
+import com.amuzil.magus.skill.Skill;
 import com.amuzil.av3.capability.Bender;
 import com.amuzil.av3.network.packets.api.AvatarPacket;
 import net.minecraft.client.Minecraft;
