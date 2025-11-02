@@ -1,6 +1,6 @@
 package com.amuzil.carryon.physics.packet;
 
-import com.amuzil.carryon.physics.CarryOn;
+import com.amuzil.carryon.CarryOn;
 import com.amuzil.carryon.physics.packet.impl.SendRigidBodyMovementPacket;
 import com.amuzil.carryon.physics.packet.impl.SendRigidBodyPropertiesPacket;
 import net.minecraftforge.network.NetworkRegistry;

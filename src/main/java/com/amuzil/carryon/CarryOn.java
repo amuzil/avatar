@@ -1,4 +1,4 @@
-package com.amuzil.carryon.physics;
+package com.amuzil.carryon;
 
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;

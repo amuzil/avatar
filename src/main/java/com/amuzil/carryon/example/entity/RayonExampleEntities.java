@@ -1,6 +1,6 @@
 package com.amuzil.carryon.example.entity;
 
-import com.amuzil.carryon.physics.CarryOn;
+import com.amuzil.carryon.CarryOn;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;

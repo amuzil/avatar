@@ -1,6 +1,6 @@
 package com.amuzil.carryon.physics.bullet.natives;
 
-import com.amuzil.carryon.physics.CarryOn;
+import com.amuzil.carryon.CarryOn;
 import com.jme3.system.JmeSystem;
 import com.jme3.system.NativeLibraryLoader;
 import net.minecraftforge.fml.loading.FMLLoader;

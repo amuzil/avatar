@@ -2,7 +2,7 @@ package com.amuzil.carryon.physics.bullet.thread;
 
 import com.amuzil.carryon.api.PhysicsElement;
 import com.amuzil.carryon.api.event.space.PhysicsSpaceEvent;
-import com.amuzil.carryon.physics.CarryOn;
+import com.amuzil.carryon.CarryOn;
 import com.amuzil.carryon.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.carryon.physics.bullet.collision.space.supplier.entity.EntitySupplier;
 import com.amuzil.carryon.physics.bullet.collision.space.supplier.level.LevelSupplier;
