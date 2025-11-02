@@ -2,23 +2,23 @@
   "required": true,
   "minVersion": "0.8",
   "compatibilityLevel": "JAVA_17",
-  "package": "com.amuzil.av3.api.carryon.physics.mixin",
+  "package": "com.amuzil.carryon.physics.mixin",
   "refmap": "av3.refmap.json",
   "mixins": [
-    "com.amuzil.carryon.physics.mixin.common.BlockStateBaseMixin",
-    "com.amuzil.carryon.physics.mixin.common.ChunkMapMixin",
-    "com.amuzil.carryon.physics.mixin.common.LevelMixin",
-    "com.amuzil.carryon.physics.mixin.common.entity.EntityMixin",
-    "com.amuzil.carryon.physics.mixin.common.entity.ExplosionMixin",
-    "com.amuzil.carryon.physics.mixin.common.entity.ServerEntityMixin",
-    "com.amuzil.carryon.physics.mixin.common.entity.TrackedEntityMixin"
+    "common.BlockStateBaseMixin",
+    "common.ChunkMapMixin",
+    "common.LevelMixin",
+    "common.entity.EntityMixin",
+    "common.entity.ExplosionMixin",
+    "common.entity.ServerEntityMixin",
+    "common.entity.TrackedEntityMixin"
   ],
   "client": [
-    "com.amuzil.carryon.physics.mixin.client.ClientPacketListenerMixin",
-    "com.amuzil.carryon.physics.mixin.client.ClientLevelMixin",
-    "com.amuzil.carryon.physics.mixin.client.EntityRenderDispatcherMixin",
-    "com.amuzil.carryon.physics.mixin.client.KeyboardMixin",
-    "com.amuzil.carryon.physics.mixin.client.LevelRendererMixin"
+    "client.ClientPacketListenerMixin",
+    "client.ClientLevelMixin",
+    "client.EntityRenderDispatcherMixin",
+    "client.KeyboardMixin",
+    "client.LevelRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
