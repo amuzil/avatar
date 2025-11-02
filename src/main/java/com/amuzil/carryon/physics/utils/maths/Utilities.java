@@ -115,7 +115,7 @@ public class Utilities {
         return new Vector3f(i, j, k);
     }
 
-    public static List<ServerPlayer> getTracking(Entity entity {
+    public static List<ServerPlayer> getTracking(Entity entity) {
         if (entity.level() instanceof ServerLevel level) {
             ChunkMap chunkMap = level.getChunkSource().chunkMap;
             TrackedEntityMixin trackedEntity = ((ChunkMapMixin)chunkMap).rayon$getEntityMap().get(entity.getId());
