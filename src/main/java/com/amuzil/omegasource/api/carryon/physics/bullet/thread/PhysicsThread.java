@@ -1,6 +1,7 @@
 package com.amuzil.omegasource.api.carryon.physics.bullet.thread;
 
 import com.amuzil.omegasource.api.carryon.api.PhysicsElement;
+import com.amuzil.omegasource.api.carryon.api.event.space.PhysicsSpaceEvent;
 import com.amuzil.omegasource.api.carryon.physics.CarryOn;
 import com.amuzil.omegasource.api.carryon.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.omegasource.api.carryon.physics.bullet.collision.space.supplier.entity.EntitySupplier;
@@ -20,9 +21,9 @@ import java.util.concurrent.Executor;
  * {@link ReentrantBlockableEventLoop} object. Calling
  * {@link PhysicsThread#execute} adds a runnable to the queue of tasks and is
  * the main way to execute code on this thread. You can also execute code here
- * by using {@link PhysicsSpaceEvents}.
+ * by using {@link PhysicsSpaceEvent}.
  * 
- * @see PhysicsSpaceEvents
+ * @see PhysicsSpaceEvent
  * @see PhysicsElement
  * @see MinecraftSpace
  */

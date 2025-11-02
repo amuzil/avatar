@@ -41,7 +41,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * rigid bodies or your computer is slo.
  * 
  * @see PhysicsThread
- * @see PhysicsSpaceEvents
+ * @see PhysicsSpaceEvent
  */
 @SuppressWarnings("deprecation")
 public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionListener {
@@ -84,7 +84,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
     /**
      * This method performs the following steps:
      * <ul>
-     * <li>Fires world step events in {@link PhysicsSpaceEvents}.</li>
+     * <li>Fires world step events in {@link PhysicsSpaceEvent}.</li>
      * <li>Steps {@link ElementRigidBody}s.</li>
      * <li>Steps the simulation asynchronously.</li>
      * <li>Triggers collision events.</li>
@@ -94,7 +94,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
      * (no {@link PhysicsRigidBody}s) or when the game is paused.
      *
      * @see TerrainGenerator
-     * @see PhysicsSpaceEvents
+     * @see PhysicsSpaceEvent
      */
     public void step() {
         MinecraftSpace.get(this.level).getRigidBodiesByClass(ElementRigidBody.class).forEach(ElementRigidBody::updateFrame);
