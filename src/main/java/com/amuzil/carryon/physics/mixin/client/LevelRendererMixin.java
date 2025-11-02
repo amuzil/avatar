@@ -16,8 +16,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class LevelRendererMixin {
     @Redirect(method = "renderEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/EntityRenderDispatcher;render(Lnet/minecraft/world/entity/Entity;DDDFFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V"))
     public void rayon$renderEntity(EntityRenderDispatcher dispatcher, Entity entity, double d, double e, double f, float g, float h, PoseStack poseStack, MultiBufferSource multiBufferSource, int i) {
-        if (EntityPhysicsElement.is(entity))
-        {
+        if (EntityPhysicsElement.is(entity)) {
             var element = EntityPhysicsElement.get(entity);
             var cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
             var location = element.getPhysicsLocation(new Vector3f(), h);

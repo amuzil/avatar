@@ -34,8 +34,7 @@ public class Utilities {
 
         var result = (q1.x() * q2.x()) + (q1.y() * q2.y()) + (q1.z() * q2.z()) + (q1.w() * q2.w());
 
-        if (result < 0.0f)
-        {
+        if (result < 0.0f) {
             q2.set(-q2.x(), -q2.y(), -q2.z(), -q2.w());
             result = -result;
         }
@@ -43,8 +42,7 @@ public class Utilities {
         var scale0 = 1 - t;
         var scale1 = t;
 
-        if ((1 - result) > 0.1f)
-        {
+        if ((1 - result) > 0.1f) {
             final var theta = (float) Math.acos(result);
             final var invSinTheta = 1f / (float) Math.sin(theta);
 
@@ -117,18 +115,15 @@ public class Utilities {
         return new Vector3f(i, j, k);
     }
 
-    public static List<ServerPlayer> getTracking(Entity entity) 
-    {
-        if (entity.level() instanceof ServerLevel level)
-        {
+    public static List<ServerPlayer> getTracking(Entity entity {
+        if (entity.level() instanceof ServerLevel level) {
             ChunkMap chunkMap = level.getChunkSource().chunkMap;
             TrackedEntityMixin trackedEntity = ((ChunkMapMixin)chunkMap).rayon$getEntityMap().get(entity.getId());
             if (trackedEntity != null)
                 return trackedEntity.rayon$getSeenBy().stream().map(ServerPlayerConnection::getPlayer).collect(ImmutableList.toImmutableList());
             return ImmutableList.of();
         }
-        else
-        {
+        else {
             throw new IllegalArgumentException("Can only fetch players tracking entity on the server");
         }
     }

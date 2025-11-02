@@ -33,8 +33,7 @@ public class Triangle {
         var aabbs = voxelShape.toAabbs();
         final var triangles = new ArrayList<Triangle>(6 * 2 * aabbs.size());
 
-        for (var box : aabbs)
-        {
+        for (var box : aabbs) {
             final var x = box.getXsize() * 0.5f;
             final var y = box.getYsize() * 0.5f;
             final var z = box.getZsize() * 0.5f;
@@ -47,8 +46,7 @@ public class Triangle {
     }
 
     public static void createBoxMesh(final float x, final float y, final float z, final Vector3f offset, Consumer<Triangle> consumer) {
-        final var points = new Vector3f[]
-        {
+        final var points = new Vector3f[] {
             // south
             new Vector3f(x, y, z), new Vector3f(-x, y, z), new Vector3f(0, 0, z), new Vector3f(-x, y, z), new Vector3f(-x, -y, z), new Vector3f(0, 0, z), new Vector3f(-x, -y, z), new Vector3f(x, -y, z), new Vector3f(0, 0, z), new Vector3f(x, -y, z), new Vector3f(x, y, z), new Vector3f(0, 0, z),
             // north

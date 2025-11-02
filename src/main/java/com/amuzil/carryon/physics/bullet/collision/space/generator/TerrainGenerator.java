@@ -23,35 +23,27 @@ public class TerrainGenerator {
         final var chunkCache = space.getChunkCache();
         final var keep = new HashSet<TerrainRigidBody>();
 
-        for (var rigidBody : space.getRigidBodiesByClass(ElementRigidBody.class))
-        {
-            if (!rigidBody.terrainLoadingEnabled() || !rigidBody.isActive())
-            {
+        for (var rigidBody : space.getRigidBodiesByClass(ElementRigidBody.class)) {
+            if (!rigidBody.terrainLoadingEnabled() || !rigidBody.isActive()) {
                 continue;
             }
 
             final var aabb = rigidBody.getCurrentMinecraftBoundingBox().inflate(0.5f);
 
-            BlockPos.betweenClosedStream(aabb).forEach(blockPos ->
-            {
-                chunkCache.getBlockData(blockPos).ifPresent(blockData ->
-                {
-                    space.getTerrainObjectAt(blockPos).ifPresentOrElse(terrain ->
-                    {
-                        if (blockData.blockState() != terrain.getBlockState())
-                        {
+            BlockPos.betweenClosedStream(aabb).forEach(blockPos -> {
+                chunkCache.getBlockData(blockPos).ifPresent(blockData -> {
+                    space.getTerrainObjectAt(blockPos).ifPresentOrElse(terrain -> {
+                        if (blockData.blockState() != terrain.getBlockState()) {
                             space.removeCollisionObject(terrain);
 
                             final var terrain2 = TerrainRigidBody.from(blockData);
                             space.addCollisionObject(terrain2);
                             keep.add(terrain2);
                         }
-                        else
-                        {
+                        else {
                             keep.add(terrain);
                         }
-                    }, () ->
-                    {
+                    }, () -> {
                         final var terrain = TerrainRigidBody.from(blockData);
                         space.addCollisionObject(terrain);
                         keep.add(terrain);
@@ -60,10 +52,8 @@ public class TerrainGenerator {
             });
         }
 
-        space.getTerrainMap().forEach((blockPos, terrain) ->
-        {
-            if (!keep.contains(terrain))
-            {
+        space.getTerrainMap().forEach((blockPos, terrain) -> {
+            if (!keep.contains(terrain)) {
                 space.removeTerrainObjectAt(blockPos);
             }
         });

@@ -12,15 +12,12 @@ import net.minecraft.world.entity.Entity;
 public class RayonClientPacketHandler {
     public static void handleSendRigidBodyMovementPacket(SendRigidBodyMovementPacket packet) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level != null)
-        {
+        if (mc.level != null) {
             Entity entity = mc.level.getEntity(packet.getId());
-            if (EntityPhysicsElement.is(entity))
-            {
+            if (EntityPhysicsElement.is(entity)) {
                 EntityRigidBody rigidBody = EntityPhysicsElement.get(entity).getRigidBody();
 
-                MinecraftSpace.get(mc.level).getWorkerThread().execute(() ->
-                {
+                MinecraftSpace.get(mc.level).getWorkerThread().execute(() -> {
                     rigidBody.setPhysicsRotation(Convert.toBullet(packet.getRotation()));
                     rigidBody.setPhysicsLocation(Convert.toBullet(packet.getPos()));
                     rigidBody.setLinearVelocity(Convert.toBullet(packet.getLinearVel()));
@@ -33,15 +30,12 @@ public class RayonClientPacketHandler {
 
     public static void handleSendRigidBodyPropertiesPacket(SendRigidBodyPropertiesPacket packet) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level != null)
-        {
+        if (mc.level != null) {
             Entity entity = mc.level.getEntity(packet.getId());
-            if (EntityPhysicsElement.is(entity))
-            {
+            if (EntityPhysicsElement.is(entity)) {
                 EntityRigidBody rigidBody = EntityPhysicsElement.get(entity).getRigidBody();
 
-                MinecraftSpace.get(mc.level).getWorkerThread().execute(() ->
-                {
+                MinecraftSpace.get(mc.level).getWorkerThread().execute(() -> {
                     rigidBody.setMass(packet.getMass());
                     rigidBody.setDragCoefficient(packet.getDragCoefficient());
                     rigidBody.setFriction(packet.getFriction());

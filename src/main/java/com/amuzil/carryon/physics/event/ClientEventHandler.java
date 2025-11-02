@@ -26,14 +26,12 @@ import net.minecraftforge.network.PacketDistributor;
 public final class ClientEventHandler {
     @SubscribeEvent
     public static void onLevelTick(TickEvent.LevelTickEvent event) {
-        if (event.level.isClientSide && event.phase == TickEvent.Phase.END)
-        {
+        if (event.level.isClientSide && event.phase == TickEvent.Phase.END) {
             MinecraftSpace space = MinecraftSpace.get(event.level);
             space.step();
             EntityCollisionGenerator.step(space);
 
-            for (var rigidBody : space.getRigidBodiesByClass(EntityRigidBody.class))
-            {
+            for (var rigidBody : space.getRigidBodiesByClass(EntityRigidBody.class)) {
                 var player = Minecraft.getInstance().player;
 
                 /* Movement */
@@ -63,8 +61,7 @@ public final class ClientEventHandler {
 
     @SubscribeEvent
     public static void onDebugRender(RenderLevelStageEvent event) {
-        if (CollisionObjectDebugger.isEnabled())
-        {
+        if (CollisionObjectDebugger.isEnabled()) {
             Minecraft mc = Minecraft.getInstance();
             CollisionObjectDebugger.renderSpace(MinecraftSpace.get(mc.level), event.getPoseStack(), event.getPartialTick());
         }
@@ -72,11 +69,9 @@ public final class ClientEventHandler {
 
     @SubscribeEvent
     public static void onEntityLoad(EntityJoinLevelEvent event) {
-        if (event.getLevel().isClientSide())
-        {
+        if (event.getLevel().isClientSide()) {
             Entity entity = event.getEntity();
-            if (EntityPhysicsElement.is(entity))
-            {
+            if (EntityPhysicsElement.is(entity)) {
                 Level level = entity.level();
                 MinecraftSpace.getOptional(level).ifPresent(space -> {
                     space.getWorkerThread().execute(() -> space.addCollisionObject(EntityPhysicsElement.get(entity).getRigidBody()));
@@ -87,11 +82,9 @@ public final class ClientEventHandler {
 
     @SubscribeEvent
     public static void onEntityUnload(EntityLeaveLevelEvent event) {
-        if (event.getLevel().isClientSide())
-        {
+        if (event.getLevel().isClientSide()) {
             Entity entity = event.getEntity();
-            if (EntityPhysicsElement.is(entity))
-            {
+            if (EntityPhysicsElement.is(entity)) {
                 Level level = entity.level();
                 MinecraftSpace.getOptional(level).ifPresent(space -> {
                     space.getWorkerThread().execute(() -> space.removeCollisionObject(EntityPhysicsElement.get(entity).getRigidBody()));

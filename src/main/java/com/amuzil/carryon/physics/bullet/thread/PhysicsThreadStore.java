@@ -77,8 +77,7 @@ public class PhysicsThreadStore {
     }
 
     private static PhysicsThread createThread(@Nullable PhysicsThread thread, Executor parentExecutor, Thread parentThread, LevelSupplier levelSupplier, EntitySupplier entitySupplier, String name) {
-        if (thread != null && !thread.isAlive())
-        {
+        if (thread != null && !thread.isAlive()) {
             LOGGER.warn("The previous {} thread was not destroyed", thread.getName());
             thread.destroy();
         }

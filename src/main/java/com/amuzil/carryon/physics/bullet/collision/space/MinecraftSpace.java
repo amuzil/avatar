@@ -99,14 +99,11 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
     public void step() {
         MinecraftSpace.get(this.level).getRigidBodiesByClass(ElementRigidBody.class).forEach(ElementRigidBody::updateFrame);
 
-        if (!this.isStepping() && !this.isEmpty())
-        {
+        if (!this.isStepping() && !this.isEmpty()) {
             this.stepping = true;
 
-            for (var rigidBody : this.getRigidBodiesByClass(ElementRigidBody.class))
-            {
-                if (!rigidBody.terrainLoadingEnabled())
-                {
+            for (var rigidBody : this.getRigidBodiesByClass(ElementRigidBody.class)) {
+                if (!rigidBody.terrainLoadingEnabled()) {
                     continue;
                 }
 
@@ -122,11 +119,9 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
             this.chunkCache.refreshAll();
 
             // Step 3 times per tick, re-evaluating forces each step
-            for (int i = 0; i < 3; ++i)
-            {
+            for (int i = 0; i < 3; ++i) {
                 // Hop threads...
-                this.futures[i] = CompletableFuture.runAsync(() ->
-                {
+                this.futures[i] = CompletableFuture.runAsync(() -> {
                     /* Call collision events */
                     this.distributeEvents();
 
@@ -169,8 +164,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
 
     @Override
     public void removeCollisionObject(PhysicsCollisionObject collisionObject) {
-        if (collisionObject.isInWorld())
-        {
+        if (collisionObject.isInWorld()) {
             super.removeCollisionObject(collisionObject);
 
             if (collisionObject instanceof ElementRigidBody rigidBody)
@@ -193,8 +187,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
     }
 
     public void wakeNearbyElementRigidBodies(BlockPos blockPos) {
-        for (var rigidBody : this.getRigidBodiesByClass(ElementRigidBody.class))
-        {
+        for (var rigidBody : this.getRigidBodiesByClass(ElementRigidBody.class)) {
             if (!rigidBody.terrainLoadingEnabled())
                 continue;
 
@@ -221,8 +214,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
     public <T> List<T> getRigidBodiesByClass(Class<T> type) {
         var out = new ArrayList<T>();
 
-        for (var body : getRigidBodyList())
-        {
+        for (var body : getRigidBodyList()) {
             if (type.isAssignableFrom(body.getClass()))
                 out.add(type.cast(body));
         }

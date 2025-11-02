@@ -26,8 +26,7 @@ public class PhysicsFallingBlockRenderer extends EntityRenderer<PhysicsFallingBl
     @Override
     public void render(PhysicsFallingBlock block, float yRot, float partialTick, PoseStack stack, MultiBufferSource bufferSource, int packedLight) {
         BlockState state = block.getBlockState();
-        if (state.getRenderShape() == RenderShape.MODEL)
-        {
+        if (state.getRenderShape() == RenderShape.MODEL) {
             stack.pushPose();
             Quaternionf rot = Convert.toMinecraft(block.getPhysicsRotation(new Quaternion(), partialTick));
             stack.mulPose(rot);

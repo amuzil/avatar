@@ -33,8 +33,7 @@ public class ExplosionMixin {
 
     @ModifyArg(method = "explode", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;setDeltaMovement(Lnet/minecraft/world/phys/Vec3;)V"))
     public Vec3 rayon$setVelocityOfRigidBody_explode(Vec3 velocity) {
-        if (EntityPhysicsElement.is(this.entity))
-        {
+        if (EntityPhysicsElement.is(this.entity)) {
             var element = EntityPhysicsElement.get(this.entity);
             element.getRigidBody().applyCentralImpulse(Convert.toBullet(velocity).multLocal(element.getRigidBody().getMass() * 100f));
         }

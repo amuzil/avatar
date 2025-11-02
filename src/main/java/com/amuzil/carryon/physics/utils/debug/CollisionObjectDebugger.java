@@ -55,8 +55,7 @@ public final class CollisionObjectDebugger {
         final var triangles = shape.getTriangles(Quaternion.IDENTITY);
         final var cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
 
-        for (var triangle : triangles)
-        {
+        for (var triangle : triangles) {
             final var vertices = triangle.getVertices();
 
             stack.pushPose();

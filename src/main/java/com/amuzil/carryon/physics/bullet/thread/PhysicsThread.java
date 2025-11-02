@@ -45,8 +45,7 @@ public class PhysicsThread extends Thread implements Executor {
         this.entitySupplier = entitySupplier;
 
         this.setName(name);
-        this.setUncaughtExceptionHandler((thread, throwable) ->
-        {
+        this.setUncaughtExceptionHandler((thread, throwable) -> {
             this.running = false;
             this.throwable = throwable;
         });
@@ -60,10 +59,8 @@ public class PhysicsThread extends Thread implements Executor {
      */
     @Override
     public void run() {
-        while (this.running)
-        {
-            if (!ClientUtil.isPaused())
-            {
+        while (this.running) {
+            if (!ClientUtil.isPaused()) {
                 /* Run all queued tasks */
                 while (!this.tasks.isEmpty())
                     this.tasks.poll().run();
@@ -128,12 +125,10 @@ public class PhysicsThread extends Thread implements Executor {
         this.running = false;
         CarryOn.LOGGER.info("Stopping " + this.getName());
 
-        try
-        {
+        try {
             this.join(5000); // 5 second timeout
         }
-        catch (InterruptedException e)
-        {
+        catch (InterruptedException e) {
             CarryOn.LOGGER.error("Error joining " + this.getName());
             e.printStackTrace();
         }

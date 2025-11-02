@@ -54,12 +54,10 @@ public class SimpleChunkCache implements ChunkCache {
     public void loadFluidData(BlockPos blockPos) {
         final var level = this.space.getLevel();
 
-        if (!level.getFluidState(blockPos).isEmpty())
-        {
+        if (!level.getFluidState(blockPos).isEmpty()) {
             var columns = this.fluidColumnByIndex.get(columnIndex(blockPos));
 
-            if (columns == null || columns.stream().noneMatch(column -> column.contains(blockPos)))
-            {
+            if (columns == null || columns.stream().noneMatch(column -> column.contains(blockPos))) {
                 var column = new FluidColumn(new BlockPos(blockPos), level);
                 this.fluidColumns.add(column);
                 this.fluidColumnByIndex.computeIfAbsent(column.getIndex(), (a) -> new ArrayList<>()).add(column);
@@ -105,13 +103,11 @@ public class SimpleChunkCache implements ChunkCache {
                 var blockData = this.blockData.get(pos);
                 final var blockState = level.getBlockState(pos);
 
-                if (blockData != null)
-                {
+                if (blockData != null) {
                     if (blockData.blockState() != blockState)
                         this.loadBlockData(pos, level, blockState);
                 }
-                else
-                {
+                else {
                     this.loadBlockData(pos, level, blockState);
                 }
 
@@ -121,12 +117,10 @@ public class SimpleChunkCache implements ChunkCache {
         }
 
         this.blockData.keySet().removeIf(blockPos -> !this.activePositions.contains(blockPos.asLong()));
-        this.fluidColumns.removeIf(column ->
-        {
+        this.fluidColumns.removeIf(column -> {
             var x = !this.isInActiveColumn(column);
 
-            if (x)
-            {
+            if (x) {
                 var y = this.fluidColumnByIndex.get(column.getIndex());
                 if (y != null)
                     y.remove(column);
@@ -145,8 +139,7 @@ public class SimpleChunkCache implements ChunkCache {
         if (list == null)
             return false;
 
-        for (var e : list)
-        {
+        for (var e : list) {
             if (column.contains(e))
                 return true;
         }
@@ -177,10 +170,8 @@ public class SimpleChunkCache implements ChunkCache {
     public Optional<FluidColumn> getFluidColumn(BlockPos blockPos) {
         var allColumns = this.fluidColumnByIndex.get(columnIndex(blockPos));
 
-        if (allColumns != null)
-        {
-            for (var column : allColumns)
-            {
+        if (allColumns != null) {
+            for (var column : allColumns) {
                 if (column.contains(blockPos))
                     return Optional.of(column);
             }

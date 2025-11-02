@@ -21,16 +21,14 @@ public class NativeLoader {
         final var nativesFolder = getGameDir().resolve("natives/");
         final var url = NativeLoader.class.getResource("/assets/natives/" + fileName);
 
-        try
-        {
+        try {
             if (!Files.exists(nativesFolder))
                 Files.createDirectory(nativesFolder);
 
             final var destination = nativesFolder.resolve(fileName);
             final var destinationFile = destination.toFile();
 
-            if (Files.exists(destination))
-            {
+            if (Files.exists(destination)) {
                 if (!destinationFile.delete())
                     CarryOn.LOGGER.warn("Failed to remove old bullet natives.");
             }
@@ -45,8 +43,7 @@ public class NativeLoader {
 
             CarryOn.LOGGER.debug("Loaded LibBulletJME natives.");
         }
-        catch (IOException | NoSuchElementException e)
-        {
+        catch (IOException | NoSuchElementException e) {
             e.printStackTrace();
             throw new RuntimeException("Unable to load bullet natives.");
         }
@@ -59,8 +56,7 @@ public class NativeLoader {
     static String getPlatformSpecificName() {
         final var platform = JmeSystem.getPlatform();
 
-        final var name = switch (platform)
-        {
+        final var name = switch (platform) {
         case Windows32, Windows64 -> "bulletjme.dll";
         case Android_ARM7, Android_ARM8, Linux_ARM32, Linux_ARM64, Linux32, Linux64 -> "libbulletjme.so";
         case MacOSX32, MacOSX64, MacOSX_ARM64 -> "libbulletjme.dylib";

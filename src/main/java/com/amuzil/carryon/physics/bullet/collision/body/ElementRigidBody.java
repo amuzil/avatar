@@ -72,31 +72,25 @@ public abstract class ElementRigidBody extends MinecraftRigidBody {
     }
 
     public void readTagInfo(CompoundTag tag) {
-        try
-        {
+        try {
             if (tag.contains("orientation", 10))
                 this.setPhysicsRotation(Convert.toBullet(VectorSerializer.quaternionFromTag(tag.getCompound("orientation"))));
         }
-        catch (IllegalArgumentException e)
-        {
+        catch (IllegalArgumentException e) {
             LOGGER.warn("Failed to read orientation", e);
         }
-        try
-        {
+        try {
             if (tag.contains("linearVelocity", 10))
                 this.setLinearVelocity(Convert.toBullet(VectorSerializer.vector3fFromTag(tag.getCompound("linearVelocity"))));
         }
-        catch (IllegalArgumentException e)
-        {
+        catch (IllegalArgumentException e) {
             LOGGER.warn("Failed to read linear velocity", e);
         }
-        try
-        {
+        try {
             if (tag.contains("angularVelocity", 10))
                 this.setAngularVelocity(Convert.toBullet(VectorSerializer.vector3fFromTag(tag.getCompound("angularVelocity"))));
         }
-        catch (IllegalArgumentException e)
-        {
+        catch (IllegalArgumentException e) {
             LOGGER.warn("Failed to read angular velocity", e);
         }
         readOptionalAndCatchInvalid(tag, "mass", 5, CompoundTag::getFloat, this::setMass);
@@ -110,13 +104,11 @@ public abstract class ElementRigidBody extends MinecraftRigidBody {
     }
 
     private static <T> void readOptionalAndCatchInvalid(CompoundTag tag, String name, int tagId, BiFunction<CompoundTag, String, T> valueGetter, Consumer<T> consumer) {
-        try
-        {
+        try {
             if (tag.contains(name, tagId))
                 consumer.accept(valueGetter.apply(tag, name));
         }
-        catch (IllegalArgumentException e)
-        {
+        catch (IllegalArgumentException e) {
             LOGGER.warn("Failed to read '" + name + "'", e);
         }
     }
@@ -217,19 +209,16 @@ public abstract class ElementRigidBody extends MinecraftRigidBody {
         private boolean waterBuoyancy;
         private boolean airBuoyancy;
 
-        private BuoyancyType(boolean waterBuoyancy, boolean airBuoyancy)
-        {
+        private BuoyancyType(boolean waterBuoyancy, boolean airBuoyancy) {
             this.waterBuoyancy = waterBuoyancy;
             this.airBuoyancy = airBuoyancy;
         }
 
-        public boolean isWaterBuoyancy()
-        {
+        public boolean isWaterBuoyancy() {
             return this.waterBuoyancy;
         }
 
-        public boolean isAirBuoyancy()
-        {
+        public boolean isAirBuoyancy() {
             return this.airBuoyancy;
         }
     }
@@ -244,19 +233,16 @@ public abstract class ElementRigidBody extends MinecraftRigidBody {
         private boolean waterDrag;
         private boolean airDrag;
 
-        private DragType(boolean waterDrag, boolean airDrag)
-        {
+        private DragType(boolean waterDrag, boolean airDrag) {
             this.waterDrag = waterDrag;
             this.airDrag = airDrag;
         }
 
-        public boolean isWaterDrag()
-        {
+        public boolean isWaterDrag() {
             return this.waterDrag;
         }
 
-        public boolean isAirDrag()
-        {
+        public boolean isAirDrag() {
             return this.airDrag;
         }
     }

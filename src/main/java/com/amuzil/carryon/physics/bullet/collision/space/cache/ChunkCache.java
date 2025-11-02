@@ -66,15 +66,13 @@ public interface ChunkCache {
         private final float height;
         private long index;
 
-        public FluidColumn(BlockPos start, Level level)
-        {
+        public FluidColumn(BlockPos start, Level level) {
             this.index = Integer.toUnsignedLong(start.getX()) << 32l | Integer.toUnsignedLong(start.getZ());
             final var cursor = new BlockPos(start).mutable();
             var fluidState = level.getFluidState(cursor);
 
             // find bottom block
-            while (!fluidState.isEmpty())
-            {
+            while (!fluidState.isEmpty()) {
                 cursor.set(cursor.below());
                 fluidState = level.getFluidState(cursor);
             }
@@ -84,8 +82,7 @@ public interface ChunkCache {
             this.bottom = new FluidData(level, new BlockPos(cursor), level.getFluidState(cursor));
 
             // find top block
-            while (!fluidState.isEmpty())
-            {
+            while (!fluidState.isEmpty()) {
                 cursor.set(cursor.above());
                 fluidState = level.getFluidState(cursor);
             }
@@ -100,38 +97,31 @@ public interface ChunkCache {
             this.flow = Convert.toBullet(fluidState.getFlow(level, cursor));
         }
 
-        public boolean contains(BlockPos blockPos)
-        {
+        public boolean contains(BlockPos blockPos) {
             return this.top.blockPos.getX() == blockPos.getX() && this.top.blockPos.getZ() == blockPos.getZ() && this.top.blockPos.getY() >= blockPos.getY() && this.bottom.blockPos.getY() <= blockPos.getY();
         }
 
-        public FluidData getTop()
-        {
+        public FluidData getTop() {
             return this.top;
         }
 
-        public FluidData getBottom()
-        {
+        public FluidData getBottom() {
             return this.bottom;
         }
 
-        public float getTopHeight(Vector3f position)
-        {
+        public float getTopHeight(Vector3f position) {
             return this.height;
         }
 
-        public int getHeight()
-        {
+        public int getHeight() {
             return this.top.blockPos.getY() - this.bottom.blockPos.getY() + 1;
         }
 
-        public Vector3f getFlow()
-        {
+        public Vector3f getFlow() {
             return this.flow;
         }
 
-        public long getIndex()
-        {
+        public long getIndex() {
             return this.index;
         }
     }

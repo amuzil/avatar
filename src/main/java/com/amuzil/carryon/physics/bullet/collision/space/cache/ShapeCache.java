@@ -23,8 +23,7 @@ public final class ShapeCache {
         final var shapes = getShapes(level.isClientSide);
         var shape = shapes.get(blockState);
 
-        if (shape == null)
-        {
+        if (shape == null) {
             shape = createShapeFor(blockState, level, BlockPos.ZERO);
             shapes.put(blockState, shape);
         }
@@ -60,8 +59,7 @@ public final class ShapeCache {
 //            }
 //        }
 
-        if (shape == null)
-        {
+        if (shape == null) {
             final var voxelShape = blockState.getCollisionShape(level, blockPos);
             if (!voxelShape.isEmpty())
                 shape = MinecraftShape.convex(voxelShape);

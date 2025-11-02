@@ -59,14 +59,12 @@ public interface MinecraftShape {
         }
 
         @Override
-        public List<Triangle> getTriangles(Quaternion quaternion)
-        {
+        public List<Triangle> getTriangles(Quaternion quaternion) {
             return this.triangles;
         }
 
         @Override
-        public float getVolume()
-        {
+        public float getVolume() {
             return this.toHullShape().aabbVolume();
         }
     }
@@ -81,14 +79,12 @@ public interface MinecraftShape {
         }
 
         @Override
-        public List<Triangle> getTriangles(Quaternion quaternion)
-        {
+        public List<Triangle> getTriangles(Quaternion quaternion) {
             return this.triangles.stream().map(triangle -> triangle.transform(quaternion)).toList();
         }
 
         @Override
-        public float getVolume()
-        {
+        public float getVolume() {
             return this.aabbVolume();
         }
     }
@@ -97,15 +93,12 @@ public interface MinecraftShape {
     final class Concave extends MeshCollisionShape implements MinecraftShape {
         private final List<Triangle> triangles;
 
-        public Concave(List<Triangle> triangles)
-        {
-            super(false, ((Supplier<IndexedMesh>) () ->
-            {
+        public Concave(List<Triangle> triangles) {
+            super(false, ((Supplier<IndexedMesh>) () -> {
                 final var vertices = triangles.stream().flatMap(triangle -> Stream.of(triangle.getVertices())).toArray(Vector3f[]::new);
                 final var indices = new int[vertices.length];
 
-                for (var i = 0; i < vertices.length; i++)
-                {
+                for (var i = 0; i < vertices.length; i++) {
                     indices[i] = i;
                 }
 
@@ -115,14 +108,12 @@ public interface MinecraftShape {
         }
 
         @Override
-        public List<Triangle> getTriangles(Quaternion quaternion)
-        {
+        public List<Triangle> getTriangles(Quaternion quaternion) {
             return this.triangles.stream().map(triangle -> triangle.transform(quaternion)).toList();
         }
 
         @Override
-        public float getVolume()
-        {
+        public float getVolume() {
             final var box = boundingBox(new Vector3f(), new Quaternion(), new BoundingBox());
             return box.getXExtent() * box.getYExtent() * box.getZExtent();
         }

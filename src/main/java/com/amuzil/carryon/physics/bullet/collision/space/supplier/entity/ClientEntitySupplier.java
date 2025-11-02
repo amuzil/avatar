@@ -16,8 +16,7 @@ public class ClientEntitySupplier implements EntitySupplier {
 
         // Is remote player
         var connection = Minecraft.getInstance().getConnection();
-        if (connection != null && connection.getOnlinePlayerIds().contains(id))
-        {
+        if (connection != null && connection.getOnlinePlayerIds().contains(id)) {
             var playerInfo = connection.getPlayerInfo(id);
             return playerInfo == null ? GameType.SURVIVAL : playerInfo.getGameMode();
         }
