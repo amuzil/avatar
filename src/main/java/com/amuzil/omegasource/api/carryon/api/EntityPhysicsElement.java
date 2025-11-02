@@ -1,7 +1,7 @@
 package com.amuzil.omegasource.api.carryon.api;
 
-import com.amuzil.omegasource.api.carryon.impl.bullet.collision.body.EntityRigidBody;
-import com.amuzil.omegasource.api.carryon.impl.bullet.collision.body.shape.MinecraftShape;
+import com.amuzil.omegasource.api.carryon.physics.bullet.collision.body.EntityRigidBody;
+import com.amuzil.omegasource.api.carryon.physics.bullet.collision.body.shape.MinecraftShape;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 

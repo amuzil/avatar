@@ -1,7 +1,7 @@
 package com.amuzil.omegasource.api.carryon.example.entity;
 
 import com.amuzil.omegasource.api.carryon.api.EntityPhysicsElement;
-import com.amuzil.omegasource.api.carryon.impl.bullet.collision.body.EntityRigidBody;
+import com.amuzil.omegasource.api.carryon.physics.bullet.collision.body.EntityRigidBody;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
