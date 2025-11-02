@@ -1,5 +1,6 @@
 package com.amuzil.omegasource.api.carryon.physics.bullet.collision.body.shape;
 
+import com.amuzil.omegasource.api.carryon.physics.bullet.math.Convert;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.HullCollisionShape;
@@ -7,7 +8,6 @@ import com.jme3.bullet.collision.shapes.MeshCollisionShape;
 import com.jme3.bullet.collision.shapes.infos.IndexedMesh;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import com.amuzil.omegasource.api.carryon.physics.bullet.math.Convert;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
 

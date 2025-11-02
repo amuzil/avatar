@@ -1,9 +1,9 @@
 package com.amuzil.omegasource.api.carryon.physics.bullet.collision.space.generator;
 
-import com.jme3.math.Vector3f;
 import com.amuzil.omegasource.api.carryon.physics.bullet.collision.body.EntityRigidBody;
 import com.amuzil.omegasource.api.carryon.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.omegasource.api.carryon.physics.bullet.math.Convert;
+import com.jme3.math.Vector3f;
 
 /**
  * Mods should implement it on their own, with will allow for better performance

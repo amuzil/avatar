@@ -1,15 +1,15 @@
 package com.amuzil.omegasource;
 
-import com.amuzil.omegasource.api.magus.registry.Registries;
-import com.amuzil.omegasource.api.magus.tree.SkillTree;
+import com.amuzil.omegasource.api.carryon.example.entity.RayonExampleEntities;
+import com.amuzil.omegasource.api.carryon.example.renderer.RayonExampleEntityRenderers;
 import com.amuzil.omegasource.api.carryon.physics.bullet.collision.space.generator.PressureGenerator;
 import com.amuzil.omegasource.api.carryon.physics.bullet.collision.space.generator.TerrainGenerator;
 import com.amuzil.omegasource.api.carryon.physics.bullet.natives.NativeLoader;
 import com.amuzil.omegasource.api.carryon.physics.event.ClientEventHandler;
 import com.amuzil.omegasource.api.carryon.physics.event.ServerEventHandler;
-import com.amuzil.omegasource.api.carryon.example.renderer.RayonExampleEntityRenderers;
-import com.amuzil.omegasource.api.carryon.example.entity.RayonExampleEntities;
 import com.amuzil.omegasource.api.carryon.physics.packet.RayonPacketHandlers;
+import com.amuzil.omegasource.api.magus.registry.Registries;
+import com.amuzil.omegasource.api.magus.tree.SkillTree;
 import com.amuzil.omegasource.bending.BendingSkill;
 import com.amuzil.omegasource.bending.element.Elements;
 import com.amuzil.omegasource.entity.AvatarEntities;

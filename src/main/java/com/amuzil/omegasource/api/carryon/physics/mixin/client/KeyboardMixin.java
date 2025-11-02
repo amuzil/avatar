@@ -1,7 +1,7 @@
 package com.amuzil.omegasource.api.carryon.physics.mixin.client;
 
-import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.amuzil.omegasource.api.carryon.physics.utils.debug.CollisionObjectDebugger;
+import com.jme3.bullet.objects.PhysicsRigidBody;
 import net.minecraft.client.KeyboardHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
