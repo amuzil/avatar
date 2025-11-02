@@ -2,16 +2,9 @@
   "required": true,
   "minVersion": "0.8",
   "compatibilityLevel": "JAVA_17",
-  "package": "com.amuzil.omegasource.api.rayon.impl.mixin",
+  "package": "com.amuzil.omegasource.api.carryon.impl.mixin",
   "refmap": "av3.refmap.json",
   "mixins": [
-    "client.ClientPacketListenerMixin",
-    "client.ClientLevelMixin",
-    "client.EntityRenderDispatcherMixin",
-    "client.KeyboardMixin",
-    "client.LevelRendererMixin"
-  ],
-  "client": [
     "common.BlockStateBaseMixin",
     "common.ChunkMapMixin",
     "common.LevelMixin",
@@ -19,6 +12,13 @@
     "common.entity.ExplosionMixin",
     "common.entity.ServerEntityMixin",
     "common.entity.TrackedEntityMixin"
+  ],
+  "client": [
+    "client.ClientPacketListenerMixin",
+    "client.ClientLevelMixin",
+    "client.EntityRenderDispatcherMixin",
+    "client.KeyboardMixin",
+    "client.LevelRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
