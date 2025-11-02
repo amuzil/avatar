@@ -26,16 +26,10 @@ import com.amuzil.av3.utils.commands.AvatarCommands;
 import com.amuzil.av3.utils.sound.AvatarSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.NeoForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -46,10 +40,11 @@ public class Avatar {
     public static final Logger LOGGER = LogManager.getLogger();
     public static InputModule inputModule;
 
-    public Avatar(FMLJavaModLoadingContext context) {
+    public Avatar(ModLoadingContext context) {
         NativeLoader.load();
-        IEventBus modEventBus = context.getModEventBus();
+        IEventBus modEventBus = context.getActiveContainer().getEventBus();
         // Register the setup method for mod loading
+        assert modEventBus != null;
         modEventBus.addListener(this::setup);
         // Register the enqueueIMC method for mod loading
         modEventBus.addListener(this::enqueueIMC);
@@ -64,7 +59,7 @@ public class Avatar {
         java.util.logging.LogManager.getLogManager().reset(); // prevent annoying libbulletjme spam
 
         // Register ourselves for server and other game events we are interested in
-        MinecraftForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.register(this);
 
         AvatarEntities.register(modEventBus);
         AvatarSounds.register(modEventBus);
