@@ -8,5 +8,5 @@ import net.minecraft.resources.ResourceLocation;
 // Avatar Visual Effects
 public class AvatarFX {
 
-    public static FX steam = FXHelper.getFX(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "steam"));
+    public static FX steam = FXHelper.getFX(Avatar.id("steam"));
 }

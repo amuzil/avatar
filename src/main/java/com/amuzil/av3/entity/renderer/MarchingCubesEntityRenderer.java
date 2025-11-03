@@ -19,8 +19,8 @@ import java.util.*;
 public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityRenderer<T> {
 
     private final Map<UUID, CachedMesh> meshCache = new HashMap<>();
-//    private static final ResourceLocation WHITE_TEX = ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "textures/misc/white.png");
-    private static final ResourceLocation WHITE_TEX = ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "textures/water.png");
+//    private static final ResourceLocation WHITE_TEX = Avatar.id("textures/misc/white.png");
+    private static final ResourceLocation WHITE_TEX = Avatar.id("textures/water.png");
 
     private static final int GRID_SIZE = 32;
     private static final float CELL_SIZE = 0.25f;

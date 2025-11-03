@@ -83,7 +83,7 @@ public class Registries {
     public static Supplier<? extends Skill> registerSkill(Supplier<? extends Skill> skillSup) {
         String name = skillSup.get().name();
         Supplier<Skill> skillRegistryObject = SKILL_REGISTER.register(name, skillSup);
-        String namespace = ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, name).toString();
+        String namespace = Avatar.id(name).toString();
         skills.put(namespace, skillRegistryObject);
         skillSuppliers.put(namespace, skillSup);
         return skillRegistryObject;
@@ -101,7 +101,7 @@ public class Registries {
     public static void onRegistryRegister(NewRegistryEvent event) {
         // Forms
         RegistryBuilder<Form> formRegistryBuilder = new RegistryBuilder<>();
-        formRegistryBuilder.defaultKey(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "forms"));
+        formRegistryBuilder.defaultKey(Avatar.id("forms"));
         FORMS = event.create(formRegistryBuilder);
     }
 

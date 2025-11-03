@@ -260,7 +260,7 @@ public abstract class AvatarEntity extends Entity {
         String fxName = this.entityData.get(FX);
         if (fxName.isEmpty())
             return null;
-        return ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, fxName);
+        return Avatar.id(fxName);
     }
 
     public void setFXOneShot(boolean fxOneShot) {

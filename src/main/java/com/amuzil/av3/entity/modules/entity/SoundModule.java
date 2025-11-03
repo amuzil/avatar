@@ -48,7 +48,7 @@ public class SoundModule implements IEntityModule {
 
     public static void startSoundEffect(String sfxName, AvatarEntity entity) {
         if (sfxName != null) {
-            ResourceLocation id = ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, sfxName);
+            ResourceLocation id = Avatar.id(sfxName);
             SoundEvent soundEvent = ForgeRegistries.SOUND_EVENTS.getValue(id);
             if (soundEvent != null)
                 Minecraft.getInstance().getSoundManager()

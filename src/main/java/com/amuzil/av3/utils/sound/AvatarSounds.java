@@ -20,7 +20,7 @@ public class AvatarSounds {
 
     private static Supplier<SoundEvent> register(String name) {
         return SOUND_EVENTS.register(name,
-                () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, name)));
+                () -> SoundEvent.createVariableRangeEvent(Avatar.id(name)));
     }
 
     public static void register(IEventBus eventBus) {

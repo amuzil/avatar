@@ -1,6 +1,7 @@
 package com.amuzil.av3.capability;
 
 import com.amuzil.av3.Avatar;
+import com.amuzil.magus.skill.traits.DataTrait;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -16,12 +17,12 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 @EventBusSubscriber(modid = Avatar.MOD_ID)
 public final class AvatarCapabilities {
-    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "bender");
+    public static final ResourceLocation ID = Avatar.id("bender");
     public static final EntityCapability<IBender, Void> BENDER = EntityCapability.createVoid(ID, IBender.class);
 
     @SubscribeEvent
     private static void register(RegisterCapabilitiesEvent event) {
-        event.registerEntity(BENDER, EntityType.PLAYER, new BenderProvider());
+        event.registerEntity(BENDER, EntityType.PLAYER, (entity, ctx) -> new BenderProvider(entity));
     }
 
 //    @SubscribeEvent
@@ -38,10 +39,7 @@ public final class AvatarCapabilities {
     public static void onPlayerDeath(LivingDeathEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
 
-        player.getCapability(BENDER).ifPresent(bender -> {
-            CompoundTag capData = bender.serializeNBT();
-            player.getPersistentData().put("BenderCap", capData);
-        });
+        player.getPersistentData().put("BenderCap", player.getCapability(BENDER).serializeNBT());
     }
 
     // Clone data on respawn
@@ -49,12 +47,7 @@ public final class AvatarCapabilities {
     public static void onPlayerClone(PlayerEvent.Clone event) {
         if (!event.isWasDeath()) return;
 
-//        event.getOriginal().reviveCaps(); // Doesn't even work
-
         CompoundTag capData = event.getOriginal().getPersistentData().getCompound("BenderCap");
-        event.getEntity().getCapability(BENDER).ifPresent(newCap -> {
-            // Load data on to new entity
-            newCap.deserializeNBT(capData);
-        });
+        event.getEntity().getCapability(BENDER).deserializeNBT(capData);
     }
 }
