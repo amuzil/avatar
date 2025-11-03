@@ -2,31 +2,36 @@ package com.amuzil.av3.capability;
 
 import com.amuzil.av3.Avatar;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.capabilities.EntityCapability;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 
 @EventBusSubscriber(modid = Avatar.MOD_ID)
-public class AvatarCapabilities {
-    public static final Capability<IBender> BENDER = CapabilityManager.get(new CapabilityToken<>() {});
-
-    public static void register(RegisterCapabilitiesEvent event) {
-        event.register(IBender.class);
-    }
+public final class AvatarCapabilities {
+    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "bender");
+    public static final EntityCapability<IBender, Void> BENDER = EntityCapability.createVoid(ID, IBender.class);
 
     @SubscribeEvent
-    public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event) {
-        if (event.getObject() instanceof Player livingEntity) {
-            BenderProvider provider = new BenderProvider(livingEntity);
-            event.addCapability(BenderProvider.ID, provider);
-            event.addListener(provider::invalidate);
-        }
+    private static void register(RegisterCapabilitiesEvent event) {
+        event.registerEntity(BENDER, EntityType.PLAYER, new BenderProvider());
     }
+
+//    @SubscribeEvent
+//    public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event) {
+//        if (event.getObject() instanceof Player livingEntity) {
+//            BenderProvider provider = new BenderProvider(livingEntity);
+//            event.addCapability(BenderProvider.ID, provider);
+//            event.addListener(provider::invalidate);
+//        }
+//    }
 
     // Save data on death
     @SubscribeEvent

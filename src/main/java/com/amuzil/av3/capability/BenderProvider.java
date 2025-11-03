@@ -1,39 +1,40 @@
 package com.amuzil.av3.capability;
 
 import com.amuzil.av3.Avatar;
-import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.EntityCapability;
+import net.neoforged.neoforge.capabilities.ICapabilityProvider;
+import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.items.IItemHandler;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
 
-public class BenderProvider implements ICapabilitySerializable<CompoundTag> {
-    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "bender");
-    private final Bender bender;
-    private final LazyOptional<IBender> optional;
+public class BenderProvider implements ICapabilityProvider<Player, @Nullable Void, IBender>, INBTSerializable<CompoundTag> {
 
-    public BenderProvider(LivingEntity entity) {
-        this.bender = new Bender(entity);
-        this.optional = LazyOptional.of(() -> bender);
-    }
-
-    @Override
-    public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap, Direction side) {
-        return cap == AvatarCapabilities.BENDER ? optional.cast() : LazyOptional.empty();
-    }
-
-    @Override
-    public CompoundTag serializeNBT() {
-        return bender.serializeNBT();
-    }
-
-    @Override
-    public void deserializeNBT(CompoundTag tag) {
-        bender.deserializeNBT(tag);
-    }
+    private final Bender bender = new Bender();
 
     public void invalidate() {
         optional.invalidate();
+    }
+
+    @Override
+    public @Nullable IBender getCapability(Player player, @Nullable Void ctx) {
+        return bender;
+    }
+
+    @Override
+    public @UnknownNullability CompoundTag serializeNBT(HolderLookup.Provider provider) {
+        return bender.serializeNBT(provider);
+    }
+
+    @Override
+    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
+        bender.deserializeNBT(provider, tag);
     }
 }

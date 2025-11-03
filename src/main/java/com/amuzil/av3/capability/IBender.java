@@ -22,7 +22,6 @@ import java.util.List;
  * It allows for serialization and deserialization of the element & bending skill data.
  * Remember to call markDirty() or send {@link SyncBenderPacket} after every data update to ensure proper syncing
  */
-@AutoRegisterCapability
 public interface IBender extends INBTSerializable<CompoundTag> {
 
     Vec3 getDeltaMovement();
