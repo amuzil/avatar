@@ -3,7 +3,7 @@ package com.amuzil.carryon.physics.bullet.natives;
 import com.amuzil.carryon.CarryOn;
 import com.jme3.system.JmeSystem;
 import com.jme3.system.NativeLibraryLoader;
-import net.minecraftforge.fml.loading.FMLLoader;
+import net.neoforged.fml.loading.FMLLoader;
 import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;

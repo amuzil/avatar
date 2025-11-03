@@ -12,7 +12,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 
 /**
  * This class handles debug rendering on the client. Press F3+r to render all
@@ -34,15 +34,14 @@ public final class CollisionObjectDebugger {
 
     public static void renderSpace(MinecraftSpace space, PoseStack stack, float tickDelta) {
         final var cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
-        final var builder = Tesselator.getInstance().getBuilder();
+        final var builder = Tesselator.getInstance().begin(VertexFormat.Mode.DEBUG_LINES, DefaultVertexFormat.POSITION_COLOR);
 
         NeoForge.EVENT_BUS.post(new DebugRenderEvent(space, builder, stack, cameraPos, tickDelta));
-        builder.begin(VertexFormat.Mode.DEBUG_LINES, DefaultVertexFormat.POSITION_COLOR);
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
         space.getTerrainMap().values().forEach(terrain -> CollisionObjectDebugger.renderBody(terrain, builder, stack, tickDelta));
         space.getRigidBodiesByClass(ElementRigidBody.class).forEach(elementRigidBody -> CollisionObjectDebugger.renderBody(elementRigidBody, builder, stack, tickDelta));
-        Tesselator.getInstance().end();
+        builder.build();
     }
 
     public static void renderBody(MinecraftRigidBody rigidBody, BufferBuilder builder, PoseStack stack, float tickDelta) {
@@ -65,10 +64,10 @@ public final class CollisionObjectDebugger {
             final var p2 = vertices[1];
             final var p3 = vertices[2];
 
-            builder.vertex(stack.last().pose(), p1.x, p1.y, p1.z).color(color.x, color.y, color.z, alpha).endVertex();
-            builder.vertex(stack.last().pose(), p2.x, p2.y, p2.z).color(color.x, color.y, color.z, alpha).endVertex();
-            builder.vertex(stack.last().pose(), p3.x, p3.y, p3.z).color(color.x, color.y, color.z, alpha).endVertex();
-            builder.vertex(stack.last().pose(), p1.x, p1.y, p1.z).color(color.x, color.y, color.z, alpha).endVertex();
+            builder.addVertex(stack.last().pose(), p1.x, p1.y, p1.z).setColor(color.x, color.y, color.z, alpha);
+            builder.addVertex(stack.last().pose(), p2.x, p2.y, p2.z).setColor(color.x, color.y, color.z, alpha);
+            builder.addVertex(stack.last().pose(), p3.x, p3.y, p3.z).setColor(color.x, color.y, color.z, alpha);
+            builder.addVertex(stack.last().pose(), p1.x, p1.y, p1.z).setColor(color.x, color.y, color.z, alpha);
             stack.popPose();
         }
     }

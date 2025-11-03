@@ -53,9 +53,9 @@ public class PhysicsFallingBlock extends FallingBlockEntity implements EntityPhy
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(HEIGHT, 1.0f);
-        this.entityData.define(WIDTH, 1.0f);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(HEIGHT, 1.0f);
+        builder.define(WIDTH, 1.0f);
     }
 }

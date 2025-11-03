@@ -6,7 +6,6 @@ import com.amuzil.carryon.physics.packet.Packet;
 import com.amuzil.carryon.physics.packet.RayonClientPacketHandler;
 import com.jme3.math.Quaternion;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 

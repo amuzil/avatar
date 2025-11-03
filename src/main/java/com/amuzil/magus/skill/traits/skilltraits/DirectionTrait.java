@@ -1,6 +1,7 @@
 package com.amuzil.magus.skill.traits.skilltraits;
 
 import com.amuzil.magus.skill.traits.SkillTrait;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.Vec3;
 
@@ -19,8 +20,8 @@ public class DirectionTrait extends SkillTrait {
     }
 
     @Override
-    public CompoundTag serializeNBT() {
-        CompoundTag tag = super.serializeNBT();
+    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+        CompoundTag tag = super.serializeNBT(provider);
         tag.putDouble("X", direction.x);
         tag.putDouble("Y", direction.y);
         tag.putDouble("Z", direction.z);
@@ -28,8 +29,8 @@ public class DirectionTrait extends SkillTrait {
     }
 
     @Override
-    public void deserializeNBT(CompoundTag nbt) {
-        super.deserializeNBT(nbt);
+    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
+        super.deserializeNBT(provider, nbt);
         double x = nbt.getDouble("X");
         double y = nbt.getDouble("Y");
         double z = nbt.getDouble("Z");

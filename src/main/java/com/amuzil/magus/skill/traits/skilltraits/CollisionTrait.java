@@ -2,6 +2,7 @@ package com.amuzil.magus.skill.traits.skilltraits;
 
 import com.amuzil.magus.skill.traits.SkillTrait;
 import com.amuzil.av3.utils.maths.Easings;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -32,7 +33,7 @@ public class CollisionTrait extends SkillTrait {
     }
 
     @Override
-    public CompoundTag serializeNBT() {
+    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
         ListTag list = new ListTag();
         for (String collisionType: collisionTypes)
@@ -42,7 +43,7 @@ public class CollisionTrait extends SkillTrait {
     }
 
     @Override
-    public void deserializeNBT(CompoundTag nbt) {
+    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
         this.collisionTypes.clear();
         ListTag list = nbt.getList("value", Tag.TAG_STRING);
         for (int i = 0; i < list.size(); i++)

@@ -2,6 +2,7 @@ package com.amuzil.magus.skill.traits.skilltraits;
 
 import com.amuzil.magus.skill.traits.SkillTrait;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -25,8 +26,8 @@ public class BlockTrait extends SkillTrait {
     }
 
     @Override
-    public CompoundTag serializeNBT() {
-        CompoundTag tag = super.serializeNBT();
+    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+        CompoundTag tag = super.serializeNBT(provider);
         tag.putInt("value", Block.getId((BlockState) state));
         tag.putIntArray("value", new int[] {
                 pos.getX(), pos.getY(), pos.getZ()
@@ -35,8 +36,8 @@ public class BlockTrait extends SkillTrait {
     }
 
     @Override
-    public void deserializeNBT(CompoundTag nbt) {
-        super.deserializeNBT(nbt);
+    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
+        super.deserializeNBT(provider, nbt);
         state = Block.stateById(nbt.getInt("value"));
         int[] blockPos = nbt.getIntArray("value");
         pos = new BlockPos(blockPos[0],  blockPos[1], blockPos[2]);

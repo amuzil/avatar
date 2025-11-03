@@ -1,6 +1,7 @@
 package com.amuzil.av3.network.packets.sync;
 
 import com.amuzil.av3.capability.AvatarCapabilities;
+import com.amuzil.av3.capability.IBender;
 import com.amuzil.av3.network.packets.api.AvatarPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -39,18 +40,20 @@ public class SyncBenderPacket implements AvatarPacket {
                 // Update Bender's data on their client
                 LocalPlayer player = Minecraft.getInstance().player;
                 assert player != null;
-                player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
-                    bender.deserializeNBT(msg.tag);
+                IBender bender = player.getCapability(AvatarCapabilities.BENDER);
+                if(bender != null) {
+                    bender.deserializeNBT(null, msg.tag);
                     bender.markClean();
-                });
+                }
             } else {
                 // Update Bender's data on server
                 ServerPlayer player = Objects.requireNonNull(ctx.getSender()).server.getPlayerList().getPlayer(msg.playerUUID);
                 assert player != null;
-                player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
-                    bender.deserializeNBT(msg.tag);
+                IBender bender = player.getCapability(AvatarCapabilities.BENDER);
+                if(bender != null) {
+                    bender.deserializeNBT(null, msg.tag);
                     bender.markClean();
-                });
+                }
             }
         });
         ctx.setPacketHandled(true);

@@ -106,10 +106,10 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(HEIGHT, 0.5f);
-        this.entityData.define(WIDTH, 0.5f);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+//        super.defineSynchedData(builder);
+        builder.define(HEIGHT, 0.5f);
+        builder.define(WIDTH, 0.5f);
     }
 
     // Unironically the worst piece of game design I have ever seen in my life.

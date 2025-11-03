@@ -3,6 +3,7 @@ package com.amuzil.magus.skill.traits.entitytraits;
 import com.amuzil.magus.skill.traits.DataTrait;
 import com.amuzil.av3.utils.maths.Easings;
 import com.amuzil.av3.utils.maths.Point;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -58,7 +59,7 @@ public class PointsTrait implements DataTrait {
     }
 
     @Override
-    public CompoundTag serializeNBT() {
+    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
         tag.putString("TraitID", name);
         tag.putBoolean("IsDirty", isDirty);
@@ -74,7 +75,7 @@ public class PointsTrait implements DataTrait {
     }
 
     @Override
-    public void deserializeNBT(CompoundTag nbt) {
+    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
         this.name = nbt.getString("TraitID");
         this.isDirty = nbt.getBoolean("IsDirty");
         this.points.clear();

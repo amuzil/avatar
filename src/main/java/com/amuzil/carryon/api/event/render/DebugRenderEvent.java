@@ -4,7 +4,7 @@ import com.amuzil.carryon.physics.bullet.collision.space.MinecraftSpace;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.bus.api.Event;
 
 public class DebugRenderEvent extends Event {
     private final MinecraftSpace space;

@@ -1,11 +1,11 @@
 package com.amuzil.av3.network.packets.sync;
 
 import com.amuzil.av3.capability.AvatarCapabilities;
+import com.amuzil.av3.capability.IBender;
 import com.amuzil.av3.network.packets.api.AvatarPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -39,10 +39,11 @@ public class SyncMovementPacket implements AvatarPacket {
                 // Update Bender's BendingSelection on the server
                 ServerPlayer player = Objects.requireNonNull(ctx.getSender()).server.getPlayerList().getPlayer(msg.playerUUID);
                 assert player != null;
-                player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
+                IBender bender = player.getCapability(AvatarCapabilities.BENDER);
+                if(bender != null) {
                     bender.setDeltaMovement(msg.movement);
                     bender.markClean();
-                });
+                }
             }
         });
         ctx.setPacketHandled(true);
