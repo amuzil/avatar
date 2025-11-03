@@ -26,15 +26,6 @@ public final class AvatarCapabilities {
         event.registerEntity(BENDER, EntityType.PLAYER, (entity, ctx) -> new BenderProvider(entity).getCapability(entity, ctx));
     }
 
-//    @SubscribeEvent
-//    public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event) {
-//        if (event.getObject() instanceof Player livingEntity) {
-//            BenderProvider provider = new BenderProvider(livingEntity);
-//            event.addCapability(BenderProvider.ID, provider);
-//            event.addListener(provider::invalidate);
-//        }
-//    }
-
     // Save data on death
     @SubscribeEvent
     public static void onPlayerDeath(LivingDeathEvent event) {

@@ -387,7 +387,7 @@ public class Bender implements IBender {
     @Override
     public void syncSelectionToServer() {
         if (entity.level().isClientSide())
-            AvatarNetwork.sendToServer(new SyncSelectionPacket(selection.serializeNBT(), entity.getUUID()));
+            AvatarNetwork.sendToServer(new SyncSelectionPacket(selection.serializeNBT(null), entity.getUUID()));
     }
 
     @Override
