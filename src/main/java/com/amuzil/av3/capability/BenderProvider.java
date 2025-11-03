@@ -15,13 +15,9 @@ public class BenderProvider implements ICapabilityProvider<Player, @Nullable Voi
 
     private final Bender bender;
 
-    public BenderProvider(LivingEntity entity) {
+    public BenderProvider(Player entity) {
         this.bender = new Bender(entity);
     }
-
-//    public void invalidate() {
-//        optional.invalidate();
-//    }
 
     @Override
     public @Nullable IBender getCapability(@NotNull Player player, @Nullable Void ctx) {

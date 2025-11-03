@@ -2,6 +2,7 @@ package com.amuzil.av3.capability;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.magus.skill.traits.DataTrait;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -22,7 +23,7 @@ public final class AvatarCapabilities {
 
     @SubscribeEvent
     private static void register(RegisterCapabilitiesEvent event) {
-        event.registerEntity(BENDER, EntityType.PLAYER, (entity, ctx) -> new BenderProvider(entity));
+        event.registerEntity(BENDER, EntityType.PLAYER, (entity, ctx) -> new BenderProvider(entity).getCapability(entity, ctx));
     }
 
 //    @SubscribeEvent
@@ -39,7 +40,8 @@ public final class AvatarCapabilities {
     public static void onPlayerDeath(LivingDeathEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
 
-        player.getPersistentData().put("BenderCap", player.getCapability(BENDER).serializeNBT());
+        HolderLookup.Provider lookup = player.level().registryAccess();
+        player.getPersistentData().put("BenderCap", player.getCapability(BENDER).serializeNBT(lookup));
     }
 
     // Clone data on respawn
@@ -48,6 +50,7 @@ public final class AvatarCapabilities {
         if (!event.isWasDeath()) return;
 
         CompoundTag capData = event.getOriginal().getPersistentData().getCompound("BenderCap");
-        event.getEntity().getCapability(BENDER).deserializeNBT(capData);
+        HolderLookup.Provider lookup = event.getEntity().level().registryAccess();
+        event.getEntity().getCapability(BENDER).deserializeNBT(lookup, capData);
     }
 }
