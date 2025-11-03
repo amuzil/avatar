@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -68,12 +69,12 @@ public class ActivatedFormPacket implements AvatarPacket {
 //        projectile.startEffect(STRIKE);
     }
 
-    public boolean handle(Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            if (ctx.get().getDirection().getReceptionSide().isClient()) {
+    public boolean handle(IPayloadContext ctx) {
+        ctx.enqueueWork(() -> {
+            if (ctx.getDirection().getReceptionSide().isClient()) {
                 DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> handleClientSide(entityId));
             } else {
-                ServerPlayer player = ctx.get().getSender();
+                ServerPlayer player = ctx.player();
                 assert player != null;
                 handleServerSide(entityId, player);
             }

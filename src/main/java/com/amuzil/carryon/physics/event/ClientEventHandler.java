@@ -26,9 +26,9 @@ import net.neoforged.neoforge.network.PacketDistributor;
 @SuppressWarnings({"removal", "deprecation"})
 public final class ClientEventHandler {
     @SubscribeEvent
-    public static void onLevelTick(LevelTickEvent event) {
-        if (event.getLevel().isClientSide && event.phase == LevelTickEvent.Phase.END) {
-            MinecraftSpace space = MinecraftSpace.get(event.level);
+    public static void onLevelTick(LevelTickEvent.Post event) {
+        if (event.getLevel().isClientSide) {
+            MinecraftSpace space = MinecraftSpace.get(event.getLevel());
             space.step();
             EntityCollisionGenerator.step(space);
 

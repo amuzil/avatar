@@ -31,7 +31,7 @@ import static com.amuzil.av3.input.KeyBindings.*;
 public class InputModule {
     private final Consumer<InputEvent.Key> keyboardListener;
     private final Consumer<InputEvent.MouseButton> mouseListener;
-    private final Consumer<ClientTickEvent> tickEventConsumer;
+    private final Consumer<ClientTickEvent.Pre> tickEventConsumer;
 
     private boolean isSelecting = false;
     private boolean isHoldingShift = false;
@@ -89,10 +89,9 @@ public class InputModule {
         };
 
         this.tickEventConsumer = tickEvent -> {
-            if (tickEvent.phase == ClientTickEvent.Phase.START &&
-                    Minecraft.getInstance().getConnection() != null &&
-                    Minecraft.getInstance().getOverlay() == null &&
-                    Minecraft.getInstance().screen == null) {
+            if (Minecraft.getInstance().getConnection() != null &&
+                Minecraft.getInstance().getOverlay() == null &&
+                Minecraft.getInstance().screen == null) {
                 checkInputs();
             }
         };
@@ -251,7 +250,7 @@ public class InputModule {
         bender = (Bender) Bender.getBender(Minecraft.getInstance().player);
         NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, InputEvent.Key.class, keyboardListener);
         NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, InputEvent.MouseButton.class, mouseListener);
-        NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, ClientTickEvent.class, tickEventConsumer);
+        NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, ClientTickEvent.Pre.class, tickEventConsumer);
     }
 
     public void unRegisterListeners() {

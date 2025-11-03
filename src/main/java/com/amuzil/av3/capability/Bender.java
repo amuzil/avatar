@@ -431,7 +431,7 @@ public class Bender implements IBender {
         tag.putInt("DataVersion", DATA_VERSION);
         tag.putString("Active Element", Objects.requireNonNullElse(activeElement, Elements.FIRE).getId().toString());
         skillCategoryData.forEach(catData -> tag.put(catData.name(), catData.serializeNBT(provider)));
-        skillDataMap.values().forEach(skillData -> tag.put(skillData.name(), skillData.serializeNBT()));
+        skillDataMap.values().forEach(skillData -> tag.put(skillData.name(), skillData.serializeNBT(provider)));
         return tag;
     }
 
@@ -459,7 +459,7 @@ public class Bender implements IBender {
 
                 for (SkillData skillData : skillDataMap.values()) {
                     if (tag.contains(skillData.name(), Tag.TAG_COMPOUND)) {
-                        skillData.deserializeNBT(tag.getCompound(skillData.name()));
+                        skillData.deserializeNBT(provider, tag.getCompound(skillData.name()));
                     } else {
                         LOGGER.warn("Missing skill data for: {}", skillData.name());
                     }

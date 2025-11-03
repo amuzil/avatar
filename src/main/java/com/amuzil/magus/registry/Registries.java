@@ -63,7 +63,7 @@ public class Registries {
     }
 
     public static List<Skill> getSkills() {
-        return skills.values().stream().map(RegistryObject::get).toList();
+        return skills.values().stream().map(Supplier::get).toList();
     }
 
     public static Skill getSkill(ResourceLocation id) {
@@ -72,7 +72,7 @@ public class Registries {
     }
 
     public static Skill getRegisteredSkill(ResourceLocation id) {
-        RegistryObject<Skill> obj = skills.get(id.toString());
+        Supplier<Skill> obj = skills.get(id.toString());
         return obj != null ? obj.get() : null;
     }
 

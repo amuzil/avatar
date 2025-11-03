@@ -8,6 +8,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -37,9 +38,9 @@ public class ExecuteFormPacket implements AvatarPacket {
         }
     }
 
-    public static void handle(ExecuteFormPacket msg, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            if (ctx.get().getDirection().getReceptionSide().isServer())
+    public static void handle(ExecuteFormPacket msg, IPayloadContext ctx) {
+        ctx.enqueueWork(() -> {
+            if (ctx.getDirection().getReceptionSide().isServer())
                 handleServerSide(msg.tag, Objects.requireNonNull(ctx.get().getSender()));
         });
         ctx.get().setPacketHandled(true);
