@@ -125,7 +125,10 @@ public class Avatar {
 
         // Initialize Skill Tree
         SkillTree.clear();
-        Registries.SKILLS.get().getValues().forEach(c -> SkillTree.RegisterSkill(((BendingSkill)c).element(), /* toRegister.targetType(), */c.startPaths(), c));
+        Registries.SKILLS.get().getValues().forEach(c -> {
+            return SkillTree.RegisterSkill(((BendingSkill)c).element(), /* toRegister.targetType(), */
+                    c.startPaths(), c);
+        });
     }
 
     @EventBusSubscriber(modid = MOD_ID)

@@ -125,7 +125,7 @@ public abstract class Skill {
 //        switch (skillData.getSkillState()) {
 //            case START -> {
 //                if (shouldStart(bender, formPath)) {
-//                    if (MinecraftForge.EVENT_BUS.post(new SkillExecutionEvent.Start(bender.getEntity(), formPath, this)))
+//                    if (NeoForge.EVENT_BUS.post(new SkillExecutionEvent.Start(bender.getEntity(), formPath, this)))
 //                        return;
 //                    executeOnClient(bender.getEntity(), skillData, SkillState.START);
 //                    start(bender);
@@ -134,7 +134,7 @@ public abstract class Skill {
 //
 //            case RUN -> {
 //                if (shouldRun(bender, formPath)) {
-//                    if (MinecraftForge.EVENT_BUS.post(new SkillExecutionEvent.Run(bender.getEntity(), formPath, this)))
+//                    if (NeoForge.EVENT_BUS.post(new SkillExecutionEvent.Run(bender.getEntity(), formPath, this)))
 //                        return;
 //                    executeOnClient(bender.getEntity(), skillData, SkillState.RUN);
 //                    run(bender);
@@ -143,7 +143,7 @@ public abstract class Skill {
 //
 //            case STOP -> {
 //                if (shouldStop(bender, formPath)) {
-//                    if (MinecraftForge.EVENT_BUS.post(new SkillExecutionEvent.Stop(bender.getEntity(), formPath, this)))
+//                    if (NeoForge.EVENT_BUS.post(new SkillExecutionEvent.Stop(bender.getEntity(), formPath, this)))
 //                        return;
 //                    executeOnClient(bender.getEntity(), skillData, SkillState.STOP);
 //                    stop(bender);

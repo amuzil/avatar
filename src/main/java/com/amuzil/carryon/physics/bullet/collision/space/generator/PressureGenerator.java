@@ -9,7 +9,7 @@ import com.jme3.bounding.BoundingBox;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import net.minecraft.core.BlockPos;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -10,7 +10,7 @@ import com.amuzil.av3.entity.api.ICollisionModule;
 import com.amuzil.av3.entity.projectile.AvatarProjectile;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.av3.utils.modules.HitDetection;
-import com.lowdragmc.photon.client.fx.EntityEffect;
+import com.lowdragmc.photon.client.fx.EntityEffectExecutor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Blaze;
@@ -31,7 +31,7 @@ public class WaterCollisionModule implements ICollisionModule {
     static {
         WATER_PROJECTILE_HANDLERS.put(Blaze.class, (proj, entity, damage, size) -> {
             entity.hurt(proj.damageSources().dragonBreath(), damage * 4f);
-            EntityEffect entityEffect = new EntityEffect(steam, entity.level(), proj);
+            EntityEffectExecutor entityEffect = new EntityEffectExecutor(steam, entity.level(), proj, EntityEffectExecutor.AutoRotate.NONE);
             entityEffect.start();
         });
 

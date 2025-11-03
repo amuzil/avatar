@@ -36,7 +36,7 @@ public final class CollisionObjectDebugger {
         final var cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
         final var builder = Tesselator.getInstance().getBuilder();
 
-        MinecraftForge.EVENT_BUS.post(new DebugRenderEvent(space, builder, stack, cameraPos, tickDelta));
+        NeoForge.EVENT_BUS.post(new DebugRenderEvent(space, builder, stack, cameraPos, tickDelta));
         builder.begin(VertexFormat.Mode.DEBUG_LINES, DefaultVertexFormat.POSITION_COLOR);
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
