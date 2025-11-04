@@ -15,6 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -22,10 +23,27 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 public class AvatarNetwork {
     private static final String PROTOCOL_VERSION = "1.0.0";
 
+    @SubscribeEvent
     public static void register(RegisterPayloadHandlersEvent event) {
-        PayloadRegistrar registrar = event.registrar(Avatar.MOD_ID)
-                .versioned(PROTOCOL_VERSION);
+        PayloadRegistrar registrar = event.registrar(Avatar.MOD_ID).versioned(PROTOCOL_VERSION);
 
+        registrar.playBidirectional(
+                SyncBenderPacket.TYPE,
+                SyncBenderPacket.CODEC,
+                SyncBenderPacket::handle
+        );
+
+        registrar.playBidirectional(
+                SyncSelectionPacket.TYPE,
+                SyncSelectionPacket.CODEC,
+                SyncSelectionPacket::handle
+        );
+
+        registrar.playToClient(
+                SyncMovementPacket.TYPE,
+                SyncMovementPacket.CODEC,
+                SyncMovementPacket::handle
+        );
         registrar.playToServer(
                 ExecuteFormPacket.TYPE,
                 ExecuteFormPacket.CODEC,
@@ -36,36 +54,6 @@ public class AvatarNetwork {
                 ReleaseFormPacket.TYPE,
                 ReleaseFormPacket.CODEC,
                 ReleaseFormPacket::handle
-        );
-
-        registrar.playToServer(
-                SyncBenderPacket.TYPE,
-                SyncBenderPacket.CODEC,
-                SyncBenderPacket::handle
-        );
-
-        registrar.playToServer(
-                SyncSelectionPacket.TYPE,
-                SyncSelectionPacket.CODEC,
-                SyncSelectionPacket::handle
-        );
-
-        registrar.playToClient(
-                SyncBenderPacket.TYPE,
-                SyncBenderPacket.CODEC,
-                SyncBenderPacket::handle
-        );
-
-        registrar.playToClient(
-                SyncSelectionPacket.TYPE,
-                SyncSelectionPacket.CODEC,
-                SyncSelectionPacket::handle
-        );
-
-        registrar.playToClient(
-                SyncMovementPacket.TYPE,
-                SyncMovementPacket.CODEC,
-                SyncMovementPacket::handle
         );
     }
 

@@ -26,87 +26,114 @@ import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
-@SuppressWarnings("deprecation")
 public final class ServerEventHandler {
+
+    /** Called when a block updates — physics should rebuild around it. */
     public static void onBlockUpdate(Level level, BlockState blockState, BlockPos blockPos) {
         MinecraftSpace.getOptional(level).ifPresent(space -> space.doBlockUpdate(blockPos));
     }
 
+    /** Fired when the server is starting — create the physics thread. */
     @SubscribeEvent
     public static void onServerStart(ServerAboutToStartEvent event) {
-        PhysicsThreadStore.INSTANCE.createServerThread(event.getServer(), Thread.currentThread(), new ServerLevelSupplier(event.getServer()), new ServerEntitySupplier());
+        PhysicsThreadStore.INSTANCE.createServerThread(
+                event.getServer(),
+                Thread.currentThread(),
+                new ServerLevelSupplier(event.getServer()),
+                new ServerEntitySupplier()
+        );
     }
 
+    /** Fired when the server stops — cleanup physics threads. */
     @SubscribeEvent
     public static void onServerStopped(ServerStoppedEvent event) {
         PhysicsThreadStore.INSTANCE.destroyServerThread();
     }
 
+    /** Server tick — check if physics thread threw an exception. */
     @SubscribeEvent
-    public static void onServerTick(TickEvent.ServerTickEvent event) {
-        if (event.phase == TickEvent.Phase.END)
-            PhysicsThreadStore.checkThrowable(PhysicsThreadStore.INSTANCE.getServerThread());
+    public static void onServerTick(ServerTickEvent.Post event) {
+        PhysicsThreadStore.checkThrowable(PhysicsThreadStore.INSTANCE.getServerThread());
     }
 
+    /** Level tick — run physics simulation each tick for that level. */
     @SubscribeEvent
-    public static void onStartLevelTick(TickEvent.LevelTickEvent event) {
-        if (!event.level.isClientSide && event.phase == TickEvent.Phase.START) {
-            MinecraftSpace space = MinecraftSpace.get(event.level);
+    public static void onLevelTick(LevelTickEvent.Pre event) {
+        Level level = event.getLevel();
+        if (!level.isClientSide) {
+            MinecraftSpace space = MinecraftSpace.get(level);
             space.step();
 
             EntityCollisionGenerator.step(space);
 
             for (var rigidBody : space.getRigidBodiesByClass(EntityRigidBody.class)) {
                 if (rigidBody.isActive()) {
-                    /* Movement */
-                    if (rigidBody.isPositionDirty())
-                        RayonPacketHandlers.MAIN.send(PacketDistributor.TRACKING_ENTITY.with(rigidBody.getElement()::cast), new SendRigidBodyMovementPacket(rigidBody));
 
-                    /* Properties */
-                    if (rigidBody.arePropertiesDirty())
-                        RayonPacketHandlers.MAIN.send(PacketDistributor.TRACKING_ENTITY.with(rigidBody.getElement()::cast), new SendRigidBodyPropertiesPacket(rigidBody));
+                    // Movement sync
+                    if (rigidBody.isPositionDirty()) {
+                        RayonPacketHandlers.MAIN.send(
+                                PacketDistributor.TRACKING_ENTITY.with(rigidBody.getElement()::cast),
+                                new SendRigidBodyMovementPacket(rigidBody)
+                        );
+                    }
+
+                    // Properties sync
+                    if (rigidBody.arePropertiesDirty()) {
+                        RayonPacketHandlers.MAIN.send(
+                                PacketDistributor.TRACKING_ENTITY.with(rigidBody.getElement()::cast),
+                                new SendRigidBodyPropertiesPacket(rigidBody)
+                        );
+                    }
                 }
 
-                /* Set entity position */
+                // Update entity position to physics
                 var location = rigidBody.getFrame().getLocation(new Vector3f(), 1.0f);
                 rigidBody.getElement().cast().absMoveTo(location.x, location.y, location.z);
             }
         }
     }
 
+    /** When a level loads — create its MinecraftSpace for physics. */
     @SubscribeEvent
     public static void onLevelLoad(LevelEvent.Load event) {
         if (event.getLevel() instanceof Level level) {
             MinecraftSpace space = PhysicsThreadStore.INSTANCE.createPhysicsSpace(level);
-            ((SpaceStorage)level).setSpace(space);
-            NeoForge.EVENT_BUS.post(new PhysicsSpaceEvent.Init(space));
+            ((SpaceStorage) level).setSpace(space);
+            NeoForge.EVENT_BUS.post(new PhysicsSpaceEvent.Init(space)); // "fire" instead of "post"
         }
     }
 
+    /** When a rigid body element is added to a physics space. */
     @SubscribeEvent
     public static void onElementAddedToSpace(PhysicsSpaceEvent.ElementAdded event) {
         if (event.getRigidBody() instanceof EntityRigidBody entityBody) {
-            final var pos = entityBody.getElement().cast().position();
+            var pos = entityBody.getElement().cast().position();
             entityBody.setPhysicsLocation(Convert.toBullet(pos));
         }
     }
 
+    /** When a player starts tracking an entity, add it to their physics updates. */
     @SubscribeEvent
     public static void onStartTrackingEntity(PlayerEvent.StartTracking event) {
         Entity entity = event.getTarget();
         if (EntityPhysicsElement.is(entity)) {
             var space = MinecraftSpace.get(entity.level());
-            space.getWorkerThread().execute(() -> space.addCollisionObject(EntityPhysicsElement.get(entity).getRigidBody()));
+            space.getWorkerThread().execute(() ->
+                    space.addCollisionObject(EntityPhysicsElement.get(entity).getRigidBody()));
         }
     }
 
+    /** When a player stops tracking an entity, remove physics sync if no one else is tracking. */
     @SubscribeEvent
     public static void onStopTrackingEntity(PlayerEvent.StopTracking event) {
         Entity entity = event.getTarget();
         if (EntityPhysicsElement.is(entity) && Utilities.getTracking(entity).isEmpty()) {
             var space = MinecraftSpace.get(entity.level());
-            space.getWorkerThread().execute(() -> space.removeCollisionObject(EntityPhysicsElement.get(entity).getRigidBody()));
+            space.getWorkerThread().execute(() ->
+                    space.removeCollisionObject(EntityPhysicsElement.get(entity).getRigidBody()));
         }
     }
 }

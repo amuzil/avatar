@@ -28,6 +28,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
@@ -47,27 +48,22 @@ public class Avatar {
     public static final Logger LOGGER = LogManager.getLogger();
     public static InputModule inputModule;
 
-    public Avatar(ModLoadingContext context) {
+    public Avatar(IEventBus modEventBus, ModContainer modContainer) {
         NativeLoader.load();
-        IEventBus modEventBus = context.getActiveContainer().getEventBus();
-        // Register the setup method for mod loading
-        assert modEventBus != null;
+        java.util.logging.LogManager.getLogManager().reset(); // prevent annoying libbulletjme spam
+
         modEventBus.addListener(this::setup);
-        // Register the enqueueIMC method for mod loading
-        modEventBus.addListener(this::enqueueIMC);
-        // Register the processIMC method for mod loading
-        modEventBus.addListener(this::processIMC);
-        // Register the setupClient method for mod loading
         modEventBus.addListener(this::setupClient);
+//        modEventBus.addListener(this::enqueueIMC);
+//        modEventBus.addListener(this::processIMC);
+        // Register ourselves for server and other game events we are interested in
+        NeoForge.EVENT_BUS.register(this);
 
         // Rayon Rigid Body Physics
         modEventBus.addListener(RayonExampleEntityRenderers::registerEntityRenderers);
         RayonExampleEntities.register(modEventBus);
-        java.util.logging.LogManager.getLogManager().reset(); // prevent annoying libbulletjme spam
 
-        // Register ourselves for server and other game events we are interested in
-        NeoForge.EVENT_BUS.register(this);
-
+        modEventBus.register(AvatarNetwork.class);
         AvatarEntities.register(modEventBus);
         AvatarSounds.register(modEventBus);
 
@@ -78,7 +74,6 @@ public class Avatar {
 
     private void setup(final FMLCommonSetupEvent event) {
         // some pre init code
-        AvatarNetwork.register();
 
         ModuleRegistry.register(MoveModule::new);
         ModuleRegistry.register(CurveModule::new);
@@ -98,10 +93,10 @@ public class Avatar {
         ModuleRegistry.register(FireEffectModule::new);
 
         // Rayon Rigid Body Physics
-        IEventBus forgeBus = NeoForge.EVENT_BUS;
-        forgeBus.register(ServerEventHandler.class);
-        forgeBus.register(PressureGenerator.class);
-        forgeBus.register(TerrainGenerator.class);
+        IEventBus bus = NeoForge.EVENT_BUS;
+        bus.register(ServerEventHandler.class);
+        bus.register(PressureGenerator.class);
+        bus.register(TerrainGenerator.class);
     }
 
     private void setupClient(final FMLClientSetupEvent event) {
@@ -114,9 +109,9 @@ public class Avatar {
         RayonPacketHandlers.registerPackets();
     }
 
-    private void enqueueIMC(final InterModEnqueueEvent event) {}
+//    private void enqueueIMC(final InterModEnqueueEvent event) {}
 
-    private void processIMC(final InterModProcessEvent event) {}
+//    private void processIMC(final InterModProcessEvent event) {}
 
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
