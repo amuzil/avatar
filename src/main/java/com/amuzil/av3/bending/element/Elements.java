@@ -32,7 +32,6 @@ public class Elements {
     public static final DeferredHolder<SkillCategory, Element> EARTHBENDING = SKILL_CATEGORY_REGISTER.register("earthbending", Earthbending::new);
     public static final DeferredHolder<SkillCategory, Element> FIREBENDING = SKILL_CATEGORY_REGISTER.register("firebending", Firebending::new);
 
-    /** Runtime references */
     public static Element AIR, WATER, EARTH, FIRE;
 
     public static Element get(ResourceLocation id) {
