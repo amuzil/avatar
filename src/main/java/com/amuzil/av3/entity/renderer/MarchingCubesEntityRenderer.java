@@ -64,33 +64,29 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
             vc.addVertex(last.pose(), p0.x, p0.y, p0.z)
                     .setColor(255,255,255,255).setUv(uv0[0], uv0[1])
                     .setOverlay(OverlayTexture.NO_OVERLAY)
-                    .setUv2(packedLight)
-                    .normal(last.normal(), n.x, n.y, n.z)
-                    .endVertex();
+                    .setLight(packedLight)
+                    .setNormal(last, n.x, n.y, n.z);
 
 //            vc.vertex(p1.x, p1.y, p1.z)
             vc.addVertex(last.pose(), p1.x, p1.y, p1.z)
                     .setColor(255,255,255,255).setUv(uv1[0], uv1[1])
                     .setOverlay(OverlayTexture.NO_OVERLAY)
-                    .setUv2(packedLight)
-                    .normal(last.normal(), n.x, n.y, n.z)
-                    .endVertex();
+                    .setLight(packedLight)
+                    .setNormal(last, n.x, n.y, n.z);
 
 //            vc.vertex(p2.x, p2.y, p2.z)
             vc.addVertex(last.pose(), p2.x, p2.y, p2.z)
                     .setColor(255,255,255,255).setUv(uv2[0], uv2[1])
                     .setOverlay(OverlayTexture.NO_OVERLAY)
-                    .setUv2(packedLight)
-                    .normal(last.normal(), n.x, n.y, n.z)
-                    .endVertex();
+                    .setLight(packedLight)
+                    .setNormal(last, n.x, n.y, n.z);
 
 //             C again (degenerate 4th vertex so the QUADS mode groups correctly)
             vc.addVertex(last.pose(), p2.x, p2.y, p2.z)
                     .setColor(255,255,255,255).setUv(uv2[0], uv2[1])
                     .setOverlay(OverlayTexture.NO_OVERLAY)
-                    .setUv2(packedLight)
-                    .normal(last.normal(), n.x, n.y, n.z)
-                    .endVertex();
+                    .setLight(packedLight)
+                    .setNormal(last, n.x, n.y, n.z);
         }
 
         pose.popPose();
