@@ -1,18 +1,27 @@
 package com.amuzil.av3.network.packets.sync;
 
+import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.BendingSelection;
 import com.amuzil.av3.capability.AvatarCapabilities;
+import com.amuzil.av3.capability.IBender;
 import com.amuzil.av3.network.packets.api.AvatarPacket;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.Objects;
 import java.util.UUID;
-import java.util.function.Supplier;
-
 
 public class SyncSelectionPacket implements AvatarPacket {
+    public static final Type<SyncSelectionPacket> TYPE = new Type<>(Avatar.id(SyncSelectionPacket.class));
+    public static final StreamCodec<FriendlyByteBuf, SyncSelectionPacket> CODEC =
+            StreamCodec.ofMember(SyncSelectionPacket::toBytes, SyncSelectionPacket::new);
+
     private final CompoundTag tag; // The NBT data to sync
     private final UUID playerUUID; // The UUID of the player
 
@@ -21,8 +30,9 @@ public class SyncSelectionPacket implements AvatarPacket {
         this.playerUUID = playerUUID;
     }
 
-    public static SyncSelectionPacket fromBytes(FriendlyByteBuf buf) {
-        return new SyncSelectionPacket(buf.readNbt(), buf.readUUID());
+    public SyncSelectionPacket(FriendlyByteBuf buf) {
+        this.tag = buf.readNbt();
+        this.playerUUID = buf.readUUID();
     }
 
     public void toBytes(FriendlyByteBuf buf) {
@@ -30,22 +40,37 @@ public class SyncSelectionPacket implements AvatarPacket {
         buf.writeUUID(playerUUID);
     }
 
-    public static boolean handle(SyncSelectionPacket msg, Supplier<NetworkEvent.Context> ctxSupplier) {
-        NetworkEvent.Context ctx = ctxSupplier.get();
+    public static void handle(SyncSelectionPacket msg, IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
-            if (ctx.getDirection().getReceptionSide().isServer()) {
-                // Update Bender's BendingSelection on the server
-                ServerPlayer player = Objects.requireNonNull(ctx.getSender()).server.getPlayerList().getPlayer(msg.playerUUID);
+            if (ctx.flow().isClientbound()) {
+                // Update Bender's BendingSelection on their client
+                LocalPlayer player = Minecraft.getInstance().player;
+                if (player != null) {
+                    IBender bender = player.getCapability(AvatarCapabilities.BENDER);
+                    if (bender != null) {
+                        BendingSelection newBendingSelection = new BendingSelection(msg.tag);
+                        newBendingSelection.setOriginalBlocksMap(bender.getSelection().originalBlocksMap());
+                        bender.setSelection(newBendingSelection);
+                        bender.markClean();
+                    }
+                }
+            } else {
+                // Update Bender's BendingSelection on server
+                ServerPlayer player = Objects.requireNonNull(ctx.player().getServer()).getPlayerList().getPlayer(msg.playerUUID);
                 assert player != null;
-                player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
+                IBender bender = player.getCapability(AvatarCapabilities.BENDER);
+                if (bender != null) {
                     BendingSelection newBendingSelection = new BendingSelection(msg.tag);
                     newBendingSelection.setOriginalBlocksMap(bender.getSelection().originalBlocksMap());
                     bender.setSelection(newBendingSelection);
                     bender.markClean();
-                });
+                }
             }
         });
-        ctx.setPacketHandled(true);
-        return true;
+    }
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

@@ -44,6 +44,12 @@ public class Bender implements IBender {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final int DATA_VERSION = 1; // Update this as your data structure changes
 
+    public final HashMap<String, Skill> activeSkills = new HashMap<>();
+    private final List<Skill> availableSkills = new ArrayList<>();
+    private Skill skillToActivate = null;
+    private final int SKILL_ACTIVATION_THRESHOLD = 10;
+    private int skillActivationTimer = SKILL_ACTIVATION_THRESHOLD;
+
     // Non-Persistent data
     private final LivingEntity entity;
     private final Consumer<FormActivatedEvent> formListener;
@@ -54,12 +60,6 @@ public class Bender implements IBender {
     public final List<Form> formPath = new ArrayList<>(); // in-sync
     private Vec3 lastDeltaMovement = Vec3.ZERO; // in-sync
     private BendingSelection selection = new BendingSelection(); // in-sync
-
-    public final HashMap<String, Skill> activeSkills = new HashMap<>();
-    private final List<Skill> availableSkills = new ArrayList<>();
-    private Skill skillToActivate = null;
-    private final int SKILL_ACTIVATION_THRESHOLD = 10;
-    private int skillActivationTimer = SKILL_ACTIVATION_THRESHOLD;
 
     // Persistent data
     private Element activeElement = Elements.FIRE; // Currently active element // TODO - Randomize on first load

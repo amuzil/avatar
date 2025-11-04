@@ -148,6 +148,10 @@ public class Avatar {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 
+    public static ResourceLocation id(Class<?> clazz) {
+        return id(clazz.getSimpleName().toLowerCase());
+    }
+
     public static String isClientOrServer(boolean isClient) {
         return isClient ? "Client-Side" : "Server-Side";
     }

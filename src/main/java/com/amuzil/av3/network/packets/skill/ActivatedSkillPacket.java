@@ -4,17 +4,21 @@ import com.amuzil.magus.registry.Registries;
 import com.amuzil.magus.skill.Skill;
 import com.amuzil.av3.capability.Bender;
 import com.amuzil.av3.network.packets.api.AvatarPacket;
+import com.amuzil.av3.Avatar;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-
-import java.util.function.Supplier;
-
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class ActivatedSkillPacket implements AvatarPacket {
+    public static final Type<ActivatedSkillPacket> TYPE = new Type<>(Avatar.id(ActivatedSkillPacket.class));
+    public static final StreamCodec<FriendlyByteBuf, ActivatedSkillPacket> CODEC =
+            StreamCodec.ofMember(ActivatedSkillPacket::toBytes, ActivatedSkillPacket::new);
 
     private final ResourceLocation skillId;
     private final int skillState; // SkillState (START, RUN, STOP, IDLE)
@@ -24,13 +28,14 @@ public class ActivatedSkillPacket implements AvatarPacket {
         this.skillState = skillState;
     }
 
+    public ActivatedSkillPacket(FriendlyByteBuf buf) {
+        this.skillId = buf.readResourceLocation();
+        this.skillState = buf.readInt();
+    }
+
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeResourceLocation(skillId);
         buf.writeInt(skillState);
-    }
-
-    public static ActivatedSkillPacket fromBytes(FriendlyByteBuf buf) {
-        return new ActivatedSkillPacket(buf.readResourceLocation(), buf.readInt());
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -52,12 +57,15 @@ public class ActivatedSkillPacket implements AvatarPacket {
         }
     }
 
-    public boolean handle(Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            if (ctx.get().getDirection().getReceptionSide().isClient()) {
-                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> handleClientSide(skillId, skillState));
-            }
+    public static void handle(ActivatedSkillPacket msg, IPayloadContext ctx) {
+        ctx.enqueueWork(() -> {
+            if (ctx.flow().isClientbound())
+                handleClientSide(msg.skillId, msg.skillState);
         });
-        return true;
+    }
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }
