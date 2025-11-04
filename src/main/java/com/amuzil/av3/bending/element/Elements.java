@@ -21,6 +21,7 @@ import java.util.function.Supplier;
 @EventBusSubscriber(modid = Avatar.MOD_ID)
 public class Elements {
     public static final HashMap<String, Element> ALL_FOUR = new HashMap<>();
+    // TODO: Probably needs correcting
     public static final ResourceKey<Registry<SkillCategory>> SKILL_CATEGORY_KEY = ResourceKey.createRegistryKey(Avatar.id("skill_category"));
     public static final DeferredRegister<SkillCategory> SKILL_CATEGORY_REGISTER = DeferredRegister.create(SKILL_CATEGORY_KEY, Avatar.MOD_ID);
     public static final Supplier<Registry<SkillCategory>> SKILL_CATEGORIES =
