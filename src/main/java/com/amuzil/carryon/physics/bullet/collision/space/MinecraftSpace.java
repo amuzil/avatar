@@ -150,8 +150,8 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
                 }
 
                 if (this.isServer() && rigidBody instanceof EntityRigidBody entityRigidBody) {
-                    RayonPacketHandlers.MAIN.send(PacketDistributor.TRACKING_ENTITY.with(entityRigidBody.getElement()::cast), new SendRigidBodyMovementPacket(entityRigidBody));
-                    RayonPacketHandlers.MAIN.send(PacketDistributor.TRACKING_ENTITY.with(entityRigidBody.getElement()::cast), new SendRigidBodyPropertiesPacket(entityRigidBody));
+                    RayonPacketHandlers.MAIN.send(PacketDistributor.sendToPlayersTrackingEntity(entityRigidBody.getElement().cast(), new SendRigidBodyMovementPacket(entityRigidBody)));
+                    RayonPacketHandlers.MAIN.send(PacketDistributor.sendToPlayersTrackingEntity(entityRigidBody.getElement().cast(), new SendRigidBodyPropertiesPacket(entityRigidBody)));
                 }
             }
             else if (collisionObject instanceof TerrainRigidBody terrain) {

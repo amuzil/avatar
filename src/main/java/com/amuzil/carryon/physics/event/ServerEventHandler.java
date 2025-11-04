@@ -75,17 +75,17 @@ public final class ServerEventHandler {
                     // Movement sync
                     if (rigidBody.isPositionDirty()) {
                         RayonPacketHandlers.MAIN.send(
-                                PacketDistributor.TRACKING_ENTITY.with(rigidBody.getElement()::cast),
+                                PacketDistributor.sendToPlayersTrackingEntity(rigidBody.getElement().cast(),
                                 new SendRigidBodyMovementPacket(rigidBody)
-                        );
+                        ));
                     }
 
                     // Properties sync
                     if (rigidBody.arePropertiesDirty()) {
                         RayonPacketHandlers.MAIN.send(
-                                PacketDistributor.TRACKING_ENTITY.with(rigidBody.getElement()::cast),
+                                PacketDistributor.sendToPlayersTrackingEntity(rigidBody.getElement().cast(),
                                 new SendRigidBodyPropertiesPacket(rigidBody)
-                        );
+                        ));
                     }
                 }
 

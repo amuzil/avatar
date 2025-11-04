@@ -37,7 +37,7 @@ public final class ClientEventHandler {
 
                 /* Movement */
                 if (rigidBody.isActive() && rigidBody.isPositionDirty() && player != null && player.equals(rigidBody.getPriorityPlayer()))
-                    RayonPacketHandlers.MAIN.send(PacketDistributor.TRACKING_ENTITY.with(rigidBody.getElement()::cast), new SendRigidBodyMovementPacket(rigidBody));
+                    RayonPacketHandlers.MAIN.send(PacketDistributor.sendToPlayersTrackingEntity(rigidBody.getElement().cast(), new SendRigidBodyMovementPacket(rigidBody)));
 
                 /* Set entity position */
                 var location = rigidBody.getFrame().getLocation(new Vector3f(), 1.0f);
