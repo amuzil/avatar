@@ -11,10 +11,13 @@ import com.amuzil.av3.entity.modules.render.PhotonModule;
 import com.google.common.base.MoreObjects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerEntity;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -25,6 +28,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.*;
+import net.neoforged.neoforge.event.EventHooks;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -304,21 +308,24 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
         return Mth.lerp(0.2F, pCurrentRotation, pTargetRotation);
     }
 
-    public void recreateFromPacket(ClientboundAddEntityPacket pPacket) {
-        super.recreateFromPacket(pPacket);
-        Entity entity = this.level().getEntity(pPacket.getData());
+    @Override
+    public Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity serverEntity) {
+        Entity entity = this.getOwner();
+        return new ClientboundAddEntityPacket(this, serverEntity, entity == null ? 0 : entity.getId());
+    }
+
+    @Override
+    public void recreateFromPacket(ClientboundAddEntityPacket packet) {
+        super.recreateFromPacket(packet);
+        Entity entity = this.level().getEntity(packet.getData());
         if (entity != null) {
             this.setOwner(entity);
         }
-
     }
 
-    public boolean mayInteract(Level pLevel, BlockPos pPos) {
+    @Override
+    public boolean mayInteract(Level level, BlockPos pos) {
         Entity entity = this.getOwner();
-        if (entity instanceof Player) {
-            return entity.mayInteract(pLevel, pPos);
-        } else {
-            return entity == null || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(pLevel, entity);
-        }
+        return entity instanceof Player ? entity.mayInteract(level, pos) : entity == null || EventHooks.canEntityGrief(level, entity);
     }
 }

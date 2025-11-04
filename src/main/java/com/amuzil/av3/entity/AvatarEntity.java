@@ -20,11 +20,13 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.event.EventHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -66,19 +68,6 @@ public abstract class AvatarEntity extends Entity {
 
     public AvatarEntity(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
-
-        SynchedEntityData.Builder synchedentitydata$builder = new SynchedEntityData.Builder(this);
-        synchedentitydata$builder.define(DATA_SHARED_FLAGS_ID, (byte)0);
-        synchedentitydata$builder.define(OWNER_ID, Optional.empty());
-        synchedentitydata$builder.define(ELEMENT, Elements.FIRE.getId().toString());
-        synchedentitydata$builder.define(FX, "");
-        synchedentitydata$builder.define(ONE_SHOT_FX, true);
-        synchedentitydata$builder.define(COLLIDABLE, false);
-        synchedentitydata$builder.define(DAMAGEABLE, false);
-        synchedentitydata$builder.define(PHYSICS, false);
-        synchedentitydata$builder.define(TIER, 0);
-        synchedentitydata$builder.define(MAX_LIFETIME, 100);
-        this.defineSynchedData(synchedentitydata$builder);
     }
 
     /** Call this after adding it to a world.
@@ -280,6 +269,19 @@ public abstract class AvatarEntity extends Entity {
         return this.entityData.get(PHYSICS);
     }
 
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        builder.define(OWNER_ID, Optional.empty());
+        builder.define(ELEMENT, Elements.FIRE.getId().toString());
+        builder.define(FX, "");
+        builder.define(ONE_SHOT_FX, true);
+        builder.define(COLLIDABLE, false);
+        builder.define(DAMAGEABLE, false);
+        builder.define(PHYSICS, false);
+        builder.define(TIER, 0);
+        builder.define(MAX_LIFETIME, 100);
+    }
+
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      *
@@ -405,30 +407,29 @@ public abstract class AvatarEntity extends Entity {
         return entityData.get(DAMAGEABLE);
     }
 
+    // TODO: Can we remove this?
     /** These were copied from the projectile class. Need to update these to account for the other data
      * serializers and important values that this class keeps track of.
      */
-    public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket() {
-        Entity entity = this.owner();
-        return new ClientboundAddEntityPacket(this, entity == null ? 0 : entity.getId());
+    @Override
+    public Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity serverEntity) {
+        Entity entity = this.getOwner();
+        return new ClientboundAddEntityPacket(this, serverEntity, entity == null ? 0 : entity.getId());
     }
 
-    public void recreateFromPacket(ClientboundAddEntityPacket pPacket) {
-        super.recreateFromPacket(pPacket);
-        Entity entity = this.level().getEntity(pPacket.getData());
+    @Override
+    public void recreateFromPacket(ClientboundAddEntityPacket packet) {
+        super.recreateFromPacket(packet);
+        Entity entity = this.level().getEntity(packet.getData());
         if (entity != null) {
             this.setOwner(entity);
         }
-
     }
 
-    public boolean mayInteract(Level pLevel, BlockPos pPos) {
-        Entity entity = this.owner();
-        if (entity instanceof Player) {
-            return entity.mayInteract(pLevel, pPos);
-        } else {
-            return entity == null || ForgeEventFactory.getMobGriefingEvent(pLevel, entity);
-        }
+    @Override
+    public boolean mayInteract(Level level, BlockPos pos) {
+        Entity entity = this.getOwner();
+        return entity instanceof Player ? entity.mayInteract(level, pos) : entity == null || EventHooks.canEntityGrief(level, entity);
     }
 
     public void setDamageable(boolean damageable) {
