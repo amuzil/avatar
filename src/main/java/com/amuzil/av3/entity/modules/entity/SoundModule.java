@@ -5,6 +5,7 @@ import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.IEntityModule;
 import com.amuzil.av3.utils.sound.AvatarEntitySound;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -49,7 +50,7 @@ public class SoundModule implements IEntityModule {
     public static void startSoundEffect(String sfxName, AvatarEntity entity) {
         if (sfxName != null) {
             ResourceLocation id = Avatar.id(sfxName);
-            SoundEvent soundEvent = ForgeRegistries.SOUND_EVENTS.getValue(id);
+            SoundEvent soundEvent = BuiltInRegistries.SOUND_EVENT.get(id);
             if (soundEvent != null)
                 Minecraft.getInstance().getSoundManager()
                         .play(new AvatarEntitySound(entity, soundEvent, entity.maxLifetime()));

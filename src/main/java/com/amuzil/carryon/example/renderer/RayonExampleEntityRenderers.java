@@ -1,7 +1,7 @@
 package com.amuzil.carryon.example.renderer;
 
 import com.amuzil.carryon.example.entity.RayonExampleEntities;
-import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 
 public class RayonExampleEntityRenderers {
     public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
