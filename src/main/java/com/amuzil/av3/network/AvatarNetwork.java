@@ -19,22 +19,13 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
-/**
- * AvatarNetwork - NeoForge 1.21.1 style.
- *
- * Uses the new PayloadTypeRegistry and PayloadRegistrar instead of SimpleChannel.
- */
 public class AvatarNetwork {
     private static final String PROTOCOL_VERSION = "1.0.0";
 
-    /**
-     * Called during mod setup (in FMLCommonSetupEvent or using @EventBusSubscriber).
-     */
     public static void register(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar(Avatar.MOD_ID)
                 .versioned(PROTOCOL_VERSION);
 
-        // Register your packets here
         registrar.playToServer(
                 ExecuteFormPacket.TYPE,
                 ExecuteFormPacket.CODEC,
