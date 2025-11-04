@@ -62,33 +62,33 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
 
 //            vc.vertex( p0.x, p0.y, p0.z)
             vc.addVertex(last.pose(), p0.x, p0.y, p0.z)
-                    .setColor(255,255,255,255).uv(uv0[0], uv0[1])
-                    .overlayCoords(OverlayTexture.NO_OVERLAY)
-                    .uv2(packedLight)
+                    .setColor(255,255,255,255).setUv(uv0[0], uv0[1])
+                    .setOverlay(OverlayTexture.NO_OVERLAY)
+                    .setUv(packedLight)
                     .normal(last.normal(), n.x, n.y, n.z)
                     .endVertex();
 
 //            vc.vertex(p1.x, p1.y, p1.z)
             vc.addVertex(last.pose(), p1.x, p1.y, p1.z)
-                    .setColor(255,255,255,255).uv(uv1[0], uv1[1])
-                    .overlayCoords(OverlayTexture.NO_OVERLAY)
-                    .uv2(packedLight)
+                    .setColor(255,255,255,255).setUv(uv1[0], uv1[1])
+                    .setOverlay(OverlayTexture.NO_OVERLAY)
+                    .setUv(packedLight)
                     .normal(last.normal(), n.x, n.y, n.z)
                     .endVertex();
 
 //            vc.vertex(p2.x, p2.y, p2.z)
             vc.addVertex(last.pose(), p2.x, p2.y, p2.z)
-                    .setColor(255,255,255,255).uv(uv2[0], uv2[1])
-                    .overlayCoords(OverlayTexture.NO_OVERLAY)
-                    .uv2(packedLight)
+                    .setColor(255,255,255,255).setUv(uv2[0], uv2[1])
+                    .setOverlay(OverlayTexture.NO_OVERLAY)
+                    .setUv(packedLight)
                     .normal(last.normal(), n.x, n.y, n.z)
                     .endVertex();
 
 //             C again (degenerate 4th vertex so the QUADS mode groups correctly)
             vc.addVertex(last.pose(), p2.x, p2.y, p2.z)
-                    .setColor(255,255,255,255).uv(uv2[0], uv2[1])
-                    .overlayCoords(OverlayTexture.NO_OVERLAY)
-                    .uv2(packedLight)
+                    .setColor(255,255,255,255).setUv(uv2[0], uv2[1])
+                    .setOverlay(OverlayTexture.NO_OVERLAY)
+                    .setUv(packedLight)
                     .normal(last.normal(), n.x, n.y, n.z)
                     .endVertex();
         }
