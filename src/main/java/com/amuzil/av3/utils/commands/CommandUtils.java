@@ -137,7 +137,7 @@ class CommandUtils {
         Bender ben = (Bender) bender;
         ben.getSkillData(skill.name()).getSkillTraits().forEach(trait -> {
             if (trait.name().equals(tag.getString("name"))) {
-                trait.deserializeNBT(tag);
+                trait.deserializeNBT(targetPlayer.level().registryAccess(), tag);
                 bender.syncToClient();
                 targetPlayer.sendSystemMessage(Component.literal("Updated " + trait.name() + " SkillTrait for " + skill.name()));
             }

@@ -226,7 +226,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
         return this.thread;
     }
 
-    public Level getLevel() {
+    public Level level() {
         return this.level;
     }
 

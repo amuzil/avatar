@@ -19,7 +19,7 @@ public interface EntitySupplier {
 
         // Entity can be a Boat, Minecart, or any LivingEntity so long as it is not a
         // player in spectator mode.
-        return rigidBody.getSpace().getLevel().getEntitiesOfClass(Entity.class, box, entity -> (entity instanceof Boat || entity instanceof Minecart || (entity instanceof LivingEntity && !(entity instanceof Player player && this.getGameType(player) == GameType.SPECTATOR))) && !EntityPhysicsElement.is(entity));
+        return rigidBody.getSpace().level().getEntitiesOfClass(Entity.class, box, entity -> (entity instanceof Boat || entity instanceof Minecart || (entity instanceof LivingEntity && !(entity instanceof Player player && this.getGameType(player) == GameType.SPECTATOR))) && !EntityPhysicsElement.is(entity));
     }
 
     GameType getGameType(Player player);

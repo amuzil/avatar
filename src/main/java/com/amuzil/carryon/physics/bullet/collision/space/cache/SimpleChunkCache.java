@@ -52,7 +52,7 @@ public class SimpleChunkCache implements ChunkCache {
 
     @Override
     public void loadFluidData(BlockPos blockPos) {
-        final var level = this.space.getLevel();
+        final var level = this.space.level();
 
         if (!level.getFluidState(blockPos).isEmpty()) {
             var columns = this.fluidColumnByIndex.get(columnIndex(blockPos));
@@ -67,7 +67,7 @@ public class SimpleChunkCache implements ChunkCache {
 
     @Override
     public void loadBlockData(BlockPos blockPos) {
-        final var level = this.space.getLevel();
+        final var level = this.space.level();
         final var blockState = level.getBlockState(blockPos);
 
         this.loadBlockData(blockPos.immutable(), level, blockState);
@@ -82,7 +82,7 @@ public class SimpleChunkCache implements ChunkCache {
 
     @Override
     public void refreshAll() {
-        final var level = space.getLevel();
+        final var level = space.level();
         this.activePositions.clear();
         this.activeColumn.clear();
 
