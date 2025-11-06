@@ -63,7 +63,7 @@ public class Bender implements IBender {
 
     // Persistent data
     private Element activeElement = Elements.FIRE; // Currently active element // TODO - Randomize on first load
-    private BendingForm.Type.Motion stepDirection;
+    private BendingForm.Type.Motion stepDirection; // TODO: Check why is this under persistent data
     private final List<SkillCategoryData> skillCategoryData = new ArrayList<>();
     private final HashMap<String, SkillData> skillDataMap = new HashMap<>();
     private final List<DataTrait> dataTraits = new ArrayList<>();
