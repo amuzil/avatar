@@ -35,7 +35,7 @@ public class ReleaseFormPacket implements AvatarPacket {
 
     public static void handle(ReleaseFormPacket msg, IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
-            if (ctx.flow().isServerbound()) {
+            if (ctx.flow().getReceptionSide().isServer()) {
                 // Server-side handling (packet was sent from client to server)
                 handleServerSide(msg.tag, Objects.requireNonNull((ServerPlayer) ctx.player()));
             }

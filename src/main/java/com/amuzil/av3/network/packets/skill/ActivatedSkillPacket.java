@@ -59,7 +59,7 @@ public class ActivatedSkillPacket implements AvatarPacket {
 
     public static void handle(ActivatedSkillPacket msg, IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
-            if (ctx.flow().isClientbound())
+            if (ctx.flow().getReceptionSide().isClient())
                 handleClientSide(msg.skillId, msg.skillState);
         });
     }

@@ -42,7 +42,7 @@ public class SyncSelectionPacket implements AvatarPacket {
 
     public static void handle(SyncSelectionPacket msg, IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
-            if (ctx.flow().isClientbound()) {
+            if (ctx.flow().getReceptionSide().isClient()) {
                 // Update Bender's BendingSelection on their client
                 LocalPlayer player = Minecraft.getInstance().player;
                 if (player != null) {

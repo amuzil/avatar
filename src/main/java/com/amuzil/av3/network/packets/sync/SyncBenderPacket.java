@@ -41,7 +41,7 @@ public class SyncBenderPacket implements AvatarPacket {
 
     public static void handle(SyncBenderPacket msg, IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
-            if (ctx.flow().isClientbound()) {
+            if (ctx.flow().getReceptionSide().isClient()) {
                 // Update Bender's data on their client
                 LocalPlayer player = Minecraft.getInstance().player;
                 if (player != null) {

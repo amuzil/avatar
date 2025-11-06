@@ -52,9 +52,8 @@ public abstract class CarryonPacket implements CustomPacketPayload {
 
     protected static Runnable client(IPayloadContext context, Runnable processor) {
         return () -> {
-            if (context.flow().getReceptionSide() == LogicalSide.CLIENT) {
+            if (context.flow().getReceptionSide().isClient())
                 processor.run();
-            }
         };
     }
 }

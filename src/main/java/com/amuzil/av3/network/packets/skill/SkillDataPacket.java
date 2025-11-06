@@ -56,7 +56,7 @@ public class SkillDataPacket implements AvatarPacket {
 
     public static void handle(SkillDataPacket msg, IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
-            if (ctx.flow().isClientbound()) {
+            if (ctx.flow().getReceptionSide().isClient()) {
 //                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> handleClientSide(msg.skillId, msg.skillUUID, msg.skillData));
             }
         });

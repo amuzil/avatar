@@ -91,7 +91,7 @@ public class SendRigidBodyPropertiesPacket extends CarryonPacket {
         this.terrainLoadingEnabled = buffer.readBoolean();
         this.buoyancyType = buffer.readEnum(ElementRigidBody.BuoyancyType.class);
         this.dragType = buffer.readEnum(ElementRigidBody.DragType.class);
-        this.priorityPlayer = buffer.readNullable(FriendlyByteBuf::readUUID);
+        this.priorityPlayer = buffer.readNullable(buf -> buf.readUUID());
     }
 
     @Override
@@ -104,7 +104,7 @@ public class SendRigidBodyPropertiesPacket extends CarryonPacket {
         buffer.writeBoolean(this.terrainLoadingEnabled);
         buffer.writeEnum(this.buoyancyType);
         buffer.writeEnum(this.dragType);
-        buffer.writeNullable(this.priorityPlayer, FriendlyByteBuf::writeUUID);
+        buffer.writeNullable(this.priorityPlayer, (buf,uuid) -> buf.writeUUID(uuid));
     }
 
     @Override

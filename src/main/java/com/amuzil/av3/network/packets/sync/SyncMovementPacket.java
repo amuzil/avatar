@@ -43,7 +43,7 @@ public class SyncMovementPacket implements AvatarPacket {
 
     public static void handle(SyncMovementPacket msg, IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
-            if (ctx.flow().isServerbound()) {
+            if (ctx.flow().getReceptionSide().isServer()) {
                 // Update Bender's movement on server
                 ServerPlayer player = Objects.requireNonNull(ctx.player().getServer()).getPlayerList().getPlayer(msg.playerUUID);
                 assert player != null;
