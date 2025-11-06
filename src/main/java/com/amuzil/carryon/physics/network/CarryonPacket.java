@@ -4,6 +4,7 @@ import io.netty.handler.codec.DecoderException;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.LogicalSide;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,19 +25,19 @@ public abstract class CarryonPacket implements CustomPacketPayload {
         return this.isValid;
     }
 
-    protected abstract void encode(FriendlyByteBuf buffer);
+    protected abstract void toBytes(FriendlyByteBuf buffer);
 
-    protected abstract void decode(FriendlyByteBuf buffer);
+    protected abstract void fromBytes(FriendlyByteBuf buffer);
 
     public static <T extends CarryonPacket> void encodeCheck(T packet, FriendlyByteBuf buffer) {
         if (!packet.isValid) return;
-        packet.encode(buffer);
+        packet.toBytes(buffer);
     }
 
-    public static <T extends CarryonPacket> T decode(Supplier<T> blank, FriendlyByteBuf buffer) {
+    public static <T extends CarryonPacket> T fromBytes(Supplier<T> blank, FriendlyByteBuf buffer) {
         T message = blank.get();
         try {
-            message.decode(buffer);
+            message.fromBytes(buffer);
         }
         catch (IllegalArgumentException | IndexOutOfBoundsException | DecoderException e) {
             LOGGER.warn("Exception while reading " + message.toString() + "; " + e);
@@ -49,7 +50,11 @@ public abstract class CarryonPacket implements CustomPacketPayload {
 
     public abstract Runnable getProcessor(IPayloadContext context);
 
-    protected static Runnable client(Runnable processor) {
-        return () -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> processor);
+    protected static Runnable client(IPayloadContext context, Runnable processor) {
+        return () -> {
+            if (context.flow().getReceptionSide() == LogicalSide.CLIENT) {
+                processor.run();
+            }
+        };
     }
 }

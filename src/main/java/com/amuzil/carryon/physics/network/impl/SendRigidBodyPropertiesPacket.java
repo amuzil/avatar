@@ -1,15 +1,23 @@
 package com.amuzil.carryon.physics.network.impl;
 
+import com.amuzil.carryon.CarryOn;
 import com.amuzil.carryon.physics.bullet.collision.body.ElementRigidBody;
 import com.amuzil.carryon.physics.bullet.collision.body.EntityRigidBody;
 import com.amuzil.carryon.physics.network.CarryonPacket;
 import com.amuzil.carryon.physics.network.CarryonClientPacketHandler;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class SendRigidBodyPropertiesPacket extends CarryonPacket {
+    public static final Type<SendRigidBodyPropertiesPacket> TYPE = new Type<>(CarryOn.id(SendRigidBodyPropertiesPacket.class));
+    public static final StreamCodec<FriendlyByteBuf, SendRigidBodyPropertiesPacket> CODEC =
+            StreamCodec.ofMember(SendRigidBodyPropertiesPacket::toBytes, SendRigidBodyPropertiesPacket::new);
+
     private int id;
     private float mass;
     private float dragCoefficient;
@@ -33,7 +41,7 @@ public class SendRigidBodyPropertiesPacket extends CarryonPacket {
         this.priorityPlayer = body.getPriorityPlayer() != null ? body.getPriorityPlayer().getUUID() : null;
     }
 
-    public SendRigidBodyPropertiesPacket() {
+    public SendRigidBodyPropertiesPacket(FriendlyByteBuf buf) {
         super(false);
     }
 
@@ -74,7 +82,7 @@ public class SendRigidBodyPropertiesPacket extends CarryonPacket {
     }
 
     @Override
-    protected void decode(FriendlyByteBuf buffer) {
+    protected void fromBytes(FriendlyByteBuf buffer) {
         this.id = buffer.readVarInt();
         this.mass = buffer.readFloat();
         this.dragCoefficient = buffer.readFloat();
@@ -87,7 +95,7 @@ public class SendRigidBodyPropertiesPacket extends CarryonPacket {
     }
 
     @Override
-    protected void encode(FriendlyByteBuf buffer) {
+    protected void toBytes(FriendlyByteBuf buffer) {
         buffer.writeVarInt(this.id);
         buffer.writeFloat(this.mass);
         buffer.writeFloat(this.dragCoefficient);
@@ -100,7 +108,12 @@ public class SendRigidBodyPropertiesPacket extends CarryonPacket {
     }
 
     @Override
-    public Runnable getProcessor(Context context) {
-        return client(() -> CarryonClientPacketHandler.handleSendRigidBodyPropertiesPacket(this));
+    public Runnable getProcessor(IPayloadContext context) {
+        return client(context, () -> CarryonClientPacketHandler.handleSendRigidBodyPropertiesPacket(this));
+    }
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

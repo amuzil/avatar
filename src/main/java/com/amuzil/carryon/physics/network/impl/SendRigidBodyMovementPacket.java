@@ -33,7 +33,7 @@ public class SendRigidBodyMovementPacket extends CarryonPacket {
         this.angularVel = Convert.toMinecraft(body.getAngularVelocity(new com.jme3.math.Vector3f()));
     }
 
-    public SendRigidBodyMovementPacket() {
+    public SendRigidBodyMovementPacket(FriendlyByteBuf buf) {
         super(false);
     }
 
@@ -58,7 +58,7 @@ public class SendRigidBodyMovementPacket extends CarryonPacket {
     }
 
     @Override
-    protected void decode(FriendlyByteBuf buffer) {
+    protected void fromBytes(FriendlyByteBuf buffer) {
         this.id = buffer.readVarInt();
         this.rotation = buffer.readQuaternion();
         this.pos = buffer.readVector3f();
@@ -67,7 +67,7 @@ public class SendRigidBodyMovementPacket extends CarryonPacket {
     }
 
     @Override
-    protected void encode(FriendlyByteBuf buffer) {
+    protected void toBytes(FriendlyByteBuf buffer) {
         buffer.writeVarInt(this.id);
         buffer.writeQuaternion(this.rotation);
         buffer.writeVector3f(this.pos);
@@ -77,7 +77,7 @@ public class SendRigidBodyMovementPacket extends CarryonPacket {
 
     @Override
     public Runnable getProcessor(IPayloadContext context) {
-        return client(() -> CarryonClientPacketHandler.handleSendRigidBodyMovementPacket(this));
+        return client(context, () -> CarryonClientPacketHandler.handleSendRigidBodyMovementPacket(this));
     }
 
     @Override

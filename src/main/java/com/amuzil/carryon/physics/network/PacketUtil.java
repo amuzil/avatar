@@ -26,7 +26,7 @@ public class PacketUtil {
                 CURRENT_IDS.computeIfAbsent(registrar, c -> new AtomicInteger()).incrementAndGet(),
                 clazz,
                 CarryonPacket::encodeCheck,
-                buffer -> CarryonPacket.decode(() -> {
+                buffer -> CarryonPacket.fromBytes(() -> {
                     try {
                         return clazz.getDeclaredConstructor().newInstance();
                     }
@@ -46,7 +46,7 @@ public class PacketUtil {
                 CURRENT_IDS.computeIfAbsent(registrar, c -> new AtomicInteger()).incrementAndGet(),
                 clazz,
                 CarryonPacket::encodeCheck,
-                buffer -> CarryonPacket.decode(() -> {
+                buffer -> CarryonPacket.fromBytes(() -> {
                     try {
                         return clazz.getDeclaredConstructor().newInstance();
                     }
