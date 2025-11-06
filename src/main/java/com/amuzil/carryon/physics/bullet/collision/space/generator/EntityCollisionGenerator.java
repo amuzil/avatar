@@ -6,7 +6,7 @@ import com.amuzil.carryon.physics.bullet.math.Convert;
 import com.jme3.math.Vector3f;
 
 /**
- * Mods should implement it on their own, with will allow for better performance
+ * Mods should implement it on their own, which will allow for better performance
  */
 public class EntityCollisionGenerator {
     public static void step(MinecraftSpace space) {

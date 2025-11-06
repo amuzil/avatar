@@ -9,9 +9,9 @@ import com.amuzil.carryon.physics.bullet.collision.space.cache.ChunkCache;
 import com.amuzil.carryon.physics.bullet.collision.space.generator.TerrainGenerator;
 import com.amuzil.carryon.physics.bullet.collision.space.storage.SpaceStorage;
 import com.amuzil.carryon.physics.bullet.thread.PhysicsThread;
-import com.amuzil.carryon.physics.packet.RayonPacketHandlers;
-import com.amuzil.carryon.physics.packet.impl.SendRigidBodyMovementPacket;
-import com.amuzil.carryon.physics.packet.impl.SendRigidBodyPropertiesPacket;
+import com.amuzil.carryon.physics.network.CarryonNetwork;
+import com.amuzil.carryon.physics.network.impl.SendRigidBodyMovementPacket;
+import com.amuzil.carryon.physics.network.impl.SendRigidBodyPropertiesPacket;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
@@ -150,8 +150,8 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
                 }
 
                 if (this.isServer() && rigidBody instanceof EntityRigidBody entityRigidBody) {
-                    RayonPacketHandlers.MAIN.send(PacketDistributor.sendToPlayersTrackingEntity(entityRigidBody.getElement().cast(), new SendRigidBodyMovementPacket(entityRigidBody)));
-                    RayonPacketHandlers.MAIN.send(PacketDistributor.sendToPlayersTrackingEntity(entityRigidBody.getElement().cast(), new SendRigidBodyPropertiesPacket(entityRigidBody)));
+                    CarryonNetwork.MAIN.send(PacketDistributor.sendToPlayersTrackingEntity(entityRigidBody.getElement().cast(), new SendRigidBodyMovementPacket(entityRigidBody)));
+                    CarryonNetwork.MAIN.send(PacketDistributor.sendToPlayersTrackingEntity(entityRigidBody.getElement().cast(), new SendRigidBodyPropertiesPacket(entityRigidBody)));
                 }
             }
             else if (collisionObject instanceof TerrainRigidBody terrain) {

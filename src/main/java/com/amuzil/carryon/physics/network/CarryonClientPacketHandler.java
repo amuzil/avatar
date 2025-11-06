@@ -1,15 +1,16 @@
-package com.amuzil.carryon.physics.packet;
+package com.amuzil.carryon.physics.network;
 
 import com.amuzil.carryon.api.EntityPhysicsElement;
 import com.amuzil.carryon.physics.bullet.collision.body.EntityRigidBody;
 import com.amuzil.carryon.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.carryon.physics.bullet.math.Convert;
-import com.amuzil.carryon.physics.packet.impl.SendRigidBodyMovementPacket;
-import com.amuzil.carryon.physics.packet.impl.SendRigidBodyPropertiesPacket;
+import com.amuzil.carryon.physics.network.impl.SendRigidBodyMovementPacket;
+import com.amuzil.carryon.physics.network.impl.SendRigidBodyPropertiesPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 
-public class RayonClientPacketHandler {
+
+public class CarryonClientPacketHandler {
     public static void handleSendRigidBodyMovementPacket(SendRigidBodyMovementPacket packet) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level != null) {

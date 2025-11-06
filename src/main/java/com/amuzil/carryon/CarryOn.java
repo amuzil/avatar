@@ -12,4 +12,8 @@ public class CarryOn {
     public static ResourceLocation id(String path) {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
+
+    public static ResourceLocation id(Class<?> clazz) {
+        return id(clazz.getSimpleName().toLowerCase());
+    }
 }

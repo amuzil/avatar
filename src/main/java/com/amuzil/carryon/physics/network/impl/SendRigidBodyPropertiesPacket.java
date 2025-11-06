@@ -1,15 +1,15 @@
-package com.amuzil.carryon.physics.packet.impl;
+package com.amuzil.carryon.physics.network.impl;
 
 import com.amuzil.carryon.physics.bullet.collision.body.ElementRigidBody;
 import com.amuzil.carryon.physics.bullet.collision.body.EntityRigidBody;
-import com.amuzil.carryon.physics.packet.Packet;
-import com.amuzil.carryon.physics.packet.RayonClientPacketHandler;
+import com.amuzil.carryon.physics.network.CarryonPacket;
+import com.amuzil.carryon.physics.network.CarryonClientPacketHandler;
 import net.minecraft.network.FriendlyByteBuf;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class SendRigidBodyPropertiesPacket extends Packet {
+public class SendRigidBodyPropertiesPacket extends CarryonPacket {
     private int id;
     private float mass;
     private float dragCoefficient;
@@ -101,6 +101,6 @@ public class SendRigidBodyPropertiesPacket extends Packet {
 
     @Override
     public Runnable getProcessor(Context context) {
-        return client(() -> RayonClientPacketHandler.handleSendRigidBodyPropertiesPacket(this));
+        return client(() -> CarryonClientPacketHandler.handleSendRigidBodyPropertiesPacket(this));
     }
 }

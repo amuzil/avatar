@@ -1,15 +1,23 @@
-package com.amuzil.carryon.physics.packet.impl;
+package com.amuzil.carryon.physics.network.impl;
 
+import com.amuzil.carryon.CarryOn;
 import com.amuzil.carryon.physics.bullet.collision.body.EntityRigidBody;
 import com.amuzil.carryon.physics.bullet.math.Convert;
-import com.amuzil.carryon.physics.packet.Packet;
-import com.amuzil.carryon.physics.packet.RayonClientPacketHandler;
+import com.amuzil.carryon.physics.network.CarryonPacket;
+import com.amuzil.carryon.physics.network.CarryonClientPacketHandler;
 import com.jme3.math.Quaternion;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-public class SendRigidBodyMovementPacket extends Packet {
+public class SendRigidBodyMovementPacket extends CarryonPacket {
+    public static final Type<SendRigidBodyMovementPacket> TYPE = new Type<>(CarryOn.id(SendRigidBodyMovementPacket.class));
+    public static final StreamCodec<FriendlyByteBuf, SendRigidBodyMovementPacket> CODEC =
+            StreamCodec.ofMember(SendRigidBodyMovementPacket::toBytes, SendRigidBodyMovementPacket::new);
+
     private int id;
     private Quaternionf rotation;
     private Vector3f pos;
@@ -68,7 +76,12 @@ public class SendRigidBodyMovementPacket extends Packet {
     }
 
     @Override
-    public Runnable getProcessor(NetworkEvent.Context context) {
-        return client(() -> RayonClientPacketHandler.handleSendRigidBodyMovementPacket(this));
+    public Runnable getProcessor(IPayloadContext context) {
+        return client(() -> CarryonClientPacketHandler.handleSendRigidBodyMovementPacket(this));
+    }
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

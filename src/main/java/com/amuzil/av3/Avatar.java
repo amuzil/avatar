@@ -7,7 +7,7 @@ import com.amuzil.carryon.physics.bullet.collision.space.generator.TerrainGenera
 import com.amuzil.carryon.physics.bullet.natives.NativeLoader;
 import com.amuzil.carryon.physics.event.ClientEventHandler;
 import com.amuzil.carryon.physics.event.ServerEventHandler;
-import com.amuzil.carryon.physics.packet.RayonPacketHandlers;
+import com.amuzil.carryon.physics.network.CarryonNetwork;
 import com.amuzil.magus.registry.Registries;
 import com.amuzil.magus.tree.SkillTree;
 import com.amuzil.av3.bending.BendingSkill;
@@ -29,13 +29,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.event.lifecycle.InterModEnqueueEvent;
-import net.neoforged.fml.event.lifecycle.InterModProcessEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.apache.logging.log4j.LogManager;
@@ -106,7 +103,7 @@ public class Avatar {
         // Rayon Rigid Body Physics
         IEventBus forgeBus = NeoForge.EVENT_BUS;
         forgeBus.register(ClientEventHandler.class);
-        RayonPacketHandlers.registerPackets();
+        CarryonNetwork.register();
     }
 
 //    private void enqueueIMC(final InterModEnqueueEvent event) {}

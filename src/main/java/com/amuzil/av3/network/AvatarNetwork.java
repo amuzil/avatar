@@ -21,11 +21,11 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 public class AvatarNetwork {
-    private static final String PROTOCOL_VERSION = "1.0.0";
+    private static final String VERSION = "1.0.0";
 
     @SubscribeEvent
     public static void register(RegisterPayloadHandlersEvent event) {
-        PayloadRegistrar registrar = event.registrar(Avatar.MOD_ID).versioned(PROTOCOL_VERSION);
+        PayloadRegistrar registrar = event.registrar(Avatar.MOD_ID).versioned(VERSION);
 
         registrar.playBidirectional(
                 SyncBenderPacket.TYPE,

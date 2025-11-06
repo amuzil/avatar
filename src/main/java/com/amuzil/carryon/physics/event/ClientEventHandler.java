@@ -7,8 +7,8 @@ import com.amuzil.carryon.physics.bullet.collision.space.generator.EntityCollisi
 import com.amuzil.carryon.physics.bullet.collision.space.supplier.entity.ClientEntitySupplier;
 import com.amuzil.carryon.physics.bullet.collision.space.supplier.level.ClientLevelSupplier;
 import com.amuzil.carryon.physics.bullet.thread.PhysicsThreadStore;
-import com.amuzil.carryon.physics.packet.RayonPacketHandlers;
-import com.amuzil.carryon.physics.packet.impl.SendRigidBodyMovementPacket;
+import com.amuzil.carryon.physics.network.CarryonNetwork;
+import com.amuzil.carryon.physics.network.impl.SendRigidBodyMovementPacket;
 import com.amuzil.carryon.physics.utils.debug.CollisionObjectDebugger;
 import com.jme3.math.Vector3f;
 import net.minecraft.client.Minecraft;
@@ -37,7 +37,7 @@ public final class ClientEventHandler {
 
                 /* Movement */
                 if (rigidBody.isActive() && rigidBody.isPositionDirty() && player != null && player.equals(rigidBody.getPriorityPlayer()))
-                    RayonPacketHandlers.MAIN.send(PacketDistributor.sendToPlayersTrackingEntity(rigidBody.getElement().cast(), new SendRigidBodyMovementPacket(rigidBody)));
+                    CarryonNetwork.MAIN.send(PacketDistributor.sendToPlayersTrackingEntity(rigidBody.getElement().cast(), new SendRigidBodyMovementPacket(rigidBody)));
 
                 /* Set entity position */
                 var location = rigidBody.getFrame().getLocation(new Vector3f(), 1.0f);

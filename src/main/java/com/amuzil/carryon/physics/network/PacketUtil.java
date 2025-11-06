@@ -1,8 +1,10 @@
-package com.amuzil.carryon.physics.packet;
+package com.amuzil.carryon.physics.network;
 
 import com.google.common.collect.Maps;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.fml.LogicalSide;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,15 +18,15 @@ import java.util.function.Supplier;
 
 public class PacketUtil {
     private static @Nullable Throwable lastException;
-    private static final Map<SimpleChannel, AtomicInteger> CURRENT_IDS = Maps.newConcurrentMap();
+    private static final Map<PayloadRegistrar, AtomicInteger> CURRENT_IDS = Maps.newConcurrentMap();
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public static <T extends Packet> void registerToClient(SimpleChannel channel, Class<T> clazz) {
-        channel.registerMessage(
-                CURRENT_IDS.computeIfAbsent(channel, c -> new AtomicInteger()).incrementAndGet(),
+    public static <T extends CarryonPacket> void registerToClient(PayloadRegistrar registrar, Class<T> clazz) {
+        registrar.playToClient(
+                CURRENT_IDS.computeIfAbsent(registrar, c -> new AtomicInteger()).incrementAndGet(),
                 clazz,
-                Packet::encodeCheck,
-                buffer -> Packet.decode(() -> {
+                CarryonPacket::encodeCheck,
+                buffer -> CarryonPacket.decode(() -> {
                     try {
                         return clazz.getDeclaredConstructor().newInstance();
                     }
@@ -39,12 +41,12 @@ public class PacketUtil {
         );
     }
 
-    public static <T extends Packet> void registerToServer(SimpleChannel channel, Class<T> clazz) {
-        channel.registerMessage(
-                CURRENT_IDS.computeIfAbsent(channel, c -> new AtomicInteger()).incrementAndGet(),
+    public static <T extends CarryonPacket> void registerToServer(PayloadRegistrar registrar, Class<T> clazz) {
+        registrar.registerMessage(
+                CURRENT_IDS.computeIfAbsent(registrar, c -> new AtomicInteger()).incrementAndGet(),
                 clazz,
-                Packet::encodeCheck,
-                buffer -> Packet.decode(() -> {
+                CarryonPacket::encodeCheck,
+                buffer -> CarryonPacket.decode(() -> {
                     try {
                         return clazz.getDeclaredConstructor().newInstance();
                     }
@@ -59,10 +61,9 @@ public class PacketUtil {
         );
     }
 
-    private static <T extends Packet> void receiveClientMessage(final T message, Supplier<NetworkEvent.Context> supplier) {
-        NetworkEvent.Context context = supplier.get();
-        LogicalSide sideReceived = context.getDirection().getReceptionSide();
-        context.setPacketHandled(true);
+    private static <T extends CarryonPacket> void receiveClientMessage(final T message, Supplier<IPayloadContext> supplier) {
+        IPayloadContext context = supplier.get();
+        LogicalSide sideReceived = context.flow().getReceptionSide();
 
         if (sideReceived != LogicalSide.CLIENT) {
             LOGGER.warn(message.toString() + " was received on the wrong side: " + sideReceived);
@@ -86,10 +87,9 @@ public class PacketUtil {
         });
     }
 
-    private static <T extends Packet> void receiveServerMessage(final T message, Supplier<NetworkEvent.Context> supplier) {
-        NetworkEvent.Context context = supplier.get();
-        LogicalSide sideReceived = context.getDirection().getReceptionSide();
-        context.setPacketHandled(true);
+    private static <T extends CarryonPacket> void receiveServerMessage(final T message, Supplier<IPayloadContext> supplier) {
+        IPayloadContext context = supplier.get();
+        LogicalSide sideReceived = context.flow().getReceptionSide();
 
         if (sideReceived != LogicalSide.SERVER) {
             LOGGER.warn(message.toString() + " was received on the wrong side: " + sideReceived);
@@ -101,7 +101,7 @@ public class PacketUtil {
             return;
         }
 
-        final ServerPlayer player = context.getSender();
+        final ServerPlayer player = (ServerPlayer) context.player();
         if (player == null) {
             LOGGER.warn("The sending player is not present when " + message.toString() + " was received");
             return;

@@ -10,9 +10,9 @@ import com.amuzil.carryon.physics.bullet.collision.space.supplier.entity.ServerE
 import com.amuzil.carryon.physics.bullet.collision.space.supplier.level.ServerLevelSupplier;
 import com.amuzil.carryon.physics.bullet.math.Convert;
 import com.amuzil.carryon.physics.bullet.thread.PhysicsThreadStore;
-import com.amuzil.carryon.physics.packet.RayonPacketHandlers;
-import com.amuzil.carryon.physics.packet.impl.SendRigidBodyMovementPacket;
-import com.amuzil.carryon.physics.packet.impl.SendRigidBodyPropertiesPacket;
+import com.amuzil.carryon.physics.network.CarryonNetwork;
+import com.amuzil.carryon.physics.network.impl.SendRigidBodyMovementPacket;
+import com.amuzil.carryon.physics.network.impl.SendRigidBodyPropertiesPacket;
 import com.amuzil.carryon.physics.utils.maths.Utilities;
 import com.jme3.math.Vector3f;
 import net.minecraft.core.BlockPos;
@@ -74,7 +74,7 @@ public final class ServerEventHandler {
 
                     // Movement sync
                     if (rigidBody.isPositionDirty()) {
-                        RayonPacketHandlers.MAIN.send(
+                        CarryonNetwork.MAIN.send(
                                 PacketDistributor.sendToPlayersTrackingEntity(rigidBody.getElement().cast(),
                                 new SendRigidBodyMovementPacket(rigidBody)
                         ));
@@ -82,7 +82,7 @@ public final class ServerEventHandler {
 
                     // Properties sync
                     if (rigidBody.arePropertiesDirty()) {
-                        RayonPacketHandlers.MAIN.send(
+                        CarryonNetwork.MAIN.send(
                                 PacketDistributor.sendToPlayersTrackingEntity(rigidBody.getElement().cast(),
                                 new SendRigidBodyPropertiesPacket(rigidBody)
                         ));
