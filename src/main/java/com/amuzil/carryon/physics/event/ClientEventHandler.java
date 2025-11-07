@@ -37,7 +37,7 @@ public final class ClientEventHandler {
 
                 /* Movement */
                 if (rigidBody.isActive() && rigidBody.isPositionDirty() && player != null && player.equals(rigidBody.getPriorityPlayer()))
-                    CarryonNetwork.MAIN.send(PacketDistributor.sendToPlayersTrackingEntity(rigidBody.getElement().cast(), new SendRigidBodyMovementPacket(rigidBody)));
+                    CarryonNetwork.sendToPlayersTrackingEntity(rigidBody.getElement().cast(), new SendRigidBodyMovementPacket(rigidBody));
 
                 /* Set entity position */
                 var location = rigidBody.getFrame().getLocation(new Vector3f(), 1.0f);
@@ -55,9 +55,8 @@ public final class ClientEventHandler {
     }
 
     @SubscribeEvent
-    public static void onClientTick(ClientTickEvent event) {
-        if (event.phase == TickEvent.Phase.END)
-            PhysicsThreadStore.checkThrowable(PhysicsThreadStore.INSTANCE.getClientThread());
+    public static void onClientTick(ClientTickEvent.Post event) {
+        PhysicsThreadStore.checkThrowable(PhysicsThreadStore.INSTANCE.getClientThread());
     }
 
     @SubscribeEvent

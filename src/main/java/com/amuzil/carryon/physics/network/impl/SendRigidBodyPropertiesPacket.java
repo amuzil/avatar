@@ -18,15 +18,15 @@ public class SendRigidBodyPropertiesPacket extends CarryonPacket {
     public static final StreamCodec<FriendlyByteBuf, SendRigidBodyPropertiesPacket> CODEC =
             StreamCodec.ofMember(SendRigidBodyPropertiesPacket::toBytes, SendRigidBodyPropertiesPacket::new);
 
-    private int id;
-    private float mass;
-    private float dragCoefficient;
-    private float friction;
-    private float restitution;
-    private boolean terrainLoadingEnabled;
-    private ElementRigidBody.BuoyancyType buoyancyType;
-    private ElementRigidBody.DragType dragType;
-    private @Nullable UUID priorityPlayer;
+    private final int id;
+    private final float mass;
+    private final float dragCoefficient;
+    private final float friction;
+    private final float restitution;
+    private final boolean terrainLoadingEnabled;
+    private final ElementRigidBody.BuoyancyType buoyancyType;
+    private final ElementRigidBody.DragType dragType;
+    private final @Nullable UUID priorityPlayer;
 
     public SendRigidBodyPropertiesPacket(EntityRigidBody body) {
         super(true);
@@ -43,6 +43,15 @@ public class SendRigidBodyPropertiesPacket extends CarryonPacket {
 
     public SendRigidBodyPropertiesPacket(FriendlyByteBuf buf) {
         super(false);
+        this.id = buf.readVarInt();
+        this.mass = buf.readFloat();
+        this.dragCoefficient = buf.readFloat();
+        this.friction = buf.readFloat();
+        this.restitution = buf.readFloat();
+        this.terrainLoadingEnabled = buf.readBoolean();
+        this.buoyancyType = buf.readEnum(ElementRigidBody.BuoyancyType.class);
+        this.dragType = buf.readEnum(ElementRigidBody.DragType.class);
+        this.priorityPlayer = buf.readNullable(b -> b.readUUID());
     }
 
     public int getId() {
@@ -82,29 +91,16 @@ public class SendRigidBodyPropertiesPacket extends CarryonPacket {
     }
 
     @Override
-    protected void fromBytes(FriendlyByteBuf buffer) {
-        this.id = buffer.readVarInt();
-        this.mass = buffer.readFloat();
-        this.dragCoefficient = buffer.readFloat();
-        this.friction = buffer.readFloat();
-        this.restitution = buffer.readFloat();
-        this.terrainLoadingEnabled = buffer.readBoolean();
-        this.buoyancyType = buffer.readEnum(ElementRigidBody.BuoyancyType.class);
-        this.dragType = buffer.readEnum(ElementRigidBody.DragType.class);
-        this.priorityPlayer = buffer.readNullable(buf -> buf.readUUID());
-    }
-
-    @Override
-    protected void toBytes(FriendlyByteBuf buffer) {
-        buffer.writeVarInt(this.id);
-        buffer.writeFloat(this.mass);
-        buffer.writeFloat(this.dragCoefficient);
-        buffer.writeFloat(this.friction);
-        buffer.writeFloat(this.restitution);
-        buffer.writeBoolean(this.terrainLoadingEnabled);
-        buffer.writeEnum(this.buoyancyType);
-        buffer.writeEnum(this.dragType);
-        buffer.writeNullable(this.priorityPlayer, (buf,uuid) -> buf.writeUUID(uuid));
+    protected void toBytes(FriendlyByteBuf buf) {
+        buf.writeVarInt(this.id);
+        buf.writeFloat(this.mass);
+        buf.writeFloat(this.dragCoefficient);
+        buf.writeFloat(this.friction);
+        buf.writeFloat(this.restitution);
+        buf.writeBoolean(this.terrainLoadingEnabled);
+        buf.writeEnum(this.buoyancyType);
+        buf.writeEnum(this.dragType);
+        buf.writeNullable(this.priorityPlayer, (b,uuid) -> b.writeUUID(uuid));
     }
 
     @Override

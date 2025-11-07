@@ -4,6 +4,7 @@ import com.amuzil.carryon.CarryOn;
 import com.amuzil.carryon.physics.network.impl.SendRigidBodyMovementPacket;
 import com.amuzil.carryon.physics.network.impl.SendRigidBodyPropertiesPacket;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -19,8 +20,21 @@ public class CarryonNetwork {
     @SubscribeEvent
     public static void register(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar(CarryOn.MOD_ID).versioned(PROTOCOL_VERSION);
-        PacketUtil.registerToClient(MAIN, SendRigidBodyMovementPacket.class);
-        PacketUtil.registerToClient(MAIN, SendRigidBodyPropertiesPacket.class);
+        registrar.playToClient(
+                SendRigidBodyMovementPacket.TYPE,
+                SendRigidBodyMovementPacket.CODEC,
+                PacketUtil::receiveClientMessage
+        );
+
+        registrar.playToClient(
+                SendRigidBodyPropertiesPacket.TYPE,
+                SendRigidBodyPropertiesPacket.CODEC,
+                PacketUtil::receiveClientMessage
+        );
+    }
+
+    public static void sendToPlayersTrackingEntity(Entity entity, CarryonPacket payload) {
+        PacketDistributor.sendToPlayersTrackingEntity(entity, payload);
     }
 
     public static void sendToClient(CarryonPacket payload, ServerPlayer player) {

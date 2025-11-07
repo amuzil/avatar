@@ -18,11 +18,11 @@ public class SendRigidBodyMovementPacket extends CarryonPacket {
     public static final StreamCodec<FriendlyByteBuf, SendRigidBodyMovementPacket> CODEC =
             StreamCodec.ofMember(SendRigidBodyMovementPacket::toBytes, SendRigidBodyMovementPacket::new);
 
-    private int id;
-    private Quaternionf rotation;
-    private Vector3f pos;
-    private Vector3f linearVel;
-    private Vector3f angularVel;
+    private final int id;
+    private final Quaternionf rotation;
+    private final Vector3f pos;
+    private final Vector3f linearVel;
+    private final Vector3f angularVel;
 
     public SendRigidBodyMovementPacket(EntityRigidBody body) {
         super(true);
@@ -35,6 +35,11 @@ public class SendRigidBodyMovementPacket extends CarryonPacket {
 
     public SendRigidBodyMovementPacket(FriendlyByteBuf buf) {
         super(false);
+        this.id = buf.readVarInt();
+        this.rotation = buf.readQuaternion();
+        this.pos = buf.readVector3f();
+        this.linearVel = buf.readVector3f();
+        this.angularVel = buf.readVector3f();
     }
 
     public int getId() {
@@ -58,21 +63,12 @@ public class SendRigidBodyMovementPacket extends CarryonPacket {
     }
 
     @Override
-    protected void fromBytes(FriendlyByteBuf buffer) {
-        this.id = buffer.readVarInt();
-        this.rotation = buffer.readQuaternion();
-        this.pos = buffer.readVector3f();
-        this.linearVel = buffer.readVector3f();
-        this.angularVel = buffer.readVector3f();
-    }
-
-    @Override
-    protected void toBytes(FriendlyByteBuf buffer) {
-        buffer.writeVarInt(this.id);
-        buffer.writeQuaternion(this.rotation);
-        buffer.writeVector3f(this.pos);
-        buffer.writeVector3f(this.linearVel);
-        buffer.writeVector3f(this.angularVel);
+    protected void toBytes(FriendlyByteBuf buf) {
+        buf.writeVarInt(this.id);
+        buf.writeQuaternion(this.rotation);
+        buf.writeVector3f(this.pos);
+        buf.writeVector3f(this.linearVel);
+        buf.writeVector3f(this.angularVel);
     }
 
     @Override

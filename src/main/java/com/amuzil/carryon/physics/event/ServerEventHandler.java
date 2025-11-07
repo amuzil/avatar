@@ -74,18 +74,18 @@ public final class ServerEventHandler {
 
                     // Movement sync
                     if (rigidBody.isPositionDirty()) {
-                        CarryonNetwork.MAIN.send(
-                                PacketDistributor.sendToPlayersTrackingEntity(rigidBody.getElement().cast(),
+                        CarryonNetwork.sendToPlayersTrackingEntity(
+                                rigidBody.getElement().cast(),
                                 new SendRigidBodyMovementPacket(rigidBody)
-                        ));
+                        );
                     }
 
                     // Properties sync
                     if (rigidBody.arePropertiesDirty()) {
-                        CarryonNetwork.MAIN.send(
-                                PacketDistributor.sendToPlayersTrackingEntity(rigidBody.getElement().cast(),
+                        CarryonNetwork.sendToPlayersTrackingEntity(
+                                rigidBody.getElement().cast(),
                                 new SendRigidBodyPropertiesPacket(rigidBody)
-                        ));
+                        );
                     }
                 }
 
