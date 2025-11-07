@@ -53,17 +53,17 @@ public class Bender implements IBender {
     // Non-Persistent data
     private final LivingEntity entity;
     private final Consumer<FormActivatedEvent> formListener;
-    private boolean isDirty = true; // Flag to indicate if data was changed
-    private boolean active;
+    private boolean isDirty = true; // Indicates if data was changed
+    private boolean active; // Indicates if a BendingForm is currently active
     private final int timeout = 5; // Adjust clear BendingForm cache timeout here
     private int tick = timeout;
-    public final List<Form> formPath = new ArrayList<>(); // in-sync
     private Vec3 lastDeltaMovement = Vec3.ZERO; // in-sync
+    private BendingForm.Type.Motion stepDirection; // in-sync
+    public final List<Form> formPath = new ArrayList<>(); // in-sync
     private BendingSelection selection = new BendingSelection(); // in-sync
 
     // Persistent data
     private Element activeElement = Elements.FIRE; // Currently active element // TODO - Randomize on first load
-    private BendingForm.Type.Motion stepDirection; // TODO: Check why is this under persistent data
     private final List<SkillCategoryData> skillCategoryData = new ArrayList<>();
     private final HashMap<String, SkillData> skillDataMap = new HashMap<>();
     private final List<DataTrait> dataTraits = new ArrayList<>();

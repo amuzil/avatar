@@ -7,7 +7,6 @@ import com.amuzil.carryon.physics.bullet.collision.space.generator.TerrainGenera
 import com.amuzil.carryon.physics.bullet.natives.NativeLoader;
 import com.amuzil.carryon.physics.event.ClientEventHandler;
 import com.amuzil.carryon.physics.event.ServerEventHandler;
-import com.amuzil.carryon.physics.network.CarryonNetwork;
 import com.amuzil.magus.registry.Registries;
 import com.amuzil.magus.tree.SkillTree;
 import com.amuzil.av3.bending.BendingSkill;
@@ -103,7 +102,6 @@ public class Avatar {
         // Rayon Rigid Body Physics
         IEventBus forgeBus = NeoForge.EVENT_BUS;
         forgeBus.register(ClientEventHandler.class);
-        CarryonNetwork.register();
     }
 
 //    private void enqueueIMC(final InterModEnqueueEvent event) {}
