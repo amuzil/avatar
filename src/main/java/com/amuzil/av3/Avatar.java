@@ -62,7 +62,6 @@ public class Avatar {
         AvatarSounds.register(modEventBus);
 
         Registries.SKILL_CATEGORY_REGISTER.register(modEventBus);
-        Elements.SKILL_CATEGORY_REGISTER.register(modEventBus); // Why not register SKILL_CATEGORY_REGISTER in Registries?
         Registries.SKILL_REGISTER.register(modEventBus);
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us

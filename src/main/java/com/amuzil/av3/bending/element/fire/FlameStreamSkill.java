@@ -30,7 +30,7 @@ public class FlameStreamSkill extends FireSkill {
         addTrait(new DamageTrait(Constants.DAMAGE, 1.5f));
         addTrait(new SizeTrait(Constants.SIZE, 0.125F));
         addTrait(new SizeTrait(Constants.MAX_SIZE, 1.0f));
-        addTrait(new KnockbackTrait(Constants.KNOCKBACK, 0.01f));
+        addTrait(new KnockbackTrait(Constants.KNOCKBACK, 0.012f));
         addTrait(new ColourTrait(0, 0, 0, Constants.FIRE_COLOUR));
         addTrait(new SpeedTrait(Constants.SPEED, 0.875d));
         addTrait(new TimedTrait(Constants.LIFETIME, 15));

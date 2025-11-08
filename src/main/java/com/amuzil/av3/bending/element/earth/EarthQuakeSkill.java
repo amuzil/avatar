@@ -103,9 +103,6 @@ public class EarthQuakeSkill extends EarthSkill {
 
     private static void sample(
             LevelReader level, BlockPos pos, Predicate<BlockPos> includePos, boolean skipUnloaded, LinkedHashMap<BlockPos, BlockState> sink) {
-        if (skipUnloaded && !level.hasChunkAt(pos)) {
-            return; // don’t force-load chunks
-        }
         if (!includePos.test(pos)) {
             return;
         }
