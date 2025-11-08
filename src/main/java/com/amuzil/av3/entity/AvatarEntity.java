@@ -1,7 +1,6 @@
 package com.amuzil.av3.entity;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.magus.skill.traits.DataTrait;
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.bending.element.Elements;
 import com.amuzil.av3.entity.api.ICollisionModule;
@@ -9,6 +8,7 @@ import com.amuzil.av3.entity.api.IEntityModule;
 import com.amuzil.av3.entity.api.IForceModule;
 import com.amuzil.av3.entity.api.IRenderModule;
 import com.amuzil.av3.entity.modules.ModuleRegistry;
+import com.amuzil.magus.skill.traits.DataTrait;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;

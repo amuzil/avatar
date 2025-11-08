@@ -1,8 +1,8 @@
 package com.amuzil.magus.skill.traits.entitytraits;
 
-import com.amuzil.magus.skill.traits.DataTrait;
 import com.amuzil.av3.utils.maths.Easings;
 import com.amuzil.av3.utils.maths.Point;
+import com.amuzil.magus.skill.traits.DataTrait;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;

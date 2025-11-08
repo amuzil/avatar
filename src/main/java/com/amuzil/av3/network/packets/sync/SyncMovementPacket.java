@@ -4,8 +4,6 @@ import com.amuzil.av3.Avatar;
 import com.amuzil.av3.capability.AvatarCapabilities;
 import com.amuzil.av3.capability.IBender;
 import com.amuzil.av3.network.packets.api.AvatarPacket;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;

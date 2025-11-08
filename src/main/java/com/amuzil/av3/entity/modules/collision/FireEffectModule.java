@@ -1,9 +1,6 @@
 package com.amuzil.av3.entity.modules.collision;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.magus.skill.traits.skilltraits.CollisionTrait;
-import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
-import com.amuzil.magus.skill.traits.skilltraits.StringTrait;
 import com.amuzil.av3.bending.element.Elements;
 import com.amuzil.av3.bending.form.BendingForm;
 import com.amuzil.av3.bending.form.BendingForms;
@@ -12,6 +9,9 @@ import com.amuzil.av3.entity.api.ICollisionModule;
 import com.amuzil.av3.entity.projectile.AvatarProjectile;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.av3.utils.modules.HitDetection;
+import com.amuzil.magus.skill.traits.skilltraits.CollisionTrait;
+import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
+import com.amuzil.magus.skill.traits.skilltraits.StringTrait;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Blaze;

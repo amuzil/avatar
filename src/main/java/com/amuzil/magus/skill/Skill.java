@@ -1,12 +1,12 @@
 package com.amuzil.magus.skill;
 
+import com.amuzil.av3.capability.Bender;
 import com.amuzil.magus.form.Form;
 import com.amuzil.magus.radix.RadixTree;
 import com.amuzil.magus.skill.data.SkillData;
 import com.amuzil.magus.skill.event.SkillTickEvent;
 import com.amuzil.magus.skill.traits.SkillTrait;
 import com.amuzil.magus.skill.traits.skilltraits.UseTrait;
-import com.amuzil.av3.capability.Bender;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.Event;

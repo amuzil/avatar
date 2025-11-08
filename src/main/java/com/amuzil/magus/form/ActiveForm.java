@@ -1,8 +1,8 @@
 package com.amuzil.magus.form;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.magus.registry.Registries;
 import com.amuzil.av3.bending.form.BendingForm;
+import com.amuzil.magus.registry.Registries;
 import net.minecraft.nbt.CompoundTag;
 
 import java.util.Objects;

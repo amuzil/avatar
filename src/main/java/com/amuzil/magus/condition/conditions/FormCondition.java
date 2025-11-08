@@ -1,7 +1,7 @@
 package com.amuzil.magus.condition.conditions;
 
-import com.amuzil.magus.condition.Condition;
 import com.amuzil.av3.events.FormActivatedEvent;
+import com.amuzil.magus.condition.Condition;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.neoforge.common.NeoForge;
 

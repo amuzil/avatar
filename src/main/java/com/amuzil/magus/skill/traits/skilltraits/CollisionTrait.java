@@ -1,7 +1,7 @@
 package com.amuzil.magus.skill.traits.skilltraits;
 
-import com.amuzil.magus.skill.traits.SkillTrait;
 import com.amuzil.av3.utils.maths.Easings;
+import com.amuzil.magus.skill.traits.SkillTrait;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;

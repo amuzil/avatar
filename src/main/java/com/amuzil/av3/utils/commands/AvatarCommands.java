@@ -1,11 +1,11 @@
 package com.amuzil.av3.utils.commands;
 
-import com.amuzil.magus.form.Form;
-import com.amuzil.magus.registry.Registries;
-import com.amuzil.magus.skill.Skill;
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.bending.element.Elements;
 import com.amuzil.av3.input.InputModule;
+import com.amuzil.magus.form.Form;
+import com.amuzil.magus.registry.Registries;
+import com.amuzil.magus.skill.Skill;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;

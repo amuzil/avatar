@@ -1,7 +1,6 @@
 package com.amuzil.av3.bending.element.water;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.av3.bending.element.Elements;
 import com.amuzil.av3.bending.form.BendingForm;
 import com.amuzil.av3.bending.skill.WaterSkill;
@@ -9,6 +8,7 @@ import com.amuzil.av3.capability.Bender;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.projectile.AvatarBoundProjectile;
 import com.amuzil.av3.utils.Constants;
+import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.traits.skilltraits.*;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;

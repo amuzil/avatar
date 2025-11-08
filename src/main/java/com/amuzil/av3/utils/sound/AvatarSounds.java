@@ -2,7 +2,6 @@ package com.amuzil.av3.utils.sound;
 
 import com.amuzil.av3.Avatar;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;

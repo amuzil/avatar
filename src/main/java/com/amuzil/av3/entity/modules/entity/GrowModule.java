@@ -1,12 +1,12 @@
 package com.amuzil.av3.entity.modules.entity;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.magus.skill.traits.entitytraits.PointsTrait;
-import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.IEntityModule;
 import com.amuzil.av3.entity.projectile.AvatarProjectile;
 import com.amuzil.av3.utils.Constants;
+import com.amuzil.magus.skill.traits.entitytraits.PointsTrait;
+import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;

@@ -1,11 +1,9 @@
 package com.amuzil.av3.capability;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.magus.skill.traits.DataTrait;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;

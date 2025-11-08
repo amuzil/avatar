@@ -1,6 +1,5 @@
 package com.amuzil.av3.input;
 
-import com.amuzil.magus.form.ActiveForm;
 import com.amuzil.av3.bending.BendingSelection;
 import com.amuzil.av3.bending.form.BendingForm;
 import com.amuzil.av3.bending.form.BendingForms;
@@ -8,6 +7,7 @@ import com.amuzil.av3.capability.Bender;
 import com.amuzil.av3.network.AvatarNetwork;
 import com.amuzil.av3.network.packets.form.ExecuteFormPacket;
 import com.amuzil.av3.network.packets.form.ReleaseFormPacket;
+import com.amuzil.magus.form.ActiveForm;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;

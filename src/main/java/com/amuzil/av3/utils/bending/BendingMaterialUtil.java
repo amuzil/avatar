@@ -2,7 +2,6 @@ package com.amuzil.av3.utils.bending;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.element.Element;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;

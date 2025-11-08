@@ -1,9 +1,9 @@
 package com.amuzil.av3.bending.element.air;
 
 import com.amuzil.av3.Avatar;
+import com.amuzil.av3.bending.element.Element;
 import com.amuzil.magus.registry.Registries;
 import com.amuzil.magus.skill.Skill;
-import com.amuzil.av3.bending.element.Element;
 
 import java.util.function.Supplier;
 

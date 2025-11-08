@@ -1,7 +1,7 @@
 package com.amuzil.magus.radix;
 
-import com.amuzil.magus.condition.Condition;
 import com.amuzil.av3.bending.element.Element;
+import com.amuzil.magus.condition.Condition;
 import net.minecraft.world.entity.Entity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -1,5 +1,6 @@
 package com.amuzil.magus.skill;
 
+import com.amuzil.av3.capability.Bender;
 import com.amuzil.magus.condition.conditions.EventCondition;
 import com.amuzil.magus.form.Form;
 import com.amuzil.magus.skill.data.SkillData;
@@ -7,7 +8,6 @@ import com.amuzil.magus.skill.event.SkillTickEvent;
 import com.amuzil.magus.skill.traits.skilltraits.LevelTrait;
 import com.amuzil.magus.skill.traits.skilltraits.TimedTrait;
 import com.amuzil.magus.skill.traits.skilltraits.XPTrait;
-import com.amuzil.av3.capability.Bender;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.List;

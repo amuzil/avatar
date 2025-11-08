@@ -1,8 +1,6 @@
 package com.amuzil.av3.bending.element.water;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.magus.skill.data.SkillData;
-import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.av3.bending.skill.WaterSkill;
 import com.amuzil.av3.capability.Bender;
 import com.amuzil.av3.entity.api.ICollisionModule;
@@ -11,6 +9,8 @@ import com.amuzil.av3.entity.modules.collision.SimpleKnockbackModule;
 import com.amuzil.av3.entity.modules.collision.WaterCollisionModule;
 import com.amuzil.av3.entity.projectile.AvatarWaterProjectile;
 import com.amuzil.av3.utils.Constants;
+import com.amuzil.magus.skill.data.SkillData;
+import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.traits.skilltraits.*;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;

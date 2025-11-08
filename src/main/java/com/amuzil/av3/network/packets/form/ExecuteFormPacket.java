@@ -1,15 +1,14 @@
 package com.amuzil.av3.network.packets.form;
 
-import com.amuzil.magus.form.ActiveForm;
+import com.amuzil.av3.Avatar;
 import com.amuzil.av3.events.FormActivatedEvent;
 import com.amuzil.av3.network.packets.api.AvatarPacket;
-import com.amuzil.av3.Avatar;
+import com.amuzil.magus.form.ActiveForm;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 

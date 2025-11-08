@@ -1,10 +1,10 @@
 package com.amuzil.av3.bending.element.fire;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.magus.registry.Registries;
-import com.amuzil.magus.skill.Skill;
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.bending.element.fire.forms.FirePushForm;
+import com.amuzil.magus.registry.Registries;
+import com.amuzil.magus.skill.Skill;
 
 import java.util.function.Supplier;
 

@@ -1,11 +1,11 @@
 package com.amuzil.av3.entity.modules.collision;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.magus.skill.traits.skilltraits.DamageTrait;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.ICollisionModule;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.av3.utils.modules.HitDetection;
+import com.amuzil.magus.skill.traits.skilltraits.DamageTrait;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 

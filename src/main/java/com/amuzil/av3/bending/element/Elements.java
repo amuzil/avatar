@@ -14,10 +14,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.RegistryBuilder;
 
 import java.util.HashMap;
-import java.util.function.Supplier;
 
 @EventBusSubscriber(modid = Avatar.MOD_ID)
 public class Elements {

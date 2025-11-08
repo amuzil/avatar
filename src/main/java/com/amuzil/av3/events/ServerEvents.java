@@ -1,11 +1,11 @@
 package com.amuzil.av3.events;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.av3.capability.IBender;
-import com.amuzil.magus.skill.event.SkillTickEvent;
 import com.amuzil.av3.bending.element.Elements;
 import com.amuzil.av3.capability.AvatarCapabilities;
 import com.amuzil.av3.capability.Bender;
+import com.amuzil.av3.capability.IBender;
+import com.amuzil.magus.skill.event.SkillTickEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
