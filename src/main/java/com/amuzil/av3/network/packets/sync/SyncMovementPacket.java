@@ -40,7 +40,6 @@ public class SyncMovementPacket implements AvatarPacket {
     }
 
     public static void handle(SyncMovementPacket msg, IPayloadContext ctx) {
-        System.out.println("MADE IT?!");
         ctx.enqueueWork(() -> {
             if (ctx.flow().getReceptionSide().isServer()) {
                 // Update Bender's movement on server

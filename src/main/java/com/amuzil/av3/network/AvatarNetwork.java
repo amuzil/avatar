@@ -34,7 +34,7 @@ public class AvatarNetwork {
                 SyncSelectionPacket::handle
         );
 
-        registrar.playToClient(
+        registrar.playToServer(
                 SyncMovementPacket.TYPE,
                 SyncMovementPacket.CODEC,
                 SyncMovementPacket::handle

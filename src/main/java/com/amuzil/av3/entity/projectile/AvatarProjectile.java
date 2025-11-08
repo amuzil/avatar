@@ -111,7 +111,7 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
-//        super.defineSynchedData(builder);
+        super.defineSynchedData(builder);
         builder.define(HEIGHT, 0.5f);
         builder.define(WIDTH, 0.5f);
     }
