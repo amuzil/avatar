@@ -57,10 +57,10 @@ public class Avatar {
         modEventBus.addListener(CarryonEntityRenderers::registerEntityRenderers);
         CarryonEntities.register(modEventBus);
 
-        modEventBus.register(AvatarNetwork.class);
-        modEventBus.register(CarryonNetwork.class);
-//        modEventBus.addListener(AvatarNetwork::register);
-//        modEventBus.addListener(CarryonNetwork::register);
+//        modEventBus.register(AvatarNetwork.class);
+//        modEventBus.register(CarryonNetwork.class);
+        modEventBus.addListener(AvatarNetwork::register);
+        modEventBus.addListener(CarryonNetwork::register);
         AvatarEntities.register(modEventBus);
         AvatarSounds.register(modEventBus);
 
