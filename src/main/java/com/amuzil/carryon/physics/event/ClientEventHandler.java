@@ -35,8 +35,8 @@ public final class ClientEventHandler {
                 var player = Minecraft.getInstance().player;
 
                 /* Movement */
-//                if (rigidBody.isActive() && rigidBody.isPositionDirty() && player != null && player.equals(rigidBody.getPriorityPlayer()))
-//                    CarryonNetwork.sendToPlayersTrackingEntity(rigidBody.getElement().cast(), new SendRigidBodyMovementPacket(rigidBody));
+                if (rigidBody.isActive() && rigidBody.isPositionDirty() && player != null && player.equals(rigidBody.getPriorityPlayer()))
+                    CarryonNetwork.sendToPlayersTrackingEntity(rigidBody.getElement().cast(), new SendRigidBodyMovementPacket(rigidBody));
 
                 /* Set entity position */
                 var location = rigidBody.getFrame().getLocation(new Vector3f(), 1.0f);
