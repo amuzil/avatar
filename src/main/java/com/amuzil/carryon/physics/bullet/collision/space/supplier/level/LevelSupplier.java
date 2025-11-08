@@ -17,7 +17,7 @@ import java.util.Optional;
  * @see ClientLevelSupplier
  * @see ServerLevelSupplier
  */
-@Deprecated
+//@Deprecated
 public interface LevelSupplier {
     /**
      * Provides the complete list of {@link Level}s. If there aren't any, it will
