@@ -34,7 +34,7 @@ public class SendRigidBodyMovementPacket extends CarryonPacket {
     }
 
     public SendRigidBodyMovementPacket(FriendlyByteBuf buf) {
-        super(false);
+        super(true);
         this.id = buf.readVarInt();
         this.rotation = buf.readQuaternion();
         this.pos = buf.readVector3f();

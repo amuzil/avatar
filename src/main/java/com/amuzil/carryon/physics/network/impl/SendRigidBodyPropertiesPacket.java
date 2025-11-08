@@ -42,7 +42,7 @@ public class SendRigidBodyPropertiesPacket extends CarryonPacket {
     }
 
     public SendRigidBodyPropertiesPacket(FriendlyByteBuf buf) {
-        super(false);
+        super(true);
         this.id = buf.readVarInt();
         this.mass = buf.readFloat();
         this.dragCoefficient = buf.readFloat();
