@@ -25,8 +25,8 @@ public class Elements {
     // TODO: Probably needs correcting
     public static final ResourceKey<Registry<SkillCategory>> SKILL_CATEGORY_KEY = ResourceKey.createRegistryKey(Avatar.id("skill_category"));
     public static final DeferredRegister<SkillCategory> SKILL_CATEGORY_REGISTER = DeferredRegister.create(SKILL_CATEGORY_KEY, Avatar.MOD_ID);
-    public static final Supplier<Registry<SkillCategory>> SKILL_CATEGORIES =
-            (Supplier<Registry<SkillCategory>>) SKILL_CATEGORY_REGISTER.makeRegistry(builder -> builder.sync(true));
+    public static final Registry<SkillCategory> SKILL_CATEGORIES =
+            SKILL_CATEGORY_REGISTER.makeRegistry(builder -> builder.sync(true));
 
     public static final DeferredHolder<SkillCategory, Element> AIRBENDING = SKILL_CATEGORY_REGISTER.register("airbending", Airbending::new);
     public static final DeferredHolder<SkillCategory, Element> WATERBENDING = SKILL_CATEGORY_REGISTER.register("waterbending", Waterbending::new);
@@ -36,8 +36,7 @@ public class Elements {
     public static Element AIR, WATER, EARTH, FIRE;
 
     public static Element get(ResourceLocation id) {
-        Registry<SkillCategory> registry = SKILL_CATEGORIES.get();
-        return (Element) registry.get(id);
+        return (Element) SKILL_CATEGORIES.get(id);
     }
 
     @SubscribeEvent
