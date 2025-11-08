@@ -26,10 +26,10 @@ public class ExplosionMixin {
     @Unique
     private Entity entity;
 
-    @Inject(method = "explode", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;ignoreExplosion()Z"), locals = LocalCapture.CAPTURE_FAILHARD)
-    public void rayon$setCurrentEntity_explode(CallbackInfo info, Set set, int q, float r, int s, int t, int u, int v, int w, int x, List list, Vec3 vec3, int y, Entity entity) {
-        this.entity = entity;
-    }
+//    @Inject(method = "explode", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;ignoreExplosion()Z"), locals = LocalCapture.CAPTURE_FAILHARD)
+//    public void rayon$setCurrentEntity_explode(CallbackInfo info, Set set, int q, float r, int s, int t, int u, int v, int w, int x, List list, Vec3 vec3, int y, Entity entity) {
+//        this.entity = entity;
+//    }
 
     @ModifyArg(method = "explode", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;setDeltaMovement(Lnet/minecraft/world/phys/Vec3;)V"))
     public Vec3 rayon$setVelocityOfRigidBody_explode(Vec3 velocity) {

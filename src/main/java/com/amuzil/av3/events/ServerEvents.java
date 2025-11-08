@@ -45,7 +45,7 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
-    public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
         IBender bender = player.getCapability(AvatarCapabilities.BENDER);
@@ -55,7 +55,7 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
-    public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedOutEvent event) {
+    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedOutEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
         IBender bender = player.getCapability(AvatarCapabilities.BENDER);
@@ -74,7 +74,7 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
-    public static void worldTick(EntityTickEvent event) {
+    public static void worldTick(EntityTickEvent.Pre event) {
         if (!(event.getEntity() instanceof Player player)) return;
         if (!player.isAlive()) return;
         Bender bender = (Bender) Bender.getBender((LivingEntity) event.getEntity());

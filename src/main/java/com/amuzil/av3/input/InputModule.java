@@ -30,7 +30,7 @@ import static com.amuzil.av3.input.KeyBindings.*;
 
 public class InputModule {
     private final Consumer<InputEvent.Key> keyboardListener;
-    private final Consumer<InputEvent.MouseButton> mouseListener;
+    private final Consumer<InputEvent.MouseButton.Pre> mouseListener;
     private final Consumer<ClientTickEvent.Pre> tickEventConsumer;
 
     private boolean isSelecting = false;
@@ -249,7 +249,7 @@ public class InputModule {
     public void registerListeners() {
         bender = (Bender) Bender.getBender(Minecraft.getInstance().player);
         NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, InputEvent.Key.class, keyboardListener);
-        NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, InputEvent.MouseButton.class, mouseListener);
+        NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, InputEvent.MouseButton.Pre.class, mouseListener);
         NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, ClientTickEvent.Pre.class, tickEventConsumer);
     }
 
