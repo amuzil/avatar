@@ -114,9 +114,9 @@ public class Avatar {
 
         // Initialize Skill Tree
         SkillTree.clear();
-        Registries.SKILLS.stream().forEach(c -> {
-            SkillTree.RegisterSkill(((BendingSkill)c).element(), /* toRegister.targetType(), */
-                    c.startPaths(), c);
+        Registries.SKILLS.stream().forEach(skill -> {
+            SkillTree.RegisterSkill(((BendingSkill) skill).element(), /* toRegister.targetType(), */
+                    skill.startPaths(), skill);
         });
     }
 

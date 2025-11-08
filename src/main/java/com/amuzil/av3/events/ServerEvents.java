@@ -28,7 +28,7 @@ public class ServerEvents {
 
         if (event.getEntity() instanceof ServerPlayer player) {
             IBender bender = player.getCapability(AvatarCapabilities.BENDER);
-            if(bender == null) return;
+            if (bender == null) return;
             bender.syncToClient();
             bender.register();
         }
@@ -38,7 +38,7 @@ public class ServerEvents {
     public static void onEntityLeaveLevel(EntityLeaveLevelEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             IBender bender = player.getCapability(AvatarCapabilities.BENDER);
-            if(bender == null) return;
+            if (bender == null) return;
             bender.syncToClient();
             bender.unregister();
         }
@@ -49,7 +49,7 @@ public class ServerEvents {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
         IBender bender = player.getCapability(AvatarCapabilities.BENDER);
-        if(bender == null) return;
+        if (bender == null) return;
         bender.syncToClient();
         System.out.println("PlayerLoggedInEvent SYNC SERVER TO CLIENT ON JOIN");
     }
@@ -59,7 +59,7 @@ public class ServerEvents {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
         IBender bender = player.getCapability(AvatarCapabilities.BENDER);
-        if(bender == null) return;
+        if (bender == null) return;
         bender.syncToClient();
         System.out.println("PlayerLoggedOutEvent SYNC SERVER TO CLIENT ON LEAVE");
     }
@@ -67,7 +67,7 @@ public class ServerEvents {
     @SubscribeEvent
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
         IBender bender = event.getPlayer().getCapability(AvatarCapabilities.BENDER);
-        if(bender == null) return;
+        if (bender == null) return;
         if (bender.getElement() == Elements.EARTH) {
             event.setCanceled(true);
         }
