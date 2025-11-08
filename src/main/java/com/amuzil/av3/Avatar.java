@@ -52,8 +52,6 @@ public class Avatar {
 
         modEventBus.addListener(this::setup);
         modEventBus.addListener(this::setupClient);
-//        modEventBus.addListener(this::enqueueIMC);
-//        modEventBus.addListener(this::processIMC);
         // Register ourselves for server and other game events we are interested in
         NeoForge.EVENT_BUS.register(this);
 
@@ -65,7 +63,7 @@ public class Avatar {
         AvatarEntities.register(modEventBus);
         AvatarSounds.register(modEventBus);
 
-//        Registries.SKILL_CATEGORY_REGISTER.register(modEventBus);
+        Registries.SKILL_CATEGORY_REGISTER.register(modEventBus);
         Elements.SKILL_CATEGORY_REGISTER.register(modEventBus); // Why not register SKILL_CATEGORY_REGISTER in Registries?
         Registries.SKILL_REGISTER.register(modEventBus);
 
@@ -105,8 +103,7 @@ public class Avatar {
         inputModule = new InputModule();
 
         // Rayon Rigid Body Physics
-        IEventBus forgeBus = NeoForge.EVENT_BUS;
-        forgeBus.register(ClientEventHandler.class);
+        NeoForge.EVENT_BUS.register(ClientEventHandler.class);
     }
 
 //    private void enqueueIMC(final InterModEnqueueEvent event) {}
@@ -120,8 +117,8 @@ public class Avatar {
 
         // Initialize Skill Tree
         SkillTree.clear();
-        Registries.SKILLS.get().getValues().forEach(c -> {
-            return SkillTree.RegisterSkill(((BendingSkill)c).element(), /* toRegister.targetType(), */
+        Registries.SKILLS.stream().forEach(c -> {
+            SkillTree.RegisterSkill(((BendingSkill)c).element(), /* toRegister.targetType(), */
                     c.startPaths(), c);
         });
     }

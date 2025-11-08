@@ -27,25 +27,29 @@ import java.util.function.Supplier;
  */
 @EventBusSubscriber(modid = Avatar.MOD_ID)
 public class Registries {
+    // === Registries ===
+//    public static final DeferredRegister<Form> FORMS =
+//            DeferredRegister.create(Avatar.id("forms"), Avatar.MOD_ID);
     public static Registry<Form> FORMS;
 
-    public static DeferredRegister<Skill> SKILL_REGISTER = DeferredRegister.create(ResourceLocation.parse("skills"), Avatar.MOD_ID);
-    public static Supplier<IForgeRegistry<Skill>> SKILLS = SKILL_REGISTER.makeRegistry(RegistryBuilder::new);
+    public static final DeferredRegister<Skill> SKILL_REGISTER =
+            DeferredRegister.create(Avatar.id("skills"), Avatar.MOD_ID);
+    public static final DeferredRegister<SkillCategory> SKILL_CATEGORY_REGISTER =
+            DeferredRegister.create(Avatar.id("skill_categories"), Avatar.MOD_ID);
 
-    // Do we still need these SkillCategory registries here?
-    public static DeferredRegister<SkillCategory> SKILL_CATEGORY_REGISTER = DeferredRegister.create(ResourceLocation.parse("skill_categories"), Avatar.MOD_ID);
-    public static Supplier<IForgeRegistry<SkillCategory>> SKILL_CATEGORIES = SKILL_CATEGORY_REGISTER.makeRegistry(RegistryBuilder::new);
+    public static final Registry<Skill> SKILLS =
+            SKILL_REGISTER.makeRegistry((builder) -> builder.sync(true));
+    public static final Registry<SkillCategory> SKILL_CATEGORIES =
+            SKILL_CATEGORY_REGISTER.makeRegistry((builder) -> builder.sync(true));
 
+    // === Local Containers ===
     private static final HashMap<String, Form> forms = new HashMap<>();
-    private static final Map<String, Supplier<? extends Skill>> skillSuppliers = new HashMap<>();
     private static final HashMap<String, Supplier<Skill>> skills = new HashMap<>();
+    private static final Map<String, Supplier<? extends Skill>> skillSuppliers = new HashMap<>();
     private static final List<SkillCategory> categories = new ArrayList<>();
     private static final List<DataTrait> traits = new ArrayList<>();
 
-//    public static void init() {
-//        Elements.init();
-//    }
-
+    // === Accessors ===
     public static List<DataTrait> getTraits() {
         return traits;
     }
@@ -71,13 +75,9 @@ public class Registries {
         return sup != null ? sup.get() : null;
     }
 
-    public static Skill getRegisteredSkill(ResourceLocation id) {
-        Supplier<Skill> obj = skills.get(id.toString());
-        return obj != null ? obj.get() : null;
-    }
-
-    public static void registerForm(Form form) {
-        forms.put(form.name(), form);
+    // === Registration Helpers ===
+    public static void registerSkillCategory(SkillCategory skillCategory) {
+        categories.add(skillCategory);
     }
 
     public static Supplier<? extends Skill> registerSkill(Supplier<? extends Skill> skillSup) {
@@ -89,18 +89,14 @@ public class Registries {
         return skillRegistryObject;
     }
 
-    public static void registerSkillCategory(SkillCategory skillCategory) {
-        categories.add(skillCategory);
+    public static void registerForm(Form form) {
+        forms.put(form.name(), form);
     }
 
-    /**
-     * All skills will be registered first, along with skill categories.
-     * Then, each skill will have its getTraits() method called, and each of its traits will be registered.
-     */
     @SubscribeEvent
-    public static void onRegistryRegister(NewRegistryEvent event) {
+    public static void onNewRegistryEvent(NewRegistryEvent event) {
         // Forms
-        RegistryBuilder<Form> formRegistryBuilder = new RegistryBuilder<>();
+        RegistryBuilder<Form> formRegistryBuilder = new RegistryBuilder<>(ResourceKey.createRegistryKey(Avatar.id("forms")));
         formRegistryBuilder.defaultKey(Avatar.id("forms"));
         FORMS = event.create(formRegistryBuilder);
     }
@@ -108,12 +104,10 @@ public class Registries {
     @SubscribeEvent
     public static void gameRegistry(RegisterEvent event) {
         // Forms
-        if (event.getRegistryKey().equals(FORMS.get().getRegistryKey())) {
-            Registry<Form> registry = FORMS.get();
-            ResourceKey<Registry<Form>> resKey = registry.getRegistryKey();
-            event.register(resKey, helper -> {
+        if (event.getRegistryKey().equals(FORMS.key())) {
+            event.register(FORMS.key(), registry -> {
                 for (Form form: forms.values())
-                    helper.register(form.name(), form);
+                    registry.register(Avatar.id(form.name()), form);
             });
         }
     }

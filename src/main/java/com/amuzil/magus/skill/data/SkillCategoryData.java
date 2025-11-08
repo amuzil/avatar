@@ -36,7 +36,7 @@ public class SkillCategoryData implements DataTrait {
     }
 
     public SkillCategory getSkillCategory() {
-        return Registries.SKILL_CATEGORIES.get().getValue(getId());
+        return Registries.SKILL_CATEGORIES.get(getId());
     }
 
     @Override
