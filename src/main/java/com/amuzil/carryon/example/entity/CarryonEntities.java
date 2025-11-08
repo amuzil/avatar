@@ -10,7 +10,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Supplier;
 
-public class RayonExampleEntities {
+public class CarryonEntities {
     private static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(Registries.ENTITY_TYPE, CarryOn.MOD_ID);
 
     public static final Supplier<EntityType<PhysicsFallingBlock>> PHYSICS_FALLING_BLOCK = register("physics_falling_block",

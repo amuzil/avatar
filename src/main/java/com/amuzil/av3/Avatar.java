@@ -1,7 +1,6 @@
 package com.amuzil.av3;
 
 import com.amuzil.av3.bending.BendingSkill;
-import com.amuzil.av3.bending.element.Elements;
 import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.modules.ModuleRegistry;
 import com.amuzil.av3.entity.modules.collision.*;
@@ -14,8 +13,8 @@ import com.amuzil.av3.input.InputModule;
 import com.amuzil.av3.network.AvatarNetwork;
 import com.amuzil.av3.utils.commands.AvatarCommands;
 import com.amuzil.av3.utils.sound.AvatarSounds;
-import com.amuzil.carryon.example.entity.RayonExampleEntities;
-import com.amuzil.carryon.example.renderer.RayonExampleEntityRenderers;
+import com.amuzil.carryon.example.entity.CarryonEntities;
+import com.amuzil.carryon.example.renderer.CarryonEntityRenderers;
 import com.amuzil.carryon.physics.bullet.collision.space.generator.PressureGenerator;
 import com.amuzil.carryon.physics.bullet.collision.space.generator.TerrainGenerator;
 import com.amuzil.carryon.physics.bullet.natives.NativeLoader;
@@ -54,9 +53,9 @@ public class Avatar {
         // Register ourselves for server and other game events we are interested in
         NeoForge.EVENT_BUS.register(this);
 
-        // Rayon Rigid Body Physics
-        modEventBus.addListener(RayonExampleEntityRenderers::registerEntityRenderers);
-        RayonExampleEntities.register(modEventBus);
+        // Carryon Rigid Body Physics
+        modEventBus.addListener(CarryonEntityRenderers::registerEntityRenderers);
+        CarryonEntities.register(modEventBus);
 
         modEventBus.register(AvatarNetwork.class);
         modEventBus.register(CarryonNetwork.class);
@@ -92,7 +91,7 @@ public class Avatar {
         ModuleRegistry.register(WaterCollisionModule::new);
         ModuleRegistry.register(FireEffectModule::new);
 
-        // Rayon Rigid Body Physics
+        // Carryon Rigid Body Physics
         IEventBus bus = NeoForge.EVENT_BUS;
         bus.register(ServerEventHandler.class);
         bus.register(PressureGenerator.class);
@@ -103,7 +102,7 @@ public class Avatar {
         // Initialize the input modules
         inputModule = new InputModule();
 
-        // Rayon Rigid Body Physics
+        // Carryon Rigid Body Physics
         NeoForge.EVENT_BUS.register(ClientEventHandler.class);
     }
 

@@ -30,7 +30,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * This is the main physics simulation used by Rayon. Each bullet simulation
+ * This is the main physics simulation used by Carryon. Each bullet simulation
  * update happens asynchronously while all the setup, input, or otherwise
  * user defined behavior happens on the game logic thread. <br>
  * <br>
