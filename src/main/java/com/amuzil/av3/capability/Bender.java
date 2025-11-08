@@ -116,7 +116,7 @@ public class Bender implements IBender {
                 stepDirection = BendingForm.Type.Motion.NONE;
 
             formPath.add(event.getActiveForm().form()); // TODO: fix Form getting added twice here
-            printFormPath(); // Debugging purposes
+//            printFormPath(); // Debugging purposes
             if (active) {
                 switch (getSelection().target()) {
                     case BLOCK, NONE, SELF, ENTITY -> checkSkillTree();
