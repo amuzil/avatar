@@ -14,7 +14,7 @@ import java.util.Optional;
  * This {@link LevelSupplier} provides a list of all {@link ServerLevel} objects
  * running on the {@link MinecraftServer}.
  */
-@Deprecated
+//@Deprecated
 public record ServerLevelSupplier(MinecraftServer server) implements LevelSupplier {
     @Override
     public List<Level> getAll() {

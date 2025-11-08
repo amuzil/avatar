@@ -21,6 +21,7 @@ import com.amuzil.carryon.physics.bullet.collision.space.generator.TerrainGenera
 import com.amuzil.carryon.physics.bullet.natives.NativeLoader;
 import com.amuzil.carryon.physics.event.ClientEventHandler;
 import com.amuzil.carryon.physics.event.ServerEventHandler;
+import com.amuzil.carryon.physics.network.CarryonNetwork;
 import com.amuzil.magus.registry.Registries;
 import com.amuzil.magus.tree.SkillTree;
 import net.minecraft.client.Minecraft;
@@ -58,6 +59,7 @@ public class Avatar {
         RayonExampleEntities.register(modEventBus);
 
         modEventBus.register(AvatarNetwork.class);
+        modEventBus.register(CarryonNetwork.class);
         AvatarEntities.register(modEventBus);
         AvatarSounds.register(modEventBus);
 

@@ -22,7 +22,6 @@ public abstract class CarryonPacket implements CustomPacketPayload {
 
     protected abstract void toBytes(FriendlyByteBuf buffer);
 
-    // TODO: Don't know if we need
     public static <T extends CarryonPacket> void encodeCheck(T packet, FriendlyByteBuf buffer) {
         if (!packet.isValid) return;
         packet.toBytes(buffer);
