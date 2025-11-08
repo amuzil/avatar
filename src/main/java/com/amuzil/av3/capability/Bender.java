@@ -110,13 +110,13 @@ public class Bender implements IBender {
         if (event.getEntity().getId() == entity.getId() && event.getActiveForm().form().notNull()) {
             active = !event.released();
             ActiveForm activeForm = event.getActiveForm();
-
             if (activeForm.direction() != null)
                 stepDirection = activeForm.direction(); // TODO: Move to bending context
             else
                 stepDirection = BendingForm.Type.Motion.NONE;
 
-            formPath.add(event.getActiveForm().form());
+            formPath.add(event.getActiveForm().form()); // TODO: fix Form getting added twice here
+            printFormPath(); // Debugging purposes
             if (active) {
                 switch (getSelection().target()) {
                     case BLOCK, NONE, SELF, ENTITY -> checkSkillTree();
@@ -130,7 +130,6 @@ public class Bender implements IBender {
             }
 
             tick = timeout;
-//            printFormPath(); // Debugging purposes
         }
     }
 
