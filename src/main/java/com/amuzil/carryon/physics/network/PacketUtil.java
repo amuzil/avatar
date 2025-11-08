@@ -22,7 +22,7 @@ public class PacketUtil {
         }
 
         if (!message.isMessageValid()) {
-            LOGGER.warn(message.toString() + " was invalid");
+//            LOGGER.warn(message.toString() + " was invalid");
             return;
         }
 
