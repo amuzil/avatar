@@ -3,151 +3,171 @@ package com.amuzil.magus.physics.core;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicIntegerArray;
 
 // A spatially hashed grid of forcepoints to prevent per-point neighbour checking. Yay!
 public class ForceGrid<T extends IPhysicsElement> {
     private final double cellSize;
-    private final Map<Long, List<T>> cells = new HashMap<>();
+    private final int binCountX, binCountY, binCountZ;
+    private final int totalBins;
 
-    // Hash made from whatever; used to identify where each point came from.
-    // Usually going to be id + hashed owner id.
-    private long identifierHash;
+    private final AtomicIntegerArray binCounts;
+    private final int[] binStartOffsets;
+    private final Object[] sortedPoints;    // store T references
+    private final List<T> allPoints;
 
-    /**
-     * @param cellSize edge length of each cubic cell in world units
-     */
-    public ForceGrid(double cellSize) {
+    private final ExecutorService threadPool;
+    private final int parallelism;
+
+    public ForceGrid(double cellSize, int binCountX, int binCountY, int binCountZ,
+                     int maxPoints, ExecutorService threadPool) {
         this.cellSize = cellSize;
+        this.binCountX = binCountX;
+        this.binCountY = binCountY;
+        this.binCountZ = binCountZ;
+        this.totalBins = binCountX * binCountY * binCountZ;
+
+        this.binCounts = new AtomicIntegerArray(totalBins);
+        this.binStartOffsets = new int[totalBins];
+        @SuppressWarnings("unchecked")
+        Object[] arr = new Object[maxPoints];
+        this.sortedPoints = arr;
+
+        this.allPoints = new ArrayList<>(maxPoints);
+        this.threadPool = threadPool;
+        this.parallelism = Runtime.getRuntime().availableProcessors();
     }
 
-    public ForceGrid(double cellSize, long identifierHash) {
-        this(cellSize);
-        this.identifierHash = identifierHash;
+    private int computeLinearBinIndex(long xi, long yi, long zi) {
+        if (xi < 0 || xi >= binCountX ||
+                yi < 0 || yi >= binCountY ||
+                zi < 0 || zi >= binCountZ) {
+            return -1;
+        }
+        return (int) (xi + yi * binCountX + zi * (binCountX * binCountY));
     }
 
-    /**
-     * Compute a 64-bit key from world coordinates.
-     */
-    private long hashKey(double x, double y, double z) {
-        long[] coords = normalCoords(x, y, z);
-        return computeKey(coords[0], coords[1], coords[2]);
-    }
-
-    /**
-     * @param x
-     * @param y
-     * @param z
-     * @return Normalised array of world to hash coordinates before the actual key is computed.
-     */
     private long[] normalCoords(double x, double y, double z) {
         return new long[]{
                 (long) Math.floor(x / cellSize),
                 (long) Math.floor(y / cellSize),
-                (long) Math.floor(z / cellSize),
+                (long) Math.floor(z / cellSize)
         };
     }
 
-    private long[] normalCoords(Vec3 pos) {
-        return normalCoords(pos.x, pos.y, pos.z);
+    public void addPoint(T p) {
+        allPoints.add(p);
     }
 
-    private long computeKey(long xi, long yi, long zi) {
-        // pack into 20 bits each (mask for safety if the world is large)
-        long key = ((xi & 0xFFFFF) << 40)
-                | ((yi & 0xFFFFF) << 20)
-                | (zi & 0xFFFFF);
-        return key ^ identifierHash;
+    public void clearPoints() {
+        allPoints.clear();
     }
 
+    public void rebuild() {
+        final int n = allPoints.size();
 
-    /**
-     * Insert a point using its own position.
-     */
-    public void insert(T p) {
-        insert(p, p.pos());
-    }
+        // Step 1: zero counts
+        for (int i = 0; i < totalBins; i++) {
+            binCounts.set(i, 0);
+        }
 
-    /**
-     * Insert a point into its corresponding cell based on position.
-     */
-    public void insert(T p, Vec3 pos) {
-        long key = hashKey(pos.x, pos.y, pos.z);
-        cells.computeIfAbsent(key, k -> new ArrayList<>()).add(p);
-    }
+        // Step 2: counting assignment (parallel)
+        int chunkSize = (n + parallelism - 1) / parallelism;
+        List<Future<?>> futures = new ArrayList<>();
+        for (int t = 0; t < parallelism; t++) {
+            final int start = t * chunkSize;
+            final int end = Math.min(n, (t + 1) * chunkSize);
+            futures.add(threadPool.submit(() -> {
+                for (int i = start; i < end; i++) {
+                    T p = allPoints.get(i);
+                    Vec3 pos = p.pos();
+                    long[] coords = normalCoords(pos.x, pos.y, pos.z);
+                    int bi = computeLinearBinIndex(coords[0], coords[1], coords[2]);
+                    if (bi >= 0) {
+                        binCounts.incrementAndGet(bi);
+                    }
+                }
+            }));
+        }
+        for (Future<?> f : futures) {
+            try {
+                f.get();
+            } catch (ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
-    /**
-     * Remove a point by reading its stored previous position.
-     */
-    public void remove(T p) {
-        remove(p, p.pos());
-    }
+        // Step 3: prefix sums & reset counts for scatter
+        int offset = 0;
+        for (int i = 0; i < totalBins; i++) {
+            int c = binCounts.get(i);
+            binStartOffsets[i] = offset;
+            offset += c;
+            binCounts.set(i, 0);
+        }
 
-    /**
-     * Remove a point from the cell corresponding to the given position.
-     */
-    public void remove(T p, Vec3 pos) {
-        long key = hashKey(pos.x, pos.y, pos.z);
-        List<T> bucket = cells.get(key);
-        if (bucket != null) {
-            bucket.remove(p);
-            if (bucket.isEmpty()) {
-                cells.remove(key);
+        // Step 4: scatter points (parallel)
+        futures.clear();
+        for (int t = 0; t < parallelism; t++) {
+            final int start = t * chunkSize;
+            final int end = Math.min(n, (t + 1) * chunkSize);
+            futures.add(threadPool.submit(() -> {
+                for (int i = start; i < end; i++) {
+                    T p = allPoints.get(i);
+                    Vec3 pos = p.pos();
+                    long[] coords = normalCoords(pos.x, pos.y, pos.z);
+                    int bi = computeLinearBinIndex(coords[0], coords[1], coords[2]);
+                    if (bi >= 0) {
+                        int idx = binStartOffsets[bi] + binCounts.getAndIncrement(bi);
+                        sortedPoints[idx] = p;
+                    }
+                }
+            }));
+        }
+        for (Future<?> f : futures) {
+            try {
+                f.get();
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
             }
         }
     }
 
-    /**
-     * Query all points in the 27-cell neighborhood (radius=1) around a given position.
-     */
-    public List<T> queryNeighbors(Vec3 pos) {
-        return queryNeighbors(pos, 1);
-    }
-
-    /**
-     * Query all points within a cubic neighborhood of given radius (in cells).
-     *
-     * @param pos        world-space sample position
-     * @param cellRadius how many cells to extend in each axis (>=0)
-     */
-    public List<T> queryNeighbors(Vec3 pos, int cellRadius) {
-        long[] coords = normalCoords(pos);
+    public List<T> queryRadius(Vec3 pos, double radius) {
         List<T> result = new ArrayList<>();
-        for (long dx = -cellRadius; dx <= cellRadius; dx++) {
-            for (long dy = -cellRadius; dy <= cellRadius; dy++) {
-                for (long dz = -cellRadius; dz <= cellRadius; dz++) {
-                    long key = computeKey(coords[0] + dx, coords[1] + dy, coords[2] + dz);
-                    List<T> bucket = cells.get(key);
-                    if (bucket != null) {
-                        result.addAll(bucket);
+        long[] baseC = normalCoords(pos.x, pos.y, pos.z);
+        int cellRadius = (int) Math.ceil(radius / cellSize);
+        double r2 = radius * radius;
+
+        for (int dz = -cellRadius; dz <= cellRadius; dz++) {
+            for (int dy = -cellRadius; dy <= cellRadius; dy++) {
+                for (int dx = -cellRadius; dx <= cellRadius; dx++) {
+                    long xi = baseC[0] + dx;
+                    long yi = baseC[1] + dy;
+                    long zi = baseC[2] + dz;
+                    int bi = computeLinearBinIndex(xi, yi, zi);
+                    if (bi < 0) continue;
+
+                    int start = binStartOffsets[bi];
+                    int count = binCounts.get(bi);
+                    for (int idx = start; idx < start + count; idx++) {
+                        @SuppressWarnings("unchecked")
+                        T p = (T) sortedPoints[idx];
+                        Vec3 pp = p.pos();
+                        double dxp = pp.x - pos.x;
+                        double dyp = pp.y - pos.y;
+                        double dzp = pp.z - pos.z;
+                        if (dxp * dxp + dyp * dyp + dzp * dzp <= r2) {
+                            result.add(p);
+                        }
                     }
                 }
             }
         }
         return result;
     }
-
-    public List<T> queryNeighbours(Vec3 pos) {
-        long[] coords = normalCoords(pos);
-        List<T> result = new ArrayList<>();
-        List<T> bucket = cells.get(computeKey(coords[0], coords[1], coords[2]));
-        if (bucket != null) {
-            result.addAll(bucket);
-        }
-        return result;
-    }
-
-    /**
-     * Clear all cells (call each frame before re-inserting if needed).
-     */
-    public void clear() {
-        cells.clear();
-    }
-
-    public long idHash() {
-        return this.identifierHash;
-    }
 }
-
