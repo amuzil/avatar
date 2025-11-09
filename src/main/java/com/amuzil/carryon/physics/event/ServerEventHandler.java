@@ -65,7 +65,6 @@ public final class ServerEventHandler {
         if (!level.isClientSide) {
             MinecraftSpace space = MinecraftSpace.get(level);
             space.step();
-
             EntityCollisionGenerator.step(space);
 
             for (var rigidBody : space.getRigidBodiesByClass(EntityRigidBody.class)) {
@@ -101,7 +100,7 @@ public final class ServerEventHandler {
         if (event.getLevel() instanceof Level level) {
             MinecraftSpace space = PhysicsThreadStore.INSTANCE.createPhysicsSpace(level);
             ((SpaceStorage) level).setSpace(space);
-            NeoForge.EVENT_BUS.post(new PhysicsSpaceEvent.Init(space)); // "fire" instead of "post"
+            NeoForge.EVENT_BUS.post(new PhysicsSpaceEvent.Init(space));
         }
     }
 
