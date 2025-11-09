@@ -20,6 +20,9 @@ import com.amuzil.magus.physics.core.ForceSystem;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.traits.entitytraits.PointsTrait;
 import com.amuzil.magus.skill.traits.skilltraits.*;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -123,6 +126,11 @@ public class FireStrikeSkill extends FireSkill {
         // Test physics
 
         MinecraftSpace space = MinecraftSpace.get(level);
+        // 4-5 clouds doing flamethrower shit
+        // 20 clouds doing flamethrower shit
+        // 20 * 200 * 20 = 800,000
+        // 20 * 50 * 20  = 200,000
+
         if (space != null) {
             ForceSystem fs = space.forceSystem();
 
@@ -134,7 +142,7 @@ public class FireStrikeSkill extends FireSkill {
             cloud.setLifetimeSeconds(3.0f);
 
             // create some points
-            int count = 200;
+            int count = 400000;
             Vec3 origin = projectile.position();
             Vec3 direction = entity.getLookAngle();
             for (int i = 0; i < count; i++) {
@@ -156,6 +164,8 @@ public class FireStrikeSkill extends FireSkill {
                 ForcePoint p = new ForcePoint(type, pos, vel, force);
                 p.mass(1.0);    // if you have mass setters
                 p.damping(0.1); // mild drag
+//                if (level instanceof ServerLevel server && entity instanceof ServerPlayer)
+//                   server.sendParticles((ServerPlayer) entity, ParticleTypes.SMOKE, false, pos.x, pos.y, pos.z, 1, 0, 0, 0, 0.1f);
 
                 cloud.addPoints(p);
             }

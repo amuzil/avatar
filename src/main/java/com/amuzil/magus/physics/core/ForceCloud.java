@@ -196,7 +196,7 @@ public class ForceCloud extends PhysicsElement {
         // lifetime countdown
         tickLifetime(dt);
 
-        System.out.println("Debug");
+        System.out.println("Debug: " + points.size());
         integratePoints(dt);
 
         updateBoundsFromPoints();
