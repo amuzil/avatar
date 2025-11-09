@@ -88,13 +88,9 @@ public final class ServerEventHandler {
                     }
                 }
 
-                // Update entity position to physics
+                // Update entity position to physics body location
                 var location = rigidBody.getFrame().getLocation(new Vector3f(), 1.0f);
-                var entity = rigidBody.getElement().cast();
-//                entity.moveTo(entity.getX() + location.x, entity.getY() + location.y, entity.getZ() + location.z);
-//                entity.moveTo(location.x, location.y, location.z);
-                entity.absMoveTo(location.x, location.y, location.z);
-//                entity.move(MoverType.SELF, entity.getDeltaMovement());
+                rigidBody.getElement().cast().absMoveTo(location.x, location.y, location.z);
             }
         }
     }

@@ -167,15 +167,15 @@ public class Bender implements IBender {
     }
 
     private void serverTick() {
-        if(skillToActivate != null) {
+        if (skillToActivate != null) {
             skillActivationTimer--;
-            if(skillActivationTimer <= 0) {
+            if (skillActivationTimer <= 0) {
                 startSkill();
             }
         }
         if (!active) {
             if (tick == 0) {
-                formPath.clear(); // Only clear when no Forms are active
+                formPath.clear(); // Only clear when Forms are inactive for `timeout` # of ticks
                 tick = timeout;
                 active = true;
             }
