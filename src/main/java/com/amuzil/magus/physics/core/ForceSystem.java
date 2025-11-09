@@ -1,7 +1,6 @@
-package com.amuzil.omegasource.utils.physics.core;
+package com.amuzil.magus.physics.core;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
 
 import java.util.List;
 
@@ -14,16 +13,15 @@ public class ForceSystem {
     //TODO: Change this to use a double SpatialGrid approach. One grid stores ForceClouds at the system level,
     // and checks what to compare against. The other adds in data at the ForcePoint level, and is used for finer
     // collisions or visuals.
-
-    public Dist side() {
-        return this.side;
-    }
-    private ForceGrid<ForceCloud> cloudGrid;
-
+    private final ForceGrid<ForceCloud> cloudGrid;
     private List<ForceEmitter> emitters;
 
     public ForceSystem(double systemCellSize) {
         this.cloudGrid = new ForceGrid<>(systemCellSize);
+    }
+
+    public Dist side() {
+        return this.side;
     }
 
     public void addEmitter(ForceEmitter e) {
@@ -40,6 +38,7 @@ public class ForceSystem {
         }
     }
 
+    // Go over grid each tick. Maybe skip emitters?
     public void tick(double dt) {
         for (ForceEmitter e : emitters) {
             e.tick(dt);

@@ -1,7 +1,7 @@
-package com.amuzil.omegasource.utils.physics.core;
+package com.amuzil.magus.physics.core;
 
-import com.amuzil.omegasource.utils.physics.constraints.ConstraintUtils;
-import com.amuzil.omegasource.utils.physics.constraints.Constraints;
+import com.amuzil.magus.physics.constraints.ConstraintUtils;
+import com.amuzil.magus.physics.constraints.Constraints;
 import net.minecraft.world.phys.Vec3;
 
 public interface IPhysicsElement {

@@ -1,6 +1,6 @@
-package com.amuzil.omegasource.utils.physics.core;
+package com.amuzil.magus.physics.core;
 
-import com.amuzil.omegasource.utils.physics.constraints.Constraints;
+import com.amuzil.magus.physics.constraints.Constraints;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;

@@ -1,8 +1,8 @@
-package com.amuzil.omegasource.utils.physics;
+package com.amuzil.magus.physics;
 
-import com.amuzil.omegasource.utils.physics.constraints.Constraints;
-import com.amuzil.omegasource.utils.physics.core.ForceCloud;
-import com.amuzil.omegasource.utils.physics.modules.IPhysicsModule;
+import com.amuzil.magus.physics.constraints.Constraints;
+import com.amuzil.magus.physics.core.ForceCloud;
+import com.amuzil.magus.physics.modules.IPhysicsModule;
 import net.minecraft.world.phys.Vec3;
 
 public class PhysicsBuilder {

@@ -1,7 +1,7 @@
-package com.amuzil.omegasource.utils.physics.constraints;
+package com.amuzil.magus.physics.constraints;
 
-import com.amuzil.omegasource.utils.physics.core.ForceCloud;
-import com.amuzil.omegasource.utils.physics.core.ForcePoint;
+import com.amuzil.magus.physics.core.ForceCloud;
+import com.amuzil.magus.physics.core.ForcePoint;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;

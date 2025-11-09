@@ -1,6 +1,6 @@
-package com.amuzil.omegasource.utils.physics.modules;
+package com.amuzil.magus.physics.modules;
 
-import com.amuzil.omegasource.utils.physics.core.IPhysicsElement;
+import com.amuzil.magus.physics.core.IPhysicsElement;
 
 public interface IPhysicsModule {
 

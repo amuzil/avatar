@@ -1,6 +1,6 @@
-package com.amuzil.omegasource.utils.physics.core;
+package com.amuzil.magus.physics.core;
 
-import com.amuzil.omegasource.utils.physics.modules.IPhysicsModule;
+import com.amuzil.magus.physics.modules.IPhysicsModule;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaterniond;
 

@@ -1,4 +1,4 @@
-package com.amuzil.omegasource.utils.physics.constraints;
+package com.amuzil.magus.physics.constraints;
 
 public class Constraints {
 

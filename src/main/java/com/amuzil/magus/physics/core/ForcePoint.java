@@ -1,4 +1,4 @@
-package com.amuzil.omegasource.utils.physics.core;
+package com.amuzil.magus.physics.core;
 
 import net.minecraft.world.phys.Vec3;
 
