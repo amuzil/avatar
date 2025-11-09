@@ -21,9 +21,11 @@ public class LevelRendererMixin {
             var cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
             var location = element.getPhysicsLocation(new Vector3f(), h);
             dispatcher.render(entity, location.x - cameraPos.x, location.y - cameraPos.y, location.z - cameraPos.z, g, h, poseStack, multiBufferSource, i);
+        } else {
+            dispatcher.render(entity, d, e, f, g, h, poseStack, multiBufferSource, i);
+
         }
 
-        dispatcher.render(entity, d, e, f, g, h, poseStack, multiBufferSource, i);
     }
 
 }

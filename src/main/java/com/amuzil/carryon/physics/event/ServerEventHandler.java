@@ -17,6 +17,7 @@ import com.amuzil.carryon.physics.utils.maths.Utilities;
 import com.jme3.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -90,7 +91,11 @@ public final class ServerEventHandler {
 
                 // Update entity position to physics
                 var location = rigidBody.getFrame().getLocation(new Vector3f(), 1.0f);
-                rigidBody.getElement().cast().absMoveTo(location.x, location.y, location.z);
+                var entity = rigidBody.getElement().cast();
+//                entity.moveTo(entity.getX() + location.x, entity.getY() + location.y, entity.getZ() + location.z);
+//                entity.moveTo(location.x, location.y, location.z);
+                entity.absMoveTo(location.x, location.y, location.z);
+//                entity.move(MoverType.SELF, entity.getDeltaMovement());
             }
         }
     }

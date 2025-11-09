@@ -30,18 +30,6 @@ public final class ClientEventHandler {
             MinecraftSpace space = MinecraftSpace.get(event.getLevel());
             space.step();
             EntityCollisionGenerator.step(space);
-
-            for (var rigidBody : space.getRigidBodiesByClass(EntityRigidBody.class)) {
-                var player = Minecraft.getInstance().player;
-
-                /* Movement */
-                if (rigidBody.isActive() && rigidBody.isPositionDirty() && player != null && player.equals(rigidBody.getPriorityPlayer()))
-                    CarryonNetwork.sendToPlayersTrackingEntity(rigidBody.getElement().cast(), new SendRigidBodyMovementPacket(rigidBody));
-
-                /* Set entity position */
-                var location = rigidBody.getFrame().getLocation(new Vector3f(), 1.0f);
-                rigidBody.getElement().cast().absMoveTo(location.x, location.y, location.z);
-            }
         }
     }
 
