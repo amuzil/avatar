@@ -12,6 +12,11 @@ import com.amuzil.av3.entity.modules.entity.GrowModule;
 import com.amuzil.av3.entity.projectile.AvatarDirectProjectile;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.av3.utils.maths.Point;
+import com.amuzil.carryon.physics.bullet.collision.body.shape.MinecraftShape;
+import com.amuzil.carryon.physics.bullet.collision.space.MinecraftSpace;
+import com.amuzil.magus.physics.core.ForceCloud;
+import com.amuzil.magus.physics.core.ForcePoint;
+import com.amuzil.magus.physics.core.ForceSystem;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.traits.entitytraits.PointsTrait;
 import com.amuzil.magus.skill.traits.skilltraits.*;
@@ -109,8 +114,51 @@ public class FireStrikeSkill extends FireSkill {
         bender.formPath.clear();
         skillData.setSkillState(SkillState.IDLE);
 
+
         if (!bender.getEntity().level().isClientSide) {
             bender.getEntity().level().addFreshEntity(projectile);
+        }
+
+
+        // Test physics
+
+        MinecraftSpace space = MinecraftSpace.get(level);
+        if (space != null) {
+            ForceSystem fs = space.forceSystem();
+
+            // type is whatever you use for element (e.g. FIRE = 1, WATER = 2, etc.)
+            int type = 1; // example
+            int maxPoints = 2000;
+
+            ForceCloud cloud = fs.createCloud(type, maxPoints);
+            cloud.setLifetimeSeconds(3.0f);
+
+            // create some points
+            int count = 200;
+            Vec3 origin = projectile.position();
+            Vec3 direction = entity.getLookAngle();
+            for (int i = 0; i < count; i++) {
+                // scatter a bit around origin
+                double rx = (level.random.nextDouble() - 0.5) * 0.5;
+                double ry = (level.random.nextDouble() - 0.5) * 0.5;
+                double rz = (level.random.nextDouble() - 0.5) * 0.5;
+
+                Vec3 pos = origin.add(rx, ry, rz);
+
+                // initial velocity roughly in 'direction'
+                Vec3 vel = direction.normalize().scale(0.3)
+                        .add((level.random.nextDouble() - 0.5) * 0.1,
+                                (level.random.nextDouble() - 0.5) * 0.1,
+                                (level.random.nextDouble() - 0.5) * 0.1);
+
+                Vec3 force = Vec3.ZERO; // start with no force, just velocity
+
+                ForcePoint p = new ForcePoint(type, pos, vel, force);
+                p.mass(1.0);    // if you have mass setters
+                p.damping(0.1); // mild drag
+
+                cloud.addPoints(p);
+            }
         }
 //        else {
 //            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {

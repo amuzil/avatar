@@ -19,7 +19,8 @@ public abstract class PhysicsElement implements IPhysicsElement {
     private int id;
     private double mass;
     private double damping;
-
+    int maxLifetime = -1;
+    int timeExisted = 0;
     public PhysicsElement(int type) {
         this(15, type);
     }
@@ -27,6 +28,14 @@ public abstract class PhysicsElement implements IPhysicsElement {
     public PhysicsElement(int size, int type) {
         this.data = new double[size];
         type(type);
+    }
+
+    public int maxLife() {
+        return this.maxLifetime;
+    }
+
+    public int timeExisted() {
+        return this.timeExisted;
     }
 
     @Override

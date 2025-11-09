@@ -88,6 +88,8 @@ public class ForceSystem {
                 collideClouds(a, b);
             }
         }
+
+        clouds.removeIf(ForceCloud::isDead);
     }
 
     private void collideClouds(ForceCloud a, ForceCloud b) {

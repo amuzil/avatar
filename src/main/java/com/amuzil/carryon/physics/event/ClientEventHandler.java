@@ -68,7 +68,7 @@ public final class ClientEventHandler {
             CollisionObjectDebugger.renderSpace(MinecraftSpace.get(mc.level), event.getPoseStack(), event.getPartialTick().getGameTimeDeltaTicks());
         }
     }
-    
+
 
     @SubscribeEvent
     public static void onEntityLoad(EntityJoinLevelEvent event) {
