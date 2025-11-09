@@ -58,7 +58,6 @@ public class PressureGenerator {
 
             if (linearVelocity.length() < rigidBody.getLinearSleepingThreshold() && angularVelocity.length() < rigidBody.getAngularSleepingThreshold()) {
                 if (rigidBody.getSleepTimer().get() > ElementRigidBody.SLEEP_TIME_IN_SECONDS) {
-//                    System.out.println("yes");
                     rigidBody.setDeactivationTime(2.0f);
                     continue;
                 }
