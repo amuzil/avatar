@@ -11,6 +11,8 @@ public class PhysicsBuilder {
     int points;
     private ForceCloud cloud;
     private int constraints;
+    public static final float CELL_SIZE = 0.25f;
+    public static final float GRID_SIZE = 32f;
 
     public static PhysicsBuilder getInstance() {
         if (instance == null) {
@@ -20,7 +22,7 @@ public class PhysicsBuilder {
     }
 
     public PhysicsBuilder start() {
-        cloud = new ForceCloud(0);
+//        cloud = new ForceCloud(0);
         return this;
     }
 

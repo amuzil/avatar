@@ -123,6 +123,6 @@ public abstract class PhysicsElement implements IPhysicsElement {
      */
     @Override
     public int hashCode() {
-        return Objects.hashCode(id()) + Objects.hashCode(pos());
+        return Objects.hashCode(id());// + Objects.hashCode(pos());
     }
 }
