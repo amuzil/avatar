@@ -232,4 +232,52 @@ public class ForceGrid<T extends IPhysicsElement> {
         }
         return result;
     }
+
+    // Used for centroid
+    public List<T> queryCell(Vec3 pos) {
+        List<T> result = new ArrayList<>();
+        long[] baseC = normalCoords(pos.x, pos.y, pos.z);
+        int cellRadius = 1;
+        double r2 = 1;
+
+        long xi = baseC[0];
+        long yi = baseC[1];
+        long zi = baseC[2];
+        int bi = computeLinearBinIndex(xi, yi, zi);
+        if (bi < 0)
+            return result;
+
+        int start = binStartOffsets[bi];
+        int count = binCounts.get(bi);
+        for (int idx = start; idx < start + count; idx++) {
+            T p = sortedPoints[idx];
+            if (p == null) return result; // paranoia
+            Vec3 pp = p.pos();
+            double dxp = pp.x - pos.x;
+            double dyp = pp.y - pos.y;
+            double dzp = pp.z - pos.z;
+            if (dxp * dxp + dyp * dyp + dzp * dzp <= r2) {
+                result.add(p);
+            }
+        }
+        return result;
+    }
+
+    public @Nullable Vec3 queryCellCentroid(Vec3 pos) {
+        List<T> cellPoints = queryCell(pos);
+        if (cellPoints.isEmpty()) {
+            return null;
+        }
+        double sumX = 0;
+        double sumY = 0;
+        double sumZ = 0;
+        for (T p : cellPoints) {
+            Vec3 pp = p.pos();
+            sumX += pp.x;
+            sumY += pp.y;
+            sumZ += pp.z;
+        }
+        int count = cellPoints.size();
+        return new Vec3(sumX / count, sumY / count, sumZ / count);
+    }
 }
