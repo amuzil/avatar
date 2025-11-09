@@ -132,18 +132,18 @@ public class ForceCloud extends PhysicsElement {
                     Vec3 samplePos = new Vec3(x, y, z);
 
                     // grab only points in the neighboring cell block
-                    List<ForcePoint> neighbors = spaceGrid.queryNeighbors(samplePos);
-
-                    if (neighbors.isEmpty()) {
-                        field[ix][iy][iz] = Vec3.ZERO;
-                    } else {
-                        // average their velocity (or force) vectors
-                        Vec3 accum = Vec3.ZERO;
-                        for (ForcePoint p : neighbors) {
-                            accum = accum.add(p.vel());    // or p.force()
-                        }
-                        field[ix][iy][iz] = accum.scale(1.0 / neighbors.size());
-                    }
+//                    List<ForcePoint> neighbors = spaceGrid.queryNeighbors(samplePos);
+//
+//                    if (neighbors.isEmpty()) {
+//                        field[ix][iy][iz] = Vec3.ZERO;
+//                    } else {
+//                        // average their velocity (or force) vectors
+//                        Vec3 accum = Vec3.ZERO;
+//                        for (ForcePoint p : neighbors) {
+//                            accum = accum.add(p.vel());    // or p.force()
+//                        }
+//                        field[ix][iy][iz] = accum.scale(1.0 / neighbors.size());
+//                    }
                 }
             }
         }
@@ -160,15 +160,16 @@ public class ForceCloud extends PhysicsElement {
         return buildVectorField(pos(), sizeX, sizeY, sizeZ, cellDim);
     }
 
+    // Don't need this anymore... Rebuild is called from within the manager for the overall SpaceGrid
     public void rebuildSpatialGrid() {
         // Build grid...
-        if (spaceGrid == null)
-            // Hash is hashed id + hashed pos
-            spaceGrid = new ForceGrid<>(cellSize, hashCode());
-        spaceGrid.clear();
-        for (ForcePoint p : points) {
-            spaceGrid.insert(p);               // uses p.pos() internally
-        }
+//        if (spaceGrid == null)
+//            // Hash is hashed id + hashed pos
+//            spaceGrid = new ForceGrid<>(cellSize, hashCode());
+//        spaceGrid.clear();
+//        for (ForcePoint p : points) {
+//            spaceGrid.insert(p);               // uses p.pos() internally
+//        }
     }
 }
 

@@ -11,13 +11,15 @@ import java.util.concurrent.atomic.AtomicIntegerArray;
 
 // A spatially hashed grid of forcepoints to prevent per-point neighbour checking. Yay!
 public class ForceGrid<T extends IPhysicsElement> {
+    public static final int MIN_POINTS_PER_WORKER = 4096;
+
     private final double cellSize;
     private final int binCountX, binCountY, binCountZ;
     private final int totalBins;
 
     private final AtomicIntegerArray binCounts;
     private final int[] binStartOffsets;
-    private final Object[] sortedPoints;    // store T references
+    private final T[] sortedPoints;    // store T references
     private final List<T> allPoints;
 
     private final ExecutorService threadPool;
@@ -34,13 +36,14 @@ public class ForceGrid<T extends IPhysicsElement> {
 
         this.binCounts = new AtomicIntegerArray(totalBins);
         this.binStartOffsets = new int[totalBins];
+
         @SuppressWarnings("unchecked")
-        T[] arr = new T[maxPoints];
-        this.sortedPoints = arr;
+        T[] sp = (T[]) new IPhysicsElement[maxPoints];
+        this.sortedPoints = sp;
 
         this.allPoints = new ArrayList<>(maxPoints);
         this.threadPool = threadPool;
-        this.parallelism = Runtime.getRuntime().availableProcessors();
+        this.parallelism = Math.max(Runtime.getRuntime().availableProcessors() / 2, 1);
     }
 
     private int computeLinearBinIndex(long xi, long yi, long zi) {
@@ -52,16 +55,23 @@ public class ForceGrid<T extends IPhysicsElement> {
         return (int) (xi + yi * binCountX + zi * (binCountX * binCountY));
     }
 
+    // Fills an existing coords array
+    private void normalCoords(double x, double y, double z, long[] coords) {
+        coords[0] = (long) Math.floor(x / cellSize);
+        coords[1] = (long) Math.floor(y / cellSize);
+        coords[2] = (long) Math.floor(z / cellSize);
+    }
+
+    // Convenience overload that allocates a new array
     private long[] normalCoords(double x, double y, double z) {
-        return new long[]{
-                (long) Math.floor(x / cellSize),
-                (long) Math.floor(y / cellSize),
-                (long) Math.floor(z / cellSize)
-        };
+        long[] coords = new long[3];
+        normalCoords(x, y, z, coords);
+        return coords;
     }
 
     public void insert(T p) {
         allPoints.add(p);
+        // you *may* want to guard against exceeding sortedPoints.length here
     }
 
     public void clear() {
@@ -70,33 +80,62 @@ public class ForceGrid<T extends IPhysicsElement> {
 
     public void rebuild() {
         final int n = allPoints.size();
+        if (n == 0) {
+            // Clear counts so queries don't see stale data
+            for (int i = 0; i < totalBins; i++) {
+                binCounts.set(i, 0);
+                binStartOffsets[i] = 0;
+            }
+            return;
+        }
+
+        // Guard (optional): avoid overflowing sortedPoints
+        final int effectiveN = Math.min(n, sortedPoints.length);
 
         // Step 1: zero counts
         for (int i = 0; i < totalBins; i++) {
             binCounts.set(i, 0);
         }
 
-        // Step 2: counting assignment (parallel)
-        int chunkSize = (n + parallelism - 1) / parallelism;
-        futures.clear();
-        for (int t = 0; t < parallelism; t++) {
-            final int start = t * chunkSize;
-            final int end = Math.min(n, (t + 1) * chunkSize);
-            futures.add(threadPool.submit(() -> {
-                for (int i = start; i < end; i++) {
-                    T p = allPoints.get(i);
-                    Vec3 pos = p.pos();
-                    long[] coords = normalCoords(pos.x, pos.y, pos.z);
-                    int bi = computeLinearBinIndex(coords[0], coords[1], coords[2]);
-                    if (bi >= 0) {
-                        binCounts.incrementAndGet(bi);
-                    }
-                }
-            }));
-        }
-        waitAll(futures);
+        boolean canParallel = (threadPool != null && parallelism > 1);
+        boolean useParallel = canParallel && effectiveN >= MIN_POINTS_PER_WORKER;
 
-        // Step 3: prefix sums & reset counts for scatter
+        int numWorkers;
+        if (useParallel) {
+            // Aim for at least MIN_POINTS_PER_WORKER per worker
+            numWorkers = Math.min(
+                    parallelism,
+                    Math.max(1, (effectiveN + MIN_POINTS_PER_WORKER - 1) / MIN_POINTS_PER_WORKER)
+            );
+        } else {
+            numWorkers = 1;
+        }
+
+        int chunkSize = (effectiveN + numWorkers - 1) / numWorkers;
+
+        // ---- Step 2: counting assignment ----
+        if (useParallel) {
+            futures.clear();
+            for (int t = 0; t < numWorkers; t++) {
+                final int start = t * chunkSize;
+                if (start >= effectiveN) break;
+                final int end = Math.min(effectiveN, (t + 1) * chunkSize);
+                futures.add(threadPool.submit(() -> {
+                    long[] coords = new long[3];
+                    for (int i = start; i < end; i++) {
+                        binPoints(coords, i);
+                    }
+                }));
+            }
+            waitAll(futures);
+        } else {
+            long[] coords = new long[3];
+            for (int i = 0; i < effectiveN; i++) {
+                binPoints(coords, i);
+            }
+        }
+
+        // ---- Step 3: prefix sums & reset counts for scatter ----
         int offset = 0;
         for (int i = 0; i < totalBins; i++) {
             int c = binCounts.get(i);
@@ -105,25 +144,48 @@ public class ForceGrid<T extends IPhysicsElement> {
             binCounts.set(i, 0);
         }
 
-        // Step 4: scatter points (parallel)
-        futures.clear();
-        for (int t = 0; t < parallelism; t++) {
-            final int start = t * chunkSize;
-            final int end = Math.min(n, (t + 1) * chunkSize);
-            futures.add(threadPool.submit(() -> {
-                for (int i = start; i < end; i++) {
-                    T p = allPoints.get(i);
-                    Vec3 pos = p.pos();
-                    long[] coords = normalCoords(pos.x, pos.y, pos.z);
-                    int bi = computeLinearBinIndex(coords[0], coords[1], coords[2]);
-                    if (bi >= 0) {
-                        int idx = binStartOffsets[bi] + binCounts.getAndIncrement(bi);
-                        sortedPoints[idx] = p;
+        // ---- Step 4: scatter points ----
+        if (useParallel) {
+            futures.clear();
+            for (int t = 0; t < numWorkers; t++) {
+                final int start = t * chunkSize;
+                if (start >= effectiveN) break;
+                final int end = Math.min(effectiveN, (t + 1) * chunkSize);
+                futures.add(threadPool.submit(() -> {
+                    long[] coords = new long[3];
+                    for (int i = start; i < end; i++) {
+                        sortPoints(coords, i);
                     }
-                }
-            }));
+                }));
+            }
+            waitAll(futures);
+        } else {
+            long[] coords = new long[3];
+            for (int i = 0; i < effectiveN; i++) {
+                sortPoints(coords, i);
+            }
         }
-       waitAll(futures);
+    }
+
+    private void sortPoints(long[] coords, int i) {
+        T p = allPoints.get(i);
+        Vec3 pos = p.pos();
+        normalCoords(pos.x, pos.y, pos.z, coords);
+        int bi = computeLinearBinIndex(coords[0], coords[1], coords[2]);
+        if (bi >= 0) {
+            int idx = binStartOffsets[bi] + binCounts.getAndIncrement(bi);
+            sortedPoints[idx] = p;
+        }
+    }
+
+    private void binPoints(long[] coords, int i) {
+        T p = allPoints.get(i);
+        Vec3 pos = p.pos();
+        normalCoords(pos.x, pos.y, pos.z, coords);
+        int bi = computeLinearBinIndex(coords[0], coords[1], coords[2]);
+        if (bi >= 0) {
+            binCounts.incrementAndGet(bi);
+        }
     }
 
     private void waitAll(List<Future<?>> futures) {
@@ -154,8 +216,8 @@ public class ForceGrid<T extends IPhysicsElement> {
                     int start = binStartOffsets[bi];
                     int count = binCounts.get(bi);
                     for (int idx = start; idx < start + count; idx++) {
-                        @SuppressWarnings("unchecked")
-                        T p = (T) sortedPoints[idx];
+                        T p = sortedPoints[idx];
+                        if (p == null) continue; // paranoia
                         Vec3 pp = p.pos();
                         double dxp = pp.x - pos.x;
                         double dyp = pp.y - pos.y;
