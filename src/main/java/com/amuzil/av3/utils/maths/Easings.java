@@ -81,7 +81,7 @@ public class Easings {
                 : (float) (1 - Math.pow(-2 * t + 2, 3) / 2);
     }
 
-    // ---- Quintic (“Smootherstep”) ----
+    // ---- Quintic (“Smoothstep”) ----
 
     /**
      * f(t) = 6t⁵ − 15t⁴ + 10t³
