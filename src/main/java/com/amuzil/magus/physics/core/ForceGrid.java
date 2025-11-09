@@ -22,6 +22,7 @@ public class ForceGrid<T extends IPhysicsElement> {
 
     private final ExecutorService threadPool;
     private final int parallelism;
+    private final List<Future<?>> futures = new ArrayList<>();
 
     public ForceGrid(double cellSize, int binCountX, int binCountY, int binCountZ,
                      int maxPoints, ExecutorService threadPool) {
@@ -34,7 +35,7 @@ public class ForceGrid<T extends IPhysicsElement> {
         this.binCounts = new AtomicIntegerArray(totalBins);
         this.binStartOffsets = new int[totalBins];
         @SuppressWarnings("unchecked")
-        Object[] arr = new Object[maxPoints];
+        T[] arr = new T[maxPoints];
         this.sortedPoints = arr;
 
         this.allPoints = new ArrayList<>(maxPoints);
@@ -59,11 +60,11 @@ public class ForceGrid<T extends IPhysicsElement> {
         };
     }
 
-    public void addPoint(T p) {
+    public void insert(T p) {
         allPoints.add(p);
     }
 
-    public void clearPoints() {
+    public void clear() {
         allPoints.clear();
     }
 
@@ -77,7 +78,7 @@ public class ForceGrid<T extends IPhysicsElement> {
 
         // Step 2: counting assignment (parallel)
         int chunkSize = (n + parallelism - 1) / parallelism;
-        List<Future<?>> futures = new ArrayList<>();
+        futures.clear();
         for (int t = 0; t < parallelism; t++) {
             final int start = t * chunkSize;
             final int end = Math.min(n, (t + 1) * chunkSize);
@@ -93,13 +94,7 @@ public class ForceGrid<T extends IPhysicsElement> {
                 }
             }));
         }
-        for (Future<?> f : futures) {
-            try {
-                f.get();
-            } catch (ExecutionException | InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        waitAll(futures);
 
         // Step 3: prefix sums & reset counts for scatter
         int offset = 0;
@@ -128,10 +123,14 @@ public class ForceGrid<T extends IPhysicsElement> {
                 }
             }));
         }
+       waitAll(futures);
+    }
+
+    private void waitAll(List<Future<?>> futures) {
         for (Future<?> f : futures) {
             try {
                 f.get();
-            } catch (InterruptedException | ExecutionException e) {
+            } catch (ExecutionException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
