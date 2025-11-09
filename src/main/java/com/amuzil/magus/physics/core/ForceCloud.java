@@ -293,6 +293,7 @@ public class ForceCloud extends PhysicsElement {
         for (ForcePoint p : points) {
             Vec3 pos = p.pos();
             Vec3 vel = p.vel();
+            Vec3 oldVel = vel;
             Vec3 force = p.force();
 
             double invMass = p.mass() > 0.0 ? 1.0 / p.mass() : 0.0;
@@ -312,8 +313,9 @@ public class ForceCloud extends PhysicsElement {
             // write back into the point's data columns:
             // 0 = pos, 1 = prevPos, 2 = vel, 3 = prevVel, 4 = force
             p.insert(pos, 1);        // prevPos
-            p.insert(vel, 3);        // prevVel
+            p.insert(oldVel, 3);        // prevVel
             p.insert(newPos, 0);     // pos
+            p.insert(vel, 2);
             p.insert(Vec3.ZERO, 4);  // clear force
         }
     }

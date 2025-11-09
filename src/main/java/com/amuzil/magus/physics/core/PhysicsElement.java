@@ -85,6 +85,7 @@ public abstract class PhysicsElement implements IPhysicsElement {
         return get(3);
     }
 
+    // Aceleration / Force
     @Override
     public Vec3 force() {
         return get(4);

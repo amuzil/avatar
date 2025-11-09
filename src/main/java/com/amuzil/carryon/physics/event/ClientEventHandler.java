@@ -10,9 +10,12 @@ import com.amuzil.carryon.physics.bullet.thread.PhysicsThreadStore;
 import com.amuzil.carryon.physics.network.CarryonNetwork;
 import com.amuzil.carryon.physics.network.impl.SendRigidBodyMovementPacket;
 import com.amuzil.carryon.physics.utils.debug.CollisionObjectDebugger;
+import com.amuzil.magus.client.render.ForceDebugRenderer;
 import com.jme3.math.Vector3f;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -65,6 +68,7 @@ public final class ClientEventHandler {
             CollisionObjectDebugger.renderSpace(MinecraftSpace.get(mc.level), event.getPoseStack(), event.getPartialTick().getGameTimeDeltaTicks());
         }
     }
+    
 
     @SubscribeEvent
     public static void onEntityLoad(EntityJoinLevelEvent event) {

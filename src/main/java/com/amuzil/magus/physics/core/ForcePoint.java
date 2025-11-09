@@ -14,13 +14,15 @@ public class ForcePoint extends PhysicsElement {
     // Size is default 15 (5 vectors x 3 variables for 3d space. We're not using 4d vectors here yet...)
     public ForcePoint(int size, int type, Vec3 pos, Vec3 vel, Vec3 force) {
         super(size, type);
+        //Current Pos
         insert(pos, 0);
         // Prev pos
         insert(Vec3.ZERO, 1);
+        // Current vel
         insert(vel, 2);
         // Prev force
         insert(Vec3.ZERO, 3);
-        // Direction
+        // Direction / Force / Acceleration
         insert(force, 4);
     }
 
@@ -33,5 +35,9 @@ public class ForcePoint extends PhysicsElement {
         return this.lifetime;
     }
 
+    public void addForce(Vec3 f) {
+        Vec3 currentForce = get(2);
+        insert(currentForce.add(f), 2);
+    }
 
 }

@@ -6,12 +6,16 @@ import com.amuzil.carryon.physics.bullet.collision.body.MinecraftRigidBody;
 import com.amuzil.carryon.physics.bullet.collision.body.shape.MinecraftShape;
 import com.amuzil.carryon.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.carryon.physics.bullet.math.Convert;
+import com.amuzil.magus.physics.core.ForceCloud;
+import com.amuzil.magus.physics.core.ForcePoint;
+import com.amuzil.magus.physics.core.ForceSystem;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForge;
 
 /**
@@ -41,6 +45,8 @@ public final class CollisionObjectDebugger {
 
         space.getTerrainMap().values().forEach(terrain -> CollisionObjectDebugger.renderBody(terrain, builder, stack, tickDelta));
         space.getRigidBodiesByClass(ElementRigidBody.class).forEach(elementRigidBody -> CollisionObjectDebugger.renderBody(elementRigidBody, builder, stack, tickDelta));
+
+        renderForceClouds(space, builder, stack, cameraPos, tickDelta);
         builder.build();
     }
 
@@ -48,6 +54,44 @@ public final class CollisionObjectDebugger {
         final var position = rigidBody.isStatic() ? rigidBody.getPhysicsLocation(new Vector3f()) : ((ElementRigidBody) rigidBody).getFrame().getLocation(new Vector3f(), tickDelta);
         final var rotation = rigidBody.isStatic() ? rigidBody.getPhysicsRotation(new Quaternion()) : ((ElementRigidBody) rigidBody).getFrame().getRotation(new Quaternion(), tickDelta);
         renderShape(rigidBody.getMinecraftShape(), position, rotation, builder, stack, rigidBody.getOutlineColor(), 1.0f);
+    }
+
+    public static void renderForceClouds(MinecraftSpace space,
+                                         BufferBuilder builder,
+                                         PoseStack stack,
+                                         Vec3 cameraPos,
+                                         float tickDelta) {
+        // If you wired ForceSystem into MinecraftSpace like: space.getForceSystem()
+        ForceSystem fs = space.forceSystem();
+        if (fs == null) return;
+
+        for (ForceCloud cloud : fs.clouds()) {
+            // Simple colour per cloud type; tweak as you like
+            float r = 0.2f, g = 0.6f, b = 1.0f;
+            // you can switch on cloud.type() to pick different colours per element
+
+            for (ForcePoint p : cloud.points()) {
+                Vec3 pos = p.pos();
+
+                // position relative to camera
+                double relX = pos.x - cameraPos.x;
+                double relY = pos.y - cameraPos.y;
+                double relZ = pos.z - cameraPos.z;
+
+                stack.pushPose();
+                stack.translate(relX, relY, relZ);
+
+                // tiny vertical line to represent the point
+                float len = 0.15f;
+
+                builder.addVertex(stack.last().pose(), 0.0f, 0.0f, 0.0f)
+                        .setColor(r, g, b, 1.0f);
+                builder.addVertex(stack.last().pose(), 0.0f, len, 0.0f)
+                        .setColor(r, g, b, 1.0f);
+
+                stack.popPose();
+            }
+        }
     }
 
     public static void renderShape(MinecraftShape shape, Vector3f position, Quaternion rotation, BufferBuilder builder, PoseStack stack, Vector3f color, float alpha) {
