@@ -2,9 +2,11 @@ package com.amuzil.magus.physics.core;
 
 import com.amuzil.magus.physics.PhysicsBuilder;
 import com.amuzil.magus.physics.modules.IPhysicsModule;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaterniond;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -14,23 +16,99 @@ public class ForceCloud extends PhysicsElement {
     private final List<ForcePoint> points;
     private final List<IPhysicsModule> modules;
     private final double cellSize;
-    private double[] rotation;
     private final ForceGrid<ForcePoint> spaceGrid;
+    private double[] rotation;
+    private AABB bounds = new AABB(0, 0, 0, 0, 0, 0);
 
 
     public ForceCloud(int type, int maxPoints,
-                      ExecutorService pool) {
+                      @Nullable ExecutorService pool) {
         super(type);
         this.rotation = new double[4];
         this.points = new ArrayList<>();
         this.modules = new ArrayList<>();
         this.cellSize = PhysicsBuilder.CELL_SIZE;
-        this.spaceGrid = new ForceGrid<ForcePoint>(cellSize,
+        this.spaceGrid = new ForceGrid<>(cellSize,
                 (int) (PhysicsBuilder.GRID_SIZE / cellSize),
                 (int) (PhysicsBuilder.GRID_SIZE / cellSize),
                 (int) (PhysicsBuilder.GRID_SIZE / cellSize),
                 maxPoints,
                 pool);
+    }
+
+    // static so ForceSystem can call it for cross-cloud collisions too
+    public static void resolvePair(ForcePoint p, ForcePoint q,
+                                   double restRadius,
+                                   double stiffness,
+                                   double dampingCoeff) {
+        Vec3 xp = p.pos();
+        Vec3 xq = q.pos();
+
+        Vec3 delta = xp.subtract(xq);
+        double dist = delta.length();
+
+        if (dist <= 1e-6 || dist >= restRadius) {
+            return;
+        }
+
+        Vec3 n = delta.scale(1.0 / dist);
+        double penetration = restRadius - dist;
+
+        // --- repulsion ---
+        double fMag = stiffness * penetration;
+        Vec3 f = n.scale(fMag);
+
+        // apply equal and opposite forces
+        Vec3 fp = p.force().add(f);
+        Vec3 fq = q.force().subtract(f);
+        p.insert(fp, 4);
+        q.insert(fq, 4);
+
+        // --- damping along normal ---
+        Vec3 vp = p.vel();
+        Vec3 vq = q.vel();
+        Vec3 relVel = vp.subtract(vq);
+        double vn = relVel.dot(n);
+
+        if (vn < 0.0) {
+            double fdMag = -dampingCoeff * vn;
+            Vec3 fd = n.scale(fdMag);
+
+            fp = p.force().add(fd);
+            fq = q.force().subtract(fd);
+            p.insert(fp, 4);
+            q.insert(fq, 4);
+        }
+    }
+
+    public void updateBoundsFromPoints() {
+        if (points.isEmpty()) {
+            this.bounds = new AABB(0, 0, 0, 0, 0, 0);
+            return;
+        }
+
+        double minX = Double.POSITIVE_INFINITY;
+        double minY = Double.POSITIVE_INFINITY;
+        double minZ = Double.POSITIVE_INFINITY;
+        double maxX = Double.NEGATIVE_INFINITY;
+        double maxY = Double.NEGATIVE_INFINITY;
+        double maxZ = Double.NEGATIVE_INFINITY;
+
+        for (ForcePoint p : points) {
+            Vec3 pos = p.pos();
+            if (pos.x < minX) minX = pos.x;
+            if (pos.y < minY) minY = pos.y;
+            if (pos.z < minZ) minZ = pos.z;
+            if (pos.x > maxX) maxX = pos.x;
+            if (pos.y > maxY) maxY = pos.y;
+            if (pos.z > maxZ) maxZ = pos.z;
+        }
+
+        this.bounds = new AABB(minX, minY, minZ, maxX, maxY, maxZ);
+    }
+
+    public ForceGrid<ForcePoint> grid() {
+        return spaceGrid;
     }
 
     public void addPoints(ForcePoint... points) {
@@ -92,12 +170,24 @@ public class ForceCloud extends PhysicsElement {
             System.arraycopy(header, 0, point.header, 0, header.length);
     }
 
-    public void tick(float dt) {
+    public void tick(double dt) {
         for (IPhysicsModule module : modules) {
             module.preSolve(this);
             module.solve(this);
             module.postSolve(this);
         }
+
+        integratePoints(dt);
+
+        updateBoundsFromPoints();
+    }
+
+    public AABB bounds() {
+        return bounds;
+    }
+
+    public boolean boundsOverlap(ForceCloud other) {
+        return this.bounds.intersects(other.bounds);
     }
 
     /**
@@ -193,10 +283,57 @@ public class ForceCloud extends PhysicsElement {
         return buildVectorField(centre.x, centre.y, centre.z, sizeX, sizeY, sizeZ, cellDim, radius);
     }
 
+    // Test Physics
 
     public Vec3[][][] buildVectorField(int sizeX, int sizeY, int sizeZ, double cellDim) {
         return buildVectorField(pos(), sizeX, sizeY, sizeZ, cellDim);
     }
+
+    private void integratePoints(double dt) {
+        for (ForcePoint p : points) {
+            Vec3 pos = p.pos();
+            Vec3 vel = p.vel();
+            Vec3 force = p.force();
+
+            double invMass = p.mass() > 0.0 ? 1.0 / p.mass() : 0.0;
+            Vec3 acc = force.scale(invMass);
+
+            // velocity update
+            vel = vel.add(acc.scale(dt));
+
+            // simple damping
+            double d = p.damping();
+            if (d > 0.0) {
+                vel = vel.scale(Math.max(0.0, 1.0 - d * dt));
+            }
+
+            Vec3 newPos = pos.add(vel.scale(dt));
+
+            // write back into the point's data columns:
+            // 0 = pos, 1 = prevPos, 2 = vel, 3 = prevVel, 4 = force
+            p.insert(pos, 1);        // prevPos
+            p.insert(vel, 3);        // prevVel
+            p.insert(newPos, 0);     // pos
+            p.insert(Vec3.ZERO, 4);  // clear force
+        }
+    }
+
+    public void resolveSelfCollisions(double restRadius,
+                                      double stiffness,
+                                      double dampingCoeff) {
+        if (points.isEmpty()) return;
+
+        for (ForcePoint p : points) {
+            List<ForcePoint> neighbours = spaceGrid.queryRadius(p.pos(), restRadius);
+            for (ForcePoint q : neighbours) {
+                if (q == p) continue;
+                // cheap symmetry break to avoid double work
+                if (System.identityHashCode(q) <= System.identityHashCode(p)) continue;
+                resolvePair(p, q, restRadius, stiffness, dampingCoeff);
+            }
+        }
+    }
+
 
     // Don't need this anymore... Rebuild is called from within the manager for the overall SpaceGrid
     public void rebuildSpatialGrid() {

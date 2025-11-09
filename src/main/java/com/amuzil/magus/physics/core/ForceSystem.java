@@ -28,7 +28,8 @@ public class ForceSystem {
 
     public ForceSystem(MinecraftSpace space) {
         this.space = space;
-        this.workerPool = space.getWorkerThread().ge;
+        // Not multithreading here for now because this is automatically threaded with MinecraftSpace
+        this.workerPool = null;
     }
 
     public ForceCloud createCloud(int type, int maxPoints) {
@@ -77,7 +78,7 @@ public class ForceSystem {
             cloud.resolveSelfCollisions(selfRestRadius, selfStiffness, selfDamping);
         }
 
-        // 4) cloud-cloud collisions
+        // 4) cloud-cloud collisions. n^2 for now; optimize later if needed
         int n = clouds.size();
         for (int i = 0; i < n; i++) {
             ForceCloud a = clouds.get(i);

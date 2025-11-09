@@ -2,6 +2,7 @@ package com.amuzil.magus.physics.core;
 
 import net.minecraft.world.phys.Vec3;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -27,7 +28,7 @@ public class ForceGrid<T extends IPhysicsElement> {
     private final List<Future<?>> futures = new ArrayList<>();
 
     public ForceGrid(double cellSize, int binCountX, int binCountY, int binCountZ,
-                     int maxPoints, ExecutorService threadPool) {
+                     int maxPoints, @Nullable ExecutorService threadPool) {
         this.cellSize = cellSize;
         this.binCountX = binCountX;
         this.binCountY = binCountY;
