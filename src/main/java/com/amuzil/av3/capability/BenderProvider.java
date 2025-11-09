@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
-
+@Deprecated
 public class BenderProvider implements ICapabilityProvider<Player, @Nullable Void, IBender>, INBTSerializable<CompoundTag> {
 
     private final Bender bender;

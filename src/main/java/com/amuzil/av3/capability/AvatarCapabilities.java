@@ -13,15 +13,35 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
+import java.util.Map;
+import java.util.WeakHashMap;
+
 
 @EventBusSubscriber(modid = Avatar.MOD_ID)
 public final class AvatarCapabilities {
     public static final ResourceLocation ID = Avatar.id("bender");
     public static final EntityCapability<IBender, Void> BENDER = EntityCapability.createVoid(ID, IBender.class);
 
+    // Persistent cache of player → capability instance
+    private static final Map<Player, IBender> BENDER_CACHE = new WeakHashMap<>();
+
     @SubscribeEvent
     private static void register(RegisterCapabilitiesEvent event) {
-        event.registerEntity(BENDER, EntityType.PLAYER, (entity, ctx) -> new BenderProvider(entity).getCapability(entity, ctx));
+        event.registerEntity(BENDER, EntityType.PLAYER,
+                (entity, ctx) -> BENDER_CACHE.computeIfAbsent(entity, Bender::new)
+        );
+
+//        BuiltInRegistries.ENTITY_TYPE.stream().
+//                filter(type -> Player.class.isAssignableFrom(type.getBaseClass())).
+//                map(type -> (EntityType<Player)> type).
+//                forEach(type ->
+//                        event.registerEntity(BENDER, type,
+//                                (entity, context) -> new Bender(entity)));
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
+        BENDER_CACHE.remove(event.getEntity());
     }
 
     // Save data on death
