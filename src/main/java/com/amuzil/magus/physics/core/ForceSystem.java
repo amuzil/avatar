@@ -1,51 +1,103 @@
 package com.amuzil.magus.physics.core;
 
+import com.amuzil.carryon.physics.bullet.collision.space.MinecraftSpace;
 import net.neoforged.api.distmarker.Dist;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 
 public class ForceSystem {
 
-    // Used to determine what to run on. We want both client and server-side annotations, if possible.
-    Dist side;
+    private final MinecraftSpace space;
+    private final ExecutorService workerPool;
+    private final List<ForceCloud> clouds = new ArrayList<>();
 
-    //TODO: Change this to use a double SpatialGrid approach. One grid stores ForceClouds at the system level,
-    // and checks what to compare against. The other adds in data at the ForcePoint level, and is used for finer
-    // collisions or visuals.
-    private final ForceGrid<ForceCloud> cloudGrid;
-    private List<ForceEmitter> emitters;
+    // global cell size for all clouds in this space
+    private final double cellSize = 0.25;
 
-    public ForceSystem(double systemCellSize) {
-        this.cloudGrid = new ForceGrid<>(systemCellSize);
+    // simple collision params – tune these later
+    private final double selfRestRadius = 0.25;
+    private final double selfStiffness = 50.0;
+    private final double selfDamping  = 5.0;
+
+    private final double crossRestRadius = 0.35;
+    private final double crossStiffness  = 80.0;
+    private final double crossDamping    = 8.0;
+
+    public ForceSystem(MinecraftSpace space) {
+        this.space = space;
+        this.workerPool = space.getWorkerThread().ge;
     }
 
-    public Dist side() {
-        return this.side;
+    public ForceCloud createCloud(int type, int maxPoints) {
+        // choose some grid dims; you can make this smarter later
+        ForceCloud cloud = new ForceCloud(
+                type,
+                maxPoints,
+                workerPool
+        );
+        this.clouds.add(cloud);
+        return cloud;
     }
 
-    public void addEmitter(ForceEmitter e) {
-        if (!emitters.contains(e)) {
-            emitters.add(e);
+    public void addCloud(ForceCloud cloud) {
+        if (!clouds.contains(cloud)) {
+            clouds.add(cloud);
         }
     }
 
-    public void unregisterEmitter(ForceEmitter e) {
-        emitters.remove(e);
-        // Optionally remove that emitter's clouds from the grid
-        for (ForceCloud c : e.getClouds()) {
-            cloudGrid.remove(c, c.pos());
-        }
+    public void removeCloud(ForceCloud cloud) {
+        clouds.remove(cloud);
     }
 
-    // Go over grid each tick. Maybe skip emitters?
+    public List<ForceCloud> clouds() {
+        return clouds;
+    }
+
+    /**
+     * Main per-tick update. Call this from MinecraftSpace.step().
+     */
     public void tick(double dt) {
-        for (ForceEmitter e : emitters) {
-            e.tick(dt);
+        if (clouds.isEmpty()) return;
+
+        // 1) tick each cloud (modules + integration + bounds)
+        for (ForceCloud cloud : clouds) {
+            cloud.tick(dt);
         }
-        // Need to rebuild the cloud grid each tick, as clouds may have moved
 
+        // 2) rebuild each cloud's point grid
+        for (ForceCloud cloud : clouds) {
+            cloud.rebuildSpatialGrid();
+        }
 
+        // 3) self-collisions
+        for (ForceCloud cloud : clouds) {
+            cloud.resolveSelfCollisions(selfRestRadius, selfStiffness, selfDamping);
+        }
+
+        // 4) cloud-cloud collisions
+        int n = clouds.size();
+        for (int i = 0; i < n; i++) {
+            ForceCloud a = clouds.get(i);
+            for (int j = i + 1; j < n; j++) {
+                ForceCloud b = clouds.get(j);
+                if (!a.boundsOverlap(b)) continue;
+                collideClouds(a, b);
+            }
+        }
+    }
+
+    private void collideClouds(ForceCloud a, ForceCloud b) {
+        double r = crossRestRadius;
+
+        for (ForcePoint p : a.points()) {
+            List<ForcePoint> neighbours = b.grid().queryRadius(p.pos(), r);
+            for (ForcePoint q : neighbours) {
+                ForceCloud.resolvePair(p, q, r, crossStiffness, crossDamping);
+            }
+        }
     }
 }
 

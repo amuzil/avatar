@@ -12,6 +12,7 @@ import com.amuzil.carryon.physics.bullet.thread.PhysicsThread;
 import com.amuzil.carryon.physics.network.CarryonNetwork;
 import com.amuzil.carryon.physics.network.impl.SendRigidBodyMovementPacket;
 import com.amuzil.carryon.physics.network.impl.SendRigidBodyPropertiesPacket;
+import com.amuzil.magus.physics.core.ForceSystem;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
@@ -38,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * the last step has taken longer than 50ms and is still executing upon the next
  * tick. This really only happens if you are dealing with an ungodly amount of
  * rigid bodies or your computer is slo.
- * 
+ *
  * @see PhysicsThread
  * @see PhysicsSpaceEvent
  */
@@ -49,24 +50,10 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
     private final PhysicsThread thread;
     private final Level level;
     private final ChunkCache chunkCache;
-
-    private volatile boolean stepping;
     private final Set<SectionPos> previousBlockUpdates;
-
-    /**
-     * Allows users to retrieve the {@link MinecraftSpace} associated with any given
-     * {@link Level} object (client or server).
-     * 
-     * @param level the level to get the physics space from
-     * @return the {@link MinecraftSpace}
-     */
-    public static MinecraftSpace get(Level level) {
-        return ((SpaceStorage) level).getSpace();
-    }
-
-    public static Optional<MinecraftSpace> getOptional(Level level) {
-        return Optional.ofNullable(get(level));
-    }
+    // Handles non-rigid body forces like gravity, drag, and buoyancy
+    private final ForceSystem forceSystem;
+    private volatile boolean stepping;
 
     public MinecraftSpace(PhysicsThread thread, Level level) {
         super(BroadphaseType.DBVT);
@@ -78,6 +65,22 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
         this.setGravity(new Vector3f(0, -9.807f, 0));
         this.addCollisionListener(this);
         this.setAccuracy(1f / 60f);
+        this.forceSystem = new ForceSystem(this);
+    }
+
+    /**
+     * Allows users to retrieve the {@link MinecraftSpace} associated with any given
+     * {@link Level} object (client or server).
+     *
+     * @param level the level to get the physics space from
+     * @return the {@link MinecraftSpace}
+     */
+    public static MinecraftSpace get(Level level) {
+        return ((SpaceStorage) level).getSpace();
+    }
+
+    public static Optional<MinecraftSpace> getOptional(Level level) {
+        return Optional.ofNullable(get(level));
     }
 
     /**
@@ -88,7 +91,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
      * <li>Steps the simulation asynchronously.</li>
      * <li>Triggers collision events.</li>
      * </ul>
-     *
+     * <p>
      * Additionally, none of the above steps execute when either the world is empty
      * (no {@link PhysicsRigidBody}s) or when the game is paused.
      *
@@ -96,9 +99,10 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
      * @see PhysicsSpaceEvent
      */
     public void step() {
+
         MinecraftSpace.get(this.level).getRigidBodiesByClass(ElementRigidBody.class).forEach(ElementRigidBody::updateFrame);
 
-        if (!this.isStepping() && !this.isEmpty()) {
+        if (!this.isStepping() && (!this.isEmpty() || !forceSystem.clouds().isEmpty())) {
             this.stepping = true;
 
             for (var rigidBody : this.getRigidBodiesByClass(ElementRigidBody.class)) {
@@ -129,11 +133,16 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
 
                     /* Step the Simulation */
                     this.update(1 / 60f);
+                    forceSystem.tick(1 / 60f);
                 }, this.getWorkerThread());
             }
 
             CompletableFuture.allOf(this.futures).thenRun(() -> this.stepping = false);
         }
+    }
+
+    public ForceSystem forceSystem() {
+        return forceSystem;
     }
 
     @Override
@@ -152,8 +161,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
                     CarryonNetwork.sendToPlayersTrackingEntity(entityRigidBody.getElement().cast(), new SendRigidBodyMovementPacket(entityRigidBody));
                     CarryonNetwork.sendToPlayersTrackingEntity(entityRigidBody.getElement().cast(), new SendRigidBodyPropertiesPacket(entityRigidBody));
                 }
-            }
-            else if (collisionObject instanceof TerrainRigidBody terrain) {
+            } else if (collisionObject instanceof TerrainRigidBody terrain) {
                 this.terrainMap.put(terrain.getBlockPos(), terrain);
             }
 
@@ -235,7 +243,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
 
     /**
      * Trigger all collision events (e.g. block/element or element/element).
-     * 
+     *
      * @param event the event context
      */
     @Override
@@ -245,10 +253,10 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
         /* Element on Element */
         if (event.getObjectA() instanceof ElementRigidBody rigidBodyA && event.getObjectB() instanceof ElementRigidBody rigidBodyB)
             NeoForge.EVENT_BUS.post(new CollisionEvent(CollisionEvent.Type.ELEMENT, rigidBodyA, rigidBodyB, impulse));
-        /* Block on Element */
+            /* Block on Element */
         else if (event.getObjectA() instanceof TerrainRigidBody terrain && event.getObjectB() instanceof ElementRigidBody rigidBody)
             NeoForge.EVENT_BUS.post(new CollisionEvent(CollisionEvent.Type.BLOCK, rigidBody, terrain, impulse));
-        /* Element on Block */
+            /* Element on Block */
         else if (event.getObjectA() instanceof ElementRigidBody rigidBody && event.getObjectB() instanceof TerrainRigidBody terrain)
             NeoForge.EVENT_BUS.post(new CollisionEvent(CollisionEvent.Type.BLOCK, rigidBody, terrain, impulse));
     }
