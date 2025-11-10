@@ -17,7 +17,6 @@ import com.amuzil.carryon.physics.utils.maths.Utilities;
 import com.jme3.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;

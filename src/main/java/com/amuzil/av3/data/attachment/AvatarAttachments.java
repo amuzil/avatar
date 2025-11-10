@@ -3,7 +3,6 @@ package com.amuzil.av3.data.attachment;
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.bending.element.Elements;
-import com.mojang.serialization.Codec;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredRegister;

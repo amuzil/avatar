@@ -1,8 +1,8 @@
 package com.amuzil.av3.entity.projectile;
 
 import com.amuzil.av3.entity.AvatarEntities;
-import com.amuzil.av3.entity.api.IHasSDF;
 import com.amuzil.av3.entity.api.IForceModule;
+import com.amuzil.av3.entity.api.IHasSDF;
 import com.amuzil.av3.entity.modules.ModuleRegistry;
 import com.amuzil.av3.entity.modules.force.CurveModule;
 import com.amuzil.av3.entity.renderer.sdf.SDFScene;

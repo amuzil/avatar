@@ -281,7 +281,7 @@ public class InputModule {
             Player player = Minecraft.getInstance().player;
             assert player != null;
             Bender bender = (Bender) Bender.getBender(player);
-            bender.printNBT();
+            bender.printBenderData();
         } else {
             terminate();
             isBending = false;

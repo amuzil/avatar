@@ -2,7 +2,6 @@ package com.amuzil.av3.data.capability;
 
 import com.amuzil.av3.bending.BendingSelection;
 import com.amuzil.av3.bending.element.Element;
-import com.amuzil.av3.bending.element.Elements;
 import com.amuzil.av3.bending.form.BendingForm;
 import com.amuzil.av3.data.attachment.BenderData;
 import com.amuzil.av3.events.FormActivatedEvent;
@@ -17,7 +16,6 @@ import com.amuzil.magus.registry.Registries;
 import com.amuzil.magus.skill.Skill;
 import com.amuzil.magus.skill.data.SkillCategoryData;
 import com.amuzil.magus.skill.data.SkillData;
-import com.amuzil.magus.skill.traits.DataTrait;
 import com.amuzil.magus.tree.SkillTree;
 import com.amuzil.magus.tree.TreeResult;
 import net.minecraft.core.HolderLookup;
@@ -37,7 +35,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 
-import static com.amuzil.av3.data.attachment.AvatarAttachments.*;
+import static com.amuzil.av3.data.attachment.AvatarAttachments.ACTIVE_ELEMENT;
+import static com.amuzil.av3.data.attachment.AvatarAttachments.BENDER_DATA;
 
 
 public class Bender implements IBender {
@@ -63,17 +62,10 @@ public class Bender implements IBender {
     public final List<Form> formPath = new ArrayList<>(); // in-sync
     private BendingSelection selection = new BendingSelection(); // in-sync
 
-    // Persistent data
-    private Element activeElement; // Currently active element // TODO - Randomize on first load
-    private final List<SkillCategoryData> skillCategoryData = new ArrayList<>();
-    private final HashMap<String, SkillData> skillDataMap = new HashMap<>();
-    private final List<DataTrait> dataTraits = new ArrayList<>();
-
     public Bender(LivingEntity entity) {
         this.entity = entity;
         this.formListener = this::onFormActivatedEvent;
 
-        this.activeElement = entity.getData(ACTIVE_ELEMENT);
         this.availableSkills.addAll(Registries.getSkills());
 //        dataTraits.addAll(Registries.getTraits());
 
@@ -85,10 +77,8 @@ public class Bender implements IBender {
 
     @Override
     public String toString() {
-        String elementName = "";
-        if (activeElement != null)
-            elementName = activeElement.name();
-        return String.format("Bender[ %s | activeElement=%s ]", entity.getName() , elementName);
+        return String.format("Bender[ %s | activeElement=%s ]",
+                entity.getName() , entity.getData(ACTIVE_ELEMENT).name());
     }
 
     public void tick() {
@@ -298,7 +288,6 @@ public class Bender implements IBender {
 
     @Override
     public void setElement(Element activeElement) {
-        this.activeElement = activeElement;
         entity.setData(ACTIVE_ELEMENT, activeElement);
         markDirty();
     }
@@ -412,9 +401,8 @@ public class Bender implements IBender {
         LOGGER.info("Forms: {}", formPath);
     }
 
-    public void printNBT() {
+    public void printBenderData() {
         BenderData benderData = entity.getData(BENDER_DATA);
-        System.out.println("benderData.skillDataMap: " + benderData.skillDataMap.size());
         CompoundTag tag = benderData.serializeNBT(null);
         StringBuilder sb = new StringBuilder();
         sb.append(String.format(

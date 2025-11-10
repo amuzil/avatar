@@ -17,8 +17,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
-import static com.amuzil.av3.data.attachment.AvatarAttachments.ACTIVE_ELEMENT;
-
 
 class CommandUtils {
 
