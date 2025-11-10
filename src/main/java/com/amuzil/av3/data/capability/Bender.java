@@ -2,6 +2,7 @@ package com.amuzil.av3.data.capability;
 
 import com.amuzil.av3.bending.BendingSelection;
 import com.amuzil.av3.bending.element.Element;
+import com.amuzil.av3.bending.element.Elements;
 import com.amuzil.av3.bending.form.BendingForm;
 import com.amuzil.av3.data.attachment.BenderData;
 import com.amuzil.av3.events.FormActivatedEvent;
@@ -73,13 +74,8 @@ public class Bender implements IBender {
         this.formListener = this::onFormActivatedEvent;
 
         this.activeElement = entity.getData(ACTIVE_ELEMENT);
-
-//        for (SkillCategory category: Registries.getSkillCategories())
-//            skillCategoryData.add(new SkillCategoryData(category));
-//        this.availableSkills.addAll(Registries.getSkills());
-//        for (Skill skill: availableSkills)
-//            skillDataMap.put(skill.name(), new SkillData(skill));
-        dataTraits.addAll(Registries.getTraits());
+        this.availableSkills.addAll(Registries.getSkills());
+//        dataTraits.addAll(Registries.getTraits());
 
         // Allow use of all Elements & Skills for testing!
         setAvatar(); // Uncomment this to grant all elements & skills
@@ -118,7 +114,7 @@ public class Bender implements IBender {
                 stepDirection = BendingForm.Type.Motion.NONE;
 
             formPath.add(event.getActiveForm().form()); // TODO: fix Form getting added twice here
-            printFormPath(); // Debugging purposes
+//            printFormPath(); // Debugging purposes
             if (active) {
                 switch (getSelection().target()) {
                     case BLOCK, NONE, SELF, ENTITY -> checkSkillTree();
@@ -257,7 +253,7 @@ public class Bender implements IBender {
 
     @Override
     public SkillCategoryData getSkillCategoryData(ResourceLocation id) {
-        return skillCategoryData.stream()
+        return entity.getData(BENDER_DATA).skillCategoryData.stream()
                 .filter(data -> data.getSkillCategory().getId().equals(id))
                 .findFirst()
                 .orElse(null);
@@ -265,27 +261,27 @@ public class Bender implements IBender {
 
     @Override
     public SkillData getSkillData(Skill skill) {
-        return skillDataMap.get(skill.name());
+        return entity.getData(BENDER_DATA).skillDataMap.get(skill.name());
     }
 
     @Override
     public SkillData getSkillData(String name) {
-        var benderData = entity.getData(BENDER_DATA);
-        return benderData.skillDataMap.get(name);
-//        return skillDataMap.get(name);
+        return entity.getData(BENDER_DATA).skillDataMap.get(name);
     }
 
     @Override
     public void resetSkillData() {
-        skillDataMap.clear();
+        var benderData = entity.getData(BENDER_DATA);
+        benderData.skillDataMap.clear();
         for (Skill skill: availableSkills)
-            skillDataMap.put(skill.name(), new SkillData(skill));
+            benderData.skillDataMap.put(skill.name(), new SkillData(skill));
+        entity.syncData(BENDER_DATA);
         markDirty();
     }
 
     @Override
     public void resetSkillData(Skill skill) {
-        skillDataMap.put(skill.name(), new SkillData(skill));
+        entity.getData(BENDER_DATA).skillDataMap.put(skill.name(), new SkillData(skill));
         markDirty();
     }
 
@@ -297,7 +293,7 @@ public class Bender implements IBender {
 
     @Override
     public Element getElement() {
-        return activeElement;
+        return entity.getData(ACTIVE_ELEMENT);
     }
 
     @Override
@@ -331,20 +327,20 @@ public class Bender implements IBender {
 
     @Override
     public void setCanUseAllElements() {
-        skillCategoryData.forEach(element -> element.setCanUse(true));
+        entity.getData(BENDER_DATA).skillCategoryData.forEach(element -> element.setCanUse(true));
         markDirty();
     }
 
     @Override
     public void setCanUseAllSkills() {
-        skillDataMap.values().forEach(skill -> skill.setCanUse(true));
+        entity.getData(BENDER_DATA).skillDataMap.values().forEach(skill -> skill.setCanUse(true));
         markDirty();
     }
 
     @Override
     public void setCanUseAllSkills(Element element) {
         setCanUseElement(true, element);
-        skillDataMap.values().forEach(skillData -> {
+        entity.getData(BENDER_DATA).skillDataMap.values().forEach(skillData -> {
             if (skillData.getSkill().getCategory().getId().equals(element.getId()))
                 skillData.setCanUse(true);
         });
@@ -426,10 +422,9 @@ public class Bender implements IBender {
                 \nData Version: %d
                 Active Element: %s
                 """, tag.getInt("DataVersion"), entity.getData(ACTIVE_ELEMENT)));
-        skillCategoryData.forEach(catData -> sb.append(tag.get(catData.name())).append("\n"));
-        skillDataMap.values().forEach(skillData -> sb.append(tag.get(skillData.name())).append("\n"));
+        entity.getData(BENDER_DATA).skillCategoryData.forEach(catData -> sb.append(tag.get(catData.name())).append("\n"));
+        entity.getData(BENDER_DATA).skillDataMap.values().forEach(skillData -> sb.append(tag.get(skillData.name())).append("\n"));
         LOGGER.info(sb.toString());
-//        entity.removeData(BENDER_DATA);
     }
 
     @Override
@@ -442,12 +437,6 @@ public class Bender implements IBender {
         return tag;
     }
 
-    /** NOTE: If you change the data structure in ANY way and want to overwrite the old data with defaults,
-     comment out the deserializing of whatever data changed. Then load the game and save and quit to overwrite.
-     ---
-     Now, if you want to migrate the data, bump the DATA_VERSION and add a new case in the switch statement.
-     After that, modify the previous case to handle the migration by loading up the old data to fit into the new.
-     */
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
 //        System.out.println("[Bender] Deserializing NBT: " + tag);

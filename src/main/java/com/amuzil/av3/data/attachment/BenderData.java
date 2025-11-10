@@ -30,18 +30,15 @@ public class BenderData implements IAttachmentSerializer<CompoundTag, BenderData
         for (Skill skill: Registries.getSkills())
             skillDataMap.put(skill.name(), new SkillData(skill));
         initialized = true;
-        LOGGER.info("BenderData INITIAL LOAD");
     }
 
     public BenderData(CompoundTag tag, HolderLookup.Provider provider) {
         this.deserializeNBT(provider, tag);
         initialized = true;
-        LOGGER.info("BenderData NBT LOAD");
     }
 
     @Override
     public BenderData read(IAttachmentHolder holder, CompoundTag tag, HolderLookup.Provider provider) {
-        System.out.println("ALREADY HERE?! " + skillDataMap.size());
         if (initialized)
             return this;
         else
@@ -61,6 +58,12 @@ public class BenderData implements IAttachmentSerializer<CompoundTag, BenderData
         return tag;
     }
 
+    /** NOTE: If you change the data structure in ANY way and want to overwrite the old data with defaults,
+     comment out the deserializing of whatever data changed. Then load the game and save and quit to overwrite.
+     ---
+     Now, if you want to migrate the data, bump the DATA_VERSION and add a new case in the switch statement.
+     After that, modify the previous case to handle the migration by loading up the old data to fit into the new.
+     */
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
         // Default to version 0 if not present
         int version = tag.contains("DataVersion") ? tag.getInt("DataVersion") : 0;

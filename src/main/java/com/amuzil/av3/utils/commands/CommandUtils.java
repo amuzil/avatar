@@ -17,6 +17,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
+import static com.amuzil.av3.data.attachment.AvatarAttachments.ACTIVE_ELEMENT;
+
 
 class CommandUtils {
 
@@ -25,7 +27,7 @@ class CommandUtils {
             player = ctx.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = player;
         IBender bender = player.getCapability(AvatarCapabilities.BENDER);
-        if(bender  != null) {
+        if (bender != null) {
             bender.setElement(element);
             bender.syncToClient();
             targetPlayer.sendSystemMessage(Component.literal("Active Bending set to " + element.name()));
@@ -47,8 +49,7 @@ class CommandUtils {
         if (player == null)
             player = ctx.getSource().getPlayerOrException();
         IBender bender = player.getCapability(AvatarCapabilities.BENDER);
-        if(bender  != null)
-        {
+        if (bender  != null) {
             Skill newSkill = skill.create((Bender) bender);
             switch (state) {
                 case START -> newSkill.start((Bender) bender);
@@ -68,8 +69,7 @@ class CommandUtils {
             player = ctx.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = player;
         IBender bender = player.getCapability(AvatarCapabilities.BENDER);
-        if(bender  != null)
-        {
+        if (bender  != null) {
             String action;
             if (skill != null) {
                 bender.resetSkillData(skill);
@@ -89,7 +89,7 @@ class CommandUtils {
             player = ctx.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = player;
         IBender bender = player.getCapability(AvatarCapabilities.BENDER);
-        if(bender == null) return 1;
+        if (bender == null) return 1;
         bender.setCanUseElement(canUse, element);
         bender.syncToClient();
         String action = canUse
@@ -104,7 +104,7 @@ class CommandUtils {
             player = ctx.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = player;
         IBender bender = player.getCapability(AvatarCapabilities.BENDER);
-        if(bender == null) return 1;
+        if (bender == null) return 1;
         bender.setCanUseSkill(canUse, skill.name());
         bender.syncToClient();
         String action = canUse
@@ -119,7 +119,7 @@ class CommandUtils {
             player = ctx.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = player;
         IBender bender = player.getCapability(AvatarCapabilities.BENDER);
-        if(bender == null) return 1;
+        if (bender == null) return 1;
         bender.setCanUseAllSkills(element);
         bender.syncToClient();
         targetPlayer.sendSystemMessage(Component.literal("Mastered the element of " + element.nickName() + "."));
@@ -132,7 +132,7 @@ class CommandUtils {
             player = ctx.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = player;
         IBender bender = player.getCapability(AvatarCapabilities.BENDER);
-        if(bender == null) return 1;
+        if (bender == null) return 1;
         bender.setCanUseSkill(canUse, skill.name());
         Bender ben = (Bender) bender;
         ben.getSkillData(skill.name()).getSkillTraits().forEach(trait -> {
