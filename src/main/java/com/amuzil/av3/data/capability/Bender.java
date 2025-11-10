@@ -1,9 +1,9 @@
-package com.amuzil.av3.capability;
+package com.amuzil.av3.data.capability;
 
 import com.amuzil.av3.bending.BendingSelection;
 import com.amuzil.av3.bending.element.Element;
-import com.amuzil.av3.bending.element.Elements;
 import com.amuzil.av3.bending.form.BendingForm;
+import com.amuzil.av3.data.attachment.BenderData;
 import com.amuzil.av3.events.FormActivatedEvent;
 import com.amuzil.av3.network.AvatarNetwork;
 import com.amuzil.av3.network.packets.sync.SyncBenderPacket;
@@ -14,15 +14,12 @@ import com.amuzil.magus.form.ActiveForm;
 import com.amuzil.magus.form.Form;
 import com.amuzil.magus.registry.Registries;
 import com.amuzil.magus.skill.Skill;
-import com.amuzil.magus.skill.SkillCategory;
 import com.amuzil.magus.skill.data.SkillCategoryData;
 import com.amuzil.magus.skill.data.SkillData;
-import com.amuzil.magus.skill.traits.DataTrait;
 import com.amuzil.magus.tree.SkillTree;
 import com.amuzil.magus.tree.TreeResult;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -37,6 +34,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Consumer;
+
+import static com.amuzil.av3.data.attachment.AvatarAttachments.ACTIVE_ELEMENT;
+import static com.amuzil.av3.data.attachment.AvatarAttachments.BENDER_DATA;
 
 
 public class Bender implements IBender {
@@ -62,22 +62,12 @@ public class Bender implements IBender {
     public final List<Form> formPath = new ArrayList<>(); // in-sync
     private BendingSelection selection = new BendingSelection(); // in-sync
 
-    // Persistent data
-    private Element activeElement = Elements.FIRE; // Currently active element // TODO - Randomize on first load
-    private final List<SkillCategoryData> skillCategoryData = new ArrayList<>();
-    private final HashMap<String, SkillData> skillDataMap = new HashMap<>();
-    private final List<DataTrait> dataTraits = new ArrayList<>();
-
     public Bender(LivingEntity entity) {
         this.entity = entity;
         this.formListener = this::onFormActivatedEvent;
 
-        for (SkillCategory category: Registries.getSkillCategories())
-            skillCategoryData.add(new SkillCategoryData(category));
         this.availableSkills.addAll(Registries.getSkills());
-        for (Skill skill: availableSkills)
-            skillDataMap.put(skill.name(), new SkillData(skill));
-        dataTraits.addAll(Registries.getTraits());
+//        dataTraits.addAll(Registries.getTraits());
 
         // Allow use of all Elements & Skills for testing!
         setAvatar(); // Uncomment this to grant all elements & skills
@@ -87,10 +77,8 @@ public class Bender implements IBender {
 
     @Override
     public String toString() {
-        String elementName = "";
-        if (activeElement != null)
-            elementName = activeElement.name();
-        return String.format("Bender[ %s | activeElement=%s ]", entity.getName() , elementName);
+        return String.format("Bender[ %s | activeElement=%s ]",
+                entity.getName() , entity.getData(ACTIVE_ELEMENT).name());
     }
 
     public void tick() {
@@ -255,7 +243,7 @@ public class Bender implements IBender {
 
     @Override
     public SkillCategoryData getSkillCategoryData(ResourceLocation id) {
-        return skillCategoryData.stream()
+        return entity.getData(BENDER_DATA).skillCategoryData.stream()
                 .filter(data -> data.getSkillCategory().getId().equals(id))
                 .findFirst()
                 .orElse(null);
@@ -263,25 +251,27 @@ public class Bender implements IBender {
 
     @Override
     public SkillData getSkillData(Skill skill) {
-        return skillDataMap.get(skill.name());
+        return entity.getData(BENDER_DATA).skillDataMap.get(skill.name());
     }
 
     @Override
     public SkillData getSkillData(String name) {
-        return skillDataMap.get(name);
+        return entity.getData(BENDER_DATA).skillDataMap.get(name);
     }
 
     @Override
     public void resetSkillData() {
-        skillDataMap.clear();
+        var benderData = entity.getData(BENDER_DATA);
+        benderData.skillDataMap.clear();
         for (Skill skill: availableSkills)
-            skillDataMap.put(skill.name(), new SkillData(skill));
+            benderData.skillDataMap.put(skill.name(), new SkillData(skill));
+        entity.syncData(BENDER_DATA);
         markDirty();
     }
 
     @Override
     public void resetSkillData(Skill skill) {
-        skillDataMap.put(skill.name(), new SkillData(skill));
+        entity.getData(BENDER_DATA).skillDataMap.put(skill.name(), new SkillData(skill));
         markDirty();
     }
 
@@ -293,12 +283,12 @@ public class Bender implements IBender {
 
     @Override
     public Element getElement() {
-        return activeElement;
+        return entity.getData(ACTIVE_ELEMENT);
     }
 
     @Override
     public void setElement(Element activeElement) {
-        this.activeElement = activeElement;
+        entity.setData(ACTIVE_ELEMENT, activeElement);
         markDirty();
     }
 
@@ -326,20 +316,20 @@ public class Bender implements IBender {
 
     @Override
     public void setCanUseAllElements() {
-        skillCategoryData.forEach(element -> element.setCanUse(true));
+        entity.getData(BENDER_DATA).skillCategoryData.forEach(element -> element.setCanUse(true));
         markDirty();
     }
 
     @Override
     public void setCanUseAllSkills() {
-        skillDataMap.values().forEach(skill -> skill.setCanUse(true));
+        entity.getData(BENDER_DATA).skillDataMap.values().forEach(skill -> skill.setCanUse(true));
         markDirty();
     }
 
     @Override
     public void setCanUseAllSkills(Element element) {
         setCanUseElement(true, element);
-        skillDataMap.values().forEach(skillData -> {
+        entity.getData(BENDER_DATA).skillDataMap.values().forEach(skillData -> {
             if (skillData.getSkill().getCategory().getId().equals(element.getId()))
                 skillData.setCanUse(true);
         });
@@ -411,63 +401,58 @@ public class Bender implements IBender {
         LOGGER.info("Forms: {}", formPath);
     }
 
-    public void printNBT() {
-        CompoundTag tag = this.serializeNBT(null);
+    public void printBenderData() {
+        BenderData benderData = entity.getData(BENDER_DATA);
+        CompoundTag tag = benderData.serializeNBT(null);
         StringBuilder sb = new StringBuilder();
         sb.append(String.format(
                 """
                 \nData Version: %d
                 Active Element: %s
-                """, tag.getInt("DataVersion"), tag.getString("Active Element")));
-        skillCategoryData.forEach(catData -> sb.append(tag.get(catData.name())).append("\n"));
-        skillDataMap.values().forEach(skillData -> sb.append(tag.get(skillData.name())).append("\n"));
+                """, tag.getInt("DataVersion"), entity.getData(ACTIVE_ELEMENT)));
+        entity.getData(BENDER_DATA).skillCategoryData.forEach(catData -> sb.append(tag.get(catData.name())).append("\n"));
+        entity.getData(BENDER_DATA).skillDataMap.values().forEach(skillData -> sb.append(tag.get(skillData.name())).append("\n"));
         LOGGER.info(sb.toString());
     }
 
     @Override
     public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
-        tag.putInt("DataVersion", DATA_VERSION);
-        tag.putString("Active Element", Objects.requireNonNullElse(activeElement, Elements.FIRE).getId().toString());
-        skillCategoryData.forEach(catData -> tag.put(catData.name(), catData.serializeNBT(provider)));
-        skillDataMap.values().forEach(skillData -> tag.put(skillData.name(), skillData.serializeNBT(provider)));
+//        tag.putInt("DataVersion", DATA_VERSION);
+//        tag.putString("Active Element", Objects.requireNonNullElse(activeElement, Elements.FIRE).getId().toString());
+//        skillCategoryData.forEach(catData -> tag.put(catData.name(), catData.serializeNBT(provider)));
+//        skillDataMap.values().forEach(skillData -> tag.put(skillData.name(), skillData.serializeNBT(provider)));
         return tag;
     }
 
-    /** NOTE: If you change the data structure in ANY way and want to overwrite the old data with defaults,
-     comment out the deserializing of whatever data changed. Then load the game and save and quit to overwrite.
-     ---
-     Now, if you want to migrate the data, bump the DATA_VERSION and add a new case in the switch statement.
-     After that, modify the previous case to handle the migration by loading up the old data to fit into the new.
-     */
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
 //        System.out.println("[Bender] Deserializing NBT: " + tag);
-        int version = tag.contains("DataVersion") ? tag.getInt("DataVersion") : 0; // Default to version 0 if not present
-        switch (version) {
-            case 1 -> {
-                LOGGER.info("Loading Bender data version: {}", version);
-                this.activeElement = Elements.get(ResourceLocation.parse(tag.getString("Active Element")));
-                for (SkillCategoryData catData : skillCategoryData) {
-                    if (tag.contains(catData.name(), Tag.TAG_COMPOUND)) {
-                        catData.deserializeNBT(provider, tag.getCompound(catData.name()));
-                    } else {
-                        LOGGER.warn("Missing skill category data for: {}", catData.name());
-                    }
-                }
-
-                for (SkillData skillData : skillDataMap.values()) {
-                    if (tag.contains(skillData.name(), Tag.TAG_COMPOUND)) {
-                        skillData.deserializeNBT(provider, tag.getCompound(skillData.name()));
-                    } else {
-                        LOGGER.warn("Missing skill data for: {}", skillData.name());
-                    }
-                }
-            } default -> { // Handle unknown versions for migrating data
-                // Set defaults here for new player / world
-                LOGGER.info("Unknown Bender data version: {}", version);
-            }
-        }
+//        int version = tag.contains("DataVersion") ? tag.getInt("DataVersion") : 0; // Default to version 0 if not present
+//        switch (version) {
+//            case 1 -> {
+//                LOGGER.info("Loading Bender data version: {}", version);
+//                this.activeElement = Elements.get(ResourceLocation.parse(tag.getString("Active Element")));
+//                for (SkillCategoryData catData : skillCategoryData) {
+//                    if (tag.contains(catData.name(), Tag.TAG_COMPOUND)) {
+//                        catData.deserializeNBT(provider, tag.getCompound(catData.name()));
+//                    } else {
+//                        LOGGER.warn("Missing skill category data for: {}", catData.name());
+//                    }
+//                }
+//
+//                for (SkillData skillData : skillDataMap.values()) {
+//                    if (tag.contains(skillData.name(), Tag.TAG_COMPOUND)) {
+//                        skillData.deserializeNBT(provider, tag.getCompound(skillData.name()));
+//                    } else {
+//                        LOGGER.warn("Missing skill data for: {}", skillData.name());
+//                    }
+//                }
+//            } default -> { // Handle unknown versions for migrating data
+//                // Set defaults here for new player / world
+//                LOGGER.info("Unknown Bender data version: {}", version);
+//            }
+//        }
     }
 
     public static @Nullable IBender getBender(LivingEntity entity) {

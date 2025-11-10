@@ -1,4 +1,4 @@
-package com.amuzil.av3.capability;
+package com.amuzil.av3.data.capability;
 
 import com.amuzil.av3.Avatar;
 import net.minecraft.core.HolderLookup;

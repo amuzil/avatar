@@ -2,8 +2,8 @@ package com.amuzil.av3.network.packets.sync;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.BendingSelection;
-import com.amuzil.av3.capability.AvatarCapabilities;
-import com.amuzil.av3.capability.IBender;
+import com.amuzil.av3.data.capability.AvatarCapabilities;
+import com.amuzil.av3.data.capability.IBender;
 import com.amuzil.av3.network.packets.api.AvatarPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;

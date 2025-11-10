@@ -1,4 +1,4 @@
-package com.amuzil.av3.entity;
+package com.amuzil.av3.entity.api;
 
 import com.amuzil.av3.entity.renderer.sdf.SignedDistanceFunction;
 import org.joml.Vector3f;

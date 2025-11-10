@@ -2,7 +2,7 @@ package com.amuzil.av3.bending.element.water;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.skill.WaterSkill;
-import com.amuzil.av3.capability.Bender;
+import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.entity.api.ICollisionModule;
 import com.amuzil.av3.entity.modules.ModuleRegistry;
 import com.amuzil.av3.entity.modules.collision.SimpleKnockbackModule;

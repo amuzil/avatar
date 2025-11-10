@@ -1,6 +1,7 @@
 package com.amuzil.av3;
 
 import com.amuzil.av3.bending.BendingSkill;
+import com.amuzil.av3.data.attachment.AvatarAttachments;
 import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.modules.ModuleRegistry;
 import com.amuzil.av3.entity.modules.collision.*;
@@ -62,6 +63,7 @@ public class Avatar {
 //        modEventBus.register(CarryonNetwork.class);
         modEventBus.addListener(AvatarNetwork::register);
         modEventBus.addListener(CarryonNetwork::register);
+        AvatarAttachments.register(modEventBus);
         AvatarEntities.register(modEventBus);
         AvatarSounds.register(modEventBus);
 

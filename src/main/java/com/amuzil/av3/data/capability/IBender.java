@@ -1,4 +1,4 @@
-package com.amuzil.av3.capability;
+package com.amuzil.av3.data.capability;
 
 import com.amuzil.av3.bending.BendingSelection;
 import com.amuzil.av3.bending.element.Element;

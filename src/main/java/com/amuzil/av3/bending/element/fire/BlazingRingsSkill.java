@@ -3,7 +3,7 @@ package com.amuzil.av3.bending.element.fire;
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.form.BendingForms;
 import com.amuzil.av3.bending.skill.FireSkill;
-import com.amuzil.av3.capability.Bender;
+import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.entity.api.ICollisionModule;
 import com.amuzil.av3.entity.modules.ModuleRegistry;
 import com.amuzil.av3.entity.modules.collision.FireCollisionModule;

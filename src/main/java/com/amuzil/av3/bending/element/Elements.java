@@ -7,16 +7,14 @@ import com.amuzil.av3.bending.element.fire.Firebending;
 import com.amuzil.av3.bending.element.water.Waterbending;
 import com.amuzil.magus.registry.Registries;
 import com.amuzil.magus.skill.SkillCategory;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.HashMap;
+import java.util.Random;
 
 @EventBusSubscriber(modid = Avatar.MOD_ID)
 public class Elements {
@@ -31,6 +29,16 @@ public class Elements {
 
     public static Element get(ResourceLocation id) {
         return (Element) Registries.SKILL_CATEGORIES.get(id);
+    }
+
+    public static Element random() {
+        int pick = new Random().nextInt(4);
+        return switch (pick) {
+            case 0 -> AIR;
+            case 1 -> WATER;
+            case 2 -> EARTH;
+            default -> FIRE;
+        };
     }
 
     @SubscribeEvent

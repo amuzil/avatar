@@ -2,9 +2,9 @@ package com.amuzil.av3.events;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.element.Elements;
-import com.amuzil.av3.capability.AvatarCapabilities;
-import com.amuzil.av3.capability.Bender;
-import com.amuzil.av3.capability.IBender;
+import com.amuzil.av3.data.capability.AvatarCapabilities;
+import com.amuzil.av3.data.capability.Bender;
+import com.amuzil.av3.data.capability.IBender;
 import com.amuzil.magus.skill.event.SkillTickEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,7 +33,7 @@ public class ServerEvents {
             bender.register();
         }
     }
-
+//
     @SubscribeEvent
     public static void onEntityLeaveLevel(EntityLeaveLevelEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
@@ -43,26 +43,26 @@ public class ServerEvents {
             bender.unregister();
         }
     }
-
-    @SubscribeEvent
-    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) return;
-
-        IBender bender = player.getCapability(AvatarCapabilities.BENDER);
-        if (bender == null) return;
-        bender.syncToClient();
-        System.out.println("PlayerLoggedInEvent SYNC SERVER TO CLIENT ON JOIN");
-    }
-
-    @SubscribeEvent
-    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedOutEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) return;
-
-        IBender bender = player.getCapability(AvatarCapabilities.BENDER);
-        if (bender == null) return;
-        bender.syncToClient();
-        System.out.println("PlayerLoggedOutEvent SYNC SERVER TO CLIENT ON LEAVE");
-    }
+//
+//    @SubscribeEvent
+//    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+//        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+//
+//        IBender bender = player.getCapability(AvatarCapabilities.BENDER);
+//        if (bender == null) return;
+//        bender.syncToClient();
+//        System.out.println("PlayerLoggedInEvent SYNC SERVER TO CLIENT ON JOIN");
+//    }
+//
+//    @SubscribeEvent
+//    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedOutEvent event) {
+//        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+//
+//        IBender bender = player.getCapability(AvatarCapabilities.BENDER);
+//        if (bender == null) return;
+//        bender.syncToClient();
+//        System.out.println("PlayerLoggedOutEvent SYNC SERVER TO CLIENT ON LEAVE");
+//    }
 
     @SubscribeEvent
     public static void onBlockBreak(BlockEvent.BreakEvent event) {

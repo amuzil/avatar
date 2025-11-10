@@ -3,7 +3,7 @@ package com.amuzil.av3.input;
 import com.amuzil.av3.bending.BendingSelection;
 import com.amuzil.av3.bending.form.BendingForm;
 import com.amuzil.av3.bending.form.BendingForms;
-import com.amuzil.av3.capability.Bender;
+import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.network.AvatarNetwork;
 import com.amuzil.av3.network.packets.form.ExecuteFormPacket;
 import com.amuzil.av3.network.packets.form.ReleaseFormPacket;
@@ -281,7 +281,7 @@ public class InputModule {
             Player player = Minecraft.getInstance().player;
             assert player != null;
             Bender bender = (Bender) Bender.getBender(player);
-            bender.printNBT();
+            bender.printBenderData();
         } else {
             terminate();
             isBending = false;

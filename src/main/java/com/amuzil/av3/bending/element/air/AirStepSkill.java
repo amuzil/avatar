@@ -4,7 +4,7 @@ import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.element.Elements;
 import com.amuzil.av3.bending.form.BendingForm;
 import com.amuzil.av3.bending.skill.AirSkill;
-import com.amuzil.av3.capability.Bender;
+import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.projectile.AvatarBoundProjectile;
 import com.amuzil.av3.utils.Constants;
