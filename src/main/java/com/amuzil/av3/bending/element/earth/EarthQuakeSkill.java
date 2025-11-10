@@ -2,7 +2,7 @@ package com.amuzil.av3.bending.element.earth;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.skill.EarthSkill;
-import com.amuzil.av3.capability.Bender;
+import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.av3.utils.bending.OriginalBlocks;
 import com.amuzil.magus.skill.data.SkillPathBuilder;

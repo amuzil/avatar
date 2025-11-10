@@ -1,4 +1,4 @@
-package com.amuzil.av3.capability;
+package com.amuzil.av3.data.capability;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;

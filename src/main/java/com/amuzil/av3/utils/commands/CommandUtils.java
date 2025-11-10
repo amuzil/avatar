@@ -2,9 +2,9 @@ package com.amuzil.av3.utils.commands;
 
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.bending.form.BendingForm;
-import com.amuzil.av3.capability.AvatarCapabilities;
-import com.amuzil.av3.capability.Bender;
-import com.amuzil.av3.capability.IBender;
+import com.amuzil.av3.data.capability.AvatarCapabilities;
+import com.amuzil.av3.data.capability.Bender;
+import com.amuzil.av3.data.capability.IBender;
 import com.amuzil.av3.network.packets.form.ExecuteFormPacket;
 import com.amuzil.av3.network.packets.form.ReleaseFormPacket;
 import com.amuzil.magus.form.ActiveForm;

@@ -1,6 +1,6 @@
 package com.amuzil.magus.skill;
 
-import com.amuzil.av3.capability.Bender;
+import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.magus.form.Form;
 import com.amuzil.magus.radix.RadixTree;
 import com.amuzil.magus.skill.data.SkillData;

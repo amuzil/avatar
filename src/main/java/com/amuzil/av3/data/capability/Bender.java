@@ -1,4 +1,4 @@
-package com.amuzil.av3.capability;
+package com.amuzil.av3.data.capability;
 
 import com.amuzil.av3.bending.BendingSelection;
 import com.amuzil.av3.bending.element.Element;
@@ -83,6 +83,7 @@ public class Bender implements IBender {
         setAvatar(); // Uncomment this to grant all elements & skills
 
         markDirty();
+        System.out.println("BENDER INSTANTIATED");
     }
 
     @Override
@@ -116,7 +117,7 @@ public class Bender implements IBender {
                 stepDirection = BendingForm.Type.Motion.NONE;
 
             formPath.add(event.getActiveForm().form()); // TODO: fix Form getting added twice here
-//            printFormPath(); // Debugging purposes
+            printFormPath(); // Debugging purposes
             if (active) {
                 switch (getSelection().target()) {
                     case BLOCK, NONE, SELF, ENTITY -> checkSkillTree();
