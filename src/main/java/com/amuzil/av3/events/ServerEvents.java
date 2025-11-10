@@ -22,47 +22,47 @@ import net.neoforged.neoforge.event.tick.EntityTickEvent;
 @EventBusSubscriber(modid = Avatar.MOD_ID)
 public class ServerEvents {
 
-    @SubscribeEvent
-    public static void onEntityJoinLevel(EntityJoinLevelEvent event) {
-        if (!(event.getEntity() instanceof Player)) return; // Ignore non-player entities
-
-        if (event.getEntity() instanceof ServerPlayer player) {
-            IBender bender = player.getCapability(AvatarCapabilities.BENDER);
-            if (bender == null) return;
-            bender.syncToClient();
-            bender.register();
-        }
-    }
-
-    @SubscribeEvent
-    public static void onEntityLeaveLevel(EntityLeaveLevelEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) {
-            IBender bender = player.getCapability(AvatarCapabilities.BENDER);
-            if (bender == null) return;
-            bender.syncToClient();
-            bender.unregister();
-        }
-    }
-
-    @SubscribeEvent
-    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) return;
-
-        IBender bender = player.getCapability(AvatarCapabilities.BENDER);
-        if (bender == null) return;
-        bender.syncToClient();
-        System.out.println("PlayerLoggedInEvent SYNC SERVER TO CLIENT ON JOIN");
-    }
-
-    @SubscribeEvent
-    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedOutEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) return;
-
-        IBender bender = player.getCapability(AvatarCapabilities.BENDER);
-        if (bender == null) return;
-        bender.syncToClient();
-        System.out.println("PlayerLoggedOutEvent SYNC SERVER TO CLIENT ON LEAVE");
-    }
+//    @SubscribeEvent
+//    public static void onEntityJoinLevel(EntityJoinLevelEvent event) {
+//        if (!(event.getEntity() instanceof Player)) return; // Ignore non-player entities
+//
+//        if (event.getEntity() instanceof ServerPlayer player) {
+//            IBender bender = player.getCapability(AvatarCapabilities.BENDER);
+//            if (bender == null) return;
+//            bender.syncToClient();
+//            bender.register();
+//        }
+//    }
+//
+//    @SubscribeEvent
+//    public static void onEntityLeaveLevel(EntityLeaveLevelEvent event) {
+//        if (event.getEntity() instanceof ServerPlayer player) {
+//            IBender bender = player.getCapability(AvatarCapabilities.BENDER);
+//            if (bender == null) return;
+//            bender.syncToClient();
+//            bender.unregister();
+//        }
+//    }
+//
+//    @SubscribeEvent
+//    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+//        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+//
+//        IBender bender = player.getCapability(AvatarCapabilities.BENDER);
+//        if (bender == null) return;
+//        bender.syncToClient();
+//        System.out.println("PlayerLoggedInEvent SYNC SERVER TO CLIENT ON JOIN");
+//    }
+//
+//    @SubscribeEvent
+//    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedOutEvent event) {
+//        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+//
+//        IBender bender = player.getCapability(AvatarCapabilities.BENDER);
+//        if (bender == null) return;
+//        bender.syncToClient();
+//        System.out.println("PlayerLoggedOutEvent SYNC SERVER TO CLIENT ON LEAVE");
+//    }
 
     @SubscribeEvent
     public static void onBlockBreak(BlockEvent.BreakEvent event) {

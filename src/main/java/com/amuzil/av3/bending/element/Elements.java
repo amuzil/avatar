@@ -17,6 +17,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.HashMap;
+import java.util.Random;
 
 @EventBusSubscriber(modid = Avatar.MOD_ID)
 public class Elements {
@@ -31,6 +32,16 @@ public class Elements {
 
     public static Element get(ResourceLocation id) {
         return (Element) Registries.SKILL_CATEGORIES.get(id);
+    }
+
+    public static Element random() {
+        int pick = new Random().nextInt(4);
+        return switch (pick) {
+            case 0 -> AIR;
+            case 1 -> WATER;
+            case 2 -> EARTH;
+            default -> FIRE;
+        };
     }
 
     @SubscribeEvent
