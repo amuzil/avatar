@@ -3,6 +3,7 @@ package com.amuzil.av3.data.capability;
 import com.amuzil.av3.bending.BendingSelection;
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.bending.form.BendingForm;
+import com.amuzil.av3.data.attachment.BenderData;
 import com.amuzil.av3.events.FormActivatedEvent;
 import com.amuzil.av3.network.AvatarNetwork;
 import com.amuzil.av3.network.packets.sync.SyncBenderPacket;
@@ -416,7 +417,9 @@ public class Bender implements IBender {
     }
 
     public void printNBT() {
-        CompoundTag tag = entity.getData(BENDER_DATA).serializeNBT(null);
+        BenderData benderData = entity.getData(BENDER_DATA);
+        System.out.println("benderData.skillDataMap: " + benderData.skillDataMap.size());
+        CompoundTag tag = benderData.serializeNBT(null);
         StringBuilder sb = new StringBuilder();
         sb.append(String.format(
                 """
@@ -426,6 +429,7 @@ public class Bender implements IBender {
         skillCategoryData.forEach(catData -> sb.append(tag.get(catData.name())).append("\n"));
         skillDataMap.values().forEach(skillData -> sb.append(tag.get(skillData.name())).append("\n"));
         LOGGER.info(sb.toString());
+//        entity.removeData(BENDER_DATA);
     }
 
     @Override

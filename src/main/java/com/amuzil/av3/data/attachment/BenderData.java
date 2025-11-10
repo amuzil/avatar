@@ -23,9 +23,19 @@ public class BenderData implements IAttachmentSerializer<CompoundTag, BenderData
     public final List<SkillCategoryData> skillCategoryData = new ArrayList<>();
     public final Map<String, SkillData> skillDataMap = new HashMap<>();
 
+    public BenderData() {
+        // Initialize skill category data
+        for (SkillCategory category: Registries.getSkillCategories())
+            skillCategoryData.add(new SkillCategoryData(category));
+        // Initialize skill data
+        for (Skill skill: Registries.getSkills())
+            skillDataMap.put(skill.name(), new SkillData(skill));
+        LOGGER.info("BenderData INITIAL LOAD");
+    }
+
     @Override
     public BenderData read(IAttachmentHolder holder, CompoundTag tag, HolderLookup.Provider provider) {
-        System.out.println("INIT DATA Attachment - Reading BenderData from NBT");
+        System.out.println("read BenderData from NBT");
         BenderData data = new BenderData();
         data.deserializeNBT(provider, tag);
         return data;
@@ -45,15 +55,10 @@ public class BenderData implements IAttachmentSerializer<CompoundTag, BenderData
     }
 
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
-        int version = tag.contains("DataVersion") ? tag.getInt("DataVersion") : 0; // Default to version 0 if not present
+        // Default to version 0 if not present
+        int version = tag.contains("DataVersion") ? tag.getInt("DataVersion") : 0;
+        System.out.println("LOAD EM UP | deserializeNBT BenderData version: " + version);
         switch (version) {
-            case 0 -> {
-                for (SkillCategory category: Registries.getSkillCategories())
-                    skillCategoryData.add(new SkillCategoryData(category));
-                for (Skill skill: Registries.getSkills())
-                    skillDataMap.put(skill.name(), new SkillData(skill));
-                LOGGER.info("BenderData INITIAL LOAD");
-            }
             case 1 -> {
                 LOGGER.info("Loading Bender data version: {}", version);
                 for (SkillCategoryData catData : skillCategoryData) {
