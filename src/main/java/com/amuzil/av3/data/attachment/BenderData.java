@@ -22,23 +22,30 @@ public class BenderData implements IAttachmentSerializer<CompoundTag, BenderData
     private static final int DATA_VERSION = 1; // Update this as your data structure changes
     public final List<SkillCategoryData> skillCategoryData = new ArrayList<>();
     public final Map<String, SkillData> skillDataMap = new HashMap<>();
+    private boolean initialized = false;
 
     public BenderData() {
-        // Initialize skill category data
         for (SkillCategory category: Registries.getSkillCategories())
             skillCategoryData.add(new SkillCategoryData(category));
-        // Initialize skill data
         for (Skill skill: Registries.getSkills())
             skillDataMap.put(skill.name(), new SkillData(skill));
+        initialized = true;
         LOGGER.info("BenderData INITIAL LOAD");
+    }
+
+    public BenderData(CompoundTag tag, HolderLookup.Provider provider) {
+        this.deserializeNBT(provider, tag);
+        initialized = true;
+        LOGGER.info("BenderData NBT LOAD");
     }
 
     @Override
     public BenderData read(IAttachmentHolder holder, CompoundTag tag, HolderLookup.Provider provider) {
-        System.out.println("read BenderData from NBT");
-        BenderData data = new BenderData();
-        data.deserializeNBT(provider, tag);
-        return data;
+        System.out.println("ALREADY HERE?! " + skillDataMap.size());
+        if (initialized)
+            return this;
+        else
+            return new BenderData(tag, provider);
     }
 
     @Override
@@ -57,7 +64,6 @@ public class BenderData implements IAttachmentSerializer<CompoundTag, BenderData
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
         // Default to version 0 if not present
         int version = tag.contains("DataVersion") ? tag.getInt("DataVersion") : 0;
-        System.out.println("LOAD EM UP | deserializeNBT BenderData version: " + version);
         switch (version) {
             case 1 -> {
                 LOGGER.info("Loading Bender data version: {}", version);
