@@ -1,5 +1,6 @@
-package com.amuzil.omegasource.api.magus.sdf;
+package com.amuzil.av3.entity.renderer.sdf;
 
+import com.amuzil.av3.utils.Constants;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -8,13 +9,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Scanner;
 
 public class SdfManager {
     public HashMap<String, SdfShapeRecord> LOADED_SDFS = new HashMap<>();
 
-    private final String SDF_SHAPE_FOLDER = "local/av3/sdfs";
+    private final String SDF_SHAPE_FOLDER = "./local/av3/sdfs";
 
     public void readFolder() {
         try {
@@ -45,14 +48,22 @@ public class SdfManager {
     }
 
     public void writeConfig() {
+        SdfConstants.init();
         try {
-            File configFile = new File(Constants.CONFIG_PATH);
+            File configFile = new File(SDF_SHAPE_FOLDER);
+            Files.createDirectories(configFile.toPath());
 
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            FileWriter writer = new FileWriter(configFile);
-            gson.toJson(config, writer);
+            File toWrite = new File(SDF_SHAPE_FOLDER + "/" + "sphere" + ".json");
+
+//            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            Gson gson2 = SdfGson.create().setPrettyPrinting().create();
+
+            FileWriter writer = new FileWriter(toWrite);
+//            gson.toJson(new SdfShapeRecord(SdfConstants.STATIC_SPHERE), writer);
+            gson2.toJson(new SdfShapeRecord(SdfConstants.STATIC_SPHERE), writer);
             writer.flush();
         } catch (IOException e) {
+
             System.out.println("An error occurred writing config json!");
             e.printStackTrace();
         }

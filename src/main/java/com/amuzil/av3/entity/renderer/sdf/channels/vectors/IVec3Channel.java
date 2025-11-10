@@ -1,4 +1,4 @@
-package com.amuzil.av3.entity.renderer.sdf.channels;
+package com.amuzil.av3.entity.renderer.sdf.channels.vectors;
 
 import org.joml.Vector3f;
 

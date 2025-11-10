@@ -9,8 +9,8 @@ public class Transform {
     public final Quaternionf rotation = new Quaternionf(); // identity
     public final Vector3f scale = new Vector3f(1,1,1);
 
-    private final Matrix4f toWorld = new Matrix4f();
-    private final Matrix4f invWorld = new Matrix4f();
+    private transient final Matrix4f toWorld = new Matrix4f();
+    private transient final Matrix4f invWorld = new Matrix4f();
 
     public Transform() {}
 

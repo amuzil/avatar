@@ -1,15 +1,15 @@
 package com.amuzil.av3.entity.renderer.sdf.shapes;
 
 import com.amuzil.av3.entity.renderer.sdf.SignedDistanceFunction;
-import com.amuzil.av3.entity.renderer.sdf.channels.Channels;
-import com.amuzil.av3.entity.renderer.sdf.channels.IFloatChannel;
+import com.amuzil.av3.entity.renderer.sdf.channels.floats.ConstantFloatChannel;
+import com.amuzil.av3.entity.renderer.sdf.channels.floats.IFloatChannel;
 import com.amuzil.av3.entity.renderer.sdf.transforms.AnimatedTransform;
 import org.joml.Vector3f;
 
 public class SDFCapsule implements SignedDistanceFunction {
     public final AnimatedTransform a = new AnimatedTransform();
-    public IFloatChannel halfHeight = Channels.constant(1.0f);
-    public IFloatChannel radius = Channels.constant(0.3f);
+    public IFloatChannel halfHeight = new ConstantFloatChannel(1.0f);
+    public IFloatChannel radius = new ConstantFloatChannel(0.3f);
 
     private final Vector3f q = new Vector3f();
     private final Vector3f local = new Vector3f();

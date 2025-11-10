@@ -1,15 +1,15 @@
 package com.amuzil.av3.entity.renderer.sdf.shapes;
 
 import com.amuzil.av3.entity.renderer.sdf.SignedDistanceFunction;
-import com.amuzil.av3.entity.renderer.sdf.channels.Channels;
-import com.amuzil.av3.entity.renderer.sdf.channels.IFloatChannel;
+import com.amuzil.av3.entity.renderer.sdf.channels.floats.ConstantFloatChannel;
+import com.amuzil.av3.entity.renderer.sdf.channels.floats.IFloatChannel;
 import com.amuzil.av3.entity.renderer.sdf.transforms.AnimatedTransform;
 import org.joml.Vector3f;
 
 public class SDFDisk implements SignedDistanceFunction {
     public final AnimatedTransform a = new AnimatedTransform();
-    public IFloatChannel radius = Channels.constant(1.0f);
-    public IFloatChannel thickness = Channels.constant(0.01f); // vertical half-thickness
+    public IFloatChannel radius = new ConstantFloatChannel(1.0f);
+    public IFloatChannel thickness = new ConstantFloatChannel(0.01f); // vertical half-thickness
 
     private final Vector3f local = new Vector3f();
 

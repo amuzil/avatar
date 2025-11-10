@@ -1,16 +1,16 @@
 package com.amuzil.av3.entity.renderer.sdf.shapes;
 
 import com.amuzil.av3.entity.renderer.sdf.SignedDistanceFunction;
-import com.amuzil.av3.entity.renderer.sdf.channels.Channels;
-import com.amuzil.av3.entity.renderer.sdf.channels.IFloatChannel;
+import com.amuzil.av3.entity.renderer.sdf.channels.floats.ConstantFloatChannel;
+import com.amuzil.av3.entity.renderer.sdf.channels.floats.IFloatChannel;
 import com.amuzil.av3.entity.renderer.sdf.transforms.AnimatedTransform;
 import org.joml.Vector3f;
 
 public class SDFTruncatedCone implements SignedDistanceFunction {
     public final AnimatedTransform a = new AnimatedTransform();
-    public IFloatChannel halfHeight = Channels.constant(1.0f);
-    public IFloatChannel radiusTop = Channels.constant(0.3f);
-    public IFloatChannel radiusBottom = Channels.constant(0.6f);
+    public IFloatChannel halfHeight = new ConstantFloatChannel(1.0f);
+    public IFloatChannel radiusTop = new ConstantFloatChannel(0.3f);
+    public IFloatChannel radiusBottom = new ConstantFloatChannel(0.6f);
 
     private final Vector3f local = new Vector3f();
 

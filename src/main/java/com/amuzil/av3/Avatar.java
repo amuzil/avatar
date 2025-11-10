@@ -9,6 +9,7 @@ import com.amuzil.av3.entity.modules.entity.SoundModule;
 import com.amuzil.av3.entity.modules.entity.TimeoutModule;
 import com.amuzil.av3.entity.modules.force.*;
 import com.amuzil.av3.entity.modules.render.PhotonModule;
+import com.amuzil.av3.entity.renderer.sdf.SdfManager;
 import com.amuzil.av3.input.InputModule;
 import com.amuzil.av3.network.AvatarNetwork;
 import com.amuzil.av3.utils.commands.AvatarCommands;
@@ -96,6 +97,7 @@ public class Avatar {
         bus.register(ServerEventHandler.class);
         bus.register(PressureGenerator.class);
         bus.register(TerrainGenerator.class);
+        new SdfManager().writeConfig();
     }
 
     private void setupClient(final FMLClientSetupEvent event) {
