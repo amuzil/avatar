@@ -1,6 +1,7 @@
 package com.amuzil.av3.entity;
 
 import com.amuzil.av3.Avatar;
+import com.amuzil.av3.entity.mobs.EntitySkybison;
 import com.amuzil.av3.entity.projectile.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
@@ -39,6 +40,10 @@ public class AvatarEntities {
     public static final Supplier<EntityType<AvatarWaterProjectile>> AVATAR_WATER_PROJECTILE_ENTITY_TYPE =
             ENTITY_TYPES.register("avatar_water_entity", () -> EntityType.Builder.<AvatarWaterProjectile>of(AvatarWaterProjectile::new, MobCategory.MISC)
                     .sized(0.5f, 0.5f).build("avatar_water_projectile"));
+
+    public static final Supplier<EntityType<EntitySkybison>> AVATAR_SKYBISON_ENTITY_TYPE =
+            ENTITY_TYPES.register("avatar_skybison_entity", () -> EntityType.Builder.<EntitySkybison>of(EntitySkybison::new, MobCategory.CREATURE)
+                    .sized(0.5f, 0.5f).build("avatar_skybison_entity"));
 
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
