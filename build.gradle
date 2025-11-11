@@ -145,6 +145,8 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
     testImplementation(platform('org.junit:junit-bom:5.11.2'))
     testImplementation('org.junit.jupiter:junit-jupiter')
+    // testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // TODO - https://docs.neoforged.net/toolchain/docs/plugins/mdg/#unit-testing-with-junit
 
     // Photon 2 VFX
     implementation("com.lowdragmc.ldlib2:ldlib2-neoforge-${minecraft_version}:${ldlib2_version}:all") { transitive = false }
