@@ -19,6 +19,7 @@ public class AvatarAttachments {
             "bender_data", () -> AttachmentType.builder(BenderData::new)
                     .serialize(new BenderData())
                     .copyOnDeath()
+                    .sync(BenderData.STREAM_CODEC)
                     .build());
 
     public static final Supplier<AttachmentType<Element>> ACTIVE_ELEMENT = ATTACHMENT_TYPES.register(

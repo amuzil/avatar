@@ -14,7 +14,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
@@ -29,7 +28,7 @@ public class ServerEvents {
         if (event.getEntity() instanceof ServerPlayer player) {
             IBender bender = player.getCapability(AvatarCapabilities.BENDER);
             if (bender == null) return;
-            bender.syncToClient();
+//            bender.syncData();
             bender.register();
         }
     }
@@ -39,11 +38,11 @@ public class ServerEvents {
         if (event.getEntity() instanceof ServerPlayer player) {
             IBender bender = player.getCapability(AvatarCapabilities.BENDER);
             if (bender == null) return;
-            bender.syncToClient();
+//            bender.syncData();
             bender.unregister();
         }
     }
-//
+
 //    @SubscribeEvent
 //    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 //        if (!(event.getEntity() instanceof ServerPlayer player)) return;

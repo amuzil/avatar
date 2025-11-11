@@ -27,7 +27,7 @@ class CommandUtils {
         IBender bender = player.getCapability(AvatarCapabilities.BENDER);
         if (bender != null) {
             bender.setElement(element);
-            bender.syncToClient();
+            bender.syncData();
             targetPlayer.sendSystemMessage(Component.literal("Active Bending set to " + element.name()));
         }
         return 1;
@@ -76,7 +76,7 @@ class CommandUtils {
                 bender.resetSkillData();
                 action = "Resetting all skills";
             }
-            bender.syncToClient();
+            bender.syncData();
             targetPlayer.sendSystemMessage(Component.literal(action));
         }
         return 1;
@@ -89,7 +89,7 @@ class CommandUtils {
         IBender bender = player.getCapability(AvatarCapabilities.BENDER);
         if (bender == null) return 1;
         bender.setCanUseElement(canUse, element);
-        bender.syncToClient();
+        bender.syncData();
         String action = canUse
                 ? String.format("Granted the power of %s. May the element of %s protect you.", element.name(), element.nickName())
                 : String.format("Taken %s away.", element.name());
@@ -104,7 +104,7 @@ class CommandUtils {
         IBender bender = player.getCapability(AvatarCapabilities.BENDER);
         if (bender == null) return 1;
         bender.setCanUseSkill(canUse, skill.name());
-        bender.syncToClient();
+        bender.syncData();
         String action = canUse
                 ? String.format("Learned %s skill", skill.name())
                 : String.format("Forgot %s skill", skill.name());
@@ -119,7 +119,7 @@ class CommandUtils {
         IBender bender = player.getCapability(AvatarCapabilities.BENDER);
         if (bender == null) return 1;
         bender.setCanUseAllSkills(element);
-        bender.syncToClient();
+        bender.syncData();
         targetPlayer.sendSystemMessage(Component.literal("Mastered the element of " + element.nickName() + "."));
 
         return 1;
@@ -136,7 +136,7 @@ class CommandUtils {
         ben.getSkillData(skill.name()).getSkillTraits().forEach(trait -> {
             if (trait.name().equals(tag.getString("name"))) {
                 trait.deserializeNBT(targetPlayer.level().registryAccess(), tag);
-                bender.syncToClient();
+                bender.syncData();
                 targetPlayer.sendSystemMessage(Component.literal("Updated " + trait.name() + " SkillTrait for " + skill.name()));
             }
         });

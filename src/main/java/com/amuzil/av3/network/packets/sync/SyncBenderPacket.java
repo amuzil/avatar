@@ -16,6 +16,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import java.util.Objects;
 import java.util.UUID;
 
+@Deprecated
 public class SyncBenderPacket implements AvatarPacket {
     public static final Type<SyncBenderPacket> TYPE = new Type<>(Avatar.id(SyncBenderPacket.class));
     public static final StreamCodec<FriendlyByteBuf, SyncBenderPacket> CODEC =

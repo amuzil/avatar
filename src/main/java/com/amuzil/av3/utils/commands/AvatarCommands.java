@@ -21,13 +21,11 @@ public class AvatarCommands {
     private static final LiteralArgumentBuilder<CommandSourceStack> builder =  Commands.literal("avatar");
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        builder.then(Commands.literal("tree")
-                .then(Commands.literal("reset")
-                        .executes(c -> {
-                            // Default message when no args are provided.
-                            InputModule.sendDebugMsg("Options: activate, grant, take, element");
-                            return 1;
-                        })));
+        builder.executes(c -> {
+            // Default message when no args are provided.
+            InputModule.sendDebugMsg("Options: activate, grant, take, trigger, reset, master");
+            return 1;
+        });
         createFormCommands();
         createSkillCommands();
         createElementCommands();

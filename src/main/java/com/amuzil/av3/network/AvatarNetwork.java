@@ -4,7 +4,6 @@ import com.amuzil.av3.Avatar;
 import com.amuzil.av3.network.packets.api.AvatarPacket;
 import com.amuzil.av3.network.packets.form.ExecuteFormPacket;
 import com.amuzil.av3.network.packets.form.ReleaseFormPacket;
-import com.amuzil.av3.network.packets.sync.SyncBenderPacket;
 import com.amuzil.av3.network.packets.sync.SyncMovementPacket;
 import com.amuzil.av3.network.packets.sync.SyncSelectionPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -21,12 +20,6 @@ public class AvatarNetwork {
     @SubscribeEvent
     public static void register(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar(Avatar.MOD_ID).versioned(VERSION);
-
-        registrar.playBidirectional(
-                SyncBenderPacket.TYPE,
-                SyncBenderPacket.CODEC,
-                SyncBenderPacket::handle
-        );
 
         registrar.playBidirectional(
                 SyncSelectionPacket.TYPE,

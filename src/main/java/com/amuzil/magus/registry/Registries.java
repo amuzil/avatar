@@ -44,7 +44,7 @@ public class Registries {
     private static final HashMap<String, Form> forms = new HashMap<>();
     private static final List<SkillCategory> categories = new ArrayList<>();
     private static final HashMap<String, Supplier<Skill>> skills = new HashMap<>();
-    private static final Map<String, Supplier<? extends Skill>> skillSuppliers = new HashMap<>();
+    private static final HashMap<String, Supplier<? extends Skill>> skillSuppliers = new HashMap<>();
     private static final List<DataTrait> traits = new ArrayList<>();
 
     // === Accessors ===

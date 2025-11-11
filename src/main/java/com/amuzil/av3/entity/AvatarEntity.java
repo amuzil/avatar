@@ -79,9 +79,6 @@ public abstract class AvatarEntity extends Entity {
         renderModules.forEach(mod -> mod.init(this));
     }
 
-    /**
-     * Called to update the entity's position/logic.
-     */
     @Override
     public void tick() {
         super.tick();

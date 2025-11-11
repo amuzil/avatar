@@ -8,6 +8,8 @@ import com.amuzil.magus.skill.data.SkillData;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import org.apache.logging.log4j.LogManager;
@@ -20,6 +22,15 @@ import java.util.Map;
 
 
 public class BenderData implements IAttachmentSerializer<CompoundTag, BenderData> {
+    public static final StreamCodec<RegistryFriendlyByteBuf, BenderData> STREAM_CODEC =
+            StreamCodec.of(
+                    (buf, data) -> buf.writeNbt(data.serializeNBT(buf.registryAccess())),
+                    buf -> {
+                        BenderData data = new BenderData();
+                        data.deserializeNBT(buf.registryAccess(), buf.readNbt());
+                        return data;
+                    }
+            );
     private static final Logger LOGGER = LogManager.getLogger();
     private static final int DATA_VERSION = 1; // Update this as your data structure changes
     public final List<SkillCategoryData> skillCategoryData = new ArrayList<>();
