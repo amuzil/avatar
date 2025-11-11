@@ -42,7 +42,6 @@ import static com.amuzil.av3.data.attachment.AvatarAttachments.BENDER_DATA;
 public class Bender implements IBender {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final int DATA_VERSION = 1; // Update this as your data structure changes
 
     public final HashMap<String, Skill> activeSkills = new HashMap<>();
     private final List<Skill> availableSkills = new ArrayList<>();

@@ -1,16 +1,18 @@
-package com.amuzil.av3.entity.modules.entity;
+package com.amuzil.av3.entity.modules.render;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.entity.AvatarEntity;
-import com.amuzil.av3.entity.api.IEntityModule;
+import com.amuzil.av3.entity.api.IRenderModule;
 import com.amuzil.av3.utils.sound.AvatarEntitySound;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
-public class SoundModule implements IEntityModule {
+public class SoundModule implements IRenderModule {
 
     public static String id = SoundModule.class.getSimpleName();
 
@@ -47,6 +49,7 @@ public class SoundModule implements IEntityModule {
         id = nbt.getString("ID");
     }
 
+    @OnlyIn(Dist.CLIENT)
     public static void startSoundEffect(String sfxName, AvatarEntity entity) {
         if (sfxName != null) {
             ResourceLocation id = Avatar.id(sfxName);

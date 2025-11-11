@@ -6,7 +6,7 @@ import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.modules.ModuleRegistry;
 import com.amuzil.av3.entity.modules.collision.*;
 import com.amuzil.av3.entity.modules.entity.GrowModule;
-import com.amuzil.av3.entity.modules.entity.SoundModule;
+import com.amuzil.av3.entity.modules.render.SoundModule;
 import com.amuzil.av3.entity.modules.entity.TimeoutModule;
 import com.amuzil.av3.entity.modules.force.*;
 import com.amuzil.av3.entity.modules.render.PhotonModule;

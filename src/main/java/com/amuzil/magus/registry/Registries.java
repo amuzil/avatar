@@ -31,12 +31,10 @@ public class Registries {
 //    public static final DeferredRegister<Form> FORMS =
 //            DeferredRegister.create(Avatar.id("forms"), Avatar.MOD_ID);
     public static Registry<Form> FORMS;
-
     public static final DeferredRegister<Skill> SKILL_REGISTER =
             DeferredRegister.create(Avatar.id("skills"), Avatar.MOD_ID);
     public static final DeferredRegister<SkillCategory> SKILL_CATEGORY_REGISTER =
             DeferredRegister.create(Avatar.id("skill_categories"), Avatar.MOD_ID);
-
     public static final Registry<Skill> SKILLS =
             SKILL_REGISTER.makeRegistry((builder) -> builder.sync(true));
     public static final Registry<SkillCategory> SKILL_CATEGORIES =
@@ -44,9 +42,9 @@ public class Registries {
 
     // === Local Containers ===
     private static final HashMap<String, Form> forms = new HashMap<>();
+    private static final List<SkillCategory> categories = new ArrayList<>();
     private static final HashMap<String, Supplier<Skill>> skills = new HashMap<>();
     private static final Map<String, Supplier<? extends Skill>> skillSuppliers = new HashMap<>();
-    private static final List<SkillCategory> categories = new ArrayList<>();
     private static final List<DataTrait> traits = new ArrayList<>();
 
     // === Accessors ===

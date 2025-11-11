@@ -5,7 +5,7 @@ import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.IAvatarProjectile;
 import com.amuzil.av3.entity.api.IRenderModule;
 import com.amuzil.av3.entity.modules.ModuleRegistry;
-import com.amuzil.av3.entity.modules.entity.SoundModule;
+import com.amuzil.av3.entity.modules.render.SoundModule;
 import com.amuzil.av3.entity.modules.entity.TimeoutModule;
 import com.amuzil.av3.entity.modules.render.PhotonModule;
 import com.google.common.base.MoreObjects;
