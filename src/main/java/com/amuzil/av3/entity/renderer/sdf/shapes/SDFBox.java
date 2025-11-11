@@ -12,6 +12,10 @@ public class SDFBox implements SignedDistanceFunction {
     private final Vector3f local = new Vector3f();
     private final Vector3f q = new Vector3f();
 
+    public SDFBox() {
+        this.a.xform.computeMatrices();
+    }
+
     public SDFBox(Vector3f center, Vector3f halfExtents) {
         this.a.xform.position.set(center);
         this.halfExtents.set(halfExtents);

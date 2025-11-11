@@ -10,6 +10,7 @@ import com.amuzil.av3.entity.modules.entity.SoundModule;
 import com.amuzil.av3.entity.modules.entity.TimeoutModule;
 import com.amuzil.av3.entity.modules.force.*;
 import com.amuzil.av3.entity.modules.render.PhotonModule;
+import com.amuzil.av3.entity.renderer.sdf.SdfConstants;
 import com.amuzil.av3.entity.renderer.sdf.SdfManager;
 import com.amuzil.av3.input.InputModule;
 import com.amuzil.av3.network.AvatarNetwork;
@@ -69,6 +70,9 @@ public class Avatar {
 
         Registries.SKILL_CATEGORY_REGISTER.register(modEventBus);
         Registries.SKILL_REGISTER.register(modEventBus);
+//        SdfConstants.init();
+//        SdfManager.INSTANCE.SDFS.clear();
+        SdfManager.INSTANCE.readFolder();
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         // modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);

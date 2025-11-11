@@ -1,6 +1,6 @@
 package com.amuzil.av3.entity.renderer.sdf;
 
-import com.amuzil.av3.utils.Constants;
+import com.amuzil.av3.entity.renderer.PointData;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -10,31 +10,44 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Scanner;
 
 public class SdfManager {
-    public HashMap<String, SdfShapeRecord> LOADED_SDFS = new HashMap<>();
+    public static SdfManager INSTANCE = new SdfManager();
+
+    public HashMap<String, SdfShapeRecord> SDFS = new HashMap<>();
 
     private final String SDF_SHAPE_FOLDER = "./local/av3/sdfs";
 
+    public void registerSdf(String name, SignedDistanceFunction function, boolean animated) {
+        // create shape record.
+        SdfShapeRecord record = new SdfShapeRecord(function);
+
+        // todo: bake the field.
+        record.sdfField = new PointData[][][] {};
+
+        SDFS.put(name, record);
+    }
+
     public void readFolder() {
         try {
-            StringBuilder sb = new StringBuilder();
             File sdfFolder = new File(SDF_SHAPE_FOLDER);
-            for (final File fileEntry : sdfFolder.listFiles()) {
-                if (fileEntry.isDirectory()) {
+            File[] files = sdfFolder.listFiles();
+            Gson gson = SdfGson.create().setPrettyPrinting().create();
+            for (File fileEntry : files) {
+                if (fileEntry.isFile()) {
+                    StringBuilder sb = new StringBuilder();
                     Scanner myReader = new Scanner(fileEntry);
                     while (myReader.hasNextLine()) {
                         String data = myReader.nextLine();
                         sb.append(data);
                     }
                     myReader.close();
-                    GsonBuilder builder = new GsonBuilder();
-                    builder.setPrettyPrinting();
-                    Gson gson = builder.create();
-                    gson.fromJson(sb.toString(), SdfShapeRecord.class);
+                    myReader = null;
+                    String jsonString = sb.toString();
+                    SdfShapeRecord loadedSdf = gson.fromJson(jsonString, SdfShapeRecord.class);
+                    SDFS.put(fileEntry.getName(), loadedSdf);
                 } else {
                     System.out.println(fileEntry.getName());
                 }
@@ -48,20 +61,20 @@ public class SdfManager {
     }
 
     public void writeConfig() {
-        SdfConstants.init();
         try {
             File configFile = new File(SDF_SHAPE_FOLDER);
             Files.createDirectories(configFile.toPath());
 
-            File toWrite = new File(SDF_SHAPE_FOLDER + "/" + "sphere" + ".json");
+            for (final String name : SDFS.keySet()) {
+                File toWrite = new File(SDF_SHAPE_FOLDER + "/" + name + ".json");
 
-//            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            Gson gson2 = SdfGson.create().setPrettyPrinting().create();
+                Gson gson = SdfGson.create().setPrettyPrinting().create();
 
-            FileWriter writer = new FileWriter(toWrite);
-//            gson.toJson(new SdfShapeRecord(SdfConstants.STATIC_SPHERE), writer);
-            gson2.toJson(new SdfShapeRecord(SdfConstants.STATIC_SPHERE), writer);
-            writer.flush();
+                FileWriter writer = new FileWriter(toWrite);
+                gson.toJson(SDFS.get(name), writer);
+                writer.flush();
+
+            }
         } catch (IOException e) {
 
             System.out.println("An error occurred writing config json!");
