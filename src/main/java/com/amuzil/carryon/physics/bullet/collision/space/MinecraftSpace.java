@@ -42,7 +42,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @see PhysicsThread
  * @see PhysicsSpaceEvent
  */
-@SuppressWarnings("deprecation")
 public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionListener {
     private final CompletableFuture<?>[] futures = new CompletableFuture[3];
     private final Map<BlockPos, TerrainRigidBody> terrainMap;
@@ -76,7 +75,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
         this.chunkCache = ChunkCache.create(this);
         this.terrainMap = new ConcurrentHashMap<>();
         this.setGravity(new Vector3f(0, -9.807f, 0));
-        this.addCollisionListener(this);
+//        this.addCollisionListener(this);
         this.setAccuracy(1f / 60f);
     }
 
@@ -122,7 +121,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
                 // Hop threads...
                 this.futures[i] = CompletableFuture.runAsync(() -> {
                     /* Call collision events */
-                    this.distributeEvents();
+//                    this.distributeEvents();
 
                     /* World Step Event */
                     NeoForge.EVENT_BUS.post(new PhysicsSpaceEvent.Step(this));

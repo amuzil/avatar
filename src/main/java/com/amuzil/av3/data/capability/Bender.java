@@ -50,7 +50,6 @@ public class Bender implements IBender {
     private final int SKILL_ACTIVATION_THRESHOLD = 10;
     private int skillActivationTimer = SKILL_ACTIVATION_THRESHOLD;
 
-    // Non-Persistent data
     private final LivingEntity entity;
     private final Consumer<FormActivatedEvent> formListener;
     private boolean isDirty = true; // Indicates if data was changed
