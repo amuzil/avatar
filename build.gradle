@@ -53,11 +53,17 @@ neoForge {
     runs {
         client {
             client()
-
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-            // Set custom username
-            programArgument '--username Dev### --mixin.config=av3.mixins.json'
+            gameDirectory = project.layout.projectDirectory.dir('run/client')
+            programArguments.addAll "--username", "Dev1#"
+        }
+
+        client_2 {
+            client()
+            ideName = "Client 2"
+            gameDirectory = project.layout.projectDirectory.dir('run/client_2')
+            programArguments.addAll "--username", "Dev2#"
         }
 
         server {
