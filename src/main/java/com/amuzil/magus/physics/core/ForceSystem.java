@@ -1,6 +1,7 @@
 package com.amuzil.magus.physics.core;
 
 import com.amuzil.carryon.physics.bullet.collision.space.MinecraftSpace;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 
 import java.util.ArrayList;
@@ -32,11 +33,14 @@ public class ForceSystem {
         this.workerPool = null;
     }
 
-    public ForceCloud createCloud(int type, int maxPoints) {
+    public ForceCloud createCloud(int type, int maxPoints, Vec3 pos, Vec3 vel, Vec3 force) {
         // choose some grid dims; you can make this smarter later
         ForceCloud cloud = new ForceCloud(
                 type,
                 maxPoints,
+                pos,
+                vel,
+                force,
                 workerPool
         );
         this.clouds.add(cloud);
@@ -65,6 +69,7 @@ public class ForceSystem {
 
         // 1) tick each cloud (modules + integration + bounds)
         for (ForceCloud cloud : clouds) {
+            System.out.println("Cloud Ticking.");
             cloud.tick(dt);
         }
 
@@ -78,7 +83,7 @@ public class ForceSystem {
             cloud.resolveSelfCollisions(selfRestRadius, selfStiffness, selfDamping);
         }
 
-        // 4) cloud-cloud collisions. n^2 for now; optimize later if needed
+//         4) cloud-cloud collisions. n^2 for now; optimize later if needed
         int n = clouds.size();
         for (int i = 0; i < n; i++) {
             ForceCloud a = clouds.get(i);

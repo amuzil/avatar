@@ -5,28 +5,26 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicIntegerArray;
 
 // A spatially hashed grid of forcepoints to prevent per-point neighbour checking. Yay!
 public class ForceGrid<T extends IPhysicsElement> {
-    public static final int MIN_POINTS_PER_WORKER = 4096;
+    public static final int MIN_POINTS_PER_WORKER = 4096; // keep for future parallelism if you want
 
     private final double cellSize;
     private final int binCountX, binCountY, binCountZ;
     private final int totalBins;
 
-    private final AtomicIntegerArray binCounts;
-    private final int[] binStartOffsets;
-    private final T[] sortedPoints;    // store T references
+    // Sparse bins: each bin is a list of points (lazy-created)
+    private final List<T>[] bins;
+    // Track which bins are non-empty this frame
+    private final int[] usedBins;
     private final List<T> allPoints;
-
     private final ExecutorService threadPool;
     private final int parallelism;
-    private final List<Future<?>> futures = new ArrayList<>();
+    private int usedBinCount = 0;
 
+    @SuppressWarnings("unchecked")
     public ForceGrid(double cellSize, int binCountX, int binCountY, int binCountZ,
                      int maxPoints, @Nullable ExecutorService threadPool) {
         this.cellSize = cellSize;
@@ -35,12 +33,8 @@ public class ForceGrid<T extends IPhysicsElement> {
         this.binCountZ = binCountZ;
         this.totalBins = binCountX * binCountY * binCountZ;
 
-        this.binCounts = new AtomicIntegerArray(totalBins);
-        this.binStartOffsets = new int[totalBins];
-
-        @SuppressWarnings("unchecked")
-        T[] sp = (T[]) new IPhysicsElement[maxPoints];
-        this.sortedPoints = sp;
+        this.bins = (List<T>[]) new List[totalBins];
+        this.usedBins = new int[totalBins]; // worst-case: all bins used once this frame
 
         this.allPoints = new ArrayList<>(maxPoints);
         this.threadPool = threadPool;
@@ -56,14 +50,12 @@ public class ForceGrid<T extends IPhysicsElement> {
         return (int) (xi + yi * binCountX + zi * (binCountX * binCountY));
     }
 
-    // Fills an existing coords array
     private void normalCoords(double x, double y, double z, long[] coords) {
         coords[0] = (long) Math.floor(x / cellSize);
         coords[1] = (long) Math.floor(y / cellSize);
         coords[2] = (long) Math.floor(z / cellSize);
     }
 
-    // Convenience overload that allocates a new array
     private long[] normalCoords(double x, double y, double z) {
         long[] coords = new long[3];
         normalCoords(x, y, z, coords);
@@ -72,130 +64,62 @@ public class ForceGrid<T extends IPhysicsElement> {
 
     public void insert(T p) {
         allPoints.add(p);
-        // you *may* want to guard against exceeding sortedPoints.length here
     }
 
     public void clear() {
         allPoints.clear();
+        // bins will be cleared lazily in rebuild()
     }
 
+    /**
+     * Rebuild the spatial grid from allPoints.
+     * Complexity: O(numPoints + usedBins) instead of O(totalBins).
+     */
     public void rebuild() {
         final int n = allPoints.size();
+
         if (n == 0) {
-            // Clear counts so queries don't see stale data
-            for (int i = 0; i < totalBins; i++) {
-                binCounts.set(i, 0);
-                binStartOffsets[i] = 0;
+            // Clear only bins that were used last frame
+            for (int i = 0; i < usedBinCount; i++) {
+                int bi = usedBins[i];
+                List<T> list = bins[bi];
+                if (list != null) {
+                    list.clear();
+                }
             }
+            usedBinCount = 0;
             return;
         }
 
-        // Guard (optional): avoid overflowing sortedPoints
-        final int effectiveN = Math.min(n, sortedPoints.length);
-
-        // Step 1: zero counts
-        for (int i = 0; i < totalBins; i++) {
-            binCounts.set(i, 0);
-        }
-
-        boolean canParallel = (threadPool != null && parallelism > 1);
-        boolean useParallel = canParallel && effectiveN >= MIN_POINTS_PER_WORKER;
-
-        int numWorkers;
-        if (useParallel) {
-            // Aim for at least MIN_POINTS_PER_WORKER per worker
-            numWorkers = Math.min(
-                    parallelism,
-                    Math.max(1, (effectiveN + MIN_POINTS_PER_WORKER - 1) / MIN_POINTS_PER_WORKER)
-            );
-        } else {
-            numWorkers = 1;
-        }
-
-        int chunkSize = (effectiveN + numWorkers - 1) / numWorkers;
-
-        // ---- Step 2: counting assignment ----
-        if (useParallel) {
-            futures.clear();
-            for (int t = 0; t < numWorkers; t++) {
-                final int start = t * chunkSize;
-                if (start >= effectiveN) break;
-                final int end = Math.min(effectiveN, (t + 1) * chunkSize);
-                futures.add(threadPool.submit(() -> {
-                    long[] coords = new long[3];
-                    for (int i = start; i < end; i++) {
-                        binPoints(coords, i);
-                    }
-                }));
-            }
-            waitAll(futures);
-        } else {
-            long[] coords = new long[3];
-            for (int i = 0; i < effectiveN; i++) {
-                binPoints(coords, i);
+        // 1) Clear previously used bins
+        for (int i = 0; i < usedBinCount; i++) {
+            int bi = usedBins[i];
+            List<T> list = bins[bi];
+            if (list != null) {
+                list.clear();
             }
         }
+        usedBinCount = 0;
 
-        // ---- Step 3: prefix sums & reset counts for scatter ----
-        int offset = 0;
-        for (int i = 0; i < totalBins; i++) {
-            int c = binCounts.get(i);
-            binStartOffsets[i] = offset;
-            offset += c;
-            binCounts.set(i, 0);
-        }
+        // 2) Re-insert all points into appropriate bins
+        // (single-threaded for now; you can parallelize this loop later if really needed)
+        long[] coords = new long[3];
+        for (int i = 0; i < n; i++) {
+            T p = allPoints.get(i);
+            Vec3 pos = p.pos();
+            normalCoords(pos.x, pos.y, pos.z, coords);
+            int bi = computeLinearBinIndex(coords[0], coords[1], coords[2]);
+            if (bi < 0) continue;
 
-        // ---- Step 4: scatter points ----
-        if (useParallel) {
-            futures.clear();
-            for (int t = 0; t < numWorkers; t++) {
-                final int start = t * chunkSize;
-                if (start >= effectiveN) break;
-                final int end = Math.min(effectiveN, (t + 1) * chunkSize);
-                futures.add(threadPool.submit(() -> {
-                    long[] coords = new long[3];
-                    for (int i = start; i < end; i++) {
-                        sortPoints(coords, i);
-                    }
-                }));
+            List<T> list = bins[bi];
+            if (list == null) {
+                list = new ArrayList<>();
+                bins[bi] = list;
             }
-            waitAll(futures);
-        } else {
-            long[] coords = new long[3];
-            for (int i = 0; i < effectiveN; i++) {
-                sortPoints(coords, i);
+            if (list.isEmpty()) {
+                usedBins[usedBinCount++] = bi;
             }
-        }
-    }
-
-    private void sortPoints(long[] coords, int i) {
-        T p = allPoints.get(i);
-        Vec3 pos = p.pos();
-        normalCoords(pos.x, pos.y, pos.z, coords);
-        int bi = computeLinearBinIndex(coords[0], coords[1], coords[2]);
-        if (bi >= 0) {
-            int idx = binStartOffsets[bi] + binCounts.getAndIncrement(bi);
-            sortedPoints[idx] = p;
-        }
-    }
-
-    private void binPoints(long[] coords, int i) {
-        T p = allPoints.get(i);
-        Vec3 pos = p.pos();
-        normalCoords(pos.x, pos.y, pos.z, coords);
-        int bi = computeLinearBinIndex(coords[0], coords[1], coords[2]);
-        if (bi >= 0) {
-            binCounts.incrementAndGet(bi);
-        }
-    }
-
-    private void waitAll(List<Future<?>> futures) {
-        for (Future<?> f : futures) {
-            try {
-                f.get();
-            } catch (ExecutionException | InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            list.add(p);
         }
     }
 
@@ -214,11 +138,10 @@ public class ForceGrid<T extends IPhysicsElement> {
                     int bi = computeLinearBinIndex(xi, yi, zi);
                     if (bi < 0) continue;
 
-                    int start = binStartOffsets[bi];
-                    int count = binCounts.get(bi);
-                    for (int idx = start; idx < start + count; idx++) {
-                        T p = sortedPoints[idx];
-                        if (p == null) continue; // paranoia
+                    List<T> list = bins[bi];
+                    if (list == null || list.isEmpty()) continue;
+
+                    for (T p : list) {
                         Vec3 pp = p.pos();
                         double dxp = pp.x - pos.x;
                         double dyp = pp.y - pos.y;
@@ -237,21 +160,23 @@ public class ForceGrid<T extends IPhysicsElement> {
     public List<T> queryCell(Vec3 pos) {
         List<T> result = new ArrayList<>();
         long[] baseC = normalCoords(pos.x, pos.y, pos.z);
-        int cellRadius = 1;
-        double r2 = 1;
 
         long xi = baseC[0];
         long yi = baseC[1];
         long zi = baseC[2];
         int bi = computeLinearBinIndex(xi, yi, zi);
-        if (bi < 0)
+        if (bi < 0) {
             return result;
+        }
 
-        int start = binStartOffsets[bi];
-        int count = binCounts.get(bi);
-        for (int idx = start; idx < start + count; idx++) {
-            T p = sortedPoints[idx];
-            if (p == null) return result; // paranoia
+        List<T> list = bins[bi];
+        if (list == null || list.isEmpty()) {
+            return result;
+        }
+
+        // You had an r2 check before; keep a small radius if you want
+        double r2 = 1.0;
+        for (T p : list) {
             Vec3 pp = p.pos();
             double dxp = pp.x - pos.x;
             double dyp = pp.y - pos.y;

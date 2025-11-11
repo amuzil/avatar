@@ -25,7 +25,8 @@ import net.neoforged.neoforge.common.NeoForge;
 public final class CollisionObjectDebugger {
     private static boolean enabled;
 
-    private CollisionObjectDebugger() {}
+    private CollisionObjectDebugger() {
+    }
 
     public static boolean toggle() {
         enabled = !enabled;
@@ -46,8 +47,8 @@ public final class CollisionObjectDebugger {
 //        space.getTerrainMap().values().forEach(terrain -> CollisionObjectDebugger.renderBody(terrain, builder, stack, tickDelta));
 //        space.getRigidBodiesByClass(ElementRigidBody.class).forEach(elementRigidBody -> CollisionObjectDebugger.renderBody(elementRigidBody, builder, stack, tickDelta));
 
+
         renderForceClouds(space, builder, stack, cameraPos, tickDelta);
-        builder.build();
 
 
     }
@@ -68,29 +69,46 @@ public final class CollisionObjectDebugger {
         if (fs == null) return;
 
         for (ForceCloud cloud : fs.clouds()) {
+            System.out.println("Rendering bodies for debug:");
             // Simple colour per cloud type; tweak as you like
             float r = 0.2f, g = 0.6f, b = 1.0f;
             // you can switch on cloud.type() to pick different colours per element
+            Vec3 pos = cloud.pos();
+            double relX = pos.x - cameraPos.x;
+            double relY = pos.y - cameraPos.y;
+            double relZ = pos.z - cameraPos.z;
+
+            stack.pushPose();
+            stack.translate(relX, relY, relZ);
+
+            // tiny vertical line to represent the point
+            float len = 0.15f;
+
+            builder.addVertex(stack.last().pose(), 0.0f, 0.0f, 0.0f)
+                    .setColor(r, g, b, 1.0f);
+            builder.addVertex(stack.last().pose(), 0.0f, len, 0.0f)
+                    .setColor(r, g, b, 1.0f);
+//                builder.build();
+            stack.popPose();
 
             for (ForcePoint p : cloud.points()) {
-                Vec3 pos = p.pos();
+                pos = p.pos();
 
                 // position relative to camera
-                double relX = pos.x - cameraPos.x;
-                double relY = pos.y - cameraPos.y;
-                double relZ = pos.z - cameraPos.z;
+                relX = pos.x - cameraPos.x;
+                relY = pos.y - cameraPos.y;
+                relZ = pos.z - cameraPos.z;
 
                 stack.pushPose();
                 stack.translate(relX, relY, relZ);
 
                 // tiny vertical line to represent the point
-                float len = 0.15f;
 
                 builder.addVertex(stack.last().pose(), 0.0f, 0.0f, 0.0f)
                         .setColor(r, g, b, 1.0f);
                 builder.addVertex(stack.last().pose(), 0.0f, len, 0.0f)
                         .setColor(r, g, b, 1.0f);
-
+//                builder.build();
                 stack.popPose();
             }
         }

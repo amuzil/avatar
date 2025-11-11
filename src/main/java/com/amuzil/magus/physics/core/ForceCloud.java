@@ -22,7 +22,7 @@ public class ForceCloud extends PhysicsElement {
     private double remainingLifeSeconds = -1.0; // -1 = infinite
     private boolean hasLifetime = false;
 
-    public ForceCloud(int type, int maxPoints,
+    public ForceCloud(int type, int maxPoints, Vec3 pos, Vec3 vel, Vec3 force,
                       @Nullable ExecutorService pool) {
         super(type);
         this.rotation = new double[4];
@@ -35,6 +35,17 @@ public class ForceCloud extends PhysicsElement {
                 (int) (PhysicsBuilder.GRID_SIZE / cellSize),
                 maxPoints,
                 pool);
+
+        //Current Pos
+        insert(pos, 0);
+        // Prev pos
+        insert(Vec3.ZERO, 1);
+        // Current vel
+        insert(vel, 2);
+        // Prev force
+        insert(Vec3.ZERO, 3);
+        // Direction / Force / Acceleration
+        insert(force, 4);
     }
 
     // static so ForceSystem can call it for cross-cloud collisions too
@@ -93,8 +104,12 @@ public class ForceCloud extends PhysicsElement {
         remainingLifeSeconds -= dt;
     }
 
+    public double lifetime() {
+        return this.remainingLifeSeconds;
+    }
+
     public boolean isDead() {
-        return hasLifetime && remainingLifeSeconds <= 0.0;
+        return !hasLifetime || remainingLifeSeconds <= 0.0;
     }
 
     public void updateBoundsFromPoints() {
@@ -187,16 +202,42 @@ public class ForceCloud extends PhysicsElement {
     }
 
     public void tick(double dt) {
-        for (IPhysicsModule module : modules) {
-            module.preSolve(this);
-            module.solve(this);
-            module.postSolve(this);
+//        for (IPhysicsModule module : modules) {
+//            module.preSolve(this);
+//            module.solve(this);
+//            module.postSolve(this);
+//        }
+
+        // Moves
+        Vec3 pos = pos();
+        Vec3 vel = vel();
+        Vec3 oldVel = vel;
+        Vec3 force = force();
+
+        double invMass = mass() > 0.0 ? 1.0 / mass() : 0.0;
+        Vec3 acc = force.scale(invMass);
+
+        // velocity update
+        vel = vel.add(acc.scale(dt));
+
+        // simple damping
+        double d = damping();
+        if (d > 0.0) {
+            vel = vel.scale(Math.max(0.0, 1.0 - d * dt));
         }
 
-        // lifetime countdown
-        tickLifetime(dt);
+        Vec3 newPos = pos.add(vel.scale(dt));
 
-        System.out.println("Debug: " + points.size());
+        // write back into the point's data columns:
+        // 0 = pos, 1 = prevPos, 2 = vel, 3 = prevVel, 4 = force
+        insert(pos, 1);        // prevPos
+        insert(oldVel, 3);        // prevVel
+        insert(newPos, 0);     // pos
+        insert(vel, 2);
+        insert(Vec3.ZERO, 4);  // clear force
+        // lifetime countdown
+        tickLifetime(dt * 3);
+
         integratePoints(dt);
 
         updateBoundsFromPoints();
