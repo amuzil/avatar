@@ -33,7 +33,7 @@ public class ForceCloud extends PhysicsElement {
                 (int) (PhysicsBuilder.GRID_SIZE / cellSize),
                 (int) (PhysicsBuilder.GRID_SIZE / cellSize),
                 (int) (PhysicsBuilder.GRID_SIZE / cellSize),
-                maxPoints,
+                maxPoints, (long) pos.x, (long) pos.y, (long) pos.z,
                 pool);
 
         //Current Pos
@@ -83,6 +83,7 @@ public class ForceCloud extends PhysicsElement {
         double vn = relVel.dot(n);
 
         if (vn < 0.0) {
+            System.out.println("Attempting Collision.");
             double fdMag = -dampingCoeff * vn;
             Vec3 fd = n.scale(fdMag);
 
@@ -386,27 +387,62 @@ public class ForceCloud extends PhysicsElement {
                                       double dampingCoeff) {
         if (points.isEmpty()) return;
 
-        for (ForcePoint p : points) {
-            List<ForcePoint> neighbours = spaceGrid.queryRadius(p.pos(), restRadius);
-            for (ForcePoint q : neighbours) {
-                if (q == p) continue;
-                // cheap symmetry break to avoid double work
-                if (System.identityHashCode(q) <= System.identityHashCode(p)) continue;
+        double r2 = restRadius * restRadius;
+        int n = points.size();
+
+        for (int i = 0; i < n; i++) {
+            ForcePoint p = points.get(i);
+            Vec3 xp = p.pos();
+
+            for (int j = i + 1; j < n; j++) {
+                ForcePoint q = points.get(j);
+                Vec3 xq = q.pos();
+
+                double dx = xp.x - xq.x;
+                double dy = xp.y - xq.y;
+                double dz = xp.z - xq.z;
+                double dist2 = dx * dx + dy * dy + dz * dz;
+
+                if (dist2 > r2 || dist2 <= 1e-12) {
+                    continue;
+                }
+
                 resolvePair(p, q, restRadius, stiffness, dampingCoeff);
             }
         }
+
+        // Alternative implementation using spatial grid (commented out due to inefficiency with small clouds)
+//        if (points.isEmpty()) return;
+//
+//        for (ForcePoint p : points) {
+//            List<ForcePoint> neighbours = spaceGrid.queryRadius(p.pos(), restRadius);
+//            for (ForcePoint q : neighbours) {
+//                if (q == p) continue;
+//                // cheap symmetry break to avoid double work
+//                if (System.identityHashCode(q) <= System.identityHashCode(p)) continue;
+//                resolvePair(p, q, restRadius, stiffness, dampingCoeff);
+//            }
+//        }
     }
 
 
     // Don't need this anymore... Rebuild is called from within the manager for the overall SpaceGrid
     public void rebuildSpatialGrid() {
         // Build grid...
-        if (spaceGrid == null) return;
-        spaceGrid.clear();
-        for (ForcePoint p : points) {
-            spaceGrid.insert(p);
+        if (points.isEmpty()) {
+            spaceGrid.rebuildFrom(points); // clears used bins
+            return;
         }
-        spaceGrid.rebuild();
+
+        // Optionally reposition grid origin around this cloud’s bounds:
+        // e.g. snap to min corner in blocks
+        long originX = (long) Math.floor(bounds.minX);
+        long originY = (long) Math.floor(bounds.minY);
+        long originZ = (long) Math.floor(bounds.minZ);
+        spaceGrid.setOrigin(originX, originY, originZ);
+
+        // Now rebuild from our point list
+        spaceGrid.rebuildFrom(points);
     }
 }
 

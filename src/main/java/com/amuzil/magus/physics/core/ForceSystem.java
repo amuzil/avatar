@@ -19,11 +19,11 @@ public class ForceSystem {
     private final double cellSize = 0.25;
 
     // simple collision params – tune these later
-    private final double selfRestRadius = 0.25;
+    private final double selfRestRadius = cellSize / 4;
     private final double selfStiffness = 50.0;
     private final double selfDamping  = 5.0;
 
-    private final double crossRestRadius = 0.35;
+    private final double crossRestRadius = cellSize / 2;
     private final double crossStiffness  = 80.0;
     private final double crossDamping    = 8.0;
 
@@ -69,19 +69,20 @@ public class ForceSystem {
 
         // 1) tick each cloud (modules + integration + bounds)
         for (ForceCloud cloud : clouds) {
-            System.out.println("Cloud Ticking.");
+//            System.out.println("Cloud Ticking.");
             cloud.tick(dt);
-        }
-
-        // 2) rebuild each cloud's point grid
-        for (ForceCloud cloud : clouds) {
             cloud.rebuildSpatialGrid();
         }
 
-        // 3) self-collisions
-        for (ForceCloud cloud : clouds) {
-            cloud.resolveSelfCollisions(selfRestRadius, selfStiffness, selfDamping);
-        }
+        // 2) rebuild each cloud's point grid
+//        for (ForceCloud cloud : clouds) {
+//            cloud.rebuildSpatialGrid();
+//        }
+
+//         3) self-collisions
+//        for (ForceCloud cloud : clouds) {
+//            cloud.resolveSelfCollisions(selfRestRadius, selfStiffness, selfDamping);
+//        }
 
 //         4) cloud-cloud collisions. n^2 for now; optimize later if needed
         int n = clouds.size();
@@ -90,6 +91,10 @@ public class ForceSystem {
             for (int j = i + 1; j < n; j++) {
                 ForceCloud b = clouds.get(j);
                 if (!a.boundsOverlap(b)) continue;
+                // Rebuilds the grid for collision
+//                System.out.println("Hey?");
+//                b.rebuildSpatialGrid();
+//                a.rebuildSpatialGrid();
                 collideClouds(a, b);
             }
         }

@@ -23,15 +23,20 @@ public class ForceGrid<T extends IPhysicsElement> {
     private final ExecutorService threadPool;
     private final int parallelism;
     private int usedBinCount = 0;
+    private long originX, originY, originZ;
 
     @SuppressWarnings("unchecked")
     public ForceGrid(double cellSize, int binCountX, int binCountY, int binCountZ,
-                     int maxPoints, @Nullable ExecutorService threadPool) {
+                     int maxPoints, long originX, long originY, long originZ, @Nullable ExecutorService threadPool) {
         this.cellSize = cellSize;
         this.binCountX = binCountX;
         this.binCountY = binCountY;
         this.binCountZ = binCountZ;
         this.totalBins = binCountX * binCountY * binCountZ;
+
+        this.originX = originX;
+        this.originY = originY;
+        this.originZ = originZ;
 
         this.bins = (List<T>[]) new List[totalBins];
         this.usedBins = new int[totalBins]; // worst-case: all bins used once this frame
@@ -51,9 +56,13 @@ public class ForceGrid<T extends IPhysicsElement> {
     }
 
     private void normalCoords(double x, double y, double z, long[] coords) {
-        coords[0] = (long) Math.floor(x / cellSize);
-        coords[1] = (long) Math.floor(y / cellSize);
-        coords[2] = (long) Math.floor(z / cellSize);
+        double lx = x - originX; // world → local
+        double ly = y - originY;
+        double lz = z - originZ;
+
+        coords[0] = (long) Math.floor(lx / cellSize);
+        coords[1] = (long) Math.floor(ly / cellSize);
+        coords[2] = (long) Math.floor(lz / cellSize);
     }
 
     private long[] normalCoords(double x, double y, double z) {
@@ -71,27 +80,9 @@ public class ForceGrid<T extends IPhysicsElement> {
         // bins will be cleared lazily in rebuild()
     }
 
-    /**
-     * Rebuild the spatial grid from allPoints.
-     * Complexity: O(numPoints + usedBins) instead of O(totalBins).
-     */
-    public void rebuild() {
-        final int n = allPoints.size();
 
-        if (n == 0) {
-            // Clear only bins that were used last frame
-            for (int i = 0; i < usedBinCount; i++) {
-                int bi = usedBins[i];
-                List<T> list = bins[bi];
-                if (list != null) {
-                    list.clear();
-                }
-            }
-            usedBinCount = 0;
-            return;
-        }
-
-        // 1) Clear previously used bins
+    public void rebuildFrom(List<T> points) {
+        // 1) Clear previously used bins only
         for (int i = 0; i < usedBinCount; i++) {
             int bi = usedBins[i];
             List<T> list = bins[bi];
@@ -101,15 +92,22 @@ public class ForceGrid<T extends IPhysicsElement> {
         }
         usedBinCount = 0;
 
-        // 2) Re-insert all points into appropriate bins
-        // (single-threaded for now; you can parallelize this loop later if really needed)
+        if (points.isEmpty()) {
+            return;
+        }
+
         long[] coords = new long[3];
-        for (int i = 0; i < n; i++) {
-            T p = allPoints.get(i);
+
+        // 2) Insert each point into bin
+        for (int i = 0, n = points.size(); i < n; i++) {
+            T p = points.get(i);
+            if (p == null) continue;
+
             Vec3 pos = p.pos();
             normalCoords(pos.x, pos.y, pos.z, coords);
+
             int bi = computeLinearBinIndex(coords[0], coords[1], coords[2]);
-            if (bi < 0) continue;
+            if (bi < 0) continue; // outside grid bounds
 
             List<T> list = bins[bi];
             if (list == null) {
@@ -119,8 +117,63 @@ public class ForceGrid<T extends IPhysicsElement> {
             if (list.isEmpty()) {
                 usedBins[usedBinCount++] = bi;
             }
-            list.add(p);
         }
+    }
+    /**
+     * Rebuild the spatial grid from allPoints.
+     * Complexity: O(numPoints + usedBins) instead of O(totalBins).
+     */
+    public void rebuild() {
+        rebuildFrom(allPoints);
+//        // Take a snapshot so we don't care if allPoints is mutated elsewhere
+//        final List<T> snapshot = new ArrayList<>(allPoints);
+//        final int n = snapshot.size();
+//
+//        if (n == 0) {
+//            // Clear only bins that were used last frame
+//            for (int i = 0; i < usedBinCount; i++) {
+//                int bi = usedBins[i];
+//                List<T> list = bins[bi];
+//                if (list != null) {
+//                    list.clear();
+//                }
+//            }
+//            usedBinCount = 0;
+//            return;
+//        }
+//
+//        // 1) Clear previously used bins
+//        for (int i = 0; i < usedBinCount; i++) {
+//            int bi = usedBins[i];
+//            List<T> list = bins[bi];
+//            if (list != null) {
+//                list.clear();
+//            }
+//        }
+//        usedBinCount = 0;
+//
+//        // 2) Re-insert all points from the snapshot into appropriate bins
+//        long[] coords = new long[3];
+//        for (int i = 0; i < n; i++) {
+//            T p = snapshot.get(i);
+//            if (p == null) {
+//                continue; // paranoia
+//            }
+//            Vec3 pos = p.pos();
+//            normalCoords(pos.x, pos.y, pos.z, coords);
+//            int bi = computeLinearBinIndex(coords[0], coords[1], coords[2]);
+//            if (bi < 0) continue;
+//
+//            List<T> list = bins[bi];
+//            if (list == null) {
+//                list = new ArrayList<>();
+//                bins[bi] = list;
+//            }
+//            if (list.isEmpty()) {
+//                usedBins[usedBinCount++] = bi;
+//            }
+//            list.add(p);
+//        }
     }
 
     public List<T> queryRadius(Vec3 pos, double radius) {
@@ -204,5 +257,11 @@ public class ForceGrid<T extends IPhysicsElement> {
         }
         int count = cellPoints.size();
         return new Vec3(sumX / count, sumY / count, sumZ / count);
+    }
+
+    public void setOrigin(long x, long y, long z) {
+        this.originX = x;
+        this.originY = y;
+        this.originZ = z;
     }
 }
