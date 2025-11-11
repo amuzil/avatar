@@ -83,7 +83,7 @@ public class ForceCloud extends PhysicsElement {
         double vn = relVel.dot(n);
 
         if (vn < 0.0) {
-            System.out.println("Attempting Collision.");
+//            System.out.println("Attempting Collision.");
             double fdMag = -dampingCoeff * vn;
             Vec3 fd = n.scale(fdMag);
 
@@ -390,39 +390,39 @@ public class ForceCloud extends PhysicsElement {
         double r2 = restRadius * restRadius;
         int n = points.size();
 
-        for (int i = 0; i < n; i++) {
-            ForcePoint p = points.get(i);
-            Vec3 xp = p.pos();
-
-            for (int j = i + 1; j < n; j++) {
-                ForcePoint q = points.get(j);
-                Vec3 xq = q.pos();
-
-                double dx = xp.x - xq.x;
-                double dy = xp.y - xq.y;
-                double dz = xp.z - xq.z;
-                double dist2 = dx * dx + dy * dy + dz * dz;
-
-                if (dist2 > r2 || dist2 <= 1e-12) {
-                    continue;
-                }
-
-                resolvePair(p, q, restRadius, stiffness, dampingCoeff);
-            }
-        }
-
-        // Alternative implementation using spatial grid (commented out due to inefficiency with small clouds)
-//        if (points.isEmpty()) return;
+//        for (int i = 0; i < n; i++) {
+//            ForcePoint p = points.get(i);
+//            Vec3 xp = p.pos();
 //
-//        for (ForcePoint p : points) {
-//            List<ForcePoint> neighbours = spaceGrid.queryRadius(p.pos(), restRadius);
-//            for (ForcePoint q : neighbours) {
-//                if (q == p) continue;
-//                // cheap symmetry break to avoid double work
-//                if (System.identityHashCode(q) <= System.identityHashCode(p)) continue;
+//            for (int j = i + 1; j < n; j++) {
+//                ForcePoint q = points.get(j);
+//                Vec3 xq = q.pos();
+//
+//                double dx = xp.x - xq.x;
+//                double dy = xp.y - xq.y;
+//                double dz = xp.z - xq.z;
+//                double dist2 = dx * dx + dy * dy + dz * dz;
+//
+//                if (dist2 > r2 || dist2 <= 1e-12) {
+//                    continue;
+//                }
+//
 //                resolvePair(p, q, restRadius, stiffness, dampingCoeff);
 //            }
 //        }
+
+        // Alternative implementation using spatial grid (commented out due to inefficiency with small clouds)
+        if (points.isEmpty()) return;
+
+        for (ForcePoint p : points) {
+            List<ForcePoint> neighbours = spaceGrid.queryRadius(p.pos(), restRadius);
+            for (ForcePoint q : neighbours) {
+                if (q == p) continue;
+                // cheap symmetry break to avoid double work
+//                if (System.identityHashCode(q) <= System.identityHashCode(p)) continue;
+                resolvePair(p, q, restRadius, stiffness, dampingCoeff);
+            }
+        }
     }
 
 

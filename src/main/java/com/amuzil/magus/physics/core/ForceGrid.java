@@ -81,8 +81,12 @@ public class ForceGrid<T extends IPhysicsElement> {
     }
 
 
+    /**
+     * Rebuild the spatial grid from the given list of points.
+     * Assumes originX/Y/Z and binCountX/Y/Z are already set appropriately.
+     */
     public void rebuildFrom(List<T> points) {
-        // 1) Clear previously used bins only
+        // 1) Clear previously used bins
         for (int i = 0; i < usedBinCount; i++) {
             int bi = usedBins[i];
             List<T> list = bins[bi];
@@ -98,16 +102,19 @@ public class ForceGrid<T extends IPhysicsElement> {
 
         long[] coords = new long[3];
 
-        // 2) Insert each point into bin
+        // 2) Insert each point
         for (int i = 0, n = points.size(); i < n; i++) {
             T p = points.get(i);
             if (p == null) continue;
 
-            Vec3 pos = p.pos();
+            Vec3 pos = p.pos(); // world-space
             normalCoords(pos.x, pos.y, pos.z, coords);
 
             int bi = computeLinearBinIndex(coords[0], coords[1], coords[2]);
-            if (bi < 0) continue; // outside grid bounds
+            if (bi < 0) {
+                // outside grid bounds; silently skip
+                continue;
+            }
 
             List<T> list = bins[bi];
             if (list == null) {
@@ -117,6 +124,7 @@ public class ForceGrid<T extends IPhysicsElement> {
             if (list.isEmpty()) {
                 usedBins[usedBinCount++] = bi;
             }
+            list.add(p);
         }
     }
     /**
