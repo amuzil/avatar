@@ -1,8 +1,7 @@
 package com.amuzil.av3.network.packets.sync;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.av3.data.capability.AvatarCapabilities;
-import com.amuzil.av3.data.capability.IBender;
+import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.network.packets.api.AvatarPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -16,7 +15,9 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import java.util.Objects;
 import java.util.UUID;
 
-@Deprecated
+import static com.amuzil.av3.data.capability.AvatarCapabilities.getOrCreateBender;
+
+
 public class SyncBenderPacket implements AvatarPacket {
     public static final Type<SyncBenderPacket> TYPE = new Type<>(Avatar.id(SyncBenderPacket.class));
     public static final StreamCodec<FriendlyByteBuf, SyncBenderPacket> CODEC =
@@ -46,7 +47,7 @@ public class SyncBenderPacket implements AvatarPacket {
                 // Update Bender's data on their client
                 LocalPlayer player = Minecraft.getInstance().player;
                 if (player != null) {
-                    IBender bender = player.getCapability(AvatarCapabilities.BENDER);
+                    Bender bender = getOrCreateBender(player);
                     if (bender != null) {
                         bender.deserializeNBT(player.level().registryAccess(), msg.tag);
                         bender.markClean();
@@ -56,7 +57,7 @@ public class SyncBenderPacket implements AvatarPacket {
                 // Update Bender's data on server
                 ServerPlayer player = Objects.requireNonNull(ctx.player().getServer()).getPlayerList().getPlayer(msg.playerUUID);
                 assert player != null;
-                IBender bender = player.getCapability(AvatarCapabilities.BENDER);
+                Bender bender = getOrCreateBender(player);
                 if (bender != null) {
                     bender.deserializeNBT(player.level().registryAccess(), msg.tag);
                     bender.markClean();

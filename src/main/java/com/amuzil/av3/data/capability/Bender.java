@@ -22,7 +22,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.neoforge.common.NeoForge;
@@ -41,8 +40,10 @@ public class Bender implements IBender {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private LivingEntity entity;
+    LivingEntity entity;
+    private BenderData benderData;
     private final Consumer<FormActivatedEvent> formListener;
+
     private boolean isDirty = true; // Indicates if data was changed
     private boolean active; // Indicates if a BendingForm is currently active
     private final int timeout = 5; // Adjust clear BendingForm cache timeout here
@@ -58,13 +59,17 @@ public class Bender implements IBender {
 
     public Bender(LivingEntity entity) {
         this.entity = entity;
+        this.benderData = entity.getData(BENDER_DATA);
         this.formListener = this::onFormActivatedEvent;
 
         // Allow use of all Elements & Skills for testing!
         setAvatar(); // Grant all elements & skills
 
         markDirty();
-        System.out.println("[Bender] " + entity.getLookAngle() + " " + entity.isAlive());
+//        System.out.println("[Bender] Alive: " + entity.isAlive() + " | " + Avatar.isClientOrServer(entity.level().isClientSide()));
+//        System.out.println("[Bender] " +
+//                benderData.skillCategoryData.size() + " skill categories and " +
+//                benderData.skillDataMap.size() + " skills.");
     }
 
     @Override
@@ -74,10 +79,8 @@ public class Bender implements IBender {
     }
 
     public void tick() {
-        if (entity instanceof Player) {
-            if (!entity.level().isClientSide())
-                serverTick();
-        }
+        if (!entity.level().isClientSide())
+            serverTick();
     }
 
     private boolean canUseSkill(Skill skill) {
@@ -87,7 +90,7 @@ public class Bender implements IBender {
     }
 
     private void onFormActivatedEvent(FormActivatedEvent event) {
-        if (event.getEntity().getId() == entity.getId() && event.getActiveForm().form().notNull()) {
+        if (event.getEntity().getUUID() == entity.getUUID() && event.getActiveForm().form().notNull()) {
             active = !event.released();
             ActiveForm activeForm = event.getActiveForm();
             if (activeForm.direction() != null)
@@ -95,7 +98,7 @@ public class Bender implements IBender {
             else
                 stepDirection = BendingForm.Type.Motion.NONE;
 
-            formPath.add(event.getActiveForm().form()); // TODO: fix Form getting added twice here
+            formPath.add(event.getActiveForm().form());
 //            printFormPath(); // Debugging purposes
             if (active) {
                 switch (getSelection().target()) {
@@ -240,7 +243,7 @@ public class Bender implements IBender {
 
     @Override
     public SkillCategoryData getSkillCategoryData(ResourceLocation id) {
-        return getData().skillCategoryData.stream()
+        return benderData.skillCategoryData.stream()
                 .filter(data -> data.getSkillCategory().getId().equals(id))
                 .findFirst()
                 .orElse(null);
@@ -248,27 +251,27 @@ public class Bender implements IBender {
 
     @Override
     public SkillData getSkillData(Skill skill) {
-        return getData().skillDataMap.get(skill.name());
+        return benderData.skillDataMap.get(skill.name());
     }
 
     @Override
     public SkillData getSkillData(String name) {
-        return getData().skillDataMap.get(name);
+        return benderData.skillDataMap.get(name);
     }
 
     @Override
     public void resetSkillData() {
-        var benderData = getData();
         benderData.skillDataMap.clear();
         for (Skill skill: Registries.getSkills())
             benderData.skillDataMap.put(skill.name(), new SkillData(skill));
-        entity.syncData(BENDER_DATA);
+        entity.setData(BENDER_DATA, benderData);
         markDirty();
     }
 
     @Override
     public void resetSkillData(Skill skill) {
-        getData().skillDataMap.put(skill.name(), new SkillData(skill));
+        benderData.skillDataMap.put(skill.name(), new SkillData(skill));
+        entity.setData(BENDER_DATA, benderData);
         markDirty();
     }
 
@@ -313,29 +316,38 @@ public class Bender implements IBender {
 
     @Override
     public void setCanUseAllElements() {
-        getData().skillCategoryData.forEach(element -> element.setCanUse(true));
+        benderData.skillCategoryData.forEach(element -> element.setCanUse(true));
+        entity.setData(BENDER_DATA, benderData);
         markDirty();
     }
 
     @Override
     public void setCanUseAllSkills() {
-        getData().skillDataMap.values().forEach(skill -> skill.setCanUse(true));
+        benderData.skillDataMap.values().forEach(skill -> skill.setCanUse(true));
+        entity.setData(BENDER_DATA, benderData);
         markDirty();
     }
 
     @Override
     public void setCanUseAllSkills(Element element) {
         setCanUseElement(true, element);
-        getData().skillDataMap.values().forEach(skillData -> {
+        benderData.skillDataMap.values().forEach(skillData -> {
             if (skillData.getSkill().getCategory().getId().equals(element.getId()))
                 skillData.setCanUse(true);
         });
+        entity.setData(BENDER_DATA, benderData);
         markDirty();
     }
 
     @Override
-    public BenderData getData() {
-        return entity.getData(BENDER_DATA);
+    public BenderData getBenderData() {
+        return benderData;
+    }
+
+    @Override
+    public void setBenderData(BenderData data) {
+        this.benderData = data;
+        markDirty();
     }
 
     @Override
@@ -347,11 +359,6 @@ public class Bender implements IBender {
     @Override
     public BendingSelection getSelection() {
         return this.selection;
-    }
-
-    @Override
-    public void reset() {
-        this.formPath.clear();
     }
 
     @Override
@@ -378,15 +385,15 @@ public class Bender implements IBender {
     @Override
     public void syncSelectionToServer() {
         if (entity.level().isClientSide())
-            AvatarNetwork.sendToServer(new SyncSelectionPacket(selection.serializeNBT(null), entity.getUUID()));
+            AvatarNetwork.sendToServer(new SyncSelectionPacket(selection.serializeNBT(entity.registryAccess()), entity.getUUID()));
     }
 
     @Override
-    public void syncData() {
-        entity.syncData(BENDER_DATA);
-//        if (!entity.level().isClientSide())
+    public void syncToClient() {
+        if (!entity.level().isClientSide())
+            entity.syncData(BENDER_DATA);
 //            if (entity instanceof ServerPlayer player)
-//                AvatarNetwork.sendToClient(new SyncBenderPacket(this.serializeNBT(null), player.getUUID()), player);
+//                AvatarNetwork.sendToClient(new SyncBenderPacket(this.serializeNBT(player.registryAccess()), player.getUUID()), player);
     }
 
     // TODO - Create generic method to check & return if data in NBT tag exists & warn if it doesn't
@@ -405,16 +412,15 @@ public class Bender implements IBender {
     }
 
     public void printBenderData() {
-        BenderData benderData = getData();
-        CompoundTag tag = benderData.serializeNBT(null);
+        CompoundTag tag = entity.getData(BENDER_DATA).serializeNBT(null);
         StringBuilder sb = new StringBuilder();
         sb.append(String.format(
                 """
                 \nData Version: %d
                 Active Element: %s
                 """, tag.getInt("DataVersion"), getElement()));
-        getData().skillCategoryData.forEach(catData -> sb.append(tag.get(catData.name())).append("\n"));
-        getData().skillDataMap.values().forEach(skillData -> sb.append(tag.get(skillData.name())).append("\n"));
+        benderData.skillCategoryData.forEach(catData -> sb.append(tag.get(catData.name())).append("\n"));
+        benderData.skillDataMap.values().forEach(skillData -> sb.append(tag.get(skillData.name())).append("\n"));
         LOGGER.info(sb.toString());
     }
 
@@ -458,7 +464,7 @@ public class Bender implements IBender {
 //        }
     }
 
-    public static @Nullable IBender getBender(LivingEntity entity) {
+    public static @Nullable Bender getBender(final LivingEntity entity) {
         if (entity == null)
             return null;
         return entity.getCapability(AvatarCapabilities.BENDER);

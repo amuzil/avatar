@@ -25,6 +25,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
+import static com.amuzil.av3.data.capability.AvatarCapabilities.getOrCreateBender;
 import static com.amuzil.av3.input.KeyBindings.*;
 
 
@@ -247,7 +248,8 @@ public class InputModule {
     }
 
     public void registerListeners() {
-        bender = (Bender) Bender.getBender(Minecraft.getInstance().player);
+        assert Minecraft.getInstance().player != null;
+        bender = getOrCreateBender(Minecraft.getInstance().player);
         NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, InputEvent.Key.class, keyboardListener);
         NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, InputEvent.MouseButton.Pre.class, mouseListener);
         NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, ClientTickEvent.Pre.class, tickEventConsumer);
@@ -266,11 +268,6 @@ public class InputModule {
         unRegisterListeners();
         glfwKeysDown.clear();
         lastPressedForm.clear();
-        assert Minecraft.getInstance().player != null;
-        bender = (Bender) Bender.getBender(Minecraft.getInstance().player);
-        if (bender != null) { // Need this on startup!
-            bender.reset();
-        }
     }
 
     public void toggleListeners() {
@@ -280,7 +277,7 @@ public class InputModule {
             System.out.println("Enabled!");
             Player player = Minecraft.getInstance().player;
             assert player != null;
-            Bender bender = (Bender) Bender.getBender(player);
+            Bender bender = getOrCreateBender(player);
             bender.printBenderData();
         } else {
             terminate();

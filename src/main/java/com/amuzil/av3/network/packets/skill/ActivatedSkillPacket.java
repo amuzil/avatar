@@ -15,6 +15,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
+@Deprecated
 public class ActivatedSkillPacket implements AvatarPacket {
     public static final Type<ActivatedSkillPacket> TYPE = new Type<>(Avatar.id(ActivatedSkillPacket.class));
     public static final StreamCodec<FriendlyByteBuf, ActivatedSkillPacket> CODEC =
@@ -42,7 +43,7 @@ public class ActivatedSkillPacket implements AvatarPacket {
     private static void handleClientSide(ResourceLocation skillId, int skillState) {
         Player player = Minecraft.getInstance().player;
         assert player != null;
-        Bender bender = (Bender) Bender.getBender(player);
+        Bender bender = Bender.getBender(player);
 //        Skill skill = Registries.SKILLS.get().getValue(skillId);
         Skill skill = Registries.getSkill(skillId);
         assert skill != null;

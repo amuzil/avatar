@@ -11,7 +11,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 
@@ -67,13 +66,12 @@ public interface IBender extends INBTSerializable<CompoundTag> {
 
     void setCanUseAllSkills(Element element);
 
-    BenderData getData();
+    BenderData getBenderData();
+
+    void setBenderData(BenderData data);
 
     void setSelection(BendingSelection selection);
     BendingSelection getSelection();
-
-    // Reset all non-persistent data
-    void reset();
 
     // Remember to call this in *every* data update!
     void markDirty();
@@ -88,7 +86,7 @@ public interface IBender extends INBTSerializable<CompoundTag> {
 
     void syncSelectionToServer();
 
-    void syncData();
+    void syncToClient();
     // Save data
 
     CompoundTag serializeNBT(HolderLookup.Provider provider);

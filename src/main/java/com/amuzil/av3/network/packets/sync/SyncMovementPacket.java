@@ -1,8 +1,7 @@
 package com.amuzil.av3.network.packets.sync;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.av3.data.capability.AvatarCapabilities;
-import com.amuzil.av3.data.capability.IBender;
+import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.network.packets.api.AvatarPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -13,6 +12,8 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.Objects;
 import java.util.UUID;
+
+import static com.amuzil.av3.data.capability.AvatarCapabilities.getOrCreateBender;
 
 public class SyncMovementPacket implements AvatarPacket {
     public static final Type<SyncMovementPacket> TYPE = new Type<>(Avatar.id(SyncMovementPacket.class));
@@ -45,7 +46,7 @@ public class SyncMovementPacket implements AvatarPacket {
                 // Update Bender's movement on server
                 ServerPlayer player = Objects.requireNonNull(ctx.player().getServer()).getPlayerList().getPlayer(msg.playerUUID);
                 assert player != null;
-                IBender bender = player.getCapability(AvatarCapabilities.BENDER);
+                Bender bender = getOrCreateBender(player);
                 if (bender != null) {
                     bender.setDeltaMovement(msg.movement);
                     bender.markClean();
