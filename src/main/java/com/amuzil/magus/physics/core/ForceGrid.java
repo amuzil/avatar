@@ -180,18 +180,19 @@ public class ForceGrid<T extends IPhysicsElement> {
         coordsFromIndex(bi, xyz);
         int x = xyz[0], y = xyz[1], z = xyz[2];
         // 6-neighborhood: if any neighbor empty or OOB ⇒ boundary
-        return binEmpty(computeLinearBinIndex(x - 1, y, z)) ||
-                binEmpty(computeLinearBinIndex(x + 1, y, z)) ||
-                binEmpty(computeLinearBinIndex(x, y - 1, z)) ||
-                binEmpty(computeLinearBinIndex(x, y + 1, z)) ||
-                binEmpty(computeLinearBinIndex(x, y, z - 1)) ||
-                binEmpty(computeLinearBinIndex(x, y, z + 1));
+        return checkAllDirections(x, y, z);
     }
 
-    public boolean checkAllDirections() {
-        int[] directions = {};
-
-        return false;
+    public boolean checkAllDirections(int xi, int yi, int zi) {
+        boolean b = false;
+        for (int x = -1; x < 2; x++) {
+            for (int y = -1; y < 2; y++) {
+                for (int z = -1; z < 2; z++) {
+                    b |= binEmpty(computeLinearBinIndex(xi + x, yi + y, zi + z));
+                }
+            }
+        }
+        return b;
     }
 
 

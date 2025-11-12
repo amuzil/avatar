@@ -75,9 +75,9 @@ public class ForceSystem {
         }
 
 ////         3) self-collisions
-        for (ForceCloud cloud : clouds) {
-            cloud.resolveSelfCollisions(selfRestRadius, selfStiffness, selfDamping);
-        }
+//        for (ForceCloud cloud : clouds) {
+//            cloud.resolveSelfCollisions(selfRestRadius, selfStiffness, selfDamping);
+//        }
 
 //         4) cloud-cloud collisions. n^2 for now; optimize later if needed
         int n = clouds.size();
