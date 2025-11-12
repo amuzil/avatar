@@ -15,22 +15,14 @@ import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class BenderData implements IAttachmentSerializer<CompoundTag, BenderData> {
     public static final StreamCodec<RegistryFriendlyByteBuf, BenderData> STREAM_CODEC =
             StreamCodec.of(
                     (buf, data) -> buf.writeNbt(data.serializeNBT(buf.registryAccess())),
-                    buf -> {
-                        BenderData data = new BenderData();
-                        data.deserializeNBT(buf.registryAccess(), buf.readNbt());
-                        return data;
-                    }
-            );
+                    buf -> new BenderData(buf.registryAccess(), buf.readNbt()));
     private static final Logger LOGGER = LogManager.getLogger();
     private static final int DATA_VERSION = 1; // Update this as your data structure changes
     public final List<SkillCategoryData> skillCategoryData = new ArrayList<>();
@@ -45,7 +37,7 @@ public class BenderData implements IAttachmentSerializer<CompoundTag, BenderData
         initialized = true;
     }
 
-    public BenderData(CompoundTag tag, HolderLookup.Provider provider) {
+    public BenderData(HolderLookup.Provider provider, CompoundTag tag) {
         this.deserializeNBT(provider, tag);
         initialized = true;
     }
@@ -55,7 +47,7 @@ public class BenderData implements IAttachmentSerializer<CompoundTag, BenderData
         if (initialized)
             return this;
         else
-            return new BenderData(tag, provider);
+            return new BenderData(provider, tag);
     }
 
     @Override
