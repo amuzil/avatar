@@ -54,4 +54,8 @@ public interface IPhysicsElement {
 
     Vec3 force();
 
+    Vec3 newVel(double dt, float mass);
+
+    Vec3 newPos(double dt);
+
 }

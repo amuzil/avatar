@@ -203,6 +203,34 @@ public class ForceCloud extends PhysicsElement {
             System.arraycopy(header, 0, point.header, 0, header.length);
     }
 
+    public void updatePhysicsElement(double dt, IPhysicsElement element, Vec3 basePos) {
+        Vec3 pos = element.pos();
+        Vec3 vel = element.vel();
+        Vec3 oldVel = vel;
+        Vec3 force = element.force();
+
+        double invMass = mass() > 0.0 ? 1.0 / mass() : 0.0;
+        Vec3 acc = force.scale(invMass);
+
+        // velocity update
+        vel = element.newVel(dt, 1f);
+
+        // simple damping
+        double d = damping();
+        if (d > 0.0) {
+            vel = vel.scale(Math.max(0.0, 1.0 - d * dt));
+        }
+
+        Vec3 newPos = newPos(dt);
+
+        // write back into the point's data columns:
+        // 0 = pos, 1 = prevPos, 2 = vel, 3 = prevVel, 4 = force
+        element.insert(pos, 1);        // prevPos
+        element.insert(oldVel, 3);        // prevVel
+        element.insert(newPos, 0);     // pos
+        element.insert(vel, 2);
+        element.insert(Vec3.ZERO, 4);  // clear force
+    }
     public void tick(double dt) {
 //        for (IPhysicsModule module : modules) {
 //            module.preSolve(this);
@@ -211,32 +239,7 @@ public class ForceCloud extends PhysicsElement {
 //        }
 
         // Moves
-        Vec3 pos = pos();
-        Vec3 vel = vel();
-        Vec3 oldVel = vel;
-        Vec3 force = force();
-
-        double invMass = mass() > 0.0 ? 1.0 / mass() : 0.0;
-        Vec3 acc = force.scale(invMass);
-
-        // velocity update
-        vel = vel.add(acc.scale(dt));
-
-        // simple damping
-        double d = damping();
-        if (d > 0.0) {
-            vel = vel.scale(Math.max(0.0, 1.0 - d * dt));
-        }
-
-        Vec3 newPos = pos.add(vel.scale(dt));
-
-        // write back into the point's data columns:
-        // 0 = pos, 1 = prevPos, 2 = vel, 3 = prevVel, 4 = force
-        insert(pos, 1);        // prevPos
-        insert(oldVel, 3);        // prevVel
-        insert(newPos, 0);     // pos
-        insert(vel, 2);
-        insert(Vec3.ZERO, 4);  // clear force
+        updatePhysicsElement(dt, this);
         // lifetime countdown
         tickLifetime(dt * 3);
 
@@ -363,7 +366,7 @@ public class ForceCloud extends PhysicsElement {
             Vec3 acc = force.scale(invMass);
 
             // velocity update
-            vel = vel.add(acc.scale(dt));
+            vel = newVel(dt, 1f);
 
             // simple damping
             double d = p.damping();
@@ -371,7 +374,7 @@ public class ForceCloud extends PhysicsElement {
                 vel = vel.scale(Math.max(0.0, 1.0 - d * dt));
             }
 
-            Vec3 newPos = pos.add(vel.scale(dt));
+            Vec3 newPos = newPos(dt);
 
             // write back into the point's data columns:
             // 0 = pos, 1 = prevPos, 2 = vel, 3 = prevVel, 4 = force

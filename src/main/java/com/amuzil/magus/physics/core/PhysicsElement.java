@@ -19,7 +19,7 @@ public abstract class PhysicsElement implements IPhysicsElement {
     int maxLifetime = -1;
     int timeExisted = 0;
     private int id;
-    private double mass;
+    private double mass = 1;
     private double damping;
     private boolean surface = false;
 
@@ -30,6 +30,16 @@ public abstract class PhysicsElement implements IPhysicsElement {
     public PhysicsElement(int size, int type) {
         this.data = new double[size];
         type(type);
+    }
+
+    @Override
+    public Vec3 newVel(double dt, float mass) {
+        return vel().add(force().scale(dt));
+    }
+
+    @Override
+    public Vec3 newPos(double dt) {
+        return pos().add(vel().scale(dt));
     }
 
     public int maxLife() {
