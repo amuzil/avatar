@@ -24,6 +24,7 @@ public class ForcePoint extends PhysicsElement {
         insert(Vec3.ZERO, 3);
         // Direction / Force / Acceleration
         insert(force, 4);
+
     }
 
     public ForcePoint(int type, Vec3 pos, Vec3 vel, Vec3 force) {

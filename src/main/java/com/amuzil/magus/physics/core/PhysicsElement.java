@@ -16,11 +16,13 @@ public abstract class PhysicsElement implements IPhysicsElement {
      */
 
     public byte[] header = new byte[Constraints.HEADER_LENGTH];
+    int maxLifetime = -1;
+    int timeExisted = 0;
     private int id;
     private double mass;
     private double damping;
-    int maxLifetime = -1;
-    int timeExisted = 0;
+    private boolean surface = false;
+
     public PhysicsElement(int type) {
         this(15, type);
     }
@@ -36,6 +38,14 @@ public abstract class PhysicsElement implements IPhysicsElement {
 
     public int timeExisted() {
         return this.timeExisted;
+    }
+
+    public boolean surface() {
+        return this.surface;
+    }
+
+    public void surface(boolean surface) {
+        this.surface = surface;
     }
 
     @Override

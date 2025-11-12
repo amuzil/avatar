@@ -20,8 +20,11 @@ public class ForceGrid<T extends IPhysicsElement> {
     // Track which bins are non-empty this frame
     private final int[] usedBins;
     private final List<T> allPoints;
+
+    // Threading one day...
     private final ExecutorService threadPool;
     private final int parallelism;
+
     private int usedBinCount = 0;
     private long originX, originY, originZ;
 
@@ -40,7 +43,7 @@ public class ForceGrid<T extends IPhysicsElement> {
 
         this.bins = (List<T>[]) new List[totalBins];
         this.usedBins = new int[totalBins]; // worst-case: all bins used once this frame
-
+        
         this.allPoints = new ArrayList<>(maxPoints);
         this.threadPool = threadPool;
         this.parallelism = Math.max(Runtime.getRuntime().availableProcessors() / 2, 1);
@@ -81,12 +84,7 @@ public class ForceGrid<T extends IPhysicsElement> {
     }
 
 
-    /**
-     * Rebuild the spatial grid from the given list of points.
-     * Assumes originX/Y/Z and binCountX/Y/Z are already set appropriately.
-     */
-    public void rebuildFrom(List<T> points) {
-        // 1) Clear previously used bins
+    public void clearUsedBins() {
         for (int i = 0; i < usedBinCount; i++) {
             int bi = usedBins[i];
             List<T> list = bins[bi];
@@ -95,6 +93,15 @@ public class ForceGrid<T extends IPhysicsElement> {
             }
         }
         usedBinCount = 0;
+    }
+
+    /**
+     * Rebuild the spatial grid from the given list of points.
+     * Assumes originX/Y/Z and binCountX/Y/Z are already set appropriately.
+     */
+    public void rebuildFrom(List<T> points) {
+        // 1) Clear previously used bins
+        clearUsedBins();
 
         if (points.isEmpty()) {
             return;
@@ -126,7 +133,22 @@ public class ForceGrid<T extends IPhysicsElement> {
             }
             list.add(p);
         }
+
+        // 3) mark relevant points
+        for (int i = 0, n = points.size(); i < n; i++) {
+            T p = points.get(i);
+            if (p == null) continue;
+            Vec3 pos = p.pos(); // world-space
+            normalCoords(pos.x, pos.y, pos.z, coords);
+
+            int bi = computeLinearBinIndex(coords[0], coords[1], coords[2]);
+
+            if (isSurfaceBin(bi) && p instanceof PhysicsElement) {
+                ((PhysicsElement) p).surface(true);
+            }
+        }
     }
+
     /**
      * Rebuild the spatial grid from allPoints.
      * Complexity: O(numPoints + usedBins) instead of O(totalBins).
@@ -182,6 +204,57 @@ public class ForceGrid<T extends IPhysicsElement> {
 //            }
 //            list.add(p);
 //        }
+    }
+
+    private void coordsFromIndex(int bi, int[] outXYZ) {
+        int BXY = binCountX * binCountY;
+        int z = bi / BXY;
+        int r = bi % BXY;
+        int y = r / binCountX;
+        int x = r % binCountX;
+        outXYZ[0] = x;
+        outXYZ[1] = y;
+        outXYZ[2] = z;
+    }
+
+    private boolean binEmpty(int bi) {
+        if (bi < 0) return true;
+        List<T> l = bins[bi];
+        return l == null || l.isEmpty();
+    }
+
+    private boolean isSurfaceBin(int bi) {
+        if (binEmpty(bi)) return false;
+        int[] xyz = new int[3];
+        coordsFromIndex(bi, xyz);
+        int x = xyz[0], y = xyz[1], z = xyz[2];
+        // 6-neighborhood: if any neighbor empty or OOB ⇒ boundary
+        return binEmpty(computeLinearBinIndex(x - 1, y, z)) ||
+                binEmpty(computeLinearBinIndex(x + 1, y, z)) ||
+                binEmpty(computeLinearBinIndex(x, y - 1, z)) ||
+                binEmpty(computeLinearBinIndex(x, y + 1, z)) ||
+                binEmpty(computeLinearBinIndex(x, y, z - 1)) ||
+                binEmpty(computeLinearBinIndex(x, y, z + 1));
+    }
+
+
+    public T surfaceElement(int cellX, int cellY, int cellZ) {
+        int bi = computeLinearBinIndex(cellX, cellY, cellZ);
+        T element = null;
+        if (bi < 0)
+            return element;
+
+        List<T> bin = bins[bi];
+        if (bin == null || bin.isEmpty())
+                return element;
+
+        bin.removeIf(el -> !(el instanceof PhysicsElement));
+        for (T p : bin) {
+            if (((PhysicsElement) p).surface()) {
+                element = p;
+            }
+        }
+        return element;
     }
 
     public List<T> queryRadius(Vec3 pos, double radius) {
