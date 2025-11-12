@@ -19,13 +19,13 @@ public class ForceSystem {
     private final double cellSize = 0.25;
 
     // simple collision params – tune these later
-    private final double selfRestRadius = cellSize / 2;
+    private final double selfRestRadius = cellSize;
     private final double selfStiffness = 50.0;
     private final double selfDamping  = 5.0;
 
-    private final double crossRestRadius = cellSize / 2;
-    private final double crossStiffness  = 800.0;
-    private final double crossDamping    = 800.0;
+    private final double crossRestRadius = cellSize;
+    private final double crossStiffness  = 80.0;
+    private final double crossDamping    = 80.0;
 
     public ForceSystem(MinecraftSpace space) {
         this.space = space;
@@ -79,10 +79,10 @@ public class ForceSystem {
 //            cloud.rebuildSpatialGrid();
 //        }
 
-//         3) self-collisions
-        for (ForceCloud cloud : clouds) {
-            cloud.resolveSelfCollisions(selfRestRadius, selfStiffness, selfDamping);
-        }
+////         3) self-collisions
+//        for (ForceCloud cloud : clouds) {
+//            cloud.resolveSelfCollisions(selfRestRadius, selfStiffness, selfDamping);
+//        }
 
 //         4) cloud-cloud collisions. n^2 for now; optimize later if needed
         int n = clouds.size();
