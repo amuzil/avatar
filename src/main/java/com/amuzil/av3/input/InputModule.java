@@ -187,7 +187,6 @@ public class InputModule {
     }
 
     private void trackBlockResult(BlockHitResult result) {
-//        System.out.println("Selected BlockPos: " + result.getBlockPos());
         bender.getSelection().setBlockPos(result.getBlockPos());
     }
 

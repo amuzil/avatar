@@ -113,10 +113,8 @@ public class EarthQuakeSkill extends EarthSkill {
     public void startCleanup() {
         cleanupRunnable = (skillTickEvent) -> {
             ticksStopped++;
-            if (ticksStopped >= 400) {
+            if (ticksStopped >= 400)
                 originalBlocks.restore((ServerLevel) bender.getEntity().level());
-                System.out.println("EarthQuakeSkill cleanup stopped");
-            }
         };
         this.listen(SkillTickEvent.class, cleanupRunnable);
     }

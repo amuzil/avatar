@@ -66,10 +66,6 @@ public class Bender implements IBender {
         setAvatar(); // Grant all elements & skills
 
         markDirty();
-//        System.out.println("[Bender] Alive: " + entity.isAlive() + " | " + Avatar.isClientOrServer(entity.level().isClientSide()));
-//        System.out.println("[Bender] " +
-//                benderData.skillCategoryData.size() + " skill categories and " +
-//                benderData.skillDataMap.size() + " skills.");
     }
 
     @Override
