@@ -40,7 +40,8 @@ public class ForceCloud extends PhysicsElement {
         insert(pos, 0);
         // Prev pos
         insert(Vec3.ZERO, 1);
-        // Current vel
+        // Current vel.
+        // TODO: Forces and velocities applied here should apply to every point in the system.
         insert(vel, 2);
         // Prev force
         insert(Vec3.ZERO, 3);

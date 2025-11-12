@@ -43,7 +43,7 @@ public class ForceGrid<T extends IPhysicsElement> {
 
         this.bins = (List<T>[]) new List[totalBins];
         this.usedBins = new int[totalBins]; // worst-case: all bins used once this frame
-        
+
         this.allPoints = new ArrayList<>(maxPoints);
         this.threadPool = threadPool;
         this.parallelism = Math.max(Runtime.getRuntime().availableProcessors() / 2, 1);
@@ -155,55 +155,6 @@ public class ForceGrid<T extends IPhysicsElement> {
      */
     public void rebuild() {
         rebuildFrom(allPoints);
-//        // Take a snapshot so we don't care if allPoints is mutated elsewhere
-//        final List<T> snapshot = new ArrayList<>(allPoints);
-//        final int n = snapshot.size();
-//
-//        if (n == 0) {
-//            // Clear only bins that were used last frame
-//            for (int i = 0; i < usedBinCount; i++) {
-//                int bi = usedBins[i];
-//                List<T> list = bins[bi];
-//                if (list != null) {
-//                    list.clear();
-//                }
-//            }
-//            usedBinCount = 0;
-//            return;
-//        }
-//
-//        // 1) Clear previously used bins
-//        for (int i = 0; i < usedBinCount; i++) {
-//            int bi = usedBins[i];
-//            List<T> list = bins[bi];
-//            if (list != null) {
-//                list.clear();
-//            }
-//        }
-//        usedBinCount = 0;
-//
-//        // 2) Re-insert all points from the snapshot into appropriate bins
-//        long[] coords = new long[3];
-//        for (int i = 0; i < n; i++) {
-//            T p = snapshot.get(i);
-//            if (p == null) {
-//                continue; // paranoia
-//            }
-//            Vec3 pos = p.pos();
-//            normalCoords(pos.x, pos.y, pos.z, coords);
-//            int bi = computeLinearBinIndex(coords[0], coords[1], coords[2]);
-//            if (bi < 0) continue;
-//
-//            List<T> list = bins[bi];
-//            if (list == null) {
-//                list = new ArrayList<>();
-//                bins[bi] = list;
-//            }
-//            if (list.isEmpty()) {
-//                usedBins[usedBinCount++] = bi;
-//            }
-//            list.add(p);
-//        }
     }
 
     private void coordsFromIndex(int bi, int[] outXYZ) {
@@ -237,6 +188,12 @@ public class ForceGrid<T extends IPhysicsElement> {
                 binEmpty(computeLinearBinIndex(x, y, z + 1));
     }
 
+    public boolean checkAllDirections() {
+        int[] directions = {};
+
+        return false;
+    }
+
 
     public T surfaceElement(int cellX, int cellY, int cellZ) {
         int bi = computeLinearBinIndex(cellX, cellY, cellZ);
@@ -246,7 +203,7 @@ public class ForceGrid<T extends IPhysicsElement> {
 
         List<T> bin = bins[bi];
         if (bin == null || bin.isEmpty())
-                return element;
+            return element;
 
         bin.removeIf(el -> !(el instanceof PhysicsElement));
         for (T p : bin) {
@@ -321,6 +278,23 @@ public class ForceGrid<T extends IPhysicsElement> {
         }
         return result;
     }
+
+    public @Nullable T surfaceElementAtWorld(double x, double y, double z) {
+        long[] c = new long[3];
+        normalCoords(x, y, z, c); // world -> (cellX,cellY,cellZ) using origin + cellSize
+        int bi = computeLinearBinIndex(c[0], c[1], c[2]);
+        if (bi < 0) return null;
+
+        List<T> bin = bins[bi];
+        if (bin == null || bin.isEmpty()) return null;
+
+        // pick the one marked as surface (your rebuildFrom sets PhysicsElement.surface(true))
+        for (T p : bin) {
+            if (p instanceof PhysicsElement pe && pe.surface()) return p;
+        }
+        return null;
+    }
+
 
     public @Nullable Vec3 queryCellCentroid(Vec3 pos) {
         List<T> cellPoints = queryCell(pos);
