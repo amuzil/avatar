@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 @Mixin(EntityRenderDispatcher.class)
 public abstract class EntityRenderDispatcherMixin {
     @ModifyVariable(method = "renderShadow", at = @At(value = "STORE", opcode = Opcodes.DSTORE), ordinal = 1)
-    private static double rayon$overrideShadowY_renderShadow(double e, PoseStack matrices, MultiBufferSource provider, Entity entity, float opacity, float tickDelta) {
+    private static double caliber$overrideShadowY_renderShadow(double e, PoseStack matrices, MultiBufferSource provider, Entity entity, float opacity, float tickDelta) {
         if (EntityPhysicsElement.is(entity))
             return EntityPhysicsElement.get(entity).getPhysicsLocation(new Vector3f(), tickDelta).y;
 
@@ -25,7 +25,7 @@ public abstract class EntityRenderDispatcherMixin {
     }
 //
 //    @Inject(method = "renderHitbox", at = @At("HEAD"), cancellable = true)
-//    private static void rayon$overrideHitBox_renderHitbox(PoseStack matrices, VertexConsumer vertices, Entity entity, float tickDelta, CallbackInfo info)
+//    private static void caliber$overrideHitBox_renderHitbox(PoseStack matrices, VertexConsumer vertices, Entity entity, float tickDelta, CallbackInfo info)
 //    {
 //        if (EntityPhysicsElement.is(entity))
 //            info.cancel();

@@ -9,5 +9,5 @@ import java.util.Set;
 @Mixin(targets = "net.minecraft.server.level.ChunkMap$TrackedEntity")
 public interface TrackedEntityMixin {
     @Accessor("seenBy")
-    Set<ServerPlayerConnection> rayon$getSeenBy();
+    Set<ServerPlayerConnection> caliber$getSeenBy();
 }

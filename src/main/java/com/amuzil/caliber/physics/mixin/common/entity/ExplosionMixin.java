@@ -28,12 +28,12 @@ public class ExplosionMixin {
     private Entity entity;
 
     @Inject(method = "explode", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;ignoreExplosion(Lnet/minecraft/world/level/Explosion;)Z"), locals = LocalCapture.CAPTURE_FAILHARD)
-    public void rayon$setCurrentEntity_explode(CallbackInfo ci, Set set, int i, float f2, int k1, int l1, int i2, int i1, int j2, int j1, List list, Vec3 vec3, Iterator var12, Entity entity) {
+    public void caliber$setCurrentEntity_explode(CallbackInfo ci, Set set, int i, float f2, int k1, int l1, int i2, int i1, int j2, int j1, List list, Vec3 vec3, Iterator var12, Entity entity) {
         this.entity = entity;
     }
 
     @ModifyArg(method = "explode", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;setDeltaMovement(Lnet/minecraft/world/phys/Vec3;)V"))
-    public Vec3 rayon$setVelocityOfRigidBody_explode(Vec3 velocity) {
+    public Vec3 caliber$setVelocityOfRigidBody_explode(Vec3 velocity) {
         if (EntityPhysicsElement.is(this.entity)) {
             var element = EntityPhysicsElement.get(this.entity);
             element.getRigidBody().applyCentralImpulse(Convert.toBullet(velocity).multLocal(element.getRigidBody().getMass() * 100f));

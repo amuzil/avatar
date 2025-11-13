@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(BlockBehaviour.BlockStateBase.class)
 public class BlockStateBaseMixin {
     @Inject(method = "updateShape", at = @At("HEAD"))
-    public void rayon$onShapeUpdated_updateShape(Direction direction, BlockState blockState, LevelAccessor levelAccessor, BlockPos blockPos, BlockPos blockPos2, CallbackInfoReturnable<BlockState> info) {
+    public void caliber$onShapeUpdated_updateShape(Direction direction, BlockState blockState, LevelAccessor levelAccessor, BlockPos blockPos, BlockPos blockPos2, CallbackInfoReturnable<BlockState> info) {
         if (levelAccessor instanceof Level level)
             ServerEventHandler.onBlockUpdate(level, blockState, blockPos);
     }

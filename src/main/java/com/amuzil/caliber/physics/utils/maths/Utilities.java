@@ -118,9 +118,9 @@ public class Utilities {
     public static List<ServerPlayer> getTracking(Entity entity) {
         if (entity.level() instanceof ServerLevel level) {
             ChunkMap chunkMap = level.getChunkSource().chunkMap;
-            TrackedEntityMixin trackedEntity = ((ChunkMapMixin)chunkMap).rayon$getEntityMap().get(entity.getId());
+            TrackedEntityMixin trackedEntity = ((ChunkMapMixin)chunkMap).caliber$getEntityMap().get(entity.getId());
             if (trackedEntity != null)
-                return trackedEntity.rayon$getSeenBy().stream().map(ServerPlayerConnection::getPlayer).collect(ImmutableList.toImmutableList());
+                return trackedEntity.caliber$getSeenBy().stream().map(ServerPlayerConnection::getPlayer).collect(ImmutableList.toImmutableList());
             return ImmutableList.of();
         }
         else {

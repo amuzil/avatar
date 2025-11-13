@@ -15,7 +15,7 @@ public class ClientLevelMixin {
     @Shadow @Final private Minecraft minecraft;
 
     @Inject(method = "disconnect", at = @At("HEAD"))
-    public void rayon$onDisconnect_disconnect(CallbackInfo ci) {
+    public void caliber$onDisconnect_disconnect(CallbackInfo ci) {
         ClientEventHandler.onDisconnect(this.minecraft, (ClientLevel)(Object)this);
     }
 }

@@ -9,5 +9,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(ChunkMap.class)
 public interface ChunkMapMixin {
     @Accessor("entityMap")
-    Int2ObjectMap<TrackedEntityMixin> rayon$getEntityMap();
+    Int2ObjectMap<TrackedEntityMixin> caliber$getEntityMap();
 }

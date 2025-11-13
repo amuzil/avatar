@@ -19,7 +19,7 @@ public abstract class KeyboardMixin {
     protected abstract void debugFeedbackTranslated(String string, Object... objects);
 
     @Inject(method = "handleDebugKeys", at = @At("HEAD"), cancellable = true)
-    private void rayon$processExtraF3_handleDebugKeys(int key, CallbackInfoReturnable<Boolean> info) {
+    private void caliber$processExtraF3_handleDebugKeys(int key, CallbackInfoReturnable<Boolean> info) {
         if (key == 82) { // R key
             boolean enabled = CollisionObjectDebugger.toggle();
 
