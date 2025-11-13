@@ -14,14 +14,14 @@ import com.amuzil.av3.input.InputModule;
 import com.amuzil.av3.network.AvatarNetwork;
 import com.amuzil.av3.utils.commands.AvatarCommands;
 import com.amuzil.av3.utils.sound.AvatarSounds;
-import com.amuzil.carryon.example.entity.CarryonEntities;
-import com.amuzil.carryon.example.renderer.CarryonEntityRenderers;
-import com.amuzil.carryon.physics.bullet.collision.space.generator.PressureGenerator;
-import com.amuzil.carryon.physics.bullet.collision.space.generator.TerrainGenerator;
-import com.amuzil.carryon.physics.bullet.natives.NativeLoader;
-import com.amuzil.carryon.physics.event.ClientEventHandler;
-import com.amuzil.carryon.physics.event.ServerEventHandler;
-import com.amuzil.carryon.physics.network.CarryonNetwork;
+import com.amuzil.caliber.example.entity.CaliberEntities;
+import com.amuzil.caliber.example.renderer.CaliberEntityRenderers;
+import com.amuzil.caliber.physics.bullet.collision.space.generator.PressureGenerator;
+import com.amuzil.caliber.physics.bullet.collision.space.generator.TerrainGenerator;
+import com.amuzil.caliber.physics.bullet.natives.NativeLoader;
+import com.amuzil.caliber.physics.event.ClientEventHandler;
+import com.amuzil.caliber.physics.event.ServerEventHandler;
+import com.amuzil.caliber.physics.network.CaliberNetwork;
 import com.amuzil.magus.registry.Registries;
 import com.amuzil.magus.tree.SkillTree;
 import net.minecraft.client.Minecraft;
@@ -54,12 +54,12 @@ public class Avatar {
         // Register ourselves for server and other game events we are interested in
         NeoForge.EVENT_BUS.register(this);
 
-        // Carryon Rigid Body Physics
-        modEventBus.addListener(CarryonEntityRenderers::registerEntityRenderers);
-        CarryonEntities.register(modEventBus);
+        // Caliber Rigid Body Physics
+        modEventBus.addListener(CaliberEntityRenderers::registerEntityRenderers);
+        CaliberEntities.register(modEventBus);
 
         modEventBus.addListener(AvatarNetwork::register);
-        modEventBus.addListener(CarryonNetwork::register);
+        modEventBus.addListener(CaliberNetwork::register);
         AvatarAttachments.register(modEventBus);
         AvatarEntities.register(modEventBus);
         AvatarSounds.register(modEventBus);
@@ -93,7 +93,7 @@ public class Avatar {
         ModuleRegistry.register(WaterCollisionModule::new);
         ModuleRegistry.register(FireEffectModule::new);
 
-        // Carryon Rigid Body Physics
+        // Caliber Rigid Body Physics
         IEventBus bus = NeoForge.EVENT_BUS;
         bus.register(ServerEventHandler.class);
         bus.register(PressureGenerator.class);
@@ -104,7 +104,7 @@ public class Avatar {
         // Initialize the input modules
         inputModule = new InputModule();
 
-        // Carryon Rigid Body Physics
+        // Caliber Rigid Body Physics
         NeoForge.EVENT_BUS.register(ClientEventHandler.class);
     }
 

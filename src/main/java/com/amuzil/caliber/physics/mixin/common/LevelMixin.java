@@ -1,0 +1,29 @@
+package com.amuzil.caliber.physics.mixin.common;
+
+import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
+import com.amuzil.caliber.physics.bullet.collision.space.storage.SpaceStorage;
+import net.minecraft.world.level.Level;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
+
+/**
+ * This is how each {@link MinecraftSpace} is stored within its associated
+ * {@link Level}.
+ * 
+ * @see SpaceStorage
+ */
+@Mixin(Level.class)
+public class LevelMixin implements SpaceStorage {
+    @Unique
+    private MinecraftSpace space;
+
+    @Override
+    public void setSpace(MinecraftSpace space) {
+        this.space = space;
+    }
+
+    @Override
+    public MinecraftSpace getSpace() {
+        return this.space;
+    }
+}
