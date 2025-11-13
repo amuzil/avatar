@@ -29,8 +29,11 @@ public final class AvatarCapabilities {
 
     @SubscribeEvent
     public static void onPlayerLoginEvent(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getEntity() instanceof ServerPlayer)
+        if (event.getEntity() instanceof ServerPlayer) {
+            System.out.println("SHOULD BE FRESH " + BENDER_CACHE.get(event.getEntity().getUUID()));
             syncBenderCap(event.getEntity());
+            System.out.println("PlayerLoggedInEvent syncBenderCap " + event.getEntity().getName().getString());
+        }
     }
 
     @SubscribeEvent

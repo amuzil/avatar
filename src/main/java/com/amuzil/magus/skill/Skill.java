@@ -57,7 +57,6 @@ public abstract class Skill {
         };
 
         addTrait(new UseTrait("use_skill", false));
-//        Registries.registerSkill(this);
     }
 
     public Skill create(Bender bender) {

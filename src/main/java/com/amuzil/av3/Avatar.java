@@ -58,16 +58,16 @@ public class Avatar {
         modEventBus.addListener(CarryonEntityRenderers::registerEntityRenderers);
         CarryonEntities.register(modEventBus);
 
-//        modEventBus.register(AvatarNetwork.class);
-//        modEventBus.register(CarryonNetwork.class);
         modEventBus.addListener(AvatarNetwork::register);
         modEventBus.addListener(CarryonNetwork::register);
         AvatarAttachments.register(modEventBus);
         AvatarEntities.register(modEventBus);
         AvatarSounds.register(modEventBus);
 
-        Registries.SKILL_CATEGORY_REGISTER.register(modEventBus);
+        Registries.registerForms();
+        Registries.FORMS_REGISTER.register(modEventBus);
         Registries.SKILL_REGISTER.register(modEventBus);
+        Registries.SKILL_CATEGORY_REGISTER.register(modEventBus);
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         // modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);

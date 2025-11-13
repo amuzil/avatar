@@ -16,14 +16,15 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import java.util.HashMap;
 import java.util.Random;
 
+
 @EventBusSubscriber(modid = Avatar.MOD_ID)
 public class Elements {
     public static final HashMap<String, Element> ALL_FOUR = new HashMap<>();
 
-    public static final DeferredHolder<SkillCategory, Element> AIRBENDING = Registries.SKILL_CATEGORY_REGISTER.register("airbending", Airbending::new);
-    public static final DeferredHolder<SkillCategory, Element> WATERBENDING = Registries.SKILL_CATEGORY_REGISTER.register("waterbending", Waterbending::new);
-    public static final DeferredHolder<SkillCategory, Element> EARTHBENDING = Registries.SKILL_CATEGORY_REGISTER.register("earthbending", Earthbending::new);
-    public static final DeferredHolder<SkillCategory, Element> FIREBENDING = Registries.SKILL_CATEGORY_REGISTER.register("firebending", Firebending::new);
+    private static final DeferredHolder<SkillCategory, Element> AIRBENDING = Registries.SKILL_CATEGORY_REGISTER.register("airbending", Airbending::new);
+    private static final DeferredHolder<SkillCategory, Element> WATERBENDING = Registries.SKILL_CATEGORY_REGISTER.register("waterbending", Waterbending::new);
+    private static final DeferredHolder<SkillCategory, Element> EARTHBENDING = Registries.SKILL_CATEGORY_REGISTER.register("earthbending", Earthbending::new);
+    private static final DeferredHolder<SkillCategory, Element> FIREBENDING = Registries.SKILL_CATEGORY_REGISTER.register("firebending", Firebending::new);
 
     public static Element AIR, WATER, EARTH, FIRE;
 

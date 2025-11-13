@@ -8,6 +8,7 @@ import com.amuzil.av3.network.AvatarNetwork;
 import com.amuzil.av3.network.packets.form.ExecuteFormPacket;
 import com.amuzil.av3.network.packets.form.ReleaseFormPacket;
 import com.amuzil.magus.form.ActiveForm;
+import com.amuzil.magus.registry.Registries;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -278,6 +279,7 @@ public class InputModule {
             assert player != null;
             Bender bender = getOrCreateBender(player);
             bender.printBenderData();
+//            Registries.printAll();
         } else {
             terminate();
             isBending = false;

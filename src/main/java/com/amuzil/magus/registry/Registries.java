@@ -6,41 +6,32 @@ import com.amuzil.magus.skill.Skill;
 import com.amuzil.magus.skill.SkillCategory;
 import com.amuzil.magus.skill.traits.DataTrait;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.NewRegistryEvent;
-import net.neoforged.neoforge.registries.RegisterEvent;
-import net.neoforged.neoforge.registries.RegistryBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Supplier;
 
+import static com.amuzil.av3.bending.form.BendingForms.*;
+
 
 /**
  * All custom registries go here.
  */
-@EventBusSubscriber(modid = Avatar.MOD_ID)
+//@EventBusSubscriber(modid = Avatar.MOD_ID)
 public class Registries {
     // === Registries ===
-//    public static final DeferredRegister<Form> FORMS =
-//            DeferredRegister.create(Avatar.id("forms"), Avatar.MOD_ID);
-    public static Registry<Form> FORMS;
-    public static final DeferredRegister<Skill> SKILL_REGISTER =
-            DeferredRegister.create(Avatar.id("skills"), Avatar.MOD_ID);
-    public static final DeferredRegister<SkillCategory> SKILL_CATEGORY_REGISTER =
-            DeferredRegister.create(Avatar.id("skill_categories"), Avatar.MOD_ID);
-    public static final Registry<Skill> SKILLS =
-            SKILL_REGISTER.makeRegistry((builder) -> builder.sync(true));
-    public static final Registry<SkillCategory> SKILL_CATEGORIES =
-            SKILL_CATEGORY_REGISTER.makeRegistry((builder) -> builder.sync(true));
+    public static final DeferredRegister<Form> FORMS_REGISTER = DeferredRegister.create(Avatar.id("forms"), Avatar.MOD_ID);
+    public static final DeferredRegister<Skill> SKILL_REGISTER = DeferredRegister.create(Avatar.id("skills"), Avatar.MOD_ID);
+    public static final DeferredRegister<SkillCategory> SKILL_CATEGORY_REGISTER = DeferredRegister.create(Avatar.id("skill_categories"), Avatar.MOD_ID);
+    public static final Registry<Form> FORMS = FORMS_REGISTER.makeRegistry((builder) -> builder.sync(true));
+    public static final Registry<Skill> SKILLS = SKILL_REGISTER.makeRegistry((builder) -> builder.sync(true));
+    public static final Registry<SkillCategory> SKILL_CATEGORIES = SKILL_CATEGORY_REGISTER.makeRegistry((builder) -> builder.sync(true));
 
     // === Local Containers ===
-    private static final HashMap<String, Form> forms = new HashMap<>();
     private static final List<SkillCategory> categories = new ArrayList<>();
     private static final HashMap<String, Supplier<Skill>> skills = new HashMap<>();
     private static final HashMap<String, Supplier<? extends Skill>> skillSuppliers = new HashMap<>();
@@ -51,20 +42,12 @@ public class Registries {
         return traits;
     }
 
-    public static HashMap<String, Form> getForms() {
-        return forms;
-    }
-
     public static Form getForm(String name) {
-        return forms.get(name);
+        return FORMS.get(Avatar.id(name));
     }
 
-    public static List<SkillCategory> getSkillCategories() {
-        return categories;
-    }
-
-    public static List<Skill> getSkills() {
-        return skills.values().stream().map(Supplier::get).toList();
+    public static List<Form> getForms() {
+        return FORMS.stream().toList();
     }
 
     public static Skill getSkill(ResourceLocation id) {
@@ -72,9 +55,40 @@ public class Registries {
         return sup != null ? sup.get() : null;
     }
 
+    public static List<Skill> getSkills() {
+        return skills.values().stream().map(Supplier::get).toList();
+    }
+
+    public static List<SkillCategory> getSkillCategories() {
+        return categories;
+    }
+
     // === Registration Helpers ===
-    public static void registerSkillCategory(SkillCategory skillCategory) {
-        categories.add(skillCategory);
+    public static void registerForm(Form form) {
+        String name = form.name();
+        FORMS_REGISTER.register(name, () -> form);
+    }
+
+    // TODO: Streamline this with reflection or something later
+    public static void registerForms() {
+        registerForm(NULL);
+        registerForm(STRIKE);
+        registerForm(BLOCK);
+        registerForm(STEP);
+        registerForm(PUSH);
+        registerForm(PULL);
+        registerForm(LEFT);
+        registerForm(RIGHT);
+        registerForm(RAISE);
+        registerForm(LOWER);
+        registerForm(ROTATE);
+        registerForm(EXPAND);
+        registerForm(COMPRESS);
+        registerForm(SPLIT);
+        registerForm(COMBINE);
+        registerForm(ARC);
+        registerForm(SHAPE);
+        registerForm(FOCUS);
     }
 
     public static Supplier<? extends Skill> registerSkill(Supplier<? extends Skill> skillSup) {
@@ -86,26 +100,37 @@ public class Registries {
         return skillRegistryObject;
     }
 
-    public static void registerForm(Form form) {
-        forms.put(form.name(), form);
+    public static void registerSkillCategory(SkillCategory skillCategory) {
+        categories.add(skillCategory);
     }
 
-    @SubscribeEvent
-    public static void onNewRegistryEvent(NewRegistryEvent event) {
-        // Forms
-        RegistryBuilder<Form> formRegistryBuilder = new RegistryBuilder<>(ResourceKey.createRegistryKey(Avatar.id("forms")));
-        formRegistryBuilder.defaultKey(Avatar.id("forms"));
-        FORMS = event.create(formRegistryBuilder);
+    public static void printAll() {
+        System.out.println("[Registries] " + Avatar.isClientOrServer(FMLEnvironment.dist.isClient()));
+        System.out.print("| ");
+        FORMS.forEach(form -> System.out.print(form.name() + " | "));
+        System.out.print("\n| ");
+        SKILL_CATEGORIES.forEach(skillCategory -> System.out.print(skillCategory.name() + " | "));
+        System.out.print("\n| ");
+        SKILLS.forEach(skill -> System.out.print(skill.name() + " | "));
+        System.out.println("\n[Registries] Total Skills: " + SKILLS.size());
     }
 
-    @SubscribeEvent
-    public static void gameRegistry(RegisterEvent event) {
-        // Forms
-        if (event.getRegistryKey().equals(FORMS.key())) {
-            event.register(FORMS.key(), registry -> {
-                for (Form form: forms.values())
-                    registry.register(Avatar.id(form.name()), form);
-            });
-        }
-    }
+//    @SubscribeEvent
+//    public static void onNewRegistryEvent(NewRegistryEvent event) {
+//        // Forms
+//        RegistryBuilder<Form> formRegistryBuilder = new RegistryBuilder<>(ResourceKey.createRegistryKey(Avatar.id("forms")));
+//        formRegistryBuilder.defaultKey(Avatar.id("forms"));
+//        FORMS = event.create(formRegistryBuilder);
+//    }
+
+//    @SubscribeEvent
+//    public static void gameRegistry(RegisterEvent event) {
+//        // Forms
+//        if (event.getRegistryKey().equals(FORMS.key())) {
+//            event.register(FORMS.key(), registry -> {
+//                for (Form form: forms.values())
+//                    registry.register(Avatar.id(form.name()), form);
+//            });
+//        }
+//    }
 }

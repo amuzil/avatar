@@ -41,12 +41,14 @@ public class BenderData implements IAttachmentSerializer<CompoundTag, BenderData
     }
 
     public BenderData(HolderLookup.Provider provider, CompoundTag tag) {
+//        System.out.println("Deserializing BenderData attachment... " + tag);
         this.deserializeNBT(provider, tag);
         initialized = true;
     }
 
     @Override
     public BenderData read(IAttachmentHolder holder, CompoundTag tag, HolderLookup.Provider provider) {
+//        System.out.println("Reading BenderData attachment..." + initialized);
         if (initialized)
             return this;
         else

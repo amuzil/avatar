@@ -37,14 +37,14 @@ public class AvatarCommands {
     }
 
     private static void createFormCommands() {
-        for (Form form : Registries.getForms().values()) {
+        for (Form form: Registries.getForms()) {
             builder.then(triggerFormCommand(form));
         }
     }
 
     private static void createSkillCommands() {
         builder.then(resetSkillCommand(null)); // Pass null to reset all
-        for (Skill skill : Registries.getSkills()) {
+        for (Skill skill: Registries.getSkills()) {
             builder.then(resetSkillCommand(skill));
             builder.then(setCanUseSkillCommand(skill, "grant"));
             builder.then(setCanUseSkillCommand(skill, "take"));
@@ -54,7 +54,7 @@ public class AvatarCommands {
     }
 
     private static void createElementCommands() {
-        for (Element elem : Elements.ALL_FOUR.values()) {
+        for (Element elem: Elements.ALL_FOUR.values()) {
             builder.then(activateElementCommand(elem));
             builder.then(setCanUseElementCommand(elem, "grant"));
             builder.then(setCanUseElementCommand(elem, "take"));
@@ -62,7 +62,7 @@ public class AvatarCommands {
     }
 
     private static void createMasterCommands() {
-        for (Element elem : Elements.ALL_FOUR.values()) {
+        for (Element elem: Elements.ALL_FOUR.values()) {
             builder.then(masterElementCommand(elem));
         }
     }
