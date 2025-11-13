@@ -89,8 +89,10 @@ public interface IBender extends INBTSerializable<CompoundTag> {
     void syncToClient();
     // Save data
 
+    @Override
     CompoundTag serializeNBT(HolderLookup.Provider provider);
     // Load data
 
+    @Override
     void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag);
 }
