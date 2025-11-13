@@ -44,26 +44,6 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
-    public static void onBlockBreak(BlockEvent.BreakEvent event) {
-        Bender bender = AvatarCapabilities.getOrCreateBender(event.getPlayer());
-        if (bender == null) return;
-        if (bender.getElement() == Elements.EARTH) {
-            event.setCanceled(true);
-        }
-    }
-
-    @SubscribeEvent
-    public static void worldTick(EntityTickEvent.Pre event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) return;
-        if (!player.isAlive()) return;
-
-        Bender bender = AvatarCapabilities.getOrCreateBender(player);
-        if (bender == null) return;
-        bender.tick();
-        NeoForge.EVENT_BUS.post(new SkillTickEvent());
-    }
-
-    @SubscribeEvent
     public static void onPlayerLoginEvent(PlayerEvent.PlayerLoggedInEvent event) {
         AvatarCapabilities.syncBenderCap(event.getEntity());
     }
@@ -87,5 +67,25 @@ public class ServerEvents {
     public static void onPlayerStartTrackingEvent(PlayerEvent.StartTracking event) {
         if (event.getTarget() instanceof Player && event.getEntity() instanceof ServerPlayer)
             AvatarCapabilities.syncBenderCap(event.getEntity());
+    }
+
+    @SubscribeEvent
+    public static void onBlockBreak(BlockEvent.BreakEvent event) {
+        Bender bender = AvatarCapabilities.getOrCreateBender(event.getPlayer());
+        if (bender == null) return;
+        if (bender.getElement() == Elements.EARTH) {
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public static void worldTick(EntityTickEvent.Pre event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        if (!player.isAlive()) return;
+
+        Bender bender = AvatarCapabilities.getOrCreateBender(player);
+        if (bender == null) return;
+        bender.tick();
+        NeoForge.EVENT_BUS.post(new SkillTickEvent());
     }
 }
