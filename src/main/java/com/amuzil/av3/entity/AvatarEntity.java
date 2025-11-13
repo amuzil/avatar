@@ -282,48 +282,47 @@ public abstract class AvatarEntity extends Entity {
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      *
-     * @param pCompound
+     * @param tag
      */
     @Override
-    protected void readAdditionalSaveData(CompoundTag pCompound) {
-        if (pCompound.hasUUID("OwnerUUID")) {
-            this.entityData.set(OWNER_ID, Optional.of(pCompound.getUUID("OwnerUUID")));
+    protected void readAdditionalSaveData(CompoundTag tag) {
+        if (tag.hasUUID("OwnerUUID")) {
+            this.entityData.set(OWNER_ID, Optional.of(tag.getUUID("OwnerUUID")));
         }
 
         // Element
-        if (pCompound.contains("Element")) {
-            this.element = Elements.get(ResourceLocation.parse(pCompound.getString("Element")));
-            this.entityData.set(ELEMENT, pCompound.getString("Element"));
+        if (tag.contains("Element")) {
+            this.element = Elements.get(ResourceLocation.parse(tag.getString("Element")));
+            this.entityData.set(ELEMENT, tag.getString("Element"));
         }
 
-        this.hittable = pCompound.getBoolean("Collidable");
-        this.damageable = pCompound.getBoolean("Damageable");
+        this.hittable = tag.getBoolean("Collidable");
+        this.damageable = tag.getBoolean("Damageable");
 
-        readTraits(pCompound);
-        readModuleList(pCompound, "GenericModules", modules);
-        readModuleList(pCompound, "ForceModules", forceModules);
-        readModuleList(pCompound, "CollisionModules", collisionModules);
-        readModuleList(pCompound, "RenderModules", renderModules);
+        readTraits(tag);
+        readModuleList(tag, "GenericModules", modules);
+        readModuleList(tag, "ForceModules", forceModules);
+        readModuleList(tag, "CollisionModules", collisionModules);
+        readModuleList(tag, "RenderModules", renderModules);
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag pCompound) {
-        this.entityData.get(OWNER_ID).ifPresent(uuid -> pCompound.putUUID("OwnerUUID", uuid));
+    protected void addAdditionalSaveData(CompoundTag tag) {
+        this.entityData.get(OWNER_ID).ifPresent(uuid -> tag.putUUID("OwnerUUID", uuid));
 
         // Element
         if (element != null) {
-            pCompound.putString("Element", element.name());
+            tag.putString("Element", element.name());
         }
 
-        pCompound.putBoolean("Collidable", hittable);
-        pCompound.putBoolean("Damageable", damageable);
+        tag.putBoolean("Collidable", hittable);
+        tag.putBoolean("Damageable", damageable);
 
-        writeTraits(pCompound);
-        writeModuleList(pCompound, "GenericModules", modules);
-        writeModuleList(pCompound, "ForceModules", forceModules);
-        writeModuleList(pCompound, "CollisionModules", collisionModules);
-        writeModuleList(pCompound, "RenderModules", renderModules);
-
+        writeTraits(tag);
+        writeModuleList(tag, "GenericModules", modules);
+        writeModuleList(tag, "ForceModules", forceModules);
+        writeModuleList(tag, "CollisionModules", collisionModules);
+        writeModuleList(tag, "RenderModules", renderModules);
     }
 
     public void checkBlocks() {

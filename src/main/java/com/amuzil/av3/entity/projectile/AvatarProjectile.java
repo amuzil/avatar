@@ -129,16 +129,16 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
         return MoreObjects.firstNonNull(this.getOwner(), this);
     }
 
-    protected void addAdditionalSaveData(CompoundTag pCompound) {
+    protected void addAdditionalSaveData(CompoundTag tag) {
         if (this.ownerUUID != null) {
-            pCompound.putUUID("Owner", this.ownerUUID);
+            tag.putUUID("Owner", this.ownerUUID);
         }
 
         if (this.leftOwner) {
-            pCompound.putBoolean("LeftOwner", true);
+            tag.putBoolean("LeftOwner", true);
         }
 
-        pCompound.putBoolean("HasBeenShot", this.hasBeenShot);
+        tag.putBoolean("HasBeenShot", this.hasBeenShot);
     }
 
     protected boolean ownedBy(Entity pEntity) {
@@ -148,14 +148,14 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    protected void readAdditionalSaveData(CompoundTag pCompound) {
-        if (pCompound.hasUUID("Owner")) {
-            this.ownerUUID = pCompound.getUUID("Owner");
+    protected void readAdditionalSaveData(CompoundTag tag) {
+        if (tag.hasUUID("Owner")) {
+            this.ownerUUID = tag.getUUID("Owner");
             this.cachedOwner = null;
         }
 
-        this.leftOwner = pCompound.getBoolean("LeftOwner");
-        this.hasBeenShot = pCompound.getBoolean("HasBeenShot");
+        this.leftOwner = tag.getBoolean("LeftOwner");
+        this.hasBeenShot = tag.getBoolean("HasBeenShot");
     }
 
     /**
