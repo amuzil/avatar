@@ -51,8 +51,8 @@ public class Bender implements IBender {
     private int tick = timeout;
     private Vec3 lastDeltaMovement = Vec3.ZERO; // in-sync
     private BendingForm.Type.Motion stepDirection; // in-sync
-    public final List<Form> formPath = new ArrayList<>(); // in-sync
     private BendingSelection selection = new BendingSelection(); // in-sync
+    public final List<Form> formPath = new ArrayList<>();
     public final HashMap<String, Skill> activeSkills = new HashMap<>();
     private Skill skillToActivate = null;
     private final int SKILL_ACTIVATION_THRESHOLD = 10;
