@@ -12,6 +12,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
@@ -60,5 +61,31 @@ public class ServerEvents {
         if (bender == null) return;
         bender.tick();
         NeoForge.EVENT_BUS.post(new SkillTickEvent());
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLoginEvent(PlayerEvent.PlayerLoggedInEvent event) {
+        AvatarCapabilities.syncBenderCap(event.getEntity());
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLoggedOutEvent(PlayerEvent.PlayerLoggedOutEvent event) {
+        AvatarCapabilities.removeCachedBender(event.getEntity());
+    }
+
+    @SubscribeEvent
+    public static void onPlayerRespawnEvent(PlayerEvent.PlayerRespawnEvent event) {
+        AvatarCapabilities.syncBenderCap(event.getEntity());
+    }
+
+    @SubscribeEvent
+    public static void onPlayerChangedDimensionEvent(PlayerEvent.PlayerChangedDimensionEvent event) {
+        AvatarCapabilities.syncBenderCap(event.getEntity());
+    }
+
+    @SubscribeEvent
+    public static void onPlayerStartTrackingEvent(PlayerEvent.StartTracking event) {
+        if (event.getTarget() instanceof Player && event.getEntity() instanceof ServerPlayer)
+            AvatarCapabilities.syncBenderCap(event.getEntity());
     }
 }

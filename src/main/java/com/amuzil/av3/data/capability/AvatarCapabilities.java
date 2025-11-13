@@ -9,7 +9,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.capabilities.EntityCapability;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,32 +24,6 @@ public final class AvatarCapabilities {
     @SubscribeEvent
     private static void register(RegisterCapabilitiesEvent event) {
         event.registerEntity(BENDER, EntityType.PLAYER, (entity, ctx) -> new Bender(entity));
-    }
-
-    @SubscribeEvent
-    public static void onPlayerLoginEvent(PlayerEvent.PlayerLoggedInEvent event) {
-        syncBenderCap(event.getEntity());
-    }
-
-    @SubscribeEvent
-    public static void onPlayerLoggedOutEvent(PlayerEvent.PlayerLoggedOutEvent event) {
-        removeCachedBender(event.getEntity());
-    }
-
-    @SubscribeEvent
-    public static void onPlayerRespawnEvent(PlayerEvent.PlayerRespawnEvent event) {
-        syncBenderCap(event.getEntity());
-    }
-
-    @SubscribeEvent
-    public static void onPlayerChangedDimensionEvent(PlayerEvent.PlayerChangedDimensionEvent event) {
-        syncBenderCap(event.getEntity());
-    }
-
-    @SubscribeEvent
-    public static void onPlayerStartTrackingEvent(PlayerEvent.StartTracking event) {
-        if (event.getTarget() instanceof Player && event.getEntity() instanceof ServerPlayer)
-            syncBenderCap(event.getEntity());
     }
 
     public static void syncBenderCap(Player player) {
