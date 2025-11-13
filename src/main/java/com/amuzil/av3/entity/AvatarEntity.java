@@ -66,8 +66,8 @@ public abstract class AvatarEntity extends Entity {
     // Data Sync for Behaviour
     // Data Sync for each trait
 
-    public AvatarEntity(EntityType<?> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public AvatarEntity(EntityType<?> entityType, Level pLevel) {
+        super(entityType, pLevel);
     }
 
     /** Call this after adding it to a world.

@@ -93,7 +93,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
     }
 
     @Override
-    public ResourceLocation getTextureLocation(AvatarEntity pEntity) { return WHITE_TEX; }
+    public ResourceLocation getTextureLocation(AvatarEntity entity) { return WHITE_TEX; }
 
     public float nowSeconds(float partialTick, T entity) {
         // or use Minecraft.getInstance().level.getGameTime()

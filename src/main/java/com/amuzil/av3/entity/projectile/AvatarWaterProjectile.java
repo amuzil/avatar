@@ -17,8 +17,8 @@ import org.joml.Vector3f;
 public class AvatarWaterProjectile extends AvatarProjectile implements IHasSDF {
     private SDFScene root;
 
-    public AvatarWaterProjectile(EntityType<AvatarWaterProjectile> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public AvatarWaterProjectile(EntityType<AvatarWaterProjectile> entityType, Level pLevel) {
+        super(entityType, pLevel);
         addForceModule((IForceModule) ModuleRegistry.create(CurveModule.id)); // Can hotswap to OrbitModule.id
 
         SDFSphere core = new SDFSphere();

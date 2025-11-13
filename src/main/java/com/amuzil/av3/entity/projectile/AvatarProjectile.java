@@ -48,8 +48,8 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
     private static final EntityDataAccessor<Float> WIDTH = SynchedEntityData.defineId(AvatarProjectile.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> HEIGHT = SynchedEntityData.defineId(AvatarProjectile.class, EntityDataSerializers.FLOAT);
 
-    public AvatarProjectile(EntityType<? extends AvatarProjectile> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public AvatarProjectile(EntityType<? extends AvatarProjectile> entityType, Level pLevel) {
+        super(entityType, pLevel);
         // NOTE: Modules are not synced between client and server unless added to the entity's constructor!
         addRenderModule((IRenderModule) ModuleRegistry.create(PhotonModule.id));
         addModule(ModuleRegistry.create(SoundModule.id));
@@ -141,8 +141,8 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
         tag.putBoolean("HasBeenShot", this.hasBeenShot);
     }
 
-    protected boolean ownedBy(Entity pEntity) {
-        return pEntity.getUUID().equals(this.ownerUUID);
+    protected boolean ownedBy(Entity entity) {
+        return entity.getUUID().equals(this.ownerUUID);
     }
 
     /**
@@ -175,12 +175,12 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
     }
 
     private boolean checkLeftOwner() {
-        Entity entity = this.getOwner();
-        if (entity != null) {
-            for(Entity entity1 : this.level().getEntities(this, this.getBoundingBox().expandTowards(this.getDeltaMovement()).inflate(1.0D), (p_37272_) -> {
-                return !p_37272_.isSpectator() && p_37272_.isPickable();
-            })) {
-                if (entity1.getRootVehicle() == entity.getRootVehicle()) {
+        Entity owner = this.getOwner();
+        if (owner != null) {
+            for (Entity entity1 : this.level().getEntities(
+                    this, this.getBoundingBox().expandTowards(this.getDeltaMovement()).inflate(1.0D),
+                    (entity) -> !entity.isSpectator() && entity.isPickable())) {
+                if (entity1.getRootVehicle() == owner.getRootVehicle()) {
                     return false;
                 }
             }
@@ -217,10 +217,10 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
     }
 
     /**
-     * Similar to setArrowHeading, it's point the throwable entity to a x, y, z direction.
+     * Similar to setArrowHeading, it's point to throw entity to a (x, y, z) direction.
      */
-    public void shoot(double pX, double pY, double pZ, float pVelocity, float pInaccuracy) {
-        Vec3 vec3 = (new Vec3(pX, pY, pZ)).normalize().add(this.random.triangle(0.0D, 0.0172275D * (double)pInaccuracy), this.random.triangle(0.0D, 0.0172275D * (double)pInaccuracy), this.random.triangle(0.0D, 0.0172275D * (double)pInaccuracy)).scale((double)pVelocity);
+    public void shoot(double x, double y, double z, float velocity, float inaccuracy) {
+        Vec3 vec3 = (new Vec3(x, y, z)).normalize().add(this.random.triangle(0.0D, 0.0172275D * (double)inaccuracy), this.random.triangle(0.0D, 0.0172275D * (double)inaccuracy), this.random.triangle(0.0D, 0.0172275D * (double)inaccuracy)).scale((double)velocity);
         this.setDeltaMovement(vec3);
         double d0 = vec3.horizontalDistance();
         this.setYRot((float)(Mth.atan2(vec3.x, vec3.z) * (double)(180F / (float)Math.PI)));
@@ -229,22 +229,22 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
         this.xRotO = this.getXRot();
     }
 
-    public void shootFromRotation(Entity pShooter, float pX, float pY, float pZ, float pVelocity, float pInaccuracy) {
-        float f = -Mth.sin(pY * ((float)Math.PI / 180F)) * Mth.cos(pX * ((float)Math.PI / 180F));
-        float f1 = -Mth.sin((pX + pZ) * ((float)Math.PI / 180F));
-        float f2 = Mth.cos(pY * ((float)Math.PI / 180F)) * Mth.cos(pX * ((float)Math.PI / 180F));
-        this.shoot((double)f, (double)f1, (double)f2, pVelocity, pInaccuracy);
-        Vec3 vec3 = pShooter.getDeltaMovement();
-        this.setDeltaMovement(this.getDeltaMovement().add(vec3.x, pShooter.onGround() ? 0.0D : vec3.y, vec3.z));
+    public void shootFromRotation(Entity shooter, float x, float y, float z, float velocity, float inaccuracy) {
+        float f = -Mth.sin(y * ((float)Math.PI / 180F)) * Mth.cos(x * ((float)Math.PI / 180F));
+        float f1 = -Mth.sin((x + z) * ((float)Math.PI / 180F));
+        float f2 = Mth.cos(y * ((float)Math.PI / 180F)) * Mth.cos(x * ((float)Math.PI / 180F));
+        this.shoot((double)f, (double)f1, (double)f2, velocity, inaccuracy);
+        Vec3 vec3 = shooter.getDeltaMovement();
+        this.setDeltaMovement(this.getDeltaMovement().add(vec3.x, shooter.onGround() ? 0.0D : vec3.y, vec3.z));
     }
 
-    protected void onHit(HitResult pResult) {
-        HitResult.Type hitresult$type = pResult.getType();
+    protected void onHit(HitResult result) {
+        HitResult.Type hitresult$type = result.getType();
         if (hitresult$type == HitResult.Type.ENTITY) {
-            this.onHitEntity((EntityHitResult)pResult);
-            this.level().gameEvent(GameEvent.PROJECTILE_LAND, pResult.getLocation(), GameEvent.Context.of(this, (BlockState)null));
+            this.onHitEntity((EntityHitResult)result);
+            this.level().gameEvent(GameEvent.PROJECTILE_LAND, result.getLocation(), GameEvent.Context.of(this, (BlockState)null));
         } else if (hitresult$type == HitResult.Type.BLOCK) {
-            BlockHitResult blockhitresult = (BlockHitResult)pResult;
+            BlockHitResult blockhitresult = (BlockHitResult)result;
             this.onHitBlock(blockhitresult);
             BlockPos blockpos = blockhitresult.getBlockPos();
             this.level().gameEvent(GameEvent.PROJECTILE_LAND, blockpos, GameEvent.Context.of(this, this.level().getBlockState(blockpos)));
@@ -256,23 +256,23 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
     /**
      * Called when the arrow hits an entity
      */
-    protected void onHitEntity(EntityHitResult pResult) {
+    protected void onHitEntity(EntityHitResult result) {
     }
 
-    protected void onHitBlock(BlockHitResult pResult) {
-        BlockState blockstate = this.level().getBlockState(pResult.getBlockPos());
-//        blockstate.onProjectileHit(this.level(), blockstate, pResult, this);
+    protected void onHitBlock(BlockHitResult result) {
+        BlockState blockstate = this.level().getBlockState(result.getBlockPos());
+//        blockstate.onProjectileHit(this.level(), blockstate, result, this);
     }
 
     /**
      * Updates the entity motion clientside, called by packets from the server
      */
-    public void lerpMotion(double pX, double pY, double pZ) {
-        this.setDeltaMovement(pX, pY, pZ);
+    public void lerpMotion(double x, double y, double z) {
+        this.setDeltaMovement(x, y, z);
         if (this.xRotO == 0.0F && this.yRotO == 0.0F) {
-            double d0 = Math.sqrt(pX * pX + pZ * pZ);
-            this.setXRot((float)(Mth.atan2(pY, d0) * (double)(180F / (float)Math.PI)));
-            this.setYRot((float)(Mth.atan2(pX, pZ) * (double)(180F / (float)Math.PI)));
+            double d0 = Math.sqrt(x * x + z * z);
+            this.setXRot((float)(Mth.atan2(y, d0) * (double)(180F / (float)Math.PI)));
+            this.setYRot((float)(Mth.atan2(x, z) * (double)(180F / (float)Math.PI)));
             this.xRotO = this.getXRot();
             this.yRotO = this.getYRot();
             this.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
@@ -296,16 +296,16 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
         this.setYRot(lerpRotation(this.yRotO, (float)(Mth.atan2(vec3.x, vec3.z) * (double)(180F / (float)Math.PI))));
     }
 
-    protected static float lerpRotation(float pCurrentRotation, float pTargetRotation) {
-        while(pTargetRotation - pCurrentRotation < -180.0F) {
-            pCurrentRotation -= 360.0F;
+    protected static float lerpRotation(float currentRotation, float targetRotation) {
+        while(targetRotation - currentRotation < -180.0F) {
+            currentRotation -= 360.0F;
         }
 
-        while(pTargetRotation - pCurrentRotation >= 180.0F) {
-            pCurrentRotation += 360.0F;
+        while(targetRotation - currentRotation >= 180.0F) {
+            currentRotation += 360.0F;
         }
 
-        return Mth.lerp(0.2F, pCurrentRotation, pTargetRotation);
+        return Mth.lerp(0.2F, currentRotation, targetRotation);
     }
 
     @Override

@@ -10,8 +10,8 @@ import net.minecraft.world.level.Level;
 
 public class AvatarCurveProjectile extends AvatarProjectile {
 
-    public AvatarCurveProjectile(EntityType<AvatarCurveProjectile> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public AvatarCurveProjectile(EntityType<AvatarCurveProjectile> entityType, Level pLevel) {
+        super(entityType, pLevel);
         addForceModule((IForceModule) ModuleRegistry.create(CurveModule.id));
     }
 
