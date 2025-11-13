@@ -11,6 +11,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Very basic knockback module. Only targets valid living entities.
@@ -38,8 +39,8 @@ public class SimpleKnockbackModule implements ICollisionModule {
                 hit -> hit != entity.owner() && (!(hit instanceof AvatarEntity) || ((AvatarEntity) hit).owner() != entity.owner()),
                 LivingEntity.class);
 
-        Vec3 knockback = entity.getTrait(Constants.KNOCKBACK_DIRECTION, DirectionTrait.class).direction();
-        float scale = (float) entity.getTrait(Constants.KNOCKBACK, KnockbackTrait.class).getKnockback();
+        Vec3 knockback = Objects.requireNonNull(entity.getTrait(Constants.KNOCKBACK_DIRECTION, DirectionTrait.class)).direction();
+        float scale = (float) Objects.requireNonNull(entity.getTrait(Constants.KNOCKBACK, KnockbackTrait.class)).getKnockback();
         Vec3 motion = entity.getDeltaMovement();
 
         // TODO: make projectile entities not hit the same target multiple times
