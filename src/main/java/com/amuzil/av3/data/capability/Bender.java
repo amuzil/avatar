@@ -64,7 +64,7 @@ public class Bender implements IBender {
         this.formListener = this::onFormActivatedEvent;
 
         // Allow use of all Elements & Skills for testing!
-        setAvatar(); // Grant all elements & skills
+//        setAvatar(); // Grant all elements & skills
 
         markDirty();
     }

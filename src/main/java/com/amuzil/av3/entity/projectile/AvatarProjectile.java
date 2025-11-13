@@ -304,13 +304,4 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
 
         return Mth.lerp(0.2F, currentRotation, targetRotation);
     }
-
-    @Override
-    public void recreateFromPacket(ClientboundAddEntityPacket packet) {
-        super.recreateFromPacket(packet);
-        Entity entity = this.level().getEntity(packet.getData());
-        if (entity != null) {
-            this.setOwner(entity);
-        }
-    }
 }

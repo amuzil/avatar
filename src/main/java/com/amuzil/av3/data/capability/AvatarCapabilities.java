@@ -26,19 +26,18 @@ public final class AvatarCapabilities {
         event.registerEntity(BENDER, EntityType.PLAYER, (entity, ctx) -> new Bender(entity));
     }
 
-    public static void syncBender(Player player) {
-        if (player instanceof ServerPlayer serverPlayer) {
-            Bender bender = getOrCreateBender(serverPlayer);
-            if (bender != null && bender.isDirty())
-                bender.syncToClient();
-        }
+    public static Bender syncBender(Player player) {
+        Bender bender = getOrCreateBender(player);
+        if (bender != null && bender.isDirty())
+            bender.syncToClient();
+        return bender;
     }
 
     public static Bender getOrCreateBender(Player player) {
         return BENDER_CACHE.computeIfAbsent(player.getUUID(), id -> Bender.getBender(player));
     }
 
-    public static void removeCachedBender(Player player) {
-        BENDER_CACHE.remove(player.getUUID());
+    public static Bender removeCachedBender(Player player) {
+        return BENDER_CACHE.remove(player.getUUID());
     }
 }

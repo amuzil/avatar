@@ -42,10 +42,10 @@ public class AvatarEntities {
             float height
     ) {
         return ENTITY_TYPES.register(id, () ->
-                EntityType.Builder.<T>of(factory, MobCategory.MISC)
+                EntityType.Builder.of(factory, MobCategory.MISC)
                         .sized(width, height)
                         .clientTrackingRange(64)
-                        .updateInterval(1)
+                        .updateInterval(3)
                         .build(id)
         );
     }

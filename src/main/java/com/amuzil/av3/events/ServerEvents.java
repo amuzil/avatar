@@ -21,37 +21,41 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 @EventBusSubscriber(modid = Avatar.MOD_ID)
 public class ServerEvents {
 
-    @SubscribeEvent
-    public static void onEntityJoinLevel(EntityJoinLevelEvent event) {
-        if (!(event.getEntity() instanceof Player)) return; // Ignore non-player entities
+//    @SubscribeEvent
+//    public static void onEntityJoinLevel(EntityJoinLevelEvent event) {
+//        if (!(event.getEntity() instanceof Player)) return; // Ignore non-player entities
+//
+//        if (event.getEntity() instanceof ServerPlayer player) {
+//            Bender bender = AvatarCapabilities.getOrCreateBender(player);
+//            if (bender == null) return;
+//            bender.register();
+//        }
+//    }
 
-        if (event.getEntity() instanceof ServerPlayer player) {
-            Bender bender = AvatarCapabilities.getOrCreateBender(player);
-            if (bender == null) return;
-            bender.register();
-        }
-    }
-
-    @SubscribeEvent
-    public static void onEntityLeaveLevel(EntityLeaveLevelEvent event) {
-        if (!(event.getEntity() instanceof Player)) return; // Ignore non-player entities
-
-        if (event.getEntity() instanceof ServerPlayer player) {
-            Bender bender = AvatarCapabilities.getOrCreateBender(player);
-            AvatarCapabilities.removeCachedBender(player);
-            if (bender == null) return;
-            bender.unregister();
-        }
-    }
+//    @SubscribeEvent
+//    public static void onEntityLeaveLevel(EntityLeaveLevelEvent event) {
+//        if (!(event.getEntity() instanceof Player)) return; // Ignore non-player entities
+//
+//        if (event.getEntity() instanceof ServerPlayer player) {
+//            Bender bender = AvatarCapabilities.getOrCreateBender(player);
+//            AvatarCapabilities.removeCachedBender(player);
+//            if (bender == null) return;
+//            bender.unregister();
+//        }
+//    }
 
     @SubscribeEvent
     public static void onPlayerLoginEvent(PlayerEvent.PlayerLoggedInEvent event) {
-        AvatarCapabilities.syncBender(event.getEntity());
+        Bender bender = AvatarCapabilities.syncBender(event.getEntity());
+        if (bender == null) return;
+        bender.register();
     }
 
     @SubscribeEvent
     public static void onPlayerLoggedOutEvent(PlayerEvent.PlayerLoggedOutEvent event) {
-        AvatarCapabilities.removeCachedBender(event.getEntity());
+        Bender bender = AvatarCapabilities.removeCachedBender(event.getEntity());
+        if (bender == null) return;
+        bender.unregister();
     }
 
     @SubscribeEvent

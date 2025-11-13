@@ -408,7 +408,7 @@ public abstract class AvatarEntity extends Entity {
      * serializers and important values that this class keeps track of.
      */
     @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity serverEntity) {
+    public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity serverEntity) {
         Entity entity = this.getOwner();
         return new ClientboundAddEntityPacket(this, serverEntity, entity == null ? 0 : entity.getId());
     }
