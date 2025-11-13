@@ -46,7 +46,7 @@ public class Bender implements IBender {
     private final Consumer<FormActivatedEvent> formListener;
 
     private boolean isDirty = true; // Indicates if data was changed
-    private boolean active; // Indicates if a BendingForm is currently active
+    private boolean active = false; // Indicates if a BendingForm is currently active
     private final int timeout = 5; // Adjust clear BendingForm cache timeout here
     private int tick = timeout;
     private Vec3 lastDeltaMovement = Vec3.ZERO; // in-sync
@@ -76,8 +76,7 @@ public class Bender implements IBender {
     }
 
     public void tick() {
-        if (!entity.level().isClientSide())
-            serverTick();
+        serverTick();
     }
 
     private boolean canUseSkill(Skill skill) {
@@ -161,7 +160,6 @@ public class Bender implements IBender {
             }
             tick--;
         }
-        restoreOriginalBlocks();
     }
 
     private void startSkill() {

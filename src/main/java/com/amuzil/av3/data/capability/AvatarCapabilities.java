@@ -26,7 +26,7 @@ public final class AvatarCapabilities {
         event.registerEntity(BENDER, EntityType.PLAYER, (entity, ctx) -> new Bender(entity));
     }
 
-    public static void syncBenderCap(Player player) {
+    public static void syncBender(Player player) {
         if (player instanceof ServerPlayer serverPlayer) {
             Bender bender = getOrCreateBender(serverPlayer);
             if (bender != null && bender.isDirty())
