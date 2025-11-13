@@ -2,13 +2,19 @@ package com.amuzil.av3.bending.element;
 
 import com.amuzil.magus.skill.SkillCategory;
 import com.mojang.serialization.Codec;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 
 
 public abstract class Element extends SkillCategory {
     public static final Codec<Element> CODEC = Codec.STRING.xmap(
-                    id -> Elements.get(ResourceLocation.parse(id)), // decode
-                    element -> element.getId().toString());       // encode
+                    id -> Elements.get(ResourceLocation.parse(id)), // encode
+                    element -> element.getId().toString());       // decode
+    public static final StreamCodec<RegistryFriendlyByteBuf, Element> STREAM_CODEC =
+            ByteBufCodecs.fromCodecWithRegistries(Element.CODEC);
+
 
     private final String nickName;
     private final Type type;

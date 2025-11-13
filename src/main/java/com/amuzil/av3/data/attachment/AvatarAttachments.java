@@ -16,15 +16,15 @@ public class AvatarAttachments {
             DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, Avatar.MOD_ID);
 
     public static final Supplier<AttachmentType<BenderData>> BENDER_DATA = ATTACHMENT_TYPES.register(
-            "bender_data", () -> AttachmentType.builder(BenderData::new)
-                    .serialize(new BenderData())
-                    .copyOnDeath()
+            "bender_data", () -> AttachmentType.serializable(BenderData::new)
                     .sync(BenderData.STREAM_CODEC)
+                    .copyOnDeath()
                     .build());
 
     public static final Supplier<AttachmentType<Element>> ACTIVE_ELEMENT = ATTACHMENT_TYPES.register(
             "active_element", () -> AttachmentType.builder(Elements::random)
                     .serialize(Element.CODEC)
+                    .sync(Element.STREAM_CODEC)
                     .copyOnDeath()
                     .build());
 

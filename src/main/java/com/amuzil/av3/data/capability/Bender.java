@@ -27,6 +27,7 @@ import net.neoforged.bus.api.EventPriority;
 import net.neoforged.neoforge.common.NeoForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.checkerframework.checker.units.qual.A;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -386,8 +387,11 @@ public class Bender implements IBender {
 
     @Override
     public void syncToClient() {
-        if (!entity.level().isClientSide())
+        if (!entity.level().isClientSide()) {
             entity.syncData(BENDER_DATA);
+            entity.syncData(ACTIVE_ELEMENT);
+            markClean();
+        }
 //            if (entity instanceof ServerPlayer player)
 //                AvatarNetwork.sendToClient(new SyncBenderPacket(this.serializeNBT(player.registryAccess()), player.getUUID()), player);
     }

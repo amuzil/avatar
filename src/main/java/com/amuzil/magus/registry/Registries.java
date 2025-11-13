@@ -17,11 +17,9 @@ import java.util.function.Supplier;
 
 import static com.amuzil.av3.bending.form.BendingForms.*;
 
-
 /**
  * All custom registries go here.
  */
-//@EventBusSubscriber(modid = Avatar.MOD_ID)
 public class Registries {
     // === Registries ===
     public static final DeferredRegister<Form> FORMS_REGISTER = DeferredRegister.create(Avatar.id("forms"), Avatar.MOD_ID);

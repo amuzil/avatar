@@ -279,7 +279,6 @@ public class InputModule {
             assert player != null;
             Bender bender = getOrCreateBender(player);
             bender.printBenderData();
-//            Registries.printAll();
         } else {
             terminate();
             isBending = false;

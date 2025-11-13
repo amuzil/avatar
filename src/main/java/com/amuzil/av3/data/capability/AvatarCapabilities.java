@@ -29,23 +29,22 @@ public final class AvatarCapabilities {
 
     @SubscribeEvent
     public static void onPlayerLoginEvent(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getEntity() instanceof ServerPlayer) {
-            System.out.println("SHOULD BE FRESH " + BENDER_CACHE.get(event.getEntity().getUUID()));
-            syncBenderCap(event.getEntity());
-            System.out.println("PlayerLoggedInEvent syncBenderCap " + event.getEntity().getName().getString());
-        }
+        syncBenderCap(event.getEntity());
     }
 
     @SubscribeEvent
-    public static void respawnEvent(PlayerEvent.PlayerRespawnEvent event) {
-        if (event.getEntity() instanceof ServerPlayer)
-            syncBenderCap(event.getEntity());
+    public static void onPlayerLoggedOutEvent(PlayerEvent.PlayerLoggedOutEvent event) {
+        removeCachedBender(event.getEntity());
     }
 
     @SubscribeEvent
-    public static void onPlayerDimChangedEvent(PlayerEvent.PlayerChangedDimensionEvent event) {
-        if (event.getEntity() instanceof ServerPlayer)
-            syncBenderCap(event.getEntity());
+    public static void onPlayerRespawnEvent(PlayerEvent.PlayerRespawnEvent event) {
+        syncBenderCap(event.getEntity());
+    }
+
+    @SubscribeEvent
+    public static void onPlayerChangedDimensionEvent(PlayerEvent.PlayerChangedDimensionEvent event) {
+        syncBenderCap(event.getEntity());
     }
 
     @SubscribeEvent
@@ -57,12 +56,16 @@ public final class AvatarCapabilities {
     public static void syncBenderCap(Player player) {
         if (player instanceof ServerPlayer serverPlayer) {
             Bender bender = getOrCreateBender(serverPlayer);
-            if (bender != null)
+            if (bender != null && bender.isDirty())
                 bender.syncToClient();
         }
     }
 
     public static Bender getOrCreateBender(Player player) {
         return BENDER_CACHE.computeIfAbsent(player.getUUID(), id -> Bender.getBender(player));
+    }
+
+    public static void removeCachedBender(Player player) {
+        BENDER_CACHE.remove(player.getUUID());
     }
 }
