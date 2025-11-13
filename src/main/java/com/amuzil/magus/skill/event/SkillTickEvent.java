@@ -1,6 +1,6 @@
 package com.amuzil.magus.skill.event;
 
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.bus.api.Event;
 
 public class SkillTickEvent extends Event {
 

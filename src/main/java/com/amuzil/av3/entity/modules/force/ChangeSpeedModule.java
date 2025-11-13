@@ -1,10 +1,10 @@
 package com.amuzil.av3.entity.modules.force;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.magus.skill.traits.skilltraits.SpeedTrait;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.IForceModule;
 import com.amuzil.av3.utils.Constants;
+import com.amuzil.magus.skill.traits.skilltraits.SpeedTrait;
 import net.minecraft.nbt.CompoundTag;
 
 

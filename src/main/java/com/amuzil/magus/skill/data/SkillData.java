@@ -4,6 +4,7 @@ import com.amuzil.magus.radix.RadixTree;
 import com.amuzil.magus.skill.Skill;
 import com.amuzil.magus.skill.traits.DataTrait;
 import com.amuzil.magus.skill.traits.SkillTrait;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
@@ -98,26 +99,26 @@ public class SkillData implements DataTrait {
     }
 
     @Override
-    public CompoundTag serializeNBT() {
+    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
         tag.putString("Skill ID", skillId.toString());
         tag.putString("Skill UUID", skillUUID.toString());
         tag.putBoolean("Can Use", canUse);
         skillTraits.forEach(skillTrait -> {
-            tag.put(skillTrait.name() + "_" + skillTrait.getClass().getSimpleName(), skillTrait.serializeNBT());
+            tag.put(skillTrait.name() + "_" + skillTrait.getClass().getSimpleName(), skillTrait.serializeNBT(provider));
         });
         return tag;
     }
 
     @Override
-    public void deserializeNBT(CompoundTag tag) {
+    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
         try {
             skillId = ResourceLocation.tryParse(tag.getString("Skill ID"));
             skillUUID = tag.getString("Skill UUID");
             canUse = tag.getBoolean("Can Use");
             if (!skillTraits.isEmpty())
                 skillTraits.forEach(skillTrait -> {
-                    skillTrait.deserializeNBT((CompoundTag) Objects.requireNonNull(tag.get(skillTrait.name() + "_" + skillTrait.getClass().getSimpleName())));
+                    skillTrait.deserializeNBT(provider, (CompoundTag) Objects.requireNonNull(tag.get(skillTrait.name() + "_" + skillTrait.getClass().getSimpleName())));
                     skillTrait.markClean();
                 });
         } catch (NullPointerException e) {

@@ -2,11 +2,11 @@ package com.amuzil.magus.skill.traits.skilltraits;
 
 import com.amuzil.magus.skill.traits.SkillTrait;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.extensions.IForgeBlockState;
 
 
 /**
@@ -14,20 +14,20 @@ import net.minecraftforge.common.extensions.IForgeBlockState;
  */
 public class BlockTrait extends SkillTrait {
 
-    private IForgeBlockState state;
+    private BlockState state;
     private BlockPos pos;
 
     // Note: If you want to know how long a usable BlockState has been selected, use another
     // TimedTrait.
-    public BlockTrait(String name, IForgeBlockState state, BlockPos pos) {
+    public BlockTrait(String name, BlockState state, BlockPos pos) {
         super(name);
         this.state = state;
         this.pos = pos;
     }
 
     @Override
-    public CompoundTag serializeNBT() {
-        CompoundTag tag = super.serializeNBT();
+    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+        CompoundTag tag = super.serializeNBT(provider);
         tag.putInt("value", Block.getId((BlockState) state));
         tag.putIntArray("value", new int[] {
                 pos.getX(), pos.getY(), pos.getZ()
@@ -36,8 +36,8 @@ public class BlockTrait extends SkillTrait {
     }
 
     @Override
-    public void deserializeNBT(CompoundTag nbt) {
-        super.deserializeNBT(nbt);
+    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
+        super.deserializeNBT(provider, nbt);
         state = Block.stateById(nbt.getInt("value"));
         int[] blockPos = nbt.getIntArray("value");
         pos = new BlockPos(blockPos[0],  blockPos[1], blockPos[2]);
@@ -55,10 +55,6 @@ public class BlockTrait extends SkillTrait {
 
     public BlockState getState() {
         return (BlockState) state;
-    }
-
-    public IForgeBlockState getForgeState() {
-        return this.state;
     }
 
     public BlockPos getPos() {

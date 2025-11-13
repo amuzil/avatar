@@ -1,18 +1,25 @@
 package com.amuzil.av3.network.packets.sync;
 
-import com.amuzil.av3.capability.AvatarCapabilities;
+import com.amuzil.av3.Avatar;
+import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.network.packets.api.AvatarPacket;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.Objects;
 import java.util.UUID;
-import java.util.function.Supplier;
 
+import static com.amuzil.av3.data.capability.AvatarCapabilities.getOrCreateBender;
 
 public class SyncMovementPacket implements AvatarPacket {
+    public static final Type<SyncMovementPacket> TYPE = new Type<>(Avatar.id(SyncMovementPacket.class));
+    public static final StreamCodec<FriendlyByteBuf, SyncMovementPacket> CODEC =
+            StreamCodec.ofMember(SyncMovementPacket::toBytes, SyncMovementPacket::new);
+
     private final Vec3 movement;
     private final UUID playerUUID;
 
@@ -21,8 +28,9 @@ public class SyncMovementPacket implements AvatarPacket {
         this.playerUUID = playerUUID;
     }
 
-    public static SyncMovementPacket fromBytes(FriendlyByteBuf buf) {
-        return new SyncMovementPacket(new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble()), buf.readUUID());
+    public SyncMovementPacket(FriendlyByteBuf buf) {
+        this.movement = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
+        this.playerUUID = buf.readUUID();
     }
 
     public void toBytes(FriendlyByteBuf buf) {
@@ -32,20 +40,23 @@ public class SyncMovementPacket implements AvatarPacket {
         buf.writeUUID(playerUUID);
     }
 
-    public static boolean handle(SyncMovementPacket msg, Supplier<NetworkEvent.Context> ctxSupplier) {
-        NetworkEvent.Context ctx = ctxSupplier.get();
+    public static void handle(SyncMovementPacket msg, IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
-            if (ctx.getDirection().getReceptionSide().isServer()) {
-                // Update Bender's BendingSelection on the server
-                ServerPlayer player = Objects.requireNonNull(ctx.getSender()).server.getPlayerList().getPlayer(msg.playerUUID);
+            if (ctx.flow().getReceptionSide().isServer()) {
+                // Update Bender's movement on server
+                ServerPlayer player = Objects.requireNonNull(ctx.player().getServer()).getPlayerList().getPlayer(msg.playerUUID);
                 assert player != null;
-                player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
+                Bender bender = getOrCreateBender(player);
+                if (bender != null) {
                     bender.setDeltaMovement(msg.movement);
                     bender.markClean();
-                });
+                }
             }
         });
-        ctx.setPacketHandled(true);
-        return true;
+    }
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

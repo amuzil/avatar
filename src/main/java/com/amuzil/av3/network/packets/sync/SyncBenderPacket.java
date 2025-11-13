@@ -1,20 +1,28 @@
 package com.amuzil.av3.network.packets.sync;
 
-import com.amuzil.av3.capability.AvatarCapabilities;
+import com.amuzil.av3.Avatar;
+import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.network.packets.api.AvatarPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.Objects;
 import java.util.UUID;
-import java.util.function.Supplier;
+
+import static com.amuzil.av3.data.capability.AvatarCapabilities.getOrCreateBender;
 
 
 public class SyncBenderPacket implements AvatarPacket {
+    public static final Type<SyncBenderPacket> TYPE = new Type<>(Avatar.id(SyncBenderPacket.class));
+    public static final StreamCodec<FriendlyByteBuf, SyncBenderPacket> CODEC =
+            StreamCodec.ofMember(SyncBenderPacket::toBytes, SyncBenderPacket::new);
+
     private final CompoundTag tag; // The NBT data to sync
     private final UUID playerUUID; // Entity ID to send back to client
 
@@ -23,10 +31,9 @@ public class SyncBenderPacket implements AvatarPacket {
         this.playerUUID = playerUUID;
     }
 
-    public static SyncBenderPacket fromBytes(FriendlyByteBuf buf) {
-        CompoundTag tag = buf.readNbt();
-        UUID playerUUID = buf.readUUID();
-        return new SyncBenderPacket(tag, playerUUID);
+    public SyncBenderPacket(FriendlyByteBuf buf) {
+        this.tag = buf.readNbt();
+        this.playerUUID = buf.readUUID();
     }
 
     public void toBytes(FriendlyByteBuf buf) {
@@ -34,28 +41,33 @@ public class SyncBenderPacket implements AvatarPacket {
         buf.writeUUID(playerUUID);
     }
 
-    public static boolean handle(SyncBenderPacket msg, Supplier<NetworkEvent.Context> ctxSupplier) {
-        NetworkEvent.Context ctx = ctxSupplier.get();
+    public static void handle(SyncBenderPacket msg, IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
-            if (ctx.getDirection().getReceptionSide().isClient()) {
+            if (ctx.flow().getReceptionSide().isClient()) {
                 // Update Bender's data on their client
                 LocalPlayer player = Minecraft.getInstance().player;
-                assert player != null;
-                player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
-                    bender.deserializeNBT(msg.tag);
-                    bender.markClean();
-                });
+                if (player != null) {
+                    Bender bender = getOrCreateBender(player);
+                    if (bender != null) {
+                        bender.deserializeNBT(player.level().registryAccess(), msg.tag);
+                        bender.markClean();
+                    }
+                }
             } else {
                 // Update Bender's data on server
-                ServerPlayer player = Objects.requireNonNull(ctx.getSender()).server.getPlayerList().getPlayer(msg.playerUUID);
+                ServerPlayer player = Objects.requireNonNull(ctx.player().getServer()).getPlayerList().getPlayer(msg.playerUUID);
                 assert player != null;
-                player.getCapability(AvatarCapabilities.BENDER).ifPresent(bender -> {
-                    bender.deserializeNBT(msg.tag);
+                Bender bender = getOrCreateBender(player);
+                if (bender != null) {
+                    bender.deserializeNBT(player.level().registryAccess(), msg.tag);
                     bender.markClean();
-                });
+                }
             }
         });
-        ctx.setPacketHandled(true);
-        return true;
+    }
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

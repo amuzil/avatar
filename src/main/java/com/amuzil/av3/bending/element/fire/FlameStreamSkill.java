@@ -1,11 +1,9 @@
 package com.amuzil.av3.bending.element.fire;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.magus.skill.data.SkillPathBuilder;
-import com.amuzil.magus.skill.traits.entitytraits.PointsTrait;
 import com.amuzil.av3.bending.form.BendingForms;
 import com.amuzil.av3.bending.skill.FireSkill;
-import com.amuzil.av3.capability.Bender;
+import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.entity.api.ICollisionModule;
 import com.amuzil.av3.entity.modules.ModuleRegistry;
 import com.amuzil.av3.entity.modules.collision.FireCollisionModule;
@@ -16,6 +14,8 @@ import com.amuzil.av3.entity.modules.force.ChangeSpeedModule;
 import com.amuzil.av3.entity.projectile.AvatarDirectProjectile;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.av3.utils.maths.Point;
+import com.amuzil.magus.skill.data.SkillPathBuilder;
+import com.amuzil.magus.skill.traits.entitytraits.PointsTrait;
 import com.amuzil.magus.skill.traits.skilltraits.*;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
@@ -30,7 +30,7 @@ public class FlameStreamSkill extends FireSkill {
         addTrait(new DamageTrait(Constants.DAMAGE, 1.5f));
         addTrait(new SizeTrait(Constants.SIZE, 0.125F));
         addTrait(new SizeTrait(Constants.MAX_SIZE, 1.0f));
-        addTrait(new KnockbackTrait(Constants.KNOCKBACK, 0.01f));
+        addTrait(new KnockbackTrait(Constants.KNOCKBACK, 0.012f));
         addTrait(new ColourTrait(0, 0, 0, Constants.FIRE_COLOUR));
         addTrait(new SpeedTrait(Constants.SPEED, 0.875d));
         addTrait(new TimedTrait(Constants.LIFETIME, 15));

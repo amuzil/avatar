@@ -3,12 +3,13 @@ package com.amuzil.av3.bending;
 import com.amuzil.av3.utils.bending.OriginalBlock;
 import com.amuzil.av3.utils.bending.OriginalBlocks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 
 import java.util.*;
 
@@ -34,8 +35,8 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
     public BendingSelection() {}
 
     public BendingSelection(CompoundTag tag) {
-        this.deserializeNBT(tag);
-    }
+        this.deserializeNBT(null, tag);
+    } // todo: whats this holder thing about
 
     public void reset() {
         blockPos = null;
@@ -132,7 +133,7 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
     }
 
     @Override
-    public CompoundTag serializeNBT() {
+    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         CompoundTag compoundTag = new CompoundTag();
 
         compoundTag.putString("targetType", this.target.toString());
@@ -166,7 +167,7 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
     }
 
     @Override
-    public void deserializeNBT(CompoundTag tag) {
+    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
         String targetType = tag.getString("targetType");
         this.target = Enum.valueOf(Target.class, targetType);
 

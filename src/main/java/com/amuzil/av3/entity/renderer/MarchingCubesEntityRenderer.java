@@ -2,7 +2,7 @@ package com.amuzil.av3.entity.renderer;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.entity.AvatarEntity;
-import com.amuzil.av3.entity.IHasSDF;
+import com.amuzil.av3.entity.api.IHasSDF;
 import com.amuzil.av3.entity.renderer.sdf.SignedDistanceFunction;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -19,8 +19,8 @@ import java.util.*;
 public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityRenderer<T> {
 
     private final Map<UUID, CachedMesh> meshCache = new HashMap<>();
-//    private static final ResourceLocation WHITE_TEX = ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "textures/misc/white.png");
-    private static final ResourceLocation WHITE_TEX = ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "textures/water.png");
+//    private static final ResourceLocation WHITE_TEX = Avatar.id("textures/misc/white.png");
+    private static final ResourceLocation WHITE_TEX = Avatar.id("textures/water.png");
 
     private static final int GRID_SIZE = 32;
     private static final float CELL_SIZE = 0.25f;
@@ -61,36 +61,32 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
             float[] uv2 = uvPlanar(p2, n, TEX_SCALE);
 
 //            vc.vertex( p0.x, p0.y, p0.z)
-            vc.vertex(last.pose(), p0.x, p0.y, p0.z)
-                    .color(255,255,255,255).uv(uv0[0], uv0[1])
-                    .overlayCoords(OverlayTexture.NO_OVERLAY)
-                    .uv2(packedLight)
-                    .normal(last.normal(), n.x, n.y, n.z)
-                    .endVertex();
+            vc.addVertex(last.pose(), p0.x, p0.y, p0.z)
+                    .setColor(255,255,255,255).setUv(uv0[0], uv0[1])
+                    .setOverlay(OverlayTexture.NO_OVERLAY)
+                    .setLight(packedLight)
+                    .setNormal(last, n.x, n.y, n.z);
 
 //            vc.vertex(p1.x, p1.y, p1.z)
-            vc.vertex(last.pose(), p1.x, p1.y, p1.z)
-                    .color(255,255,255,255).uv(uv1[0], uv1[1])
-                    .overlayCoords(OverlayTexture.NO_OVERLAY)
-                    .uv2(packedLight)
-                    .normal(last.normal(), n.x, n.y, n.z)
-                    .endVertex();
+            vc.addVertex(last.pose(), p1.x, p1.y, p1.z)
+                    .setColor(255,255,255,255).setUv(uv1[0], uv1[1])
+                    .setOverlay(OverlayTexture.NO_OVERLAY)
+                    .setLight(packedLight)
+                    .setNormal(last, n.x, n.y, n.z);
 
 //            vc.vertex(p2.x, p2.y, p2.z)
-            vc.vertex(last.pose(), p2.x, p2.y, p2.z)
-                    .color(255,255,255,255).uv(uv2[0], uv2[1])
-                    .overlayCoords(OverlayTexture.NO_OVERLAY)
-                    .uv2(packedLight)
-                    .normal(last.normal(), n.x, n.y, n.z)
-                    .endVertex();
+            vc.addVertex(last.pose(), p2.x, p2.y, p2.z)
+                    .setColor(255,255,255,255).setUv(uv2[0], uv2[1])
+                    .setOverlay(OverlayTexture.NO_OVERLAY)
+                    .setLight(packedLight)
+                    .setNormal(last, n.x, n.y, n.z);
 
 //             C again (degenerate 4th vertex so the QUADS mode groups correctly)
-            vc.vertex(last.pose(), p2.x, p2.y, p2.z)
-                    .color(255,255,255,255).uv(uv2[0], uv2[1])
-                    .overlayCoords(OverlayTexture.NO_OVERLAY)
-                    .uv2(packedLight)
-                    .normal(last.normal(), n.x, n.y, n.z)
-                    .endVertex();
+            vc.addVertex(last.pose(), p2.x, p2.y, p2.z)
+                    .setColor(255,255,255,255).setUv(uv2[0], uv2[1])
+                    .setOverlay(OverlayTexture.NO_OVERLAY)
+                    .setLight(packedLight)
+                    .setNormal(last, n.x, n.y, n.z);
         }
 
         pose.popPose();

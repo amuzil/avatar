@@ -1,17 +1,17 @@
 package com.amuzil.magus.skill;
 
+import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.magus.form.Form;
 import com.amuzil.magus.radix.RadixTree;
 import com.amuzil.magus.skill.data.SkillData;
 import com.amuzil.magus.skill.event.SkillTickEvent;
 import com.amuzil.magus.skill.traits.SkillTrait;
 import com.amuzil.magus.skill.traits.skilltraits.UseTrait;
-import com.amuzil.av3.capability.Bender;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.EventPriority;
+import net.neoforged.bus.api.Event;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -57,7 +57,6 @@ public abstract class Skill {
         };
 
         addTrait(new UseTrait("use_skill", false));
-//        Registries.registerSkill(this);
     }
 
     public Skill create(Bender bender) {
@@ -125,7 +124,7 @@ public abstract class Skill {
 //        switch (skillData.getSkillState()) {
 //            case START -> {
 //                if (shouldStart(bender, formPath)) {
-//                    if (MinecraftForge.EVENT_BUS.post(new SkillExecutionEvent.Start(bender.getEntity(), formPath, this)))
+//                    if (NeoForge.EVENT_BUS.post(new SkillExecutionEvent.Start(bender.getEntity(), formPath, this)))
 //                        return;
 //                    executeOnClient(bender.getEntity(), skillData, SkillState.START);
 //                    start(bender);
@@ -134,7 +133,7 @@ public abstract class Skill {
 //
 //            case RUN -> {
 //                if (shouldRun(bender, formPath)) {
-//                    if (MinecraftForge.EVENT_BUS.post(new SkillExecutionEvent.Run(bender.getEntity(), formPath, this)))
+//                    if (NeoForge.EVENT_BUS.post(new SkillExecutionEvent.Run(bender.getEntity(), formPath, this)))
 //                        return;
 //                    executeOnClient(bender.getEntity(), skillData, SkillState.RUN);
 //                    run(bender);
@@ -143,7 +142,7 @@ public abstract class Skill {
 //
 //            case STOP -> {
 //                if (shouldStop(bender, formPath)) {
-//                    if (MinecraftForge.EVENT_BUS.post(new SkillExecutionEvent.Stop(bender.getEntity(), formPath, this)))
+//                    if (NeoForge.EVENT_BUS.post(new SkillExecutionEvent.Stop(bender.getEntity(), formPath, this)))
 //                        return;
 //                    executeOnClient(bender.getEntity(), skillData, SkillState.STOP);
 //                    stop(bender);
@@ -153,11 +152,11 @@ public abstract class Skill {
 //    }
 
     protected <T extends Event> void listen(Class<T> eventType, Consumer<T> runnable) {
-        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, eventType, runnable);
+        NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, eventType, runnable);
     }
 
     protected void hush(Consumer<?> runnable) {
-        MinecraftForge.EVENT_BUS.unregister(runnable);
+        NeoForge.EVENT_BUS.unregister(runnable);
     }
 
     public void tick(Bender bender) {

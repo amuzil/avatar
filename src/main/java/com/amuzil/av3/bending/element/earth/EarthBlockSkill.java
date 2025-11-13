@@ -1,12 +1,12 @@
 package com.amuzil.av3.bending.element.earth;
 
 import com.amuzil.av3.Avatar;
+import com.amuzil.av3.bending.skill.EarthSkill;
+import com.amuzil.av3.data.capability.Bender;
+import com.amuzil.av3.utils.Constants;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.traits.skilltraits.KnockbackTrait;
 import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
-import com.amuzil.av3.bending.skill.EarthSkill;
-import com.amuzil.av3.capability.Bender;
-import com.amuzil.av3.utils.Constants;
 import net.minecraft.core.BlockPos;
 
 import static com.amuzil.av3.bending.form.BendingForms.BLOCK;
@@ -34,9 +34,9 @@ public class EarthBlockSkill extends EarthSkill {
 //            AnimationStack animationStack = PlayerAnimationAccess.getPlayerAnimLayer(benderPlayer);
 //            animationStack.addAnimLayer(null, true);
 //            var animation = (ModifierLayer<IAnimation>) PlayerAnimationAccess.getPlayerAssociatedData(benderPlayer).get(
-//                    ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "animation"));
+//                    Avatar.id("animation"));
 //            if (animation != null) {
-//                animation.setAnimation(new KeyframeAnimationPlayer(PlayerAnimationRegistry.getAnimation(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "earth_block"))));
+//                animation.setAnimation(new KeyframeAnimationPlayer(PlayerAnimationRegistry.getAnimation(Avatar.id("earth_block"))));
 //                // You might use  animation.replaceAnimationWithFade(); to create fade effect instead of sudden change
 //                // See javadoc for details
 //            }

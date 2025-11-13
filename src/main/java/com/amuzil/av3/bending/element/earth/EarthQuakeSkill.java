@@ -1,14 +1,14 @@
 package com.amuzil.av3.bending.element.earth;
 
 import com.amuzil.av3.Avatar;
+import com.amuzil.av3.bending.skill.EarthSkill;
+import com.amuzil.av3.data.capability.Bender;
+import com.amuzil.av3.utils.Constants;
+import com.amuzil.av3.utils.bending.OriginalBlocks;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.event.SkillTickEvent;
 import com.amuzil.magus.skill.traits.skilltraits.KnockbackTrait;
 import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
-import com.amuzil.av3.bending.skill.EarthSkill;
-import com.amuzil.av3.capability.Bender;
-import com.amuzil.av3.utils.Constants;
-import com.amuzil.av3.utils.bending.OriginalBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelReader;
@@ -103,9 +103,6 @@ public class EarthQuakeSkill extends EarthSkill {
 
     private static void sample(
             LevelReader level, BlockPos pos, Predicate<BlockPos> includePos, boolean skipUnloaded, LinkedHashMap<BlockPos, BlockState> sink) {
-        if (skipUnloaded && !level.hasChunkAt(pos)) {
-            return; // don’t force-load chunks
-        }
         if (!includePos.test(pos)) {
             return;
         }
@@ -116,10 +113,8 @@ public class EarthQuakeSkill extends EarthSkill {
     public void startCleanup() {
         cleanupRunnable = (skillTickEvent) -> {
             ticksStopped++;
-            if (ticksStopped >= 400) {
+            if (ticksStopped >= 400)
                 originalBlocks.restore((ServerLevel) bender.getEntity().level());
-                System.out.println("EarthQuakeSkill cleanup stopped");
-            }
         };
         this.listen(SkillTickEvent.class, cleanupRunnable);
     }

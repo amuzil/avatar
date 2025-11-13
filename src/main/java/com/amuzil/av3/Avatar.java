@@ -1,41 +1,40 @@
 package com.amuzil.av3;
 
-import com.amuzil.carryon.example.entity.RayonExampleEntities;
-import com.amuzil.carryon.example.renderer.RayonExampleEntityRenderers;
-import com.amuzil.carryon.physics.bullet.collision.space.generator.PressureGenerator;
-import com.amuzil.carryon.physics.bullet.collision.space.generator.TerrainGenerator;
-import com.amuzil.carryon.physics.bullet.natives.NativeLoader;
-import com.amuzil.carryon.physics.event.ClientEventHandler;
-import com.amuzil.carryon.physics.event.ServerEventHandler;
-import com.amuzil.carryon.physics.packet.RayonPacketHandlers;
-import com.amuzil.magus.registry.Registries;
-import com.amuzil.magus.tree.SkillTree;
 import com.amuzil.av3.bending.BendingSkill;
-import com.amuzil.av3.bending.element.Elements;
+import com.amuzil.av3.data.attachment.AvatarAttachments;
 import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.modules.ModuleRegistry;
 import com.amuzil.av3.entity.modules.collision.*;
 import com.amuzil.av3.entity.modules.entity.GrowModule;
-import com.amuzil.av3.entity.modules.entity.SoundModule;
 import com.amuzil.av3.entity.modules.entity.TimeoutModule;
 import com.amuzil.av3.entity.modules.force.*;
 import com.amuzil.av3.entity.modules.render.PhotonModule;
+import com.amuzil.av3.entity.modules.render.SoundModule;
 import com.amuzil.av3.input.InputModule;
 import com.amuzil.av3.network.AvatarNetwork;
 import com.amuzil.av3.utils.commands.AvatarCommands;
 import com.amuzil.av3.utils.sound.AvatarSounds;
+import com.amuzil.caliber.example.entity.CaliberEntities;
+import com.amuzil.caliber.example.renderer.CaliberEntityRenderers;
+import com.amuzil.caliber.physics.bullet.collision.space.generator.PressureGenerator;
+import com.amuzil.caliber.physics.bullet.collision.space.generator.TerrainGenerator;
+import com.amuzil.caliber.physics.bullet.natives.NativeLoader;
+import com.amuzil.caliber.physics.event.ClientEventHandler;
+import com.amuzil.caliber.physics.event.ServerEventHandler;
+import com.amuzil.caliber.physics.network.CaliberNetwork;
+import com.amuzil.magus.registry.Registries;
+import com.amuzil.magus.tree.SkillTree;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -46,37 +45,36 @@ public class Avatar {
     public static final Logger LOGGER = LogManager.getLogger();
     public static InputModule inputModule;
 
-    public Avatar(FMLJavaModLoadingContext context) {
+    public Avatar(IEventBus modEventBus, ModContainer modContainer) {
         NativeLoader.load();
-        IEventBus modEventBus = context.getModEventBus();
-        // Register the setup method for mod loading
-        modEventBus.addListener(this::setup);
-        // Register the enqueueIMC method for mod loading
-        modEventBus.addListener(this::enqueueIMC);
-        // Register the processIMC method for mod loading
-        modEventBus.addListener(this::processIMC);
-        // Register the setupClient method for mod loading
-        modEventBus.addListener(this::setupClient);
-
-        // Rayon Rigid Body Physics
-        modEventBus.addListener(RayonExampleEntityRenderers::registerEntityRenderers);
-        RayonExampleEntities.register(modEventBus);
         java.util.logging.LogManager.getLogManager().reset(); // prevent annoying libbulletjme spam
 
+        modEventBus.addListener(this::setup);
+        modEventBus.addListener(this::setupClient);
         // Register ourselves for server and other game events we are interested in
-        MinecraftForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.register(this);
 
+        // Caliber Rigid Body Physics
+        modEventBus.addListener(CaliberEntityRenderers::registerEntityRenderers);
+        CaliberEntities.register(modEventBus);
+
+        modEventBus.addListener(AvatarNetwork::register);
+        modEventBus.addListener(CaliberNetwork::register);
+        AvatarAttachments.register(modEventBus);
         AvatarEntities.register(modEventBus);
         AvatarSounds.register(modEventBus);
 
-//        Registries.SKILL_CATEGORY_REGISTER.register(modEventBus);
-        Elements.SKILL_CATEGORY_REGISTER.register(modEventBus); // Why not register SKILL_CATEGORY_REGISTER in Registries?
+        Registries.registerForms();
+        Registries.FORMS_REGISTER.register(modEventBus);
         Registries.SKILL_REGISTER.register(modEventBus);
+        Registries.SKILL_CATEGORY_REGISTER.register(modEventBus);
+
+        // Register our mod's ModConfigSpec so that FML can create and load the config file for us
+        // modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 
     private void setup(final FMLCommonSetupEvent event) {
         // some pre init code
-        AvatarNetwork.register();
 
         ModuleRegistry.register(MoveModule::new);
         ModuleRegistry.register(CurveModule::new);
@@ -95,26 +93,24 @@ public class Avatar {
         ModuleRegistry.register(WaterCollisionModule::new);
         ModuleRegistry.register(FireEffectModule::new);
 
-        // Rayon Rigid Body Physics
-        IEventBus forgeBus = MinecraftForge.EVENT_BUS;
-        forgeBus.register(ServerEventHandler.class);
-        forgeBus.register(PressureGenerator.class);
-        forgeBus.register(TerrainGenerator.class);
+        // Caliber Rigid Body Physics
+        IEventBus bus = NeoForge.EVENT_BUS;
+        bus.register(ServerEventHandler.class);
+        bus.register(PressureGenerator.class);
+        bus.register(TerrainGenerator.class);
     }
 
     private void setupClient(final FMLClientSetupEvent event) {
         // Initialize the input modules
         inputModule = new InputModule();
 
-        // Rayon Rigid Body Physics
-        IEventBus forgeBus = MinecraftForge.EVENT_BUS;
-        forgeBus.register(ClientEventHandler.class);
-        RayonPacketHandlers.registerPackets();
+        // Caliber Rigid Body Physics
+        NeoForge.EVENT_BUS.register(ClientEventHandler.class);
     }
 
-    private void enqueueIMC(final InterModEnqueueEvent event) {}
+//    private void enqueueIMC(final InterModEnqueueEvent event) {}
 
-    private void processIMC(final InterModProcessEvent event) {}
+//    private void processIMC(final InterModProcessEvent event) {}
 
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
@@ -123,10 +119,13 @@ public class Avatar {
 
         // Initialize Skill Tree
         SkillTree.clear();
-        Registries.SKILLS.get().getValues().forEach(c -> SkillTree.RegisterSkill(((BendingSkill)c).element(), /* toRegister.targetType(), */c.startPaths(), c));
+        Registries.SKILLS.stream().forEach(skill -> {
+            SkillTree.RegisterSkill(((BendingSkill) skill).element(), /* toRegister.targetType(), */
+                    skill.startPaths(), skill);
+        });
     }
 
-    @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(modid = MOD_ID)
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
@@ -141,6 +140,10 @@ public class Avatar {
 
     public static ResourceLocation id(String path) {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+    }
+
+    public static ResourceLocation id(Class<?> clazz) {
+        return id(clazz.getSimpleName().toLowerCase());
     }
 
     public static String isClientOrServer(boolean isClient) {

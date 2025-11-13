@@ -2,7 +2,7 @@ package com.amuzil.av3.entity.modules.render;
 
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.IRenderModule;
-import com.lowdragmc.photon.client.fx.EntityEffect;
+import com.lowdragmc.photon.client.fx.EntityEffectExecutor;
 import com.lowdragmc.photon.client.fx.FX;
 import com.lowdragmc.photon.client.fx.FXHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -48,7 +48,7 @@ public class PhotonModule implements IRenderModule {
 
     public static void startEntityEffect(FX fx, Entity entity) {
         if (fx != null) {
-            EntityEffect entityEffect = new EntityEffect(fx, entity.level(), entity);
+            EntityEffectExecutor entityEffect = new EntityEffectExecutor(fx, entity.level(), entity, EntityEffectExecutor.AutoRotate.NONE);
             entityEffect.start();
         }
     }

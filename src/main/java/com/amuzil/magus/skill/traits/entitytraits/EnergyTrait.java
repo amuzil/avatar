@@ -1,6 +1,7 @@
 package com.amuzil.magus.skill.traits.entitytraits;
 
 import com.amuzil.magus.skill.traits.DataTrait;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 
 
@@ -71,7 +72,7 @@ public class EnergyTrait implements DataTrait {
     }
 
     @Override
-    public CompoundTag serializeNBT() {
+    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
         tag.putString("name", name());
         tag.putDouble("max_energy", maxEnergy);
@@ -80,7 +81,7 @@ public class EnergyTrait implements DataTrait {
     }
 
     @Override
-    public void deserializeNBT(CompoundTag nbt) {
+    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
         this.name = nbt.getString("name");
         this.maxEnergy = nbt.getDouble("max_energy");
         this.currentEnergy = nbt.getDouble("current_energy");

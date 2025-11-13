@@ -1,13 +1,14 @@
 package com.amuzil.av3.input;
 
-import com.amuzil.magus.form.ActiveForm;
 import com.amuzil.av3.bending.BendingSelection;
 import com.amuzil.av3.bending.form.BendingForm;
 import com.amuzil.av3.bending.form.BendingForms;
-import com.amuzil.av3.capability.Bender;
+import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.network.AvatarNetwork;
 import com.amuzil.av3.network.packets.form.ExecuteFormPacket;
 import com.amuzil.av3.network.packets.form.ReleaseFormPacket;
+import com.amuzil.magus.form.ActiveForm;
+import com.amuzil.magus.registry.Registries;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -17,21 +18,22 @@ import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.HashMap;
 import java.util.function.Consumer;
 
+import static com.amuzil.av3.data.capability.AvatarCapabilities.getOrCreateBender;
 import static com.amuzil.av3.input.KeyBindings.*;
 
 
 public class InputModule {
     private final Consumer<InputEvent.Key> keyboardListener;
-    private final Consumer<InputEvent.MouseButton> mouseListener;
-    private final Consumer<TickEvent.ClientTickEvent> tickEventConsumer;
+    private final Consumer<InputEvent.MouseButton.Pre> mouseListener;
+    private final Consumer<ClientTickEvent.Pre> tickEventConsumer;
 
     private boolean isSelecting = false;
     private boolean isHoldingShift = false;
@@ -89,10 +91,9 @@ public class InputModule {
         };
 
         this.tickEventConsumer = tickEvent -> {
-            if (tickEvent.phase == TickEvent.ClientTickEvent.Phase.START &&
-                    Minecraft.getInstance().getConnection() != null &&
-                    Minecraft.getInstance().getOverlay() == null &&
-                    Minecraft.getInstance().screen == null) {
+            if (Minecraft.getInstance().getConnection() != null &&
+                Minecraft.getInstance().getOverlay() == null &&
+                Minecraft.getInstance().screen == null) {
                 checkInputs();
             }
         };
@@ -187,7 +188,6 @@ public class InputModule {
     }
 
     private void trackBlockResult(BlockHitResult result) {
-//        System.out.println("Selected BlockPos: " + result.getBlockPos());
         bender.getSelection().setBlockPos(result.getBlockPos());
     }
 
@@ -248,16 +248,17 @@ public class InputModule {
     }
 
     public void registerListeners() {
-        bender = (Bender) Bender.getBender(Minecraft.getInstance().player);
-        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, InputEvent.Key.class, keyboardListener);
-        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, InputEvent.MouseButton.class, mouseListener);
-        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, TickEvent.ClientTickEvent.class, tickEventConsumer);
+        assert Minecraft.getInstance().player != null;
+        bender = getOrCreateBender(Minecraft.getInstance().player);
+        NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, InputEvent.Key.class, keyboardListener);
+        NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, InputEvent.MouseButton.Pre.class, mouseListener);
+        NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, ClientTickEvent.Pre.class, tickEventConsumer);
     }
 
     public void unRegisterListeners() {
-        MinecraftForge.EVENT_BUS.unregister(keyboardListener);
-        MinecraftForge.EVENT_BUS.unregister(mouseListener);
-        MinecraftForge.EVENT_BUS.unregister(tickEventConsumer);
+        NeoForge.EVENT_BUS.unregister(keyboardListener);
+        NeoForge.EVENT_BUS.unregister(mouseListener);
+        NeoForge.EVENT_BUS.unregister(tickEventConsumer);
     }
 
     public void terminate() {
@@ -267,11 +268,6 @@ public class InputModule {
         unRegisterListeners();
         glfwKeysDown.clear();
         lastPressedForm.clear();
-        assert Minecraft.getInstance().player != null;
-        bender = (Bender) Bender.getBender(Minecraft.getInstance().player);
-        if (bender != null) { // Need this on startup!
-            bender.reset();
-        }
     }
 
     public void toggleListeners() {
@@ -281,8 +277,8 @@ public class InputModule {
             System.out.println("Enabled!");
             Player player = Minecraft.getInstance().player;
             assert player != null;
-            Bender bender = (Bender) Bender.getBender(player);
-            bender.printNBT();
+            Bender bender = getOrCreateBender(player);
+            bender.printBenderData();
         } else {
             terminate();
             isBending = false;

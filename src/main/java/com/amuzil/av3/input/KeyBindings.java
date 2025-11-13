@@ -6,16 +6,16 @@ import com.amuzil.av3.bending.form.BendingForms;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 
 import java.util.HashMap;
 
 
-@Mod.EventBusSubscriber(modid = Avatar.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Avatar.MOD_ID, value = Dist.CLIENT)
 public class KeyBindings {
     static final HashMap<Integer, BendingForm> MOUSE_FORM_MAPPINGS = new HashMap<>();
     static final HashMap<BendingForm.Type.Motion, KeyMapping> DASH_KEY_MAPPINGS = new HashMap<>();
@@ -91,7 +91,7 @@ public class KeyBindings {
         FORM_KEY_MAPPINGS.values().forEach(event::register);
     }
 
-    @Mod.EventBusSubscriber(modid = Avatar.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
+    @EventBusSubscriber(modid = Avatar.MOD_ID, value = Dist.CLIENT)
     public static class ModKeyInputHandler {
         @SubscribeEvent
         public static void keyPress(InputEvent.Key key) {

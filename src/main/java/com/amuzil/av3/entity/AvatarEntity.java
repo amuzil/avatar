@@ -1,7 +1,6 @@
 package com.amuzil.av3.entity;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.magus.skill.traits.DataTrait;
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.bending.element.Elements;
 import com.amuzil.av3.entity.api.ICollisionModule;
@@ -9,6 +8,7 @@ import com.amuzil.av3.entity.api.IEntityModule;
 import com.amuzil.av3.entity.api.IForceModule;
 import com.amuzil.av3.entity.api.IRenderModule;
 import com.amuzil.av3.entity.modules.ModuleRegistry;
+import com.amuzil.magus.skill.traits.DataTrait;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -20,11 +20,13 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.event.EventHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -77,9 +79,6 @@ public abstract class AvatarEntity extends Entity {
         renderModules.forEach(mod -> mod.init(this));
     }
 
-    /**
-     * Called to update the entity's position/logic.
-     */
     @Override
     public void tick() {
         super.tick();
@@ -247,7 +246,7 @@ public abstract class AvatarEntity extends Entity {
         String fxName = this.entityData.get(FX);
         if (fxName.isEmpty())
             return null;
-        return ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, fxName);
+        return Avatar.id(fxName);
     }
 
     public void setFXOneShot(boolean fxOneShot) {
@@ -268,16 +267,16 @@ public abstract class AvatarEntity extends Entity {
     }
 
     @Override
-    protected void defineSynchedData() {
-        this.entityData.define(OWNER_ID, Optional.empty());
-        this.entityData.define(ELEMENT, Elements.FIREBENDING.getId().toString());
-        this.entityData.define(FX, "");
-        this.entityData.define(ONE_SHOT_FX, true);
-        this.entityData.define(COLLIDABLE, false);
-        this.entityData.define(DAMAGEABLE, false);
-        this.entityData.define(PHYSICS, false);
-        this.entityData.define(TIER, 0);
-        this.entityData.define(MAX_LIFETIME, 100);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        builder.define(OWNER_ID, Optional.empty());
+        builder.define(ELEMENT, Elements.FIRE.getId().toString());
+        builder.define(FX, "");
+        builder.define(ONE_SHOT_FX, true);
+        builder.define(COLLIDABLE, false);
+        builder.define(DAMAGEABLE, false);
+        builder.define(PHYSICS, false);
+        builder.define(TIER, 0);
+        builder.define(MAX_LIFETIME, 100);
     }
 
     /**
@@ -363,7 +362,7 @@ public abstract class AvatarEntity extends Entity {
         for (DataTrait trait : traits) {
             CompoundTag tTag = new CompoundTag();
             // TODO: check whether ensuring ID is included is necessary
-            tTag.put("Trait Data", trait.serializeNBT());
+            tTag.put("Trait Data", trait.serializeNBT(null));
             list.add(tTag);
         }
         parent.put("DataTraits", list);
@@ -375,7 +374,7 @@ public abstract class AvatarEntity extends Entity {
         int limit = Math.min(list.size(), traits.size());
         for (int i = 0; i < limit; i++) {
             CompoundTag tTag = list.getCompound(i);
-            traits.get(i).deserializeNBT(tTag.getCompound("Trait Data"));
+            traits.get(i).deserializeNBT(null, tTag.getCompound("Trait Data"));
         }
     }
 
@@ -405,30 +404,29 @@ public abstract class AvatarEntity extends Entity {
         return entityData.get(DAMAGEABLE);
     }
 
+    // TODO: Can we remove this?
     /** These were copied from the projectile class. Need to update these to account for the other data
      * serializers and important values that this class keeps track of.
      */
-    public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket() {
-        Entity entity = this.owner();
-        return new ClientboundAddEntityPacket(this, entity == null ? 0 : entity.getId());
+    @Override
+    public Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity serverEntity) {
+        Entity entity = this.getOwner();
+        return new ClientboundAddEntityPacket(this, serverEntity, entity == null ? 0 : entity.getId());
     }
 
-    public void recreateFromPacket(ClientboundAddEntityPacket pPacket) {
-        super.recreateFromPacket(pPacket);
-        Entity entity = this.level().getEntity(pPacket.getData());
+    @Override
+    public void recreateFromPacket(ClientboundAddEntityPacket packet) {
+        super.recreateFromPacket(packet);
+        Entity entity = this.level().getEntity(packet.getData());
         if (entity != null) {
             this.setOwner(entity);
         }
-
     }
 
-    public boolean mayInteract(Level pLevel, BlockPos pPos) {
-        Entity entity = this.owner();
-        if (entity instanceof Player) {
-            return entity.mayInteract(pLevel, pPos);
-        } else {
-            return entity == null || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(pLevel, entity);
-        }
+    @Override
+    public boolean mayInteract(Level level, BlockPos pos) {
+        Entity entity = this.getOwner();
+        return entity instanceof Player ? entity.mayInteract(level, pos) : entity == null || EventHooks.canEntityGrief(level, entity);
     }
 
     public void setDamageable(boolean damageable) {

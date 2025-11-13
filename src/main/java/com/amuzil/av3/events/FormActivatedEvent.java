@@ -2,7 +2,7 @@ package com.amuzil.av3.events;
 
 import com.amuzil.magus.form.ActiveForm;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.bus.api.Event;
 
 
 public class FormActivatedEvent extends Event {

@@ -1,6 +1,7 @@
 package com.amuzil.magus.skill.traits.skilltraits;
 
 import com.amuzil.magus.skill.traits.SkillTrait;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 
 
@@ -19,15 +20,15 @@ public class DamageTrait extends SkillTrait {
     }
 
     @Override
-    public CompoundTag serializeNBT() {
-        CompoundTag tag = super.serializeNBT();
+    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+        CompoundTag tag = super.serializeNBT(provider);
         tag.putDouble("value", damage);
         return tag;
     }
 
     @Override
-    public void deserializeNBT(CompoundTag nbt) {
-        super.deserializeNBT(nbt);
+    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
+        super.deserializeNBT(provider, nbt);
         damage = nbt.getDouble("value");
     }
 

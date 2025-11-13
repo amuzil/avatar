@@ -1,10 +1,9 @@
 package com.amuzil.magus.form;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.magus.registry.Registries;
 import com.amuzil.av3.bending.form.BendingForm;
+import com.amuzil.magus.registry.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 
 import java.util.Objects;
 
@@ -16,8 +15,7 @@ public class ActiveForm {
     private BendingForm.Type.Motion motion = BendingForm.Type.Motion.NONE;
 
     public ActiveForm(String formName, boolean active) {
-        this((BendingForm) Registries.FORMS.get().getValue(
-                ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, formName)), active);
+        this((BendingForm) Registries.FORMS.get(Avatar.id(formName)), active);
     }
 
     public ActiveForm(BendingForm form, boolean active) {
@@ -54,7 +52,7 @@ public class ActiveForm {
     }
 
     public void deserializeNBT(CompoundTag tag) {
-        form = (BendingForm) Registries.FORMS.get().getValue(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, tag.getString("Form")));
+        form = (BendingForm) Registries.FORMS.get(Avatar.id(tag.getString("Form")));
         active = tag.getBoolean("Active");
         motion = BendingForm.Type.Motion.valueOf(tag.getString("Direction"));
     }

@@ -1,11 +1,11 @@
 package com.amuzil.av3.utils.commands;
 
-import com.amuzil.magus.form.Form;
-import com.amuzil.magus.registry.Registries;
-import com.amuzil.magus.skill.Skill;
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.bending.element.Elements;
 import com.amuzil.av3.input.InputModule;
+import com.amuzil.magus.form.Form;
+import com.amuzil.magus.registry.Registries;
+import com.amuzil.magus.skill.Skill;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
@@ -21,13 +21,11 @@ public class AvatarCommands {
     private static final LiteralArgumentBuilder<CommandSourceStack> builder =  Commands.literal("avatar");
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        builder.then(Commands.literal("tree")
-                .then(Commands.literal("reset")
-                        .executes(c -> {
-                            // Default message when no args are provided.
-                            InputModule.sendDebugMsg("Options: activate, grant, take, element");
-                            return 1;
-                        })));
+        builder.executes(c -> {
+            // Default message when no args are provided.
+            InputModule.sendDebugMsg("Options: activate, grant, take, trigger, reset, master");
+            return 1;
+        });
         createFormCommands();
         createSkillCommands();
         createElementCommands();
@@ -39,14 +37,14 @@ public class AvatarCommands {
     }
 
     private static void createFormCommands() {
-        for (Form form : Registries.getForms().values()) {
+        for (Form form: Registries.getForms()) {
             builder.then(triggerFormCommand(form));
         }
     }
 
     private static void createSkillCommands() {
         builder.then(resetSkillCommand(null)); // Pass null to reset all
-        for (Skill skill : Registries.getSkills()) {
+        for (Skill skill: Registries.getSkills()) {
             builder.then(resetSkillCommand(skill));
             builder.then(setCanUseSkillCommand(skill, "grant"));
             builder.then(setCanUseSkillCommand(skill, "take"));
@@ -56,7 +54,7 @@ public class AvatarCommands {
     }
 
     private static void createElementCommands() {
-        for (Element elem : Elements.ALL_FOUR.values()) {
+        for (Element elem: Elements.ALL_FOUR.values()) {
             builder.then(activateElementCommand(elem));
             builder.then(setCanUseElementCommand(elem, "grant"));
             builder.then(setCanUseElementCommand(elem, "take"));
@@ -64,7 +62,7 @@ public class AvatarCommands {
     }
 
     private static void createMasterCommands() {
-        for (Element elem : Elements.ALL_FOUR.values()) {
+        for (Element elem: Elements.ALL_FOUR.values()) {
             builder.then(masterElementCommand(elem));
         }
     }

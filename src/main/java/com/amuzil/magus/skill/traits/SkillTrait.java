@@ -1,5 +1,6 @@
 package com.amuzil.magus.skill.traits;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 
 
@@ -47,14 +48,14 @@ public class SkillTrait implements DataTrait, Cloneable {
     }
 
     @Override
-    public CompoundTag serializeNBT() {
+    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
         tag.putString("name", name);
         return tag;
     }
 
     @Override
-    public void deserializeNBT(CompoundTag nbt) {
+    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
         markClean();
         name = nbt.getString("name");
     }
