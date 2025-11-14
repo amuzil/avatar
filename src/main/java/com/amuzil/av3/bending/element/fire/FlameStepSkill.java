@@ -75,7 +75,6 @@ public class FlameStepSkill extends FireSkill {
             }
             if (motion != BendingForm.Type.Motion.DOWNWARD)
                 dashVec = dashVec.add(0, 0.3D, 0); // Add a little hop for better dash
-//            System.out.println("Dash Vec: " + dashVec);
             entity.setDeltaMovement(dashVec);
             entity.hurtMarked = true;
             entity.hasImpulse = true;

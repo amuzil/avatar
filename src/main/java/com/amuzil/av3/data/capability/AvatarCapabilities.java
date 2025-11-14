@@ -1,65 +1,43 @@
 package com.amuzil.av3.data.capability;
 
 import com.amuzil.av3.Avatar;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.capabilities.EntityCapability;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.UUID;
 
 
 @EventBusSubscriber(modid = Avatar.MOD_ID)
 public final class AvatarCapabilities {
     public static final ResourceLocation ID = Avatar.id("bender");
-    public static final EntityCapability<IBender, Void> BENDER = EntityCapability.createVoid(ID, IBender.class);
-
-    // Persistent cache of player → capability instance
-    private static final Map<Player, IBender> BENDER_CACHE = new WeakHashMap<>();
+    public static final EntityCapability<Bender, Void> BENDER = EntityCapability.createVoid(ID, Bender.class);
+    public static final Map<UUID, Bender> BENDER_CACHE = new HashMap<>();
 
     @SubscribeEvent
     private static void register(RegisterCapabilitiesEvent event) {
-        event.registerEntity(BENDER, EntityType.PLAYER,
-                (entity, ctx) -> BENDER_CACHE.computeIfAbsent(entity, Bender::new)
-        );
-
-//        BuiltInRegistries.ENTITY_TYPE.stream().
-//                filter(type -> Player.class.isAssignableFrom(type.getBaseClass())).
-//                map(type -> (EntityType<Player)> type).
-//                forEach(type ->
-//                        event.registerEntity(BENDER, type,
-//                                (entity, context) -> new Bender(entity)));
+        event.registerEntity(BENDER, EntityType.PLAYER, (entity, ctx) -> new Bender(entity));
     }
 
-    @SubscribeEvent
-    public static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-        BENDER_CACHE.remove(event.getEntity());
+    public static Bender syncBender(Player player) {
+        Bender bender = getOrCreateBender(player);
+        if (bender != null && bender.isDirty())
+            bender.syncToClient();
+        return bender;
     }
 
-    // Save data on death
-    @SubscribeEvent
-    public static void onPlayerDeath(LivingDeathEvent event) {
-        if (!(event.getEntity() instanceof Player player)) return;
-
-        HolderLookup.Provider lookup = player.level().registryAccess();
-        player.getPersistentData().put("BenderCap", player.getCapability(BENDER).serializeNBT(lookup));
+    public static Bender getOrCreateBender(Player player) {
+        return BENDER_CACHE.computeIfAbsent(player.getUUID(), id -> Bender.getBender(player));
     }
 
-    // Clone data on respawn
-    @SubscribeEvent
-    public static void onPlayerClone(PlayerEvent.Clone event) {
-        if (!event.isWasDeath()) return;
-
-        CompoundTag capData = event.getOriginal().getPersistentData().getCompound("BenderCap");
-        HolderLookup.Provider lookup = event.getEntity().level().registryAccess();
-        event.getEntity().getCapability(BENDER).deserializeNBT(lookup, capData);
+    public static Bender removeCachedBender(Player player) {
+        return BENDER_CACHE.remove(player.getUUID());
     }
 }

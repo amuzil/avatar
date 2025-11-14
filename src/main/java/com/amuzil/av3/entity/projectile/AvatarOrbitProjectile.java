@@ -10,8 +10,8 @@ import net.minecraft.world.level.Level;
 
 public class AvatarOrbitProjectile extends AvatarProjectile {
 
-    public AvatarOrbitProjectile(EntityType<AvatarOrbitProjectile> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public AvatarOrbitProjectile(EntityType<AvatarOrbitProjectile> entityType, Level pLevel) {
+        super(entityType, pLevel);
         addForceModule((IForceModule) ModuleRegistry.create(OrbitModule.id));
     }
 

@@ -8,8 +8,9 @@ import com.amuzil.magus.skill.data.SkillData;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.neoforged.neoforge.attachment.IAttachmentHolder;
-import net.neoforged.neoforge.attachment.IAttachmentSerializer;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,39 +20,42 @@ import java.util.List;
 import java.util.Map;
 
 
-public class BenderData implements IAttachmentSerializer<CompoundTag, BenderData> {
+public class BenderData implements INBTSerializable<CompoundTag> {
+    public static final StreamCodec<RegistryFriendlyByteBuf, BenderData> STREAM_CODEC =
+            StreamCodec.of(BenderData::encode, BenderData::decode);
+
     private static final Logger LOGGER = LogManager.getLogger();
     private static final int DATA_VERSION = 1; // Update this as your data structure changes
     public final List<SkillCategoryData> skillCategoryData = new ArrayList<>();
     public final Map<String, SkillData> skillDataMap = new HashMap<>();
-    private boolean initialized = false;
 
     public BenderData() {
         for (SkillCategory category: Registries.getSkillCategories())
             skillCategoryData.add(new SkillCategoryData(category));
         for (Skill skill: Registries.getSkills())
             skillDataMap.put(skill.name(), new SkillData(skill));
-        initialized = true;
     }
 
-    public BenderData(CompoundTag tag, HolderLookup.Provider provider) {
+    public BenderData(HolderLookup.Provider provider, CompoundTag tag) {
+        this();
         this.deserializeNBT(provider, tag);
-        initialized = true;
+    }
+
+    // For Syncing
+    public static void encode(RegistryFriendlyByteBuf buf, BenderData data) {
+        CompoundTag tag = data.serializeNBT(buf.registryAccess());
+        buf.writeNbt(tag);
+    }
+
+    // For Syncing
+    public static BenderData decode(RegistryFriendlyByteBuf buf) {
+        CompoundTag tag = buf.readNbt();
+        if (tag == null)
+            return new BenderData();
+        return new BenderData(buf.registryAccess(), tag);
     }
 
     @Override
-    public BenderData read(IAttachmentHolder holder, CompoundTag tag, HolderLookup.Provider provider) {
-        if (initialized)
-            return this;
-        else
-            return new BenderData(tag, provider);
-    }
-
-    @Override
-    public CompoundTag write(BenderData data, HolderLookup.Provider provider) {
-        return data.serializeNBT(provider);
-    }
-
     public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
         tag.putInt("DataVersion", DATA_VERSION);
@@ -66,13 +70,14 @@ public class BenderData implements IAttachmentSerializer<CompoundTag, BenderData
      Now, if you want to migrate the data, bump the DATA_VERSION and add a new case in the switch statement.
      After that, modify the previous case to handle the migration by loading up the old data to fit into the new.
      */
+    @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
         // Default to version 0 if not present
         int version = tag.contains("DataVersion") ? tag.getInt("DataVersion") : 0;
         switch (version) {
             case 1 -> {
                 LOGGER.info("Loading Bender data version: {}", version);
-                for (SkillCategoryData catData : skillCategoryData) {
+                for (SkillCategoryData catData: skillCategoryData) {
                     if (tag.contains(catData.name(), Tag.TAG_COMPOUND)) {
                         catData.deserializeNBT(provider, tag.getCompound(catData.name()));
                     } else {
@@ -80,7 +85,7 @@ public class BenderData implements IAttachmentSerializer<CompoundTag, BenderData
                     }
                 }
 
-                for (SkillData skillData : skillDataMap.values()) {
+                for (SkillData skillData: skillDataMap.values()) {
                     if (tag.contains(skillData.name(), Tag.TAG_COMPOUND)) {
                         skillData.deserializeNBT(provider, tag.getCompound(skillData.name()));
                     } else {

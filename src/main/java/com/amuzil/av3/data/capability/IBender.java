@@ -2,7 +2,7 @@ package com.amuzil.av3.data.capability;
 
 import com.amuzil.av3.bending.BendingSelection;
 import com.amuzil.av3.bending.element.Element;
-import com.amuzil.av3.network.packets.sync.SyncBenderPacket;
+import com.amuzil.av3.data.attachment.BenderData;
 import com.amuzil.magus.form.Form;
 import com.amuzil.magus.skill.Skill;
 import com.amuzil.magus.skill.data.SkillCategoryData;
@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * This interface is used to define the capability of bending elements.
  * It allows for serialization and deserialization of the element & bending skill data.
- * Remember to call markDirty() or send {@link SyncBenderPacket} after every data update to ensure proper syncing
+ * Remember to call markDirty() to ensure proper syncing
  */
 public interface IBender extends INBTSerializable<CompoundTag> {
 
@@ -31,6 +31,8 @@ public interface IBender extends INBTSerializable<CompoundTag> {
     void register();
 
     void unregister();
+
+    void setEntity(LivingEntity entity);
 
     LivingEntity getEntity();
 
@@ -64,11 +66,12 @@ public interface IBender extends INBTSerializable<CompoundTag> {
 
     void setCanUseAllSkills(Element element);
 
+    BenderData getBenderData();
+
+    void setBenderData(BenderData data);
+
     void setSelection(BendingSelection selection);
     BendingSelection getSelection();
-
-    // Reset all non-persistent data
-    void reset();
 
     // Remember to call this in *every* data update!
     void markDirty();
@@ -84,10 +87,12 @@ public interface IBender extends INBTSerializable<CompoundTag> {
     void syncSelectionToServer();
 
     void syncToClient();
-
     // Save data
-    CompoundTag serializeNBT(HolderLookup.Provider provider);
 
+    @Override
+    CompoundTag serializeNBT(HolderLookup.Provider provider);
     // Load data
+
+    @Override
     void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag);
 }

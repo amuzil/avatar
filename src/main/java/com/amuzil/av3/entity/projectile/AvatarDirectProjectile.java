@@ -10,8 +10,8 @@ import net.minecraft.world.level.Level;
 
 public class AvatarDirectProjectile extends AvatarProjectile {
 
-    public AvatarDirectProjectile(EntityType<AvatarDirectProjectile> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public AvatarDirectProjectile(EntityType<AvatarDirectProjectile> entityType, Level pLevel) {
+        super(entityType, pLevel);
         addForceModule((IForceModule) ModuleRegistry.create(MoveModule.id));
     }
 

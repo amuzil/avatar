@@ -6,22 +6,15 @@ import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.modules.ModuleRegistry;
 import com.amuzil.av3.entity.modules.collision.*;
 import com.amuzil.av3.entity.modules.entity.GrowModule;
-import com.amuzil.av3.entity.modules.entity.SoundModule;
 import com.amuzil.av3.entity.modules.entity.TimeoutModule;
 import com.amuzil.av3.entity.modules.force.*;
 import com.amuzil.av3.entity.modules.render.PhotonModule;
+import com.amuzil.av3.entity.modules.render.SoundModule;
 import com.amuzil.av3.input.InputModule;
 import com.amuzil.av3.network.AvatarNetwork;
 import com.amuzil.av3.utils.commands.AvatarCommands;
 import com.amuzil.av3.utils.sound.AvatarSounds;
-import com.amuzil.carryon.example.entity.CarryonEntities;
-import com.amuzil.carryon.example.renderer.CarryonEntityRenderers;
-import com.amuzil.carryon.physics.bullet.collision.space.generator.PressureGenerator;
-import com.amuzil.carryon.physics.bullet.collision.space.generator.TerrainGenerator;
-import com.amuzil.carryon.physics.bullet.natives.NativeLoader;
-import com.amuzil.carryon.physics.event.ClientEventHandler;
-import com.amuzil.carryon.physics.event.ServerEventHandler;
-import com.amuzil.carryon.physics.network.CarryonNetwork;
+import com.amuzil.caliber.CaliberPhysics;
 import com.amuzil.magus.registry.Registries;
 import com.amuzil.magus.tree.SkillTree;
 import net.minecraft.client.Minecraft;
@@ -46,35 +39,29 @@ public class Avatar {
     public static InputModule inputModule;
 
     public Avatar(IEventBus modEventBus, ModContainer modContainer) {
-        NativeLoader.load();
-        java.util.logging.LogManager.getLogManager().reset(); // prevent annoying libbulletjme spam
+        CaliberPhysics.init(modEventBus, modContainer);
 
         modEventBus.addListener(this::setup);
         modEventBus.addListener(this::setupClient);
+        modEventBus.addListener(AvatarNetwork::register);
+
         // Register ourselves for server and other game events we are interested in
         NeoForge.EVENT_BUS.register(this);
 
-        // Carryon Rigid Body Physics
-        modEventBus.addListener(CarryonEntityRenderers::registerEntityRenderers);
-        CarryonEntities.register(modEventBus);
-
-//        modEventBus.register(AvatarNetwork.class);
-//        modEventBus.register(CarryonNetwork.class);
-        modEventBus.addListener(AvatarNetwork::register);
-        modEventBus.addListener(CarryonNetwork::register);
         AvatarAttachments.register(modEventBus);
         AvatarEntities.register(modEventBus);
         AvatarSounds.register(modEventBus);
 
-        Registries.SKILL_CATEGORY_REGISTER.register(modEventBus);
+        Registries.registerForms();
+        Registries.FORMS_REGISTER.register(modEventBus);
         Registries.SKILL_REGISTER.register(modEventBus);
+        Registries.SKILL_CATEGORY_REGISTER.register(modEventBus);
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         // modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-        // some pre init code
 
         ModuleRegistry.register(MoveModule::new);
         ModuleRegistry.register(CurveModule::new);
@@ -92,20 +79,11 @@ public class Avatar {
         ModuleRegistry.register(FireCollisionModule::new);
         ModuleRegistry.register(WaterCollisionModule::new);
         ModuleRegistry.register(FireEffectModule::new);
-
-        // Carryon Rigid Body Physics
-        IEventBus bus = NeoForge.EVENT_BUS;
-        bus.register(ServerEventHandler.class);
-        bus.register(PressureGenerator.class);
-        bus.register(TerrainGenerator.class);
     }
 
     private void setupClient(final FMLClientSetupEvent event) {
         // Initialize the input modules
         inputModule = new InputModule();
-
-        // Carryon Rigid Body Physics
-        NeoForge.EVENT_BUS.register(ClientEventHandler.class);
     }
 
 //    private void enqueueIMC(final InterModEnqueueEvent event) {}

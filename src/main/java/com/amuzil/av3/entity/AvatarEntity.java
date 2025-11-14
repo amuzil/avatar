@@ -66,8 +66,8 @@ public abstract class AvatarEntity extends Entity {
     // Data Sync for Behaviour
     // Data Sync for each trait
 
-    public AvatarEntity(EntityType<?> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public AvatarEntity(EntityType<?> entityType, Level pLevel) {
+        super(entityType, pLevel);
     }
 
     /** Call this after adding it to a world.
@@ -79,9 +79,6 @@ public abstract class AvatarEntity extends Entity {
         renderModules.forEach(mod -> mod.init(this));
     }
 
-    /**
-     * Called to update the entity's position/logic.
-     */
     @Override
     public void tick() {
         super.tick();
@@ -282,103 +279,8 @@ public abstract class AvatarEntity extends Entity {
         builder.define(MAX_LIFETIME, 100);
     }
 
-    /**
-     * (abstract) Protected helper method to read subclass entity data from NBT.
-     *
-     * @param pCompound
-     */
-    @Override
-    protected void readAdditionalSaveData(CompoundTag pCompound) {
-        if (pCompound.hasUUID("OwnerUUID")) {
-            this.entityData.set(OWNER_ID, Optional.of(pCompound.getUUID("OwnerUUID")));
-        }
-
-        // Element
-        if (pCompound.contains("Element")) {
-            this.element = Elements.get(ResourceLocation.parse(pCompound.getString("Element")));
-            this.entityData.set(ELEMENT, pCompound.getString("Element"));
-        }
-
-        this.hittable = pCompound.getBoolean("Collidable");
-        this.damageable = pCompound.getBoolean("Damageable");
-
-        readTraits(pCompound);
-        readModuleList(pCompound, "GenericModules", modules);
-        readModuleList(pCompound, "ForceModules", forceModules);
-        readModuleList(pCompound, "CollisionModules", collisionModules);
-        readModuleList(pCompound, "RenderModules", renderModules);
-    }
-
-    @Override
-    protected void addAdditionalSaveData(CompoundTag pCompound) {
-        this.entityData.get(OWNER_ID).ifPresent(uuid -> pCompound.putUUID("OwnerUUID", uuid));
-
-        // Element
-        if (element != null) {
-            pCompound.putString("Element", element.name());
-        }
-
-        pCompound.putBoolean("Collidable", hittable);
-        pCompound.putBoolean("Damageable", damageable);
-
-        writeTraits(pCompound);
-        writeModuleList(pCompound, "GenericModules", modules);
-        writeModuleList(pCompound, "ForceModules", forceModules);
-        writeModuleList(pCompound, "CollisionModules", collisionModules);
-        writeModuleList(pCompound, "RenderModules", renderModules);
-
-    }
-
     public void checkBlocks() {
         checkInsideBlocks();
-    }
-
-    private <T> void readModuleList(CompoundTag parent, String key, List<T> list) {
-        // Clears the list before re-adding whatever modules it needs toAdd commentMore actions
-        list.clear();
-        ListTag mods = parent.getList(key, Tag.TAG_COMPOUND);
-        for (Tag t : mods) {
-            CompoundTag mTag = (CompoundTag) t;
-            String id = mTag.getString("Module ID");
-            IEntityModule mod = ModuleRegistry.create(id);
-            if (mod != null) {
-                mod.load(mTag);
-                @SuppressWarnings("unchecked") T casted = (T) mod;
-                list.add(casted);
-            }
-        }
-    }
-
-    private void writeModuleList(CompoundTag parent, String key, List<? extends IEntityModule> list) {
-        ListTag mods = new ListTag();
-        for (IEntityModule mod : list) {
-            CompoundTag mTag = new CompoundTag();
-            mTag.putString("Module ID", mod.id());
-            mod.save(mTag);
-            mods.add(mTag);
-        }
-        parent.put(key, mods);
-    }
-
-    private void writeTraits(CompoundTag parent) {
-        ListTag list = new ListTag();
-        for (DataTrait trait : traits) {
-            CompoundTag tTag = new CompoundTag();
-            // TODO: check whether ensuring ID is included is necessary
-            tTag.put("Trait Data", trait.serializeNBT(null));
-            list.add(tTag);
-        }
-        parent.put("DataTraits", list);
-    }
-
-    private void readTraits(CompoundTag parent) {
-        ListTag list = parent.getList("DataTraits", Tag.TAG_COMPOUND);
-
-        int limit = Math.min(list.size(), traits.size());
-        for (int i = 0; i < limit; i++) {
-            CompoundTag tTag = list.getCompound(i);
-            traits.get(i).deserializeNBT(null, tTag.getCompound("Trait Data"));
-        }
     }
 
     /**
@@ -412,7 +314,7 @@ public abstract class AvatarEntity extends Entity {
      * serializers and important values that this class keeps track of.
      */
     @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity serverEntity) {
+    public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity serverEntity) {
         Entity entity = this.getOwner();
         return new ClientboundAddEntityPacket(this, serverEntity, entity == null ? 0 : entity.getId());
     }

@@ -5,11 +5,11 @@ import com.amuzil.av3.entity.api.IForceModule;
 import com.amuzil.av3.entity.api.IHasSDF;
 import com.amuzil.av3.entity.modules.ModuleRegistry;
 import com.amuzil.av3.entity.modules.force.CurveModule;
-import com.amuzil.av3.entity.renderer.sdf.SDFScene;
-import com.amuzil.av3.entity.renderer.sdf.SignedDistanceFunction;
-import com.amuzil.av3.entity.renderer.sdf.channels.Channels;
-import com.amuzil.av3.entity.renderer.sdf.shapes.SDFSphere;
-import com.amuzil.av3.entity.renderer.sdf.shapes.SDFTorus;
+import com.amuzil.av3.renderer.sdf.SDFScene;
+import com.amuzil.av3.renderer.sdf.SignedDistanceFunction;
+import com.amuzil.av3.renderer.sdf.channels.Channels;
+import com.amuzil.av3.renderer.sdf.shapes.SDFSphere;
+import com.amuzil.av3.renderer.sdf.shapes.SDFTorus;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import org.joml.Vector3f;
@@ -17,8 +17,8 @@ import org.joml.Vector3f;
 public class AvatarWaterProjectile extends AvatarProjectile implements IHasSDF {
     private SDFScene root;
 
-    public AvatarWaterProjectile(EntityType<AvatarWaterProjectile> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public AvatarWaterProjectile(EntityType<AvatarWaterProjectile> entityType, Level pLevel) {
+        super(entityType, pLevel);
         addForceModule((IForceModule) ModuleRegistry.create(CurveModule.id)); // Can hotswap to OrbitModule.id
 
         SDFSphere core = new SDFSphere();

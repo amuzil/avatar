@@ -1,6 +1,7 @@
 package com.amuzil.av3.events;
 
 import com.amuzil.av3.Avatar;
+import com.amuzil.av3.data.capability.AvatarCapabilities;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -17,5 +18,6 @@ public class ClientEvents {
     public static void onClientLogout(ClientPlayerNetworkEvent.LoggingOut event) {
         if (Avatar.inputModule != null)
             Avatar.inputModule.terminate();
+        AvatarCapabilities.BENDER_CACHE.clear();
     }
 }
