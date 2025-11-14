@@ -39,7 +39,7 @@ public class Avatar {
     public static InputModule inputModule;
 
     public Avatar(IEventBus modEventBus, ModContainer modContainer) {
-        new CaliberPhysics(modEventBus, modContainer);
+        CaliberPhysics.init(modEventBus, modContainer);
 
         modEventBus.addListener(this::setup);
         modEventBus.addListener(this::setupClient);
