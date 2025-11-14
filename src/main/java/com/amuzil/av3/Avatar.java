@@ -14,14 +14,7 @@ import com.amuzil.av3.input.InputModule;
 import com.amuzil.av3.network.AvatarNetwork;
 import com.amuzil.av3.utils.commands.AvatarCommands;
 import com.amuzil.av3.utils.sound.AvatarSounds;
-import com.amuzil.caliber.example.entity.CaliberEntities;
-import com.amuzil.caliber.example.renderer.CaliberEntityRenderers;
-import com.amuzil.caliber.physics.bullet.collision.space.generator.PressureGenerator;
-import com.amuzil.caliber.physics.bullet.collision.space.generator.TerrainGenerator;
-import com.amuzil.caliber.physics.bullet.natives.NativeLoader;
-import com.amuzil.caliber.physics.event.ClientEventHandler;
-import com.amuzil.caliber.physics.event.ServerEventHandler;
-import com.amuzil.caliber.physics.network.CaliberNetwork;
+import com.amuzil.caliber.CaliberPhysics;
 import com.amuzil.magus.registry.Registries;
 import com.amuzil.magus.tree.SkillTree;
 import net.minecraft.client.Minecraft;
@@ -46,20 +39,15 @@ public class Avatar {
     public static InputModule inputModule;
 
     public Avatar(IEventBus modEventBus, ModContainer modContainer) {
-        NativeLoader.load();
-        java.util.logging.LogManager.getLogManager().reset(); // prevent annoying libbulletjme spam
+        new CaliberPhysics(modEventBus, modContainer);
 
         modEventBus.addListener(this::setup);
         modEventBus.addListener(this::setupClient);
+        modEventBus.addListener(AvatarNetwork::register);
+
         // Register ourselves for server and other game events we are interested in
         NeoForge.EVENT_BUS.register(this);
 
-        // Caliber Rigid Body Physics
-        modEventBus.addListener(CaliberEntityRenderers::registerEntityRenderers);
-        CaliberEntities.register(modEventBus);
-
-        modEventBus.addListener(AvatarNetwork::register);
-        modEventBus.addListener(CaliberNetwork::register);
         AvatarAttachments.register(modEventBus);
         AvatarEntities.register(modEventBus);
         AvatarSounds.register(modEventBus);
@@ -74,7 +62,6 @@ public class Avatar {
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-        // some pre init code
 
         ModuleRegistry.register(MoveModule::new);
         ModuleRegistry.register(CurveModule::new);
@@ -92,20 +79,11 @@ public class Avatar {
         ModuleRegistry.register(FireCollisionModule::new);
         ModuleRegistry.register(WaterCollisionModule::new);
         ModuleRegistry.register(FireEffectModule::new);
-
-        // Caliber Rigid Body Physics
-        IEventBus bus = NeoForge.EVENT_BUS;
-        bus.register(ServerEventHandler.class);
-        bus.register(PressureGenerator.class);
-        bus.register(TerrainGenerator.class);
     }
 
     private void setupClient(final FMLClientSetupEvent event) {
         // Initialize the input modules
         inputModule = new InputModule();
-
-        // Caliber Rigid Body Physics
-        NeoForge.EVENT_BUS.register(ClientEventHandler.class);
     }
 
 //    private void enqueueIMC(final InterModEnqueueEvent event) {}
