@@ -5,7 +5,6 @@ import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.IAvatarConstruct;
 import com.amuzil.av3.entity.modules.ModuleRegistry;
 import com.amuzil.av3.entity.modules.render.SoundModule;
-import com.amuzil.av3.entity.projectile.AvatarProjectile;
 import com.mojang.logging.LogUtils;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.core.BlockPos;
@@ -31,7 +30,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.level.ClipContext;
@@ -80,7 +78,7 @@ public class AvatarBlockEntity extends AvatarEntity implements IAvatarConstruct 
     }
 
     private AvatarBlockEntity(Level level, double x, double y, double z, BlockState state) {
-        this(AvatarEntities.AVATAR_RIGID_BLOCK.get(), level);
+        this(AvatarEntities.AVATAR_RIGID_BLOCK_ENTITY_TYPE.get(), level);
         this.blockState = state;
         this.blocksBuilding = true;
         this.setPos(x, y, z);
@@ -89,6 +87,10 @@ public class AvatarBlockEntity extends AvatarEntity implements IAvatarConstruct 
         this.yo = y;
         this.zo = z;
         this.setStartPos(this.blockPosition());
+    }
+
+    public void setBlockState(BlockState state) {
+        this.blockState = state;
     }
 
     public void setWidth(float width) {
@@ -329,7 +331,7 @@ public class AvatarBlockEntity extends AvatarEntity implements IAvatarConstruct 
 
         this.cancelDrop = compound.getBoolean("CancelDrop");
         if (this.blockState.isAir()) {
-            this.blockState = Blocks.SAND.defaultBlockState();
+            this.blockState = Blocks.STONE.defaultBlockState();
         }
 
     }
@@ -363,6 +365,11 @@ public class AvatarBlockEntity extends AvatarEntity implements IAvatarConstruct 
 
     public boolean onlyOpCanSetNbt() {
         return true;
+    }
+
+    @Override
+    public Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity entity) {
+        return new ClientboundAddEntityPacket(this, entity, Block.getId(this.getBlockState()));
     }
 
     @Override

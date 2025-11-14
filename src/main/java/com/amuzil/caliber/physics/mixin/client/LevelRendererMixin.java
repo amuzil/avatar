@@ -23,9 +23,6 @@ public class LevelRendererMixin {
             dispatcher.render(entity, location.x - cameraPos.x, location.y - cameraPos.y, location.z - cameraPos.z, g, h, poseStack, multiBufferSource, i);
         } else {
             dispatcher.render(entity, d, e, f, g, h, poseStack, multiBufferSource, i);
-
         }
-
     }
-
 }
