@@ -125,7 +125,6 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
     }
 
     protected void addAdditionalSaveData(CompoundTag tag) {
-        super.addAdditionalSaveData(tag);
         if (this.ownerUUID != null) {
             tag.putUUID("Owner", this.ownerUUID);
         }
@@ -145,7 +144,6 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
     protected void readAdditionalSaveData(CompoundTag tag) {
-        super.readAdditionalSaveData(tag);
         if (tag.hasUUID("Owner")) {
             this.ownerUUID = tag.getUUID("Owner");
             this.cachedOwner = null;
