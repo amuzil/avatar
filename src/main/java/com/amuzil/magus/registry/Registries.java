@@ -30,8 +30,8 @@ public class Registries {
     public static final Registry<SkillCategory> SKILL_CATEGORIES = SKILL_CATEGORY_REGISTER.makeRegistry((builder) -> builder.sync(true));
 
     // === Local Containers ===
+    private static final List<Skill> skills = new ArrayList<>();
     private static final List<SkillCategory> categories = new ArrayList<>();
-    private static final HashMap<String, Supplier<Skill>> skills = new HashMap<>();
     private static final HashMap<String, Supplier<? extends Skill>> skillSuppliers = new HashMap<>();
     private static final List<DataTrait> traits = new ArrayList<>();
 
@@ -54,7 +54,11 @@ public class Registries {
     }
 
     public static List<Skill> getSkills() {
-        return skills.values().stream().map(Supplier::get).toList();
+        return skills;
+    }
+
+    public static SkillCategory getSkillCategory(ResourceLocation id) {
+        return SKILL_CATEGORIES.get(id);
     }
 
     public static List<SkillCategory> getSkillCategories() {
@@ -92,9 +96,9 @@ public class Registries {
     public static Supplier<? extends Skill> registerSkill(Supplier<? extends Skill> skillSup) {
         String name = skillSup.get().name();
         Supplier<Skill> skillRegistryObject = SKILL_REGISTER.register(name, skillSup);
-        String namespace = Avatar.id(name).toString();
-        skills.put(namespace, skillRegistryObject);
-        skillSuppliers.put(namespace, skillSup);
+        String id = Avatar.id(name).toString();
+        skills.add(skillRegistryObject.get());
+        skillSuppliers.put(id, skillSup);
         return skillRegistryObject;
     }
 

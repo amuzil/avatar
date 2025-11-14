@@ -134,11 +134,12 @@ public class InputModule {
                 glfwKeysDown.put(key, heldTicks + 1);
                 if (heldTicks == 0)
                     checkForm(form);
-            } else {
+            }
+//            else {
 //                if (glfwKeysDown.containsKey(key)) {
 //                    releaseForm(form, key);
 //                }
-            }
+//            }
         });
 
         if (selectTargetKey.isDown() && !isSelecting) {

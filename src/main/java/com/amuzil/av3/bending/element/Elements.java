@@ -29,7 +29,7 @@ public class Elements {
     public static Element AIR, WATER, EARTH, FIRE;
 
     public static Element get(ResourceLocation id) {
-        return (Element) Registries.SKILL_CATEGORIES.get(id);
+        return (Element) Registries.getSkillCategory(id);
     }
 
     public static Element random() {
