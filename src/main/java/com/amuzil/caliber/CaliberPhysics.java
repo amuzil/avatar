@@ -1,7 +1,5 @@
 package com.amuzil.caliber;
 
-import com.amuzil.caliber.example.entity.CaliberEntities;
-import com.amuzil.caliber.example.renderer.CaliberEntityRenderers;
 import com.amuzil.caliber.physics.bullet.collision.space.generator.PressureGenerator;
 import com.amuzil.caliber.physics.bullet.collision.space.generator.TerrainGenerator;
 import com.amuzil.caliber.physics.bullet.natives.NativeLoader;
@@ -31,9 +29,6 @@ public class CaliberPhysics {
         modEventBus.addListener(CaliberPhysics::setup);
         modEventBus.addListener(CaliberPhysics::setupClient);
         modEventBus.addListener(CaliberNetwork::register);
-        modEventBus.addListener(CaliberEntityRenderers::registerEntityRenderers);
-
-        CaliberEntities.register(modEventBus);
     }
 
     private static void setup(final FMLCommonSetupEvent event) {

@@ -17,7 +17,7 @@ import java.util.UUID;
 
 import static com.amuzil.av3.data.capability.AvatarCapabilities.getOrCreateBender;
 
-
+@Deprecated
 public class SyncBenderPacket implements AvatarPacket {
     public static final Type<SyncBenderPacket> TYPE = new Type<>(Avatar.id(SyncBenderPacket.class));
     public static final StreamCodec<FriendlyByteBuf, SyncBenderPacket> CODEC =
