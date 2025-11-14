@@ -2,6 +2,7 @@ package com.amuzil.av3.entity;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.entity.physics.AvatarRigidBlock;
+import com.amuzil.av3.entity.mobs.EntitySkybison;
 import com.amuzil.av3.entity.projectile.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.Entity;
@@ -39,7 +40,9 @@ public class AvatarEntities {
     public static final Supplier<EntityType<AvatarRigidBlock>> AVATAR_RIGID_BLOCK_ENTITY_TYPE =
             registerPhysicsBody("avatar_rigid_block", AvatarRigidBlock::new, 1.0f, 1.0f, 10, 4);
 
-
+    public static final Supplier<EntityType<EntitySkybison>> AVATAR_SKYBISON_ENTITY_TYPE =
+            ENTITY_TYPES.register("avatar_skybison_entity", () -> EntityType.Builder.<EntitySkybison>of(EntitySkybison::new, MobCategory.CREATURE)
+                    .sized(0.5f, 0.5f).build("avatar_skybison_entity"));
 
     private static <T extends Entity> Supplier<EntityType<T>> registerPhysicsBody(
             String id, EntityType.EntityFactory<T> factory, float width, float height, int trackingRange, int updateInterval) {
