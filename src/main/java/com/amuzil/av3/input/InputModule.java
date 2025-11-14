@@ -94,6 +94,11 @@ public class InputModule {
             if (Minecraft.getInstance().getConnection() != null &&
                 Minecraft.getInstance().getOverlay() == null &&
                 Minecraft.getInstance().screen == null) {
+                if (bender == null) {
+                    Player player = Minecraft.getInstance().player;
+                    if (player != null)
+                        bender = getOrCreateBender(player);
+                }
                 checkInputs();
             }
         };
@@ -249,8 +254,6 @@ public class InputModule {
     }
 
     public void registerListeners() {
-        assert Minecraft.getInstance().player != null;
-        bender = getOrCreateBender(Minecraft.getInstance().player);
         NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, InputEvent.Key.class, keyboardListener);
         NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, InputEvent.MouseButton.Pre.class, mouseListener);
         NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, ClientTickEvent.Pre.class, tickEventConsumer);
