@@ -1,6 +1,7 @@
 package com.amuzil.caliber.physics.bullet.collision.body;
 
 import com.amuzil.caliber.api.EntityPhysicsElement;
+import com.amuzil.caliber.api.PlayerPhysicsElement;
 import com.amuzil.caliber.physics.bullet.collision.body.shape.MinecraftShape;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.jme3.math.Vector3f;
@@ -10,12 +11,12 @@ public class PlayerRigidBody extends ElementRigidBody {
     private final Player player;
     private boolean dirtyProperties = true;
 
-    public PlayerRigidBody(EntityPhysicsElement element, MinecraftSpace space, MinecraftShape shape, float mass, float dragCoefficient, float friction, float restitution) {
+    public PlayerRigidBody(PlayerPhysicsElement element, MinecraftSpace space, MinecraftShape shape, float mass, float dragCoefficient, float friction, float restitution) {
         super(element, space, shape, mass, dragCoefficient, friction, restitution);
         player = (Player) element;
     }
 
-    public PlayerRigidBody(EntityPhysicsElement element, MinecraftSpace space, MinecraftShape shape) {
+    public PlayerRigidBody(PlayerPhysicsElement element, MinecraftSpace space, MinecraftShape shape) {
         this(element, space, shape, 10.0f, 0.25f, 1.0f, 0.5f);
     }
 
@@ -24,13 +25,13 @@ public class PlayerRigidBody extends ElementRigidBody {
      *
      * @param element the element to base this body around
      */
-    public PlayerRigidBody(EntityPhysicsElement element) {
+    public PlayerRigidBody(PlayerPhysicsElement element) {
         this(element, MinecraftSpace.get(element.cast().level()), element.createShape());
     }
 
     @Override
-    public EntityPhysicsElement getElement() {
-        return (EntityPhysicsElement) super.getElement();
+    public PlayerPhysicsElement getElement() {
+        return (PlayerPhysicsElement) super.getElement();
     }
 
     public Player getPlayer() {

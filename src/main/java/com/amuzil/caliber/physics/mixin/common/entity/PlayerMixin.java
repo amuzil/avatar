@@ -1,7 +1,6 @@
 package com.amuzil.caliber.physics.mixin.common.entity;
 
-import com.amuzil.caliber.api.EntityPhysicsElement;
-import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
+import com.amuzil.caliber.api.PlayerPhysicsElement;
 import com.amuzil.caliber.physics.bullet.collision.body.PlayerRigidBody;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.core.BlockPos;
@@ -15,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Player.class)
-public class PlayerMixin implements EntityPhysicsElement {
+public class PlayerMixin implements PlayerPhysicsElement {
 
     @Unique
     private PlayerRigidBody rigidBody;
