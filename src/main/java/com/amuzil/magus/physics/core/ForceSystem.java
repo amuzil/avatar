@@ -2,7 +2,6 @@ package com.amuzil.magus.physics.core;
 
 import com.amuzil.carryon.physics.bullet.collision.space.MinecraftSpace;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +20,11 @@ public class ForceSystem {
     // simple collision params – tune these later
     private final double selfRestRadius = cellSize;
     private final double selfStiffness = 50.0;
-    private final double selfDamping  = 5.0;
+    private final double selfDamping = 5.0;
 
     private final double crossRestRadius = cellSize;
-    private final double crossStiffness  = 80.0;
-    private final double crossDamping    = 80.0;
+    private final double crossStiffness = 80.0;
+    private final double crossDamping = 80.0;
 
     public ForceSystem(MinecraftSpace space) {
         this.space = space;
@@ -51,6 +50,27 @@ public class ForceSystem {
         if (!clouds.contains(cloud)) {
             clouds.add(cloud);
         }
+    }
+
+    public void removeClouds(ForceCloud... clouds) {
+        this.clouds.removeAll(List.of(clouds));
+    }
+
+    public void removeCloud(List<ForceCloud> clouds) {
+        this.clouds.removeAll(clouds);
+    }
+
+    public void removeClouds(String... clouds) {
+        List<String> newC = List.of(clouds);
+        this.clouds.removeIf(cloud -> newC.contains(cloud.id()));
+    }
+
+    public void removeClouds(List<String> ids) {
+        this.clouds.removeIf(cloud -> ids.contains(cloud.id()));
+    }
+
+    public void removeCloud(String id) {
+        removeClouds(id);
     }
 
     public void removeCloud(ForceCloud cloud) {

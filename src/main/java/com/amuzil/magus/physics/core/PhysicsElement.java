@@ -18,7 +18,7 @@ public abstract class PhysicsElement implements IPhysicsElement {
     public byte[] header = new byte[Constraints.HEADER_LENGTH];
     int maxLifetime = -1;
     int timeExisted = 0;
-    private int id;
+    private String id;
     private double mass = 1;
     private double damping;
     private boolean surface = false;
@@ -68,11 +68,11 @@ public abstract class PhysicsElement implements IPhysicsElement {
         return data;
     }
 
-    public int id() {
+    public String id() {
         return this.id;
     }
 
-    public void id(int id) {
+    public void id(String id) {
         this.id = id;
     }
 
