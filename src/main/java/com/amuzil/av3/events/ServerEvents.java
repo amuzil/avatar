@@ -95,7 +95,6 @@ public class ServerEvents {
     @SubscribeEvent
     public static void onServerTick(ServerTickEvent.Pre event) {
         NeoForge.EVENT_BUS.post(new SkillTickEvent());
-
     }
 
 }
