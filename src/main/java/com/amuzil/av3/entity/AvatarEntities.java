@@ -2,7 +2,7 @@ package com.amuzil.av3.entity;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.entity.projectile.*;
-import com.amuzil.av3.entity.physics.RigidBlock;
+import com.amuzil.av3.entity.physics.AvatarRigidBlock;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -36,8 +36,8 @@ public class AvatarEntities {
     public static final Supplier<EntityType<AvatarWaterProjectile>> AVATAR_WATER_PROJECTILE_ENTITY_TYPE =
             registerProjectile("avatar_water_projectile", AvatarWaterProjectile::new, 0.5f, 0.5f);
 
-    public static final Supplier<EntityType<RigidBlock>> AVATAR_RIGID_BLOCK =
-            registerPhysicsBody("avatar_rigid_block", RigidBlock::new, 1.0f, 1.0f, 10, 4);
+    public static final Supplier<EntityType<AvatarRigidBlock>> AVATAR_RIGID_BLOCK =
+            registerPhysicsBody("avatar_rigid_block", AvatarRigidBlock::new, 1.0f, 1.0f, 10, 4);
 
 
 
