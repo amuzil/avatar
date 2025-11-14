@@ -16,7 +16,7 @@ public class CaliberClientPacketHandler {
         if (mc.level != null) {
             Entity entity = mc.level.getEntity(packet.getId());
             if (EntityPhysicsElement.is(entity)) {
-                EntityRigidBody rigidBody = EntityPhysicsElement.get(entity).getRigidBody();
+                EntityRigidBody rigidBody = (EntityRigidBody) EntityPhysicsElement.get(entity).getRigidBody();
 
                 MinecraftSpace.get(mc.level).getWorkerThread().execute(() -> {
                     rigidBody.setPhysicsRotation(Convert.toBullet(packet.getRotation()));
@@ -34,7 +34,7 @@ public class CaliberClientPacketHandler {
         if (mc.level != null) {
             Entity entity = mc.level.getEntity(packet.getId());
             if (EntityPhysicsElement.is(entity)) {
-                EntityRigidBody rigidBody = EntityPhysicsElement.get(entity).getRigidBody();
+                EntityRigidBody rigidBody = (EntityRigidBody) EntityPhysicsElement.get(entity).getRigidBody();
 
                 MinecraftSpace.get(mc.level).getWorkerThread().execute(() -> {
                     rigidBody.setMass(packet.getMass());

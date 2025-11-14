@@ -17,6 +17,7 @@ import com.amuzil.caliber.physics.utils.maths.Utilities;
 import com.jme3.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -117,7 +118,7 @@ public final class ServerEventHandler {
     @SubscribeEvent
     public static void onStartTrackingEntity(PlayerEvent.StartTracking event) {
         Entity entity = event.getTarget();
-        if (EntityPhysicsElement.is(entity)) {
+        if (EntityPhysicsElement.is(entity) && !(entity instanceof Player)) {
             var space = MinecraftSpace.get(entity.level());
             space.getWorkerThread().execute(() ->
                     space.addCollisionObject(EntityPhysicsElement.get(entity).getRigidBody()));

@@ -10,6 +10,7 @@
     "common.LevelMixin",
     "common.entity.EntityMixin",
     "common.entity.ExplosionMixin",
+    "common.entity.PlayerMixin",
     "common.entity.ServerEntityMixin",
     "common.entity.TrackedEntityMixin"
   ],

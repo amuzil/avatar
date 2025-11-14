@@ -3,6 +3,7 @@ package com.amuzil.caliber.physics.mixin.common.entity;
 import com.amuzil.caliber.api.EntityPhysicsElement;
 import net.minecraft.server.level.ServerEntity;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -24,19 +25,19 @@ public class ServerEntityMixin {
 
     @Redirect(method = "sendChanges", at = @At(value = "INVOKE", target = "Ljava/util/function/Consumer;accept(Ljava/lang/Object;)V", ordinal = 1))
     public void caliber$overrideRotation_sendChanges(Consumer consumer, Object object) {
-        if (!EntityPhysicsElement.is(this.entity))
+        if (this.entity instanceof Player || !EntityPhysicsElement.is(this.entity))
             consumer.accept(object);
     }
 
     @Redirect(method = "sendChanges", at = @At(value = "INVOKE", target = "Ljava/util/function/Consumer;accept(Ljava/lang/Object;)V", ordinal = 2))
     public void caliber$overrideVelocity_sendChanges(Consumer consumer, Object object) {
-        if (!EntityPhysicsElement.is(this.entity))
+        if (this.entity instanceof Player || !EntityPhysicsElement.is(this.entity))
             consumer.accept(object);
     }
 
     @Redirect(method = "sendChanges", at = @At(value = "INVOKE", target = "Ljava/util/function/Consumer;accept(Ljava/lang/Object;)V", ordinal = 3))
     public void caliber$overrideMultiple_sendChanges(Consumer consumer, Object object) {
-        if (!EntityPhysicsElement.is(this.entity))
+        if (this.entity instanceof Player || !EntityPhysicsElement.is(this.entity))
             consumer.accept(object);
     }
 }

@@ -1,5 +1,6 @@
 package com.amuzil.caliber.api;
 
+import com.amuzil.caliber.physics.bullet.collision.body.ElementRigidBody;
 import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
 import com.amuzil.caliber.physics.bullet.collision.body.shape.MinecraftShape;
 import net.minecraft.world.entity.Entity;
@@ -21,7 +22,7 @@ public interface EntityPhysicsElement extends PhysicsElement<Entity> {
 
     @Override
     @Nullable
-    EntityRigidBody getRigidBody();
+    ElementRigidBody getRigidBody();
 
     @Override
     default MinecraftShape.Convex createShape() {

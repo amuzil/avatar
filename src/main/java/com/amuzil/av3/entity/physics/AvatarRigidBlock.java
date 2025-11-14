@@ -10,7 +10,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
-
 public class AvatarRigidBlock extends AvatarBlockEntity implements EntityPhysicsElement {
     private final EntityRigidBody rigidBody;
 
