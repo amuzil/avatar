@@ -97,7 +97,7 @@ public class Registries {
         String name = skillSup.get().name();
         Supplier<Skill> skillRegistryObject = SKILL_REGISTER.register(name, skillSup);
         String id = Avatar.id(name).toString();
-        skills.add(skillRegistryObject.get());
+        skills.add(skillSup.get());
         skillSuppliers.put(id, skillSup);
         return skillRegistryObject;
     }
