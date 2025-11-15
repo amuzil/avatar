@@ -27,6 +27,7 @@ public class ForceGrid<T extends IPhysicsElement> {
 
     private int usedBinCount = 0;
     private long originX, originY, originZ;
+    private final int maxPoints;
 
     @SuppressWarnings("unchecked")
     public ForceGrid(double cellSize, int binCountX, int binCountY, int binCountZ, int maxPoints, long originX, long originY, long originZ, @Nullable ExecutorService threadPool) {
@@ -43,9 +44,14 @@ public class ForceGrid<T extends IPhysicsElement> {
         this.bins = (List<T>[]) new List[totalBins];
         this.usedBins = new int[totalBins]; // worst-case: all bins used once this frame
 
+        this.maxPoints = maxPoints;
         this.allPoints = new ArrayList<>(maxPoints);
         this.threadPool = threadPool;
         this.parallelism = Math.max(Runtime.getRuntime().availableProcessors() / 2, 1);
+    }
+
+    public int maxPoints() {
+        return maxPoints;
     }
 
     public Vec3 origin() {

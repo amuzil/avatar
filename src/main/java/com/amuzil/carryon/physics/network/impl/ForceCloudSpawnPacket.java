@@ -4,10 +4,13 @@ package com.amuzil.carryon.physics.network.impl;
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.network.packets.api.AvatarPacket;
 import com.amuzil.av3.utils.network.AvatarPacketUtils;
+import com.amuzil.carryon.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.magus.physics.core.ForceCloud;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
@@ -25,12 +28,14 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
     private final UUID ownerUuid;
     private final int type;
     private final long seed;
+    private final int maxPoints;
 
     private final int gridNx, gridNy, gridNz;
     private final float cellSize;
 
     private final Vec3 origin;
     private final Vec3 direction;
+    private final Vec3 force;
     private final Vec3 aabbMin;
     private final Vec3 aabbMax;
 
@@ -40,14 +45,16 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
         this.ownerUuid = cloud.owner();
         this.type = cloud.type();          // e.g. ResourceLocation
         this.seed = cloud.seed();          // or 0L if you don't use it yet
+        this.maxPoints = cloud.grid().maxPoints();
 
         this.gridNx = cloud.grid().binX();
         this.gridNy = cloud.grid().binY();
         this.gridNz = cloud.grid().binZ();
         this.cellSize = cloud.grid().cellSize();
 
-        this.origin = cloud.grid().origin();      // or cloud.pos()
+        this.origin = cloud.pos();      // or cloud.pos()
         this.direction = cloud.vel();// or cloud.dir()
+        this.force = cloud.force();
         this.aabbMin = cloud.bounds().getMinPosition();
         this.aabbMax = cloud.bounds().getMaxPosition();
     }
@@ -58,6 +65,7 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
         this.ownerUuid = buf.readUUID();
         this.type = buf.readInt();
         this.seed = buf.readLong();
+        this.maxPoints = buf.readInt();
 
         this.gridNx = buf.readVarInt();
         this.gridNy = buf.readVarInt();
@@ -66,16 +74,24 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
 
         this.origin = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
         this.direction = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
+        this.force = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
         this.aabbMin = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
         this.aabbMax = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
     }
 
     public static void handle(ForceCloudSpawnPacket msg, IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
-            if (net.minecraft.client.Minecraft.getInstance().level == null)
+            Minecraft mc = Minecraft.getInstance();
+
+            if (mc.level == null)
                 return;
             // Mirror only: build/update the client cloud from packet contents
-            ClientForceSystem.get().spawnFromPacket(msg);
+
+            Level level = mc.level;
+            MinecraftSpace space = MinecraftSpace.get(level);
+            if (!space.isServer()) {
+                space.getWorkerThread().execute(() -> space.addForceCloud(msg.cloud()));
+            }
         });
     }
 
@@ -85,6 +101,7 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
         buf.writeUUID(this.ownerUuid);
         buf.writeInt(this.type);
         buf.writeLong(this.seed);
+        buf.writeInt(this.maxPoints);
 
         buf.writeVarInt(this.gridNx);
         buf.writeVarInt(this.gridNy);
@@ -94,6 +111,8 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
         AvatarPacketUtils.writeVec3(origin, buf);
 
         AvatarPacketUtils.writeVec3(direction, buf);
+
+        AvatarPacketUtils.writeVec3(force, buf);
 
         AvatarPacketUtils.writeVec3(aabbMin, buf);
 
@@ -105,52 +124,9 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
         return TYPE;
     }
 
-    // GETTERS
-    public String getId() {
-        return id;
-    }
 
-    public UUID getOwnerUuid() {
-        return ownerUuid;
-    }
-
-    public int typeID() {
-        return type;
-    }
-
-    public long getSeed() {
-        return seed;
-    }
-
-    public int getGridNx() {
-        return gridNx;
-    }
-
-    public int getGridNy() {
-        return gridNy;
-    }
-
-    public int getGridNz() {
-        return gridNz;
-    }
-
-    public float getCellSize() {
-        return cellSize;
-    }
-
-    public Vec3 getOrigin() {
-        return origin;
-    }
-
-    public Vec3 getDirection() {
-        return direction;
-    }
-
-    public Vec3 aabbMin() {
-        return this.aabbMin;
-    }
-
-    public Vec3 aabbMax() {
-        return this.aabbMax;
+    public ForceCloud cloud() {
+        // Client doesn't need multithreading and we don't need it for now anyway
+        return new ForceCloud(type, maxPoints, id, origin, direction, force, ownerUuid, null);
     }
 }

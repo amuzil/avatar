@@ -8,6 +8,7 @@ import org.joml.Quaterniond;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -22,9 +23,9 @@ public class ForceCloud extends PhysicsElement {
     private AABB bounds = new AABB(0, 0, 0, 0, 0, 0);
     private double remainingLifeSeconds = -1.0; // -1 = infinite
     private boolean hasLifetime = false;
-    private UUID owner;
+    private final UUID owner;
 
-    public ForceCloud(int type, int maxPoints, Vec3 pos, Vec3 vel, Vec3 force, UUID owner,
+    public ForceCloud(int type, int maxPoints, String id, Vec3 pos, Vec3 vel, Vec3 force, UUID owner,
                       @Nullable ExecutorService pool) {
         super(type);
         this.rotation = new double[4];
@@ -50,12 +51,9 @@ public class ForceCloud extends PhysicsElement {
         // Direction / Force / Acceleration
         insert(force, 4);
 
+        id(id);
         this.owner = owner;
         this.seed = Seeds.fromUuid(owner);
-    }
-
-    public AABB getBounds() {
-        return this.bounds;
     }
 
     // static so ForceSystem can call it for cross-cloud collisions too
@@ -102,6 +100,10 @@ public class ForceCloud extends PhysicsElement {
             p.insert(fp, 4);
             q.insert(fq, 4);
         }
+    }
+
+    public AABB getBounds() {
+        return this.bounds;
     }
 
     public UUID owner() {
@@ -467,6 +469,67 @@ public class ForceCloud extends PhysicsElement {
 
         // Now rebuild from our point list
         spaceGrid.rebuildFrom(points);
+    }
+
+    /**
+     * Indicates whether some other object is "equal to" this one.
+     * <p>
+     * The {@code equals} method implements an equivalence relation
+     * on non-null object references:
+     * <ul>
+     * <li>It is <i>reflexive</i>: for any non-null reference value
+     *     {@code x}, {@code x.equals(x)} should return
+     *     {@code true}.
+     * <li>It is <i>symmetric</i>: for any non-null reference values
+     *     {@code x} and {@code y}, {@code x.equals(y)}
+     *     should return {@code true} if and only if
+     *     {@code y.equals(x)} returns {@code true}.
+     * <li>It is <i>transitive</i>: for any non-null reference values
+     *     {@code x}, {@code y}, and {@code z}, if
+     *     {@code x.equals(y)} returns {@code true} and
+     *     {@code y.equals(z)} returns {@code true}, then
+     *     {@code x.equals(z)} should return {@code true}.
+     * <li>It is <i>consistent</i>: for any non-null reference values
+     *     {@code x} and {@code y}, multiple invocations of
+     *     {@code x.equals(y)} consistently return {@code true}
+     *     or consistently return {@code false}, provided no
+     *     information used in {@code equals} comparisons on the
+     *     objects is modified.
+     * <li>For any non-null reference value {@code x},
+     *     {@code x.equals(null)} should return {@code false}.
+     * </ul>
+     *
+     * <p>
+     * An equivalence relation partitions the elements it operates on
+     * into <i>equivalence classes</i>; all the members of an
+     * equivalence class are equal to each other. Members of an
+     * equivalence class are substitutable for each other, at least
+     * for some purposes.
+     *
+     * @param obj the reference object with which to compare.
+     * @return {@code true} if this object is the same as the obj
+     * argument; {@code false} otherwise.
+     * @implSpec The {@code equals} method for class {@code Object} implements
+     * the most discriminating possible equivalence relation on objects;
+     * that is, for any non-null reference values {@code x} and
+     * {@code y}, this method returns {@code true} if and only
+     * if {@code x} and {@code y} refer to the same object
+     * ({@code x == y} has the value {@code true}).
+     * <p>
+     * In other words, under the reference equality equivalence
+     * relation, each equivalence class only has a single element.
+     * @apiNote It is generally necessary to override the {@link #hashCode() hashCode}
+     * method whenever this method is overridden, so as to maintain the
+     * general contract for the {@code hashCode} method, which states
+     * that equal objects must have equal hash codes.
+     * @see #hashCode()
+     * @see HashMap
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof ForceCloud)) return false;
+
+        return id().equals(((ForceCloud) obj).id()) && owner.equals(((ForceCloud) obj).owner());
     }
 }
 

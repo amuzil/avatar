@@ -201,14 +201,24 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
         }
     }
 
-    public void addForceCloud(ForceCloud forceCloud, Level level, Entity spawner) {
+    public void addForceCloud(ForceCloud forceCloud, Entity spawner) {
         if (forceSystem != null) {
+            // TODO: Set frames here and post a spawn event
             if (!forceSystem.clouds().contains(forceCloud)) {
                 if (this.isServer()) {
-                    // Need to figure out how to s
-                    forceSystem.addCloud(forceCloud);
+                    // Need to figure out how to sync properly here
                     PacketDistributor.sendToPlayersTrackingEntity(spawner, new ForceCloudSpawnPacket(forceCloud));
                 }
+                forceSystem.addCloud(forceCloud);
+            }
+        }
+    }
+
+    public void addForceCloud(ForceCloud forceCloud) {
+        if (forceSystem != null) {
+            // TODO: Set frames here and post a spawn event
+            if (!forceSystem.clouds().contains(forceCloud)) {
+                forceSystem.addCloud(forceCloud);
             }
         }
     }
