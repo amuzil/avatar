@@ -4,7 +4,7 @@ import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.api.IForceModule;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
 import com.amuzil.av3.entity.api.modules.force.ControlModule;
-import com.amuzil.caliber.api.EntityRigidPhysicsElement;
+import com.amuzil.caliber.api.elements.rigid.EntityRigidPhysicsElement;
 import com.amuzil.caliber.physics.bullet.collision.body.rigidbody.EntityRigidBody;
 import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.jme3.math.Matrix3f;

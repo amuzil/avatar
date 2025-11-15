@@ -1,6 +1,6 @@
 package com.amuzil.caliber.physics.event;
 
-import com.amuzil.caliber.api.EntityRigidPhysicsElement;
+import com.amuzil.caliber.api.elements.rigid.EntityRigidPhysicsElement;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.caliber.physics.bullet.collision.space.generator.EntityCollisionGenerator;
 import com.amuzil.caliber.physics.bullet.collision.space.supplier.entity.ClientEntitySupplier;

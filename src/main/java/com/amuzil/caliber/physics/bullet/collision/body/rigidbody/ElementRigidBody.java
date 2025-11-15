@@ -1,6 +1,7 @@
 package com.amuzil.caliber.physics.bullet.collision.body.rigidbody;
 
-import com.amuzil.caliber.api.PhysicsElement;
+import com.amuzil.caliber.api.PhysicsSynced;
+import com.amuzil.caliber.api.elements.PhysicsElement;
 import com.amuzil.caliber.physics.bullet.collision.body.shape.MinecraftShape;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.caliber.physics.bullet.math.Convert;
@@ -21,7 +22,7 @@ import java.security.InvalidParameterException;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
-public abstract class ElementRigidBody extends MinecraftRigidBody {
+public abstract class ElementRigidBody extends MinecraftRigidBody implements PhysicsSynced {
     private static final Logger LOGGER = LogManager.getLogger();
     public static final float SLEEP_TIME_IN_SECONDS = 2.0f;
     protected final PhysicsElement<?> element;

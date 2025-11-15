@@ -1,6 +1,6 @@
 package com.amuzil.caliber.physics.mixin.common.entity;
 
-import com.amuzil.caliber.api.EntityRigidPhysicsElement;
+import com.amuzil.caliber.api.elements.rigid.EntityRigidPhysicsElement;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;

@@ -1,6 +1,6 @@
 package com.amuzil.caliber.physics.bullet.collision.space.supplier.entity;
 
-import com.amuzil.caliber.api.EntityRigidPhysicsElement;
+import com.amuzil.caliber.api.elements.rigid.EntityRigidPhysicsElement;
 import com.amuzil.caliber.physics.bullet.collision.body.rigidbody.ElementRigidBody;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;

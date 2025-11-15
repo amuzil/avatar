@@ -1,7 +1,7 @@
 package com.amuzil.caliber.physics.mixin.common.entity;
 
-import com.amuzil.caliber.api.EntityRigidPhysicsElement;
-import com.amuzil.caliber.api.PhysicsElement;
+import com.amuzil.caliber.api.elements.rigid.EntityRigidPhysicsElement;
+import com.amuzil.caliber.api.elements.PhysicsElement;
 import com.amuzil.caliber.physics.bullet.math.Convert;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Explosion;

@@ -1,12 +1,13 @@
 package com.amuzil.caliber.physics.bullet.collision.body.softbody;
 
-import com.amuzil.caliber.api.EntitySoftPhysicsElement;
+import com.amuzil.caliber.api.PhysicsSynced;
+import com.amuzil.caliber.api.elements.soft.EntitySoftPhysicsElement;
 import com.amuzil.caliber.physics.bullet.collision.body.shape.MinecraftShape;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.jme3.math.Vector3f;
 import net.minecraft.world.entity.player.Player;
 
-public class EntitySoftBody extends ElementSoftBody {
+public class EntitySoftBody extends ElementSoftBody implements PhysicsSynced {
     private Player priorityPlayer;
     private boolean dirtyProperties = true;
 
@@ -30,6 +31,11 @@ public class EntitySoftBody extends ElementSoftBody {
     @Override
     public EntitySoftPhysicsElement getElement() {
         return (EntitySoftPhysicsElement) super.getElement();
+    }
+
+    @Override
+    public boolean isRigid() {
+        return false;
     }
 
     public Player getPriorityPlayer() {

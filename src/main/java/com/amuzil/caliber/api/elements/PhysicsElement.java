@@ -1,5 +1,6 @@
-package com.amuzil.caliber.api;
+package com.amuzil.caliber.api.elements;
 
+import com.amuzil.caliber.api.elements.rigid.EntityRigidPhysicsElement;
 import com.amuzil.caliber.physics.bullet.collision.body.rigidbody.ElementRigidBody;
 import com.amuzil.caliber.physics.bullet.collision.body.shape.MinecraftShape;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;

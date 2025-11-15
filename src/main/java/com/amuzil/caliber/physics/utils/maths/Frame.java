@@ -1,6 +1,6 @@
 package com.amuzil.caliber.physics.utils.maths;
 
-import com.amuzil.caliber.api.PhysicsElement;
+import com.amuzil.caliber.api.elements.PhysicsElement;
 import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;

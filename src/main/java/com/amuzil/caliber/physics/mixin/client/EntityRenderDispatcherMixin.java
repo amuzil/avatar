@@ -1,6 +1,6 @@
 package com.amuzil.caliber.physics.mixin.client;
 
-import com.amuzil.caliber.api.EntityRigidPhysicsElement;
+import com.amuzil.caliber.api.elements.rigid.EntityRigidPhysicsElement;
 import com.jme3.math.Vector3f;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;

@@ -1,6 +1,7 @@
 package com.amuzil.caliber.physics.event;
 
-import com.amuzil.caliber.api.EntityRigidPhysicsElement;
+import com.amuzil.caliber.api.PhysicsSynced;
+import com.amuzil.caliber.api.elements.rigid.EntityRigidPhysicsElement;
 import com.amuzil.caliber.api.event.space.PhysicsSpaceEvent;
 import com.amuzil.caliber.physics.bullet.collision.body.rigidbody.EntityRigidBody;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
@@ -67,29 +68,29 @@ public final class ServerEventHandler {
             space.step();
             EntityCollisionGenerator.step(space);
 
-            for (var rigidBody : space.getRigidBodiesByClass(EntityRigidBody.class)) {
+            for (var rigidBody : space.getRigidBodiesByClass(PhysicsSynced.class)) {
                 if (rigidBody.isActive()) {
 
                     // Movement sync
                     if (rigidBody.isPositionDirty()) {
                         CaliberNetwork.sendToPlayersTrackingEntity(
-                                rigidBody.getElement().cast(),
-                                new SendRigidBodyMovementPacket(rigidBody)
+                                (Entity) rigidBody.getElement().cast(),
+                                rigidBody.isRigid() ? new SendRigidBodyMovementPacket((EntityRigidBody) rigidBody) : null
                         );
                     }
 
                     // Properties sync
                     if (rigidBody.arePropertiesDirty()) {
                         CaliberNetwork.sendToPlayersTrackingEntity(
-                                rigidBody.getElement().cast(),
-                                new SendRigidBodyPropertiesPacket(rigidBody)
+                                (Entity) rigidBody.getElement().cast(),
+                                rigidBody.isRigid() ? new SendRigidBodyPropertiesPacket((EntityRigidBody) rigidBody) : null
                         );
                     }
                 }
 
                 // Update entity position to physics body location
                 var location = rigidBody.getFrame().getLocation(new Vector3f(), 1.0f);
-                rigidBody.getElement().cast().absMoveTo(location.x, location.y, location.z);
+                ((Entity)rigidBody.getElement().cast()).absMoveTo(location.x, location.y, location.z);
             }
         }
     }

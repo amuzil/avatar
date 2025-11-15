@@ -1,6 +1,6 @@
 package com.amuzil.caliber.physics.bullet.collision.body.rigidbody;
 
-import com.amuzil.caliber.api.EntityRigidPhysicsElement;
+import com.amuzil.caliber.api.elements.rigid.EntityRigidPhysicsElement;
 import com.amuzil.caliber.physics.bullet.collision.body.shape.MinecraftShape;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.jme3.math.Vector3f;
@@ -30,6 +30,11 @@ public class EntityRigidBody extends ElementRigidBody {
     @Override
     public EntityRigidPhysicsElement getElement() {
         return (EntityRigidPhysicsElement) super.getElement();
+    }
+
+    @Override
+    public boolean isRigid() {
+        return true;
     }
 
     public Player getPriorityPlayer() {
