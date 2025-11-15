@@ -62,8 +62,7 @@ public class AvatarBlockEntity extends AvatarEntity implements IAvatarConstruct 
     private boolean hurtEntities;
     private int fallDamageMax;
     private float fallDamagePerDistance;
-    @Nullable
-    public CompoundTag blockData;
+    public @Nullable CompoundTag blockData;
     public boolean forceTickAfterTeleportToDuplicate;
     protected static final EntityDataAccessor<BlockPos> DATA_START_POS = SynchedEntityData.defineId(AvatarBlockEntity.class, EntityDataSerializers.BLOCK_POS);
     private static final EntityDataAccessor<Float> WIDTH = SynchedEntityData.defineId(AvatarBlockEntity.class, EntityDataSerializers.FLOAT);
@@ -160,6 +159,8 @@ public class AvatarBlockEntity extends AvatarEntity implements IAvatarConstruct 
     }
 
     public void tick() {
+        super.tick();
+
         if (this.blockState.isAir()) {
             this.discard();
         } else {
@@ -412,6 +413,6 @@ public class AvatarBlockEntity extends AvatarEntity implements IAvatarConstruct 
 
     @Override
     public @NotNull ItemStack getItem() {
-        return new ItemStack(Blocks.AIR);
+        return new ItemStack(Blocks.STONE);
     }
 }

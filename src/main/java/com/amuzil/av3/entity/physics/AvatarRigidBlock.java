@@ -3,10 +3,11 @@ package com.amuzil.av3.entity.physics;
 import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.api.IForceModule;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
-import com.amuzil.av3.entity.api.modules.force.MoveModule;
+import com.amuzil.av3.entity.api.modules.force.ControlModule;
 import com.amuzil.caliber.api.EntityPhysicsElement;
 import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
 import com.amuzil.caliber.physics.bullet.math.Convert;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -19,7 +20,7 @@ public class AvatarRigidBlock extends AvatarBlockEntity implements EntityPhysics
     public AvatarRigidBlock(EntityType<? extends AvatarRigidBlock> type, Level level) {
         super(type, level);
         this.rigidBody = new EntityRigidBody(this);
-        addForceModule((IForceModule) ModuleRegistry.create(MoveModule.id));
+        addForceModule((IForceModule) ModuleRegistry.create(ControlModule.id));
     }
 
     public AvatarRigidBlock(Level pLevel) {
@@ -40,6 +41,11 @@ public class AvatarRigidBlock extends AvatarBlockEntity implements EntityPhysics
 
     @Override
     public void control(float scale) {
-
+        Entity owner = this.getOwner();
+        assert owner != null;
+        Vec3[] pose = new Vec3[]{owner.position(), owner.getLookAngle()};
+        pose[1] = pose[1].scale((scale)).add((0), (owner.getEyeHeight()), (0));
+        Vec3 newPos = pose[1].add(pose[0]);
+        rigidBody.setPhysicsLocation(Convert.toBullet(newPos));
     }
 }

@@ -52,6 +52,9 @@ public class EarthBlockSkill extends EarthSkill {
         AvatarRigidBlock projectile = new AvatarRigidBlock(level);
         projectile.setBlockState(blockState);
         projectile.setPos(entity.position().add(0, entity.getEyeHeight(), 0));
+        System.out.println("Default Mass: " + projectile.getRigidBody().getMass());
+        projectile.getRigidBody().setMass(0f);
+        projectile.getRigidBody().setKinematic(true);
         projectile.setElement(element());
         projectile.setOwner(entity);
         projectile.setMaxLifetime(lifetime);

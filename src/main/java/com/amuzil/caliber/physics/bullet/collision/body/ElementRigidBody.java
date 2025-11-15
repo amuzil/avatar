@@ -209,7 +209,7 @@ public abstract class ElementRigidBody extends MinecraftRigidBody {
         private boolean waterBuoyancy;
         private boolean airBuoyancy;
 
-        private BuoyancyType(boolean waterBuoyancy, boolean airBuoyancy) {
+        BuoyancyType(boolean waterBuoyancy, boolean airBuoyancy) {
             this.waterBuoyancy = waterBuoyancy;
             this.airBuoyancy = airBuoyancy;
         }

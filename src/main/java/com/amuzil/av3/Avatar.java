@@ -65,6 +65,7 @@ public class Avatar {
 
         ModuleRegistry.register(MoveModule::new);
         ModuleRegistry.register(CurveModule::new);
+        ModuleRegistry.register(ControlModule::new);
         ModuleRegistry.register(TimeoutModule::new);
         ModuleRegistry.register(SoundModule::new);
         ModuleRegistry.register(GrowModule::new);
