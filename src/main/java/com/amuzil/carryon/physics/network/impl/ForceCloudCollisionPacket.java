@@ -91,33 +91,33 @@ public class ForceCloudCollisionPacket implements AvatarPacket {
     public static void handle(ForceCloudCollisionPacket msg, IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
             if (!ctx.flow().getReceptionSide().isClient()) return;
-
-            ClientForceSystem system = ClientForceSystem.get();
-            ClientForceCloud a = system.getCloud(msg.cloudAId);
-            ClientForceCloud b = system.getCloud(msg.cloudBId);
-            if (a == null || b == null) return;
-
-            // Delegate to visual logic
-            a.applyCollisionEffect(
-                    msg.contactPos,
-                    msg.radius,
-                    msg.densityA,
-                    msg.avgVelA,
-                    msg.densityB,
-                    msg.avgVelB,
-                    msg.intensity,
-                    true
-            );
-            b.applyCollisionEffect(
-                    msg.contactPos,
-                    msg.radius,
-                    msg.densityB,
-                    msg.avgVelB,
-                    msg.densityA,
-                    msg.avgVelA,
-                    msg.intensity,
-                    false
-            );
+//
+//            ClientForceSystem system = ClientForceSystem.get();
+//            ClientForceCloud a = system.getCloud(msg.cloudAId);
+//            ClientForceCloud b = system.getCloud(msg.cloudBId);
+//            if (a == null || b == null) return;
+//
+//            // Delegate to visual logic
+//            a.applyCollisionEffect(
+//                    msg.contactPos,
+//                    msg.radius,
+//                    msg.densityA,
+//                    msg.avgVelA,
+//                    msg.densityB,
+//                    msg.avgVelB,
+//                    msg.intensity,
+//                    true
+//            );
+//            b.applyCollisionEffect(
+//                    msg.contactPos,
+//                    msg.radius,
+//                    msg.densityB,
+//                    msg.avgVelB,
+//                    msg.densityA,
+//                    msg.avgVelA,
+//                    msg.intensity,
+//                    false
+//            );
         });
     }
 

@@ -39,18 +39,18 @@ public class ForceEmitter {
     /**
      * Spawn + register a new cloud through the system, and attach it to this emitter.
      */
-    public ForceCloud spawnCloud(ForceCloudSpec spec) {
-        // spec should include: type, grid params, lifetime, maybe attachedEntityUuid
-        ForceCloud cloud = system.spawnCloud(
-                ownerUuid,
-                spec.attachedEntityUuid(),
-                spec.type(),
-                spec
-        );
-        cloud.setEmitterKey(this.key); // optional, if you want reverse mapping
-        cloudIds.add(cloud.id);
-        return cloud;
-    }
+//    public ForceCloud spawnCloud(ForceCloudSpec spec) {
+//        // spec should include: type, grid params, lifetime, maybe attachedEntityUuid
+//        ForceCloud cloud = system.spawnCloud(
+//                ownerUuid,
+//                spec.attachedEntityUuid(),
+//                spec.type(),
+//                spec
+//        );
+//        cloud.setEmitterKey(this.key); // optional, if you want reverse mapping
+//        cloudIds.add(cloud.id);
+//        return cloud;
+//    }
 
     /**
      * Remove a cloud controlled by this emitter.
@@ -76,18 +76,19 @@ public class ForceEmitter {
     public void tick(double dt) {
         fields.clear();
 
-        for (String id : cloudIds) {
-            ForceCloud cloud = system.getCloud(id);
-            if (cloud == null) continue;
-
-            // If you really want per-emitter vector fields, do it here:
-            // (this is debug / secondary, not core physics)
-            // Vec3[][][] field = cloud.buildVectorField(
-            //         cloud.pos(),
-            //         16, 16, 16,
-            //         0.5
-            // );
-            // fields.add(field);
-        }
+//        for (String id : cloudIds) {
+//            ForceCloud cloud = system.getCloud(id);
+//            if (cloud == null) continue;
+//
+//            // If you really want per-emitter vector fields, do it here:
+//            // (this is debug / secondary, not core physics)
+//            // Vec3[][][] field = cloud.buildVectorField(
+//            //         cloud.pos(),
+//            //         16, 16, 16,
+//            //         0.5
+//            // );
+//            // fields.add(field);
+//        }
+//    }
     }
 }
