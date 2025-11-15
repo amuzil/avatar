@@ -1,4 +1,4 @@
-package com.amuzil.av3.entity.physics;
+package com.amuzil.av3.entity.construct;
 
 import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.api.IForceModule;
@@ -7,6 +7,8 @@ import com.amuzil.av3.entity.api.modules.force.ControlModule;
 import com.amuzil.caliber.api.EntityPhysicsElement;
 import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
 import com.amuzil.caliber.physics.bullet.math.Convert;
+import com.jme3.math.Matrix3f;
+import com.jme3.math.Quaternion;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
@@ -14,7 +16,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 
-public class AvatarRigidBlock extends AvatarBlockEntity implements EntityPhysicsElement {
+public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsElement {
     private final EntityRigidBody rigidBody;
 
     public AvatarRigidBlock(EntityType<? extends AvatarRigidBlock> type, Level level) {
@@ -42,10 +44,26 @@ public class AvatarRigidBlock extends AvatarBlockEntity implements EntityPhysics
     @Override
     public void control(float scale) {
         Entity owner = this.getOwner();
-        assert owner != null;
-        Vec3[] pose = new Vec3[]{owner.position(), owner.getLookAngle()};
-        pose[1] = pose[1].scale((scale)).add((0), (owner.getEyeHeight()), (0));
-        Vec3 newPos = pose[1].add(pose[0]);
+        if (owner == null) return;
+
+        Vec3 eyePos = owner.getEyePosition();
+        Vec3 look = owner.getLookAngle().normalize();
+        Vec3 up = new Vec3(0, 1, 0);
+        Vec3 right = look.cross(up).normalize(); // cross product gives right vector
+
+        double sideOffset = 0.7;  // how far to the right
+
+        Vec3 newPos = eyePos
+                .add(right.scale(sideOffset))
+                .add(look.scale(scale));
+
+        Matrix3f mat = new Matrix3f();
+        mat.fromAxes(Convert.toBullet(right), Convert.toBullet(up), Convert.toBullet(look)); // columns = basis vectors
+
+        Quaternion q = new Quaternion();
+        q.fromRotationMatrix(mat);
+
         rigidBody.setPhysicsLocation(Convert.toBullet(newPos));
+        rigidBody.setPhysicsRotation(q);
     }
 }

@@ -1,10 +1,11 @@
-package com.amuzil.av3.entity.physics;
+package com.amuzil.av3.entity.construct;
 
 import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.IAvatarConstruct;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
 import com.amuzil.av3.entity.api.modules.render.SoundModule;
+import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.mojang.logging.LogUtils;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.core.BlockPos;
@@ -52,7 +53,7 @@ import javax.annotation.Nullable;
 import java.util.function.Predicate;
 
 
-public class AvatarBlockEntity extends AvatarEntity implements IAvatarConstruct {
+public class AvatarConstruct extends AvatarEntity implements IAvatarConstruct {
 
     private static final Logger LOGGER = LogUtils.getLogger();
     private BlockState blockState;
@@ -64,11 +65,11 @@ public class AvatarBlockEntity extends AvatarEntity implements IAvatarConstruct 
     private float fallDamagePerDistance;
     public @Nullable CompoundTag blockData;
     public boolean forceTickAfterTeleportToDuplicate;
-    protected static final EntityDataAccessor<BlockPos> DATA_START_POS = SynchedEntityData.defineId(AvatarBlockEntity.class, EntityDataSerializers.BLOCK_POS);
-    private static final EntityDataAccessor<Float> WIDTH = SynchedEntityData.defineId(AvatarBlockEntity.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> HEIGHT = SynchedEntityData.defineId(AvatarBlockEntity.class, EntityDataSerializers.FLOAT);
+    protected static final EntityDataAccessor<BlockPos> DATA_START_POS = SynchedEntityData.defineId(AvatarConstruct.class, EntityDataSerializers.BLOCK_POS);
+    private static final EntityDataAccessor<Float> WIDTH = SynchedEntityData.defineId(AvatarConstruct.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> HEIGHT = SynchedEntityData.defineId(AvatarConstruct.class, EntityDataSerializers.FLOAT);
 
-    public AvatarBlockEntity(EntityType<? extends AvatarBlockEntity> entityType, Level level) {
+    public AvatarConstruct(EntityType<? extends AvatarConstruct> entityType, Level level) {
         super(entityType, level);
         addModule(ModuleRegistry.create(SoundModule.id));
         this.blockState = Blocks.STONE.defaultBlockState();
@@ -76,7 +77,7 @@ public class AvatarBlockEntity extends AvatarEntity implements IAvatarConstruct 
         this.fallDamageMax = 40;
     }
 
-    private AvatarBlockEntity(Level level, double x, double y, double z, BlockState state) {
+    private AvatarConstruct(Level level, double x, double y, double z, BlockState state) {
         this(AvatarEntities.AVATAR_RIGID_BLOCK_ENTITY_TYPE.get(), level);
         this.blockState = state;
         this.blocksBuilding = true;
@@ -127,8 +128,8 @@ public class AvatarBlockEntity extends AvatarEntity implements IAvatarConstruct 
 
 
 
-    public static AvatarBlockEntity fall(Level level, BlockPos pos, BlockState blockState) {
-        AvatarBlockEntity fallingblockentity = new AvatarBlockEntity(level, (double)pos.getX() + (double)0.5F, (double)pos.getY(), (double)pos.getZ() + (double)0.5F, blockState.hasProperty(BlockStateProperties.WATERLOGGED) ? (BlockState)blockState.setValue(BlockStateProperties.WATERLOGGED, false) : blockState);
+    public static AvatarConstruct fall(Level level, BlockPos pos, BlockState blockState) {
+        AvatarConstruct fallingblockentity = new AvatarConstruct(level, (double)pos.getX() + (double)0.5F, (double)pos.getY(), (double)pos.getZ() + (double)0.5F, blockState.hasProperty(BlockStateProperties.WATERLOGGED) ? (BlockState)blockState.setValue(BlockStateProperties.WATERLOGGED, false) : blockState);
         level.setBlock(pos, blockState.getFluidState().createLegacyBlock(), 3);
         level.addFreshEntity(fallingblockentity);
         return fallingblockentity;
@@ -408,7 +409,12 @@ public class AvatarBlockEntity extends AvatarEntity implements IAvatarConstruct 
 
     @Override
     public void control(float scale) {
-
+        Entity owner = this.getOwner();
+        if (owner == null) return;
+        Vec3[] pose = new Vec3[]{owner.position(), owner.getLookAngle()};
+        pose[1] = pose[1].scale((scale)).add((0), (owner.getEyeHeight()), (0));
+        Vec3 newPos = pose[1].add(pose[0]);
+        this.setPos(newPos);
     }
 
     @Override

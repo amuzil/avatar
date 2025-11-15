@@ -1,6 +1,6 @@
-package com.amuzil.av3.renderer.physics;
+package com.amuzil.av3.renderer.construct;
 
-import com.amuzil.av3.entity.physics.AvatarRigidBlock;
+import com.amuzil.av3.entity.construct.AvatarRigidBlock;
 import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.jme3.math.Quaternion;
 import com.mojang.blaze3d.vertex.PoseStack;

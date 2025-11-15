@@ -1,8 +1,10 @@
 package com.amuzil.av3.entity.api.modules.force;
 
 import com.amuzil.av3.entity.AvatarEntity;
+import com.amuzil.av3.entity.api.IAvatarConstruct;
 import com.amuzil.av3.entity.api.IForceModule;
-import com.amuzil.av3.entity.physics.AvatarRigidBlock;
+import com.amuzil.av3.entity.construct.AvatarConstruct;
+import com.amuzil.av3.entity.construct.AvatarRigidBlock;
 import net.minecraft.nbt.CompoundTag;
 
 
@@ -22,8 +24,8 @@ public class ControlModule implements IForceModule {
 
     @Override
     public void tick(AvatarEntity entity) {
-        if (entity instanceof AvatarRigidBlock rigidBlock) {
-            rigidBlock.control(1.0f);
+        if (entity instanceof IAvatarConstruct construct) {
+            construct.control(1.0f);
         }
     }
 

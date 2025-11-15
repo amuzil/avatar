@@ -6,7 +6,7 @@ import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
 import com.amuzil.av3.entity.api.modules.collision.SimpleDamageModule;
 import com.amuzil.av3.entity.api.modules.collision.SimpleKnockbackModule;
-import com.amuzil.av3.entity.physics.AvatarRigidBlock;
+import com.amuzil.av3.entity.construct.AvatarRigidBlock;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.magus.skill.data.SkillData;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
@@ -25,7 +25,7 @@ public class EarthBlockSkill extends EarthSkill {
     public EarthBlockSkill() {
         super(Avatar.MOD_ID, "earth_block");
         addTrait(new DamageTrait(Constants.DAMAGE, 3.5f));
-        addTrait(new TimedTrait(Constants.LIFETIME, 200)); // Ticks not seconds...
+        addTrait(new TimedTrait(Constants.LIFETIME, 100)); // Ticks not seconds...
         addTrait(new SpeedTrait(Constants.SPEED, 5d));
         addTrait(new SizeTrait(Constants.SIZE, 1.0f));
         addTrait(new KnockbackTrait(Constants.KNOCKBACK, 1.5f));
@@ -49,39 +49,38 @@ public class EarthBlockSkill extends EarthSkill {
         double speed = data.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
         double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
-        AvatarRigidBlock projectile = new AvatarRigidBlock(level);
-        projectile.setBlockState(blockState);
-        projectile.setPos(entity.position().add(0, entity.getEyeHeight(), 0));
-        System.out.println("Default Mass: " + projectile.getRigidBody().getMass());
-        projectile.getRigidBody().setMass(0f);
-        projectile.getRigidBody().setKinematic(true);
-        projectile.setElement(element());
-        projectile.setOwner(entity);
-        projectile.setMaxLifetime(lifetime);
-        projectile.setWidth((float) size);
-        projectile.setHeight((float) size);
+        AvatarRigidBlock rigidBlock = new AvatarRigidBlock(level);
+        rigidBlock.setBlockState(blockState);
+        rigidBlock.setPos(entity.position().add(0, entity.getEyeHeight(), 0));
+        rigidBlock.getRigidBody().setMass(0f);
+        rigidBlock.getRigidBody().setKinematic(true);
+        rigidBlock.setElement(element());
+        rigidBlock.setOwner(entity);
+        rigidBlock.setMaxLifetime(lifetime);
+        rigidBlock.setWidth((float) size);
+        rigidBlock.setHeight((float) size);
 //        projectile.setNoGravity(true);
-        projectile.setDamageable(false);
-        projectile.setHittable(true);
+        rigidBlock.setDamageable(false);
+        rigidBlock.setHittable(true);
 
-        projectile.addTraits(data.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
-        projectile.addTraits(new DirectionTrait(Constants.KNOCKBACK_DIRECTION, new Vec3(0, 0.45, 0)));
-        projectile.addModule(ModuleRegistry.create(SimpleKnockbackModule.id));
+        rigidBlock.addTraits(data.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
+        rigidBlock.addTraits(new DirectionTrait(Constants.KNOCKBACK_DIRECTION, new Vec3(0, 0.45, 0)));
+        rigidBlock.addModule(ModuleRegistry.create(SimpleKnockbackModule.id));
 
         // Damage module
-        projectile.addTraits(data.getTrait(Constants.DAMAGE, DamageTrait.class));
-        projectile.addTraits(data.getTrait(Constants.SIZE, SizeTrait.class));
-        projectile.addModule(ModuleRegistry.create(SimpleDamageModule.id));
-        projectile.addTraits(new CollisionTrait(Constants.COLLISION_TYPE, "Blaze", "Fireball", "AbstractArrow", "FireProjectile"));
+        rigidBlock.addTraits(data.getTrait(Constants.DAMAGE, DamageTrait.class));
+        rigidBlock.addTraits(data.getTrait(Constants.SIZE, SizeTrait.class));
+        rigidBlock.addModule(ModuleRegistry.create(SimpleDamageModule.id));
+        rigidBlock.addTraits(new CollisionTrait(Constants.COLLISION_TYPE, "Blaze", "Fireball", "AbstractArrow", "FireProjectile"));
 //        projectile.addCollisionModule((ICollisionModule) ModuleRegistry.create(AirCollisionModule.id));
 
-        projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
-        projectile.init();
+        rigidBlock.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
+        rigidBlock.init();
 
         bender.formPath.clear();
         data.setSkillState(SkillState.IDLE);
 
-        bender.getEntity().level().addFreshEntity(projectile);
+        bender.getEntity().level().addFreshEntity(rigidBlock);
     }
 
 //    @Override

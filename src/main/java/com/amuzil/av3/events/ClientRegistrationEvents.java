@@ -3,7 +3,7 @@ package com.amuzil.av3.events;
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.renderer.mc.MarchingCubesEntityRenderer;
-import com.amuzil.av3.renderer.physics.PhysicsBlockRenderer;
+import com.amuzil.av3.renderer.construct.PhysicsBlockRenderer;
 import com.amuzil.av3.renderer.mobs.SkyBisonRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.neoforged.api.distmarker.Dist;
