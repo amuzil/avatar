@@ -1,6 +1,6 @@
 package com.amuzil.caliber.physics.event;
 
-import com.amuzil.caliber.api.EntityPhysicsElement;
+import com.amuzil.caliber.api.EntityRigidPhysicsElement;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.caliber.physics.bullet.collision.space.generator.EntityCollisionGenerator;
 import com.amuzil.caliber.physics.bullet.collision.space.supplier.entity.ClientEntitySupplier;
@@ -54,10 +54,10 @@ public final class ClientEventHandler {
     public static void onEntityLoad(EntityJoinLevelEvent event) {
         if (event.getLevel().isClientSide()) {
             Entity entity = event.getEntity();
-            if (EntityPhysicsElement.is(entity)) {
+            if (EntityRigidPhysicsElement.is(entity)) {
                 Level level = entity.level();
                 MinecraftSpace.getOptional(level).ifPresent(space -> {
-                    space.getWorkerThread().execute(() -> space.addCollisionObject(EntityPhysicsElement.get(entity).getRigidBody()));
+                    space.getWorkerThread().execute(() -> space.addCollisionObject(EntityRigidPhysicsElement.get(entity).getPhysicsBody()));
                 });
             }
         }
@@ -67,10 +67,10 @@ public final class ClientEventHandler {
     public static void onEntityUnload(EntityLeaveLevelEvent event) {
         if (event.getLevel().isClientSide()) {
             Entity entity = event.getEntity();
-            if (EntityPhysicsElement.is(entity)) {
+            if (EntityRigidPhysicsElement.is(entity)) {
                 Level level = entity.level();
                 MinecraftSpace.getOptional(level).ifPresent(space -> {
-                    space.getWorkerThread().execute(() -> space.removeCollisionObject(EntityPhysicsElement.get(entity).getRigidBody()));
+                    space.getWorkerThread().execute(() -> space.removeCollisionObject(EntityRigidPhysicsElement.get(entity).getPhysicsBody()));
                 });
             }
         }

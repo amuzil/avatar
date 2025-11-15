@@ -1,6 +1,6 @@
 package com.amuzil.caliber.physics.mixin.common.entity;
 
-import com.amuzil.caliber.api.EntityPhysicsElement;
+import com.amuzil.caliber.api.EntityRigidPhysicsElement;
 import com.amuzil.caliber.api.PhysicsElement;
 import com.amuzil.caliber.physics.bullet.math.Convert;
 import net.minecraft.world.entity.Entity;
@@ -34,9 +34,9 @@ public class ExplosionMixin {
 
     @ModifyArg(method = "explode", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;setDeltaMovement(Lnet/minecraft/world/phys/Vec3;)V"))
     public Vec3 caliber$setVelocityOfRigidBody_explode(Vec3 velocity) {
-        if (EntityPhysicsElement.is(this.entity)) {
-            var element = EntityPhysicsElement.get(this.entity);
-            element.getRigidBody().applyCentralImpulse(Convert.toBullet(velocity).multLocal(element.getRigidBody().getMass() * 100f));
+        if (EntityRigidPhysicsElement.is(this.entity)) {
+            var element = EntityRigidPhysicsElement.get(this.entity);
+            element.getPhysicsBody().applyCentralImpulse(Convert.toBullet(velocity).multLocal(element.getPhysicsBody().getMass() * 100f));
         }
 
         return velocity;

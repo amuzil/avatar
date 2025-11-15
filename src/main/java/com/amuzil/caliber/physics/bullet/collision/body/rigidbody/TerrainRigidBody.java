@@ -1,4 +1,4 @@
-package com.amuzil.caliber.physics.bullet.collision.body;
+package com.amuzil.caliber.physics.bullet.collision.body.rigidbody;
 
 import com.amuzil.caliber.physics.bullet.collision.body.shape.MinecraftShape;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;

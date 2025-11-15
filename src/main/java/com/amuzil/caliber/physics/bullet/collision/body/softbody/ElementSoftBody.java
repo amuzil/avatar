@@ -1,6 +1,7 @@
-package com.amuzil.caliber.physics.bullet.collision.body;
+package com.amuzil.caliber.physics.bullet.collision.body.softbody;
 
 import com.amuzil.caliber.api.PhysicsElement;
+import com.amuzil.caliber.physics.bullet.collision.body.rigidbody.MinecraftRigidBody;
 import com.amuzil.caliber.physics.bullet.collision.body.shape.MinecraftShape;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.caliber.physics.bullet.math.Convert;
@@ -21,7 +22,7 @@ import java.security.InvalidParameterException;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
-public abstract class ElementRigidBody extends MinecraftRigidBody {
+public abstract class ElementSoftBody extends MinecraftSoftBody {
     private static final Logger LOGGER = LogManager.getLogger();
     public static final float SLEEP_TIME_IN_SECONDS = 2.0f;
     protected final PhysicsElement<?> element;
@@ -34,7 +35,7 @@ public abstract class ElementRigidBody extends MinecraftRigidBody {
     private BoundingBox currentBoundingBox = new BoundingBox();
     private AABB currentMinecraftBoundingBox = new AABB(0, 0, 0, 0, 0, 0);
 
-    public ElementRigidBody(PhysicsElement<?> element, MinecraftSpace space, MinecraftShape shape, float mass, float dragCoefficient, float friction, float restitution) {
+    public ElementSoftBody(PhysicsElement<?> element, MinecraftSpace space, MinecraftShape shape, float mass, float dragCoefficient, float friction, float restitution) {
         super(space, shape, mass);
 
         if (shape instanceof MinecraftShape.Concave)
@@ -59,8 +60,8 @@ public abstract class ElementRigidBody extends MinecraftRigidBody {
     public CompoundTag writeTagInfo() {
         CompoundTag tag = new CompoundTag();
         tag.put("orientation", VectorSerializer.quaternionToTag(Convert.toMinecraft(this.getPhysicsRotation(new Quaternion()))));
-        tag.put("linearVelocity", VectorSerializer.vector3fToTag(Convert.toMinecraft(this.getLinearVelocity(new Vector3f()))));
-        tag.put("angularVelocity", VectorSerializer.vector3fToTag(Convert.toMinecraft(this.getAngularVelocity(new Vector3f()))));
+//        tag.put("linearVelocity", VectorSerializer.vector3fToTag(Convert.toMinecraft(this.getLinearVelocity(new Vector3f()))));
+//        tag.put("angularVelocity", VectorSerializer.vector3fToTag(Convert.toMinecraft(this.getAngularVelocity(new Vector3f()))));
         tag.putFloat("mass", this.getMass());
         tag.putFloat("dragCoefficient", this.getDragCoefficient());
         tag.putFloat("friction", this.getFriction());
@@ -74,25 +75,26 @@ public abstract class ElementRigidBody extends MinecraftRigidBody {
     public void readTagInfo(CompoundTag tag) {
         try {
             if (tag.contains("orientation", 10))
-                this.setPhysicsRotation(Convert.toBullet(VectorSerializer.quaternionFromTag(tag.getCompound("orientation"))));
+                this.applyRotation(Convert.toBullet(VectorSerializer.quaternionFromTag(tag.getCompound("orientation"))));
+            // was this.setPhysicsRotation in ElementRigidBody, made a guess here while translating, not sure whether we keep this or get rid of it, or if theres an alternative approach to be taking.
         }
         catch (IllegalArgumentException e) {
             LOGGER.warn("Failed to read orientation", e);
         }
-        try {
-            if (tag.contains("linearVelocity", 10))
-                this.setLinearVelocity(Convert.toBullet(VectorSerializer.vector3fFromTag(tag.getCompound("linearVelocity"))));
-        }
-        catch (IllegalArgumentException e) {
-            LOGGER.warn("Failed to read linear velocity", e);
-        }
-        try {
-            if (tag.contains("angularVelocity", 10))
-                this.setAngularVelocity(Convert.toBullet(VectorSerializer.vector3fFromTag(tag.getCompound("angularVelocity"))));
-        }
-        catch (IllegalArgumentException e) {
-            LOGGER.warn("Failed to read angular velocity", e);
-        }
+//        try {
+//            if (tag.contains("linearVelocity", 10))
+//                this.setLinearVelocity(Convert.toBullet(VectorSerializer.vector3fFromTag(tag.getCompound("linearVelocity"))));
+//        }
+//        catch (IllegalArgumentException e) {
+//            LOGGER.warn("Failed to read linear velocity", e);
+//        }
+//        try {
+//            if (tag.contains("angularVelocity", 10))
+//                this.setAngularVelocity(Convert.toBullet(VectorSerializer.vector3fFromTag(tag.getCompound("angularVelocity"))));
+//        }
+//        catch (IllegalArgumentException e) {
+//            LOGGER.warn("Failed to read angular velocity", e);
+//        }
         readOptionalAndCatchInvalid(tag, "mass", 5, CompoundTag::getFloat, this::setMass);
         readOptionalAndCatchInvalid(tag, "dragCoefficient", 5, CompoundTag::getFloat, this::setDragCoefficient);
         readOptionalAndCatchInvalid(tag, "friction", 5, CompoundTag::getFloat, this::setFriction);

@@ -1,6 +1,6 @@
 package com.amuzil.caliber.physics.mixin.client;
 
-import com.amuzil.caliber.api.EntityPhysicsElement;
+import com.amuzil.caliber.api.EntityRigidPhysicsElement;
 import com.jme3.math.Vector3f;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -18,8 +18,8 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public abstract class EntityRenderDispatcherMixin {
     @ModifyVariable(method = "renderShadow", at = @At(value = "STORE", opcode = Opcodes.DSTORE), ordinal = 1)
     private static double caliber$overrideShadowY_renderShadow(double e, PoseStack matrices, MultiBufferSource provider, Entity entity, float opacity, float tickDelta) {
-        if (EntityPhysicsElement.is(entity))
-            return EntityPhysicsElement.get(entity).getPhysicsLocation(new Vector3f(), tickDelta).y;
+        if (EntityRigidPhysicsElement.is(entity))
+            return EntityRigidPhysicsElement.get(entity).getPhysicsLocation(new Vector3f(), tickDelta).y;
 
         return e;
     }

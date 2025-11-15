@@ -1,7 +1,7 @@
 package com.amuzil.caliber.physics.bullet.collision.space.supplier.entity;
 
-import com.amuzil.caliber.api.EntityPhysicsElement;
-import com.amuzil.caliber.physics.bullet.collision.body.ElementRigidBody;
+import com.amuzil.caliber.api.EntityRigidPhysicsElement;
+import com.amuzil.caliber.physics.bullet.collision.body.rigidbody.ElementRigidBody;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -19,7 +19,7 @@ public interface EntitySupplier {
 
         // Entity can be a Boat, Minecart, or any LivingEntity so long as it is not a
         // player in spectator mode.
-        return rigidBody.getSpace().level().getEntitiesOfClass(Entity.class, box, entity -> (entity instanceof Boat || entity instanceof Minecart || (entity instanceof LivingEntity && !(entity instanceof Player player && this.getGameType(player) == GameType.SPECTATOR))) && !EntityPhysicsElement.is(entity));
+        return rigidBody.getSpace().level().getEntitiesOfClass(Entity.class, box, entity -> (entity instanceof Boat || entity instanceof Minecart || (entity instanceof LivingEntity && !(entity instanceof Player player && this.getGameType(player) == GameType.SPECTATOR))) && !EntityRigidPhysicsElement.is(entity));
     }
 
     GameType getGameType(Player player);

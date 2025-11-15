@@ -1,10 +1,9 @@
 package com.amuzil.caliber.api;
 
-import com.amuzil.caliber.physics.bullet.collision.body.ElementRigidBody;
+import com.amuzil.caliber.physics.bullet.collision.body.rigidbody.ElementRigidBody;
 import com.amuzil.caliber.physics.bullet.collision.body.shape.MinecraftShape;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
-import com.jme3.math.Quaternion;
-import com.jme3.math.Vector3f;
+import com.jme3.bullet.objects.PhysicsBody;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +25,7 @@ public interface PhysicsElement<T> {
      * @return the {@link ElementRigidBody}
      */
     @Nullable
-    ElementRigidBody getRigidBody();
+    PhysicsBody getPhysicsBody();
 
     /**
      * For generating a new {@link MinecraftShape.Convex}.
@@ -36,35 +35,7 @@ public interface PhysicsElement<T> {
     MinecraftShape.Convex createShape();
 
     /**
-     * Mainly used for lerping within your renderer.
-     * 
-     * @param store     any vector to store the output in
-     * @param tickDelta the delta time between ticks
-     * @return the lerped vector
-     */
-    default Vector3f getPhysicsLocation(Vector3f store, float tickDelta) {
-        var rigidBody = this.getRigidBody();
-        if (rigidBody == null)
-            return new Vector3f();
-        return rigidBody.getFrame().getLocation(store, tickDelta);
-    }
-
-    /**
-     * Mainly used for lerping within your renderer.
-     * 
-     * @param store     the quaternion to store the output in
-     * @param tickDelta the delta time between ticks
-     * @return the "slerped" quaternion
-     */
-    default Quaternion getPhysicsRotation(Quaternion store, float tickDelta) {
-        var rigidBody = this.getRigidBody();
-        if (rigidBody == null)
-            return new Quaternion();
-        return rigidBody.getFrame().getRotation(store, tickDelta);
-    }
-
-    /**
-     * Returns the object as its generic type. (e.g. {@link EntityPhysicsElement} ->
+     * Returns the object as its generic type. (e.g. {@link EntityRigidPhysicsElement} ->
      * {@link Entity})
      * 
      * @return this as {@link T}

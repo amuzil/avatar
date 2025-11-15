@@ -4,8 +4,8 @@ import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.api.IForceModule;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
 import com.amuzil.av3.entity.api.modules.force.ControlModule;
-import com.amuzil.caliber.api.EntityPhysicsElement;
-import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
+import com.amuzil.caliber.api.EntityRigidPhysicsElement;
+import com.amuzil.caliber.physics.bullet.collision.body.rigidbody.EntityRigidBody;
 import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
@@ -16,7 +16,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 
-public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsElement {
+public class AvatarRigidBlock extends AvatarConstruct implements EntityRigidPhysicsElement {
     private final EntityRigidBody rigidBody;
 
     public AvatarRigidBlock(EntityType<? extends AvatarRigidBlock> type, Level level) {
@@ -30,7 +30,7 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
     }
 
     @Override
-    public @Nullable EntityRigidBody getRigidBody() {
+    public @Nullable EntityRigidBody getPhysicsBody() {
         return this.rigidBody;
     }
 

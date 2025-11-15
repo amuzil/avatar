@@ -1,7 +1,7 @@
 package com.amuzil.caliber.physics.network;
 
-import com.amuzil.caliber.api.EntityPhysicsElement;
-import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
+import com.amuzil.caliber.api.EntityRigidPhysicsElement;
+import com.amuzil.caliber.physics.bullet.collision.body.rigidbody.EntityRigidBody;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.amuzil.caliber.physics.network.impl.SendRigidBodyMovementPacket;
@@ -15,8 +15,8 @@ public class CaliberClientPacketHandler {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level != null) {
             Entity entity = mc.level.getEntity(packet.getId());
-            if (EntityPhysicsElement.is(entity)) {
-                EntityRigidBody rigidBody = EntityPhysicsElement.get(entity).getRigidBody();
+            if (EntityRigidPhysicsElement.is(entity)) {
+                EntityRigidBody rigidBody = EntityRigidPhysicsElement.get(entity).getPhysicsBody();
 
                 MinecraftSpace.get(mc.level).getWorkerThread().execute(() -> {
                     rigidBody.setPhysicsRotation(Convert.toBullet(packet.getRotation()));
@@ -33,8 +33,8 @@ public class CaliberClientPacketHandler {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level != null) {
             Entity entity = mc.level.getEntity(packet.getId());
-            if (EntityPhysicsElement.is(entity)) {
-                EntityRigidBody rigidBody = EntityPhysicsElement.get(entity).getRigidBody();
+            if (EntityRigidPhysicsElement.is(entity)) {
+                EntityRigidBody rigidBody = EntityRigidPhysicsElement.get(entity).getPhysicsBody();
 
                 MinecraftSpace.get(mc.level).getWorkerThread().execute(() -> {
                     rigidBody.setMass(packet.getMass());

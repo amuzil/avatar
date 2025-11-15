@@ -1,7 +1,7 @@
 package com.amuzil.caliber.api;
 
-import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
 import com.amuzil.caliber.physics.bullet.collision.body.shape.MinecraftShape;
+import com.amuzil.caliber.physics.bullet.collision.body.softbody.EntitySoftBody;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,18 +10,18 @@ import org.jetbrains.annotations.Nullable;
  * 
  * @see PhysicsElement
  */
-public interface EntityPhysicsElement extends PhysicsElement<Entity> {
+public interface EntitySoftPhysicsElement extends SoftPhysicsElement<Entity> {
     static boolean is(Entity entity) {
-        return entity instanceof EntityPhysicsElement element && element.getRigidBody() != null;
+        return entity instanceof EntitySoftPhysicsElement element && element.getPhysicsBody() != null;
     }
 
-    static EntityPhysicsElement get(Entity entity) {
-        return (EntityPhysicsElement) entity;
+    static EntitySoftPhysicsElement get(Entity entity) {
+        return (EntitySoftPhysicsElement) entity;
     }
 
     @Override
     @Nullable
-    EntityRigidBody getRigidBody();
+    EntitySoftBody getPhysicsBody();
 
     @Override
     default MinecraftShape.Convex createShape() {

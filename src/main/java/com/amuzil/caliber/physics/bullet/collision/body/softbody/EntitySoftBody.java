@@ -1,35 +1,35 @@
-package com.amuzil.caliber.physics.bullet.collision.body;
+package com.amuzil.caliber.physics.bullet.collision.body.softbody;
 
-import com.amuzil.caliber.api.EntityPhysicsElement;
+import com.amuzil.caliber.api.EntitySoftPhysicsElement;
 import com.amuzil.caliber.physics.bullet.collision.body.shape.MinecraftShape;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.jme3.math.Vector3f;
 import net.minecraft.world.entity.player.Player;
 
-public class EntityRigidBody extends ElementRigidBody {
+public class EntitySoftBody extends ElementSoftBody {
     private Player priorityPlayer;
     private boolean dirtyProperties = true;
 
-    public EntityRigidBody(EntityPhysicsElement element, MinecraftSpace space, MinecraftShape shape, float mass, float dragCoefficient, float friction, float restitution) {
+    public EntitySoftBody(EntitySoftPhysicsElement element, MinecraftSpace space, MinecraftShape shape, float mass, float dragCoefficient, float friction, float restitution) {
         super(element, space, shape, mass, dragCoefficient, friction, restitution);
     }
 
-    public EntityRigidBody(EntityPhysicsElement element, MinecraftSpace space, MinecraftShape shape) {
+    public EntitySoftBody(EntitySoftPhysicsElement element, MinecraftSpace space, MinecraftShape shape) {
         this(element, space, shape, 10.0f, 0.25f, 1.0f, 0.5f);
     }
 
     /**
-     * The simplest way to create a new {@link EntityRigidBody}.
-     * 
+     * The simplest way to create a new {@link EntitySoftBody}.
+     *
      * @param element the element to base this body around
      */
-    public EntityRigidBody(EntityPhysicsElement element) {
+    public EntitySoftBody(EntitySoftPhysicsElement element) {
         this(element, MinecraftSpace.get(element.cast().level()), element.createShape());
     }
 
     @Override
-    public EntityPhysicsElement getElement() {
-        return (EntityPhysicsElement) super.getElement();
+    public EntitySoftPhysicsElement getElement() {
+        return (EntitySoftPhysicsElement) super.getElement();
     }
 
     public Player getPriorityPlayer() {
