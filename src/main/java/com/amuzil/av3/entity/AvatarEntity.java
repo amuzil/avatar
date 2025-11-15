@@ -81,11 +81,11 @@ public abstract class AvatarEntity extends Entity {
 
         // Tick appropriate modules in each order
         if (this.level().isClientSide()) {
+            renderModules.forEach(mod -> mod.tick(this));
+        } else {
             modules.forEach(mod -> mod.tick(this));
             forceModules.forEach(mod -> mod.tick(this));
             collisionModules.forEach(mod -> mod.tick(this));
-        } else {
-            renderModules.forEach(mod -> mod.tick(this));
         }
     }
 
