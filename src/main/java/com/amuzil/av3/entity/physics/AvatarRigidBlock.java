@@ -2,8 +2,8 @@ package com.amuzil.av3.entity.physics;
 
 import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.api.IForceModule;
-import com.amuzil.av3.entity.modules.ModuleRegistry;
-import com.amuzil.av3.entity.modules.force.MoveModule;
+import com.amuzil.av3.entity.api.modules.ModuleRegistry;
+import com.amuzil.av3.entity.api.modules.force.MoveModule;
 import com.amuzil.caliber.api.EntityPhysicsElement;
 import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
 import net.minecraft.world.entity.EntityType;

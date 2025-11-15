@@ -1,4 +1,4 @@
-package com.amuzil.av3.entity.modules.collision;
+package com.amuzil.av3.entity.api.modules.collision;
 
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.ICollisionModule;

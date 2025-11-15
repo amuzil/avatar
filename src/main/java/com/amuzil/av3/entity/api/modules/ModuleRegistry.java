@@ -1,4 +1,4 @@
-package com.amuzil.av3.entity.modules;
+package com.amuzil.av3.entity.api.modules;
 
 import com.amuzil.av3.entity.api.IEntityModule;
 import net.minecraft.nbt.CompoundTag;

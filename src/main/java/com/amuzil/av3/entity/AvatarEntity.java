@@ -7,12 +7,8 @@ import com.amuzil.av3.entity.api.ICollisionModule;
 import com.amuzil.av3.entity.api.IEntityModule;
 import com.amuzil.av3.entity.api.IForceModule;
 import com.amuzil.av3.entity.api.IRenderModule;
-import com.amuzil.av3.entity.modules.ModuleRegistry;
 import com.amuzil.magus.skill.traits.DataTrait;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
@@ -84,10 +80,13 @@ public abstract class AvatarEntity extends Entity {
         super.tick();
 
         // Tick appropriate modules in each order
-        modules.forEach(mod -> mod.tick(this));
-        forceModules.forEach(mod -> mod.tick(this));
-        collisionModules.forEach(mod -> mod.tick(this));
-        renderModules.forEach(mod -> mod.tick(this));
+        if (this.level().isClientSide()) {
+            modules.forEach(mod -> mod.tick(this));
+            forceModules.forEach(mod -> mod.tick(this));
+            collisionModules.forEach(mod -> mod.tick(this));
+        } else {
+            renderModules.forEach(mod -> mod.tick(this));
+        }
     }
 
     public void tickDespawn() {

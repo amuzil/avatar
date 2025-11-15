@@ -1,4 +1,4 @@
-package com.amuzil.av3.entity.modules.force;
+package com.amuzil.av3.entity.api.modules.force;
 
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.IForceModule;

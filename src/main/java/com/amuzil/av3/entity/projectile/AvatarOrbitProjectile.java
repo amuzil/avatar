@@ -2,8 +2,8 @@ package com.amuzil.av3.entity.projectile;
 
 import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.api.IForceModule;
-import com.amuzil.av3.entity.modules.ModuleRegistry;
-import com.amuzil.av3.entity.modules.force.OrbitModule;
+import com.amuzil.av3.entity.api.modules.ModuleRegistry;
+import com.amuzil.av3.entity.api.modules.force.OrbitModule;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 

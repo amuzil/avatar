@@ -1,4 +1,4 @@
-package com.amuzil.av3.entity.modules.entity;
+package com.amuzil.av3.entity.api.modules.entity;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.entity.AvatarEntity;

@@ -7,7 +7,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -18,11 +17,11 @@ import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class EntitySkybison extends TamableAnimal implements GeoEntity {
+public class SkyBisonEntity extends TamableAnimal implements GeoEntity {
     protected static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("animation.model.walk");
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
-    public EntitySkybison(EntityType<EntitySkybison> entityType, Level level) {
+    public SkyBisonEntity(EntityType<SkyBisonEntity> entityType, Level level) {
         super(entityType, level);
     }
 
@@ -49,7 +48,7 @@ public class EntitySkybison extends TamableAnimal implements GeoEntity {
         controllers.add(new AnimationController<>(this, "Walking", 5, this::walkAnimController));
     }
 
-    protected <E extends EntitySkybison> PlayState walkAnimController(final AnimationState<E> animTest) {
+    protected <E extends SkyBisonEntity> PlayState walkAnimController(final AnimationState<E> animTest) {
         if (animTest.isMoving())
             return animTest.setAndContinue(WALK_ANIM);
 

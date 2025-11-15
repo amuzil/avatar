@@ -1,12 +1,13 @@
-package com.amuzil.av3.entity.modules.entity;
+package com.amuzil.av3.entity.api.modules.force;
 
 import com.amuzil.av3.entity.AvatarEntity;
-import com.amuzil.av3.entity.api.IEntityModule;
+import com.amuzil.av3.entity.api.IForceModule;
 import net.minecraft.nbt.CompoundTag;
 
-public class TimeoutModule implements IEntityModule {
 
-    public static String id = TimeoutModule.class.getSimpleName();
+public class BindModule implements IForceModule {
+
+    public static String id = BindModule.class.getSimpleName();
 
     @Override
     public String id() {
@@ -20,7 +21,8 @@ public class TimeoutModule implements IEntityModule {
 
     @Override
     public void tick(AvatarEntity entity) {
-        entity.tickDespawn();
+        if (entity.owner() != null)
+            entity.setPos(entity.owner().position());
     }
 
     @Override
