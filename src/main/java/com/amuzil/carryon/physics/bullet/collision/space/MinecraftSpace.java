@@ -1,5 +1,6 @@
 package com.amuzil.carryon.physics.bullet.collision.space;
 
+import com.amuzil.av3.network.AvatarNetwork;
 import com.amuzil.carryon.api.event.collision.CollisionEvent;
 import com.amuzil.carryon.api.event.space.PhysicsSpaceEvent;
 import com.amuzil.carryon.physics.bullet.collision.body.ElementRigidBody;
@@ -10,8 +11,10 @@ import com.amuzil.carryon.physics.bullet.collision.space.generator.TerrainGenera
 import com.amuzil.carryon.physics.bullet.collision.space.storage.SpaceStorage;
 import com.amuzil.carryon.physics.bullet.thread.PhysicsThread;
 import com.amuzil.carryon.physics.network.CarryonNetwork;
+import com.amuzil.carryon.physics.network.impl.ForceCloudSpawnPacket;
 import com.amuzil.carryon.physics.network.impl.SendRigidBodyMovementPacket;
 import com.amuzil.carryon.physics.network.impl.SendRigidBodyPropertiesPacket;
+import com.amuzil.magus.physics.core.ForceCloud;
 import com.amuzil.magus.physics.core.ForceSystem;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
@@ -23,8 +26,10 @@ import com.jme3.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -193,6 +198,18 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
             }
 
             super.addCollisionObject(collisionObject);
+        }
+    }
+
+    public void addForceCloud(ForceCloud forceCloud, Level level, Entity spawner) {
+        if (forceSystem != null) {
+            if (!forceSystem.clouds().contains(forceCloud)) {
+                if (this.isServer()) {
+                    // Need to figure out how to s
+                    forceSystem.addCloud(forceCloud);
+                    PacketDistributor.sendToPlayersTrackingEntity(spawner, new ForceCloudSpawnPacket(forceCloud));
+                }
+            }
         }
     }
 

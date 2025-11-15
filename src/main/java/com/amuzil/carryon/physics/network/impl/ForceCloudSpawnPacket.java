@@ -4,12 +4,10 @@ package com.amuzil.carryon.physics.network.impl;
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.network.packets.api.AvatarPacket;
 import com.amuzil.av3.utils.network.AvatarPacketUtils;
-import com.amuzil.carryon.physics.network.CarryonPacket;
 import com.amuzil.magus.physics.core.ForceCloud;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
@@ -68,8 +66,17 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
 
         this.origin = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
         this.direction = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
-        this.aabbMin =  new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
-        this.aabbMax =  new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
+        this.aabbMin = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
+        this.aabbMax = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
+    }
+
+    public static void handle(ForceCloudSpawnPacket msg, IPayloadContext ctx) {
+        ctx.enqueueWork(() -> {
+            if (net.minecraft.client.Minecraft.getInstance().level == null)
+                return;
+            // Mirror only: build/update the client cloud from packet contents
+            ClientForceSystem.get().spawnFromPacket(msg);
+        });
     }
 
     @Override
@@ -145,8 +152,5 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
 
     public Vec3 aabbMax() {
         return this.aabbMax;
-    }
-
-    public static void handle(ForceCloudSpawnPacket msg, IPayloadContext ctx) {
     }
 }
