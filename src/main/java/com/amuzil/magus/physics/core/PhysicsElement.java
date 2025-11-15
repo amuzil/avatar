@@ -5,6 +5,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.UUID;
 
 public abstract class PhysicsElement implements IPhysicsElement {
     public double[] data;
@@ -22,6 +23,7 @@ public abstract class PhysicsElement implements IPhysicsElement {
     private double mass = 1;
     private double damping;
     private boolean surface = false;
+    protected long seed = Seeds.fromUuid(UUID.randomUUID());
 
     public PhysicsElement(int type) {
         this(15, type);
@@ -112,6 +114,11 @@ public abstract class PhysicsElement implements IPhysicsElement {
     @Override
     public Vec3 prevVel() {
         return get(3);
+    }
+
+    @Override
+    public long seed() {
+        return seed;
     }
 
     // Aceleration / Force

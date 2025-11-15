@@ -29,8 +29,7 @@ public class ForceGrid<T extends IPhysicsElement> {
     private long originX, originY, originZ;
 
     @SuppressWarnings("unchecked")
-    public ForceGrid(double cellSize, int binCountX, int binCountY, int binCountZ,
-                     int maxPoints, long originX, long originY, long originZ, @Nullable ExecutorService threadPool) {
+    public ForceGrid(double cellSize, int binCountX, int binCountY, int binCountZ, int maxPoints, long originX, long originY, long originZ, @Nullable ExecutorService threadPool) {
         this.cellSize = cellSize;
         this.binCountX = binCountX;
         this.binCountY = binCountY;
@@ -49,10 +48,28 @@ public class ForceGrid<T extends IPhysicsElement> {
         this.parallelism = Math.max(Runtime.getRuntime().availableProcessors() / 2, 1);
     }
 
+    public Vec3 origin() {
+        return new Vec3(originX, originY, originZ);
+    }
+
+    public float cellSize() {
+        return (float) this.cellSize;
+    }
+
+    public int binX() {
+        return binCountX;
+    }
+
+    public int binY() {
+        return binCountY;
+    }
+
+    public int binZ() {
+        return binCountZ;
+    }
+
     private int computeLinearBinIndex(long xi, long yi, long zi) {
-        if (xi < 0 || xi >= binCountX ||
-                yi < 0 || yi >= binCountY ||
-                zi < 0 || zi >= binCountZ) {
+        if (xi < 0 || xi >= binCountX || yi < 0 || yi >= binCountY || zi < 0 || zi >= binCountZ) {
             return -1;
         }
         return (int) (xi + yi * binCountX + zi * (binCountX * binCountY));
@@ -199,12 +216,10 @@ public class ForceGrid<T extends IPhysicsElement> {
     public T surfaceElement(int cellX, int cellY, int cellZ) {
         int bi = computeLinearBinIndex(cellX, cellY, cellZ);
         T element = null;
-        if (bi < 0)
-            return element;
+        if (bi < 0) return element;
 
         List<T> bin = bins[bi];
-        if (bin == null || bin.isEmpty())
-            return element;
+        if (bin == null || bin.isEmpty()) return element;
 
         bin.removeIf(el -> !(el instanceof PhysicsElement));
         for (T p : bin) {

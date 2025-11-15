@@ -9,6 +9,7 @@ import org.joml.Quaterniond;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
 public class ForceCloud extends PhysicsElement {
@@ -21,8 +22,9 @@ public class ForceCloud extends PhysicsElement {
     private AABB bounds = new AABB(0, 0, 0, 0, 0, 0);
     private double remainingLifeSeconds = -1.0; // -1 = infinite
     private boolean hasLifetime = false;
+    private UUID owner;
 
-    public ForceCloud(int type, int maxPoints, Vec3 pos, Vec3 vel, Vec3 force,
+    public ForceCloud(int type, int maxPoints, Vec3 pos, Vec3 vel, Vec3 force, UUID owner,
                       @Nullable ExecutorService pool) {
         super(type);
         this.rotation = new double[4];
@@ -47,6 +49,13 @@ public class ForceCloud extends PhysicsElement {
         insert(Vec3.ZERO, 3);
         // Direction / Force / Acceleration
         insert(force, 4);
+
+        this.owner = owner;
+        this.seed = Seeds.fromUuid(owner);
+    }
+
+    public AABB getBounds() {
+        return this.bounds;
     }
 
     // static so ForceSystem can call it for cross-cloud collisions too
@@ -93,6 +102,10 @@ public class ForceCloud extends PhysicsElement {
             p.insert(fp, 4);
             q.insert(fq, 4);
         }
+    }
+
+    public UUID owner() {
+        return owner;
     }
 
     // lifetime API
@@ -236,6 +249,7 @@ public class ForceCloud extends PhysicsElement {
 
         element.insert(Vec3.ZERO, 4);  // clear force
     }
+
     public void tick(double dt) {
 //        for (IPhysicsModule module : modules) {
 //            module.preSolve(this);

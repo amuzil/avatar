@@ -2,6 +2,7 @@ package com.amuzil.carryon.physics.network.impl;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.network.packets.api.AvatarPacket;
+import com.amuzil.av3.utils.network.AvatarPacketUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -74,21 +75,15 @@ public class ForceCloudCollisionPacket implements AvatarPacket {
         buf.writeUtf(this.cloudAId);
         buf.writeUtf(this.cloudBId);
 
-        buf.writeDouble(this.contactPos.x());
-        buf.writeDouble(this.contactPos.y());
-        buf.writeDouble(this.contactPos.z());
+        AvatarPacketUtils.writeVec3(contactPos, buf);
         buf.writeFloat(this.radius);
 
         buf.writeFloat(this.densityA);
         buf.writeFloat(this.densityB);
 
-        buf.writeDouble(this.avgVelA.x());
-        buf.writeDouble(this.avgVelA.y());
-        buf.writeDouble(this.avgVelA.z());
+        AvatarPacketUtils.writeVec3(avgVelA, buf);
 
-        buf.writeDouble(this.avgVelB.x());
-        buf.writeDouble(this.avgVelB.y());
-        buf.writeDouble(this.avgVelB.z());
+        AvatarPacketUtils.writeVec3(avgVelB, buf);
 
         buf.writeFloat(this.intensity);
     }

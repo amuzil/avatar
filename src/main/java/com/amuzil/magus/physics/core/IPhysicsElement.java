@@ -18,6 +18,8 @@ public interface IPhysicsElement {
         return header()[Constraints.TYPE_INDEX];
     }
 
+    long seed();
+
     default void type(int type) {
         header()[Constraints.TYPE_INDEX] = (byte) type;
     }

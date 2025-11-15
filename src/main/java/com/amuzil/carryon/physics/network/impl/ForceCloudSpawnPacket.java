@@ -3,6 +3,7 @@ package com.amuzil.carryon.physics.network.impl;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.network.packets.api.AvatarPacket;
+import com.amuzil.av3.utils.network.AvatarPacketUtils;
 import com.amuzil.carryon.physics.network.CarryonPacket;
 import com.amuzil.magus.physics.core.ForceCloud;
 import net.minecraft.network.FriendlyByteBuf;
@@ -24,7 +25,7 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
 
     private final String id;
     private final UUID ownerUuid;
-    private final ResourceLocation type;
+    private final int type;
     private final long seed;
 
     private final int gridNx, gridNy, gridNz;
@@ -32,33 +33,32 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
 
     private final Vec3 origin;
     private final Vec3 direction;
-    private final float length;
-    private final float radius;
+    private final Vec3 aabbMin;
+    private final Vec3 aabbMax;
 
     // SERVER-SIDE CONSTRUCTOR
     public ForceCloudSpawnPacket(ForceCloud cloud) {
-        super(true); // clientbound
         this.id = cloud.id();
-        this.ownerUuid = cloud.getOwnerUuid();
-        this.type = cloud.getType();          // e.g. ResourceLocation
-        this.seed = cloud.getSeed();          // or 0L if you don't use it yet
+        this.ownerUuid = cloud.owner();
+        this.type = cloud.type();          // e.g. ResourceLocation
+        this.seed = cloud.seed();          // or 0L if you don't use it yet
 
-        this.gridNx = cloud.gridNx();
-        this.gridNy = cloud.gridNy();
-        this.gridNz = cloud.gridNz();
-        this.cellSize = cloud.cellSize();
+        this.gridNx = cloud.grid().binX();
+        this.gridNy = cloud.grid().binY();
+        this.gridNz = cloud.grid().binZ();
+        this.cellSize = cloud.grid().cellSize();
 
-        this.origin = cloud.getOrigin();      // or cloud.pos()
+        this.origin = cloud.grid().origin();      // or cloud.pos()
         this.direction = cloud.vel();// or cloud.dir()
-        this.length = cloud.getLength();
-        this.radius = cloud.getRadius();
+        this.aabbMin = cloud.bounds().getMinPosition();
+        this.aabbMax = cloud.bounds().getMaxPosition();
     }
 
     // CLIENT-SIDE DECODING CONSTRUCTOR
     public ForceCloudSpawnPacket(FriendlyByteBuf buf) {
         this.id = buf.readUtf();
         this.ownerUuid = buf.readUUID();
-        this.type = buf.readResourceLocation();
+        this.type = buf.readInt();
         this.seed = buf.readLong();
 
         this.gridNx = buf.readVarInt();
@@ -68,15 +68,15 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
 
         this.origin = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
         this.direction = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
-        this.length = buf.readFloat();
-        this.radius = buf.readFloat();
+        this.aabbMin =  new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
+        this.aabbMax =  new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
     }
 
     @Override
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeUtf(this.id);
         buf.writeUUID(this.ownerUuid);
-        buf.writeResourceLocation(this.type);
+        buf.writeInt(this.type);
         buf.writeLong(this.seed);
 
         buf.writeVarInt(this.gridNx);
@@ -84,16 +84,13 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
         buf.writeVarInt(this.gridNz);
         buf.writeFloat(this.cellSize);
 
-        buf.writeDouble(this.origin.x);
-        buf.writeDouble(this.origin.y);
-        buf.writeDouble(this.origin.z);
+        AvatarPacketUtils.writeVec3(origin, buf);
 
-        buf.writeDouble(this.direction.x);
-        buf.writeDouble(this.direction.y);
-        buf.writeDouble(this.direction.z);
+        AvatarPacketUtils.writeVec3(direction, buf);
 
-        buf.writeFloat(this.length);
-        buf.writeFloat(this.radius);
+        AvatarPacketUtils.writeVec3(aabbMin, buf);
+
+        AvatarPacketUtils.writeVec3(aabbMax, buf);
     }
 
     @Override
@@ -110,7 +107,7 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
         return ownerUuid;
     }
 
-    public ResourceLocation getTypeId() {
+    public int typeID() {
         return type;
     }
 
@@ -142,14 +139,14 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
         return direction;
     }
 
-    public float getLength() {
-        return length;
+    public Vec3 aabbMin() {
+        return this.aabbMin;
     }
 
-    public float getRadius() {
-        return radius;
+    public Vec3 aabbMax() {
+        return this.aabbMax;
     }
 
-    public static void handle(ForceCloudCollisionPacket msg, IPayloadContext ctx) {
+    public static void handle(ForceCloudSpawnPacket msg, IPayloadContext ctx) {
     }
 }
