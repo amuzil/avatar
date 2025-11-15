@@ -46,20 +46,19 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
         Entity owner = this.getOwner();
         if (owner == null) return;
 
+        // Calculate right pivot position
         Vec3 eyePos = owner.getEyePosition();
         Vec3 look = owner.getLookAngle().normalize();
         Vec3 up = new Vec3(0, 1, 0);
         Vec3 right = look.cross(up).normalize(); // cross product gives right vector
-
         double sideOffset = 0.7;  // how far to the right
-
         Vec3 newPos = eyePos
                 .add(right.scale(sideOffset))
                 .add(look.scale(scale));
 
+        // Calculate rotation to match owner's look direction
         Matrix3f mat = new Matrix3f();
         mat.fromAxes(Convert.toBullet(right), Convert.toBullet(up), Convert.toBullet(look)); // columns = basis vectors
-
         Quaternion q = new Quaternion();
         q.fromRotationMatrix(mat);
 
