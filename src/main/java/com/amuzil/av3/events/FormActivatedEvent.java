@@ -4,7 +4,7 @@ import com.amuzil.magus.form.ActiveForm;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.Event;
 
-
+// TODO: Move this into magus package
 public class FormActivatedEvent extends Event {
     private final ActiveForm activeForm;
     private final LivingEntity entity;
