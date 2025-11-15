@@ -136,7 +136,7 @@ dependencies {
     compileOnly("org.appliedenergistics.yoga:yoga:1.0.0")
     implementation("com.lowdragmc.photon:photon-neoforge-${minecraft_version}:${photon2_version}") { transitive = false }
 
-    // geckolib & player animation api
+    // Geckolib & player animation api
     implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
 
     // Bullet Physics Engine
