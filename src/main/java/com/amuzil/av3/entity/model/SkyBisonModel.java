@@ -5,8 +5,8 @@ import com.amuzil.av3.entity.mobs.SkyBisonEntity;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 
-public class SkybisonModel extends DefaultedEntityGeoModel<SkyBisonEntity> {
-    public SkybisonModel() {
+public class SkyBisonModel extends DefaultedEntityGeoModel<SkyBisonEntity> {
+    public SkyBisonModel() {
         super(ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "skybison"));
     }
 }
