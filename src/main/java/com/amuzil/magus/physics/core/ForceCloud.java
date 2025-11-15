@@ -269,8 +269,8 @@ public class ForceCloud extends PhysicsElement {
 
         updateBoundsFromPoints();
 
-        System.out.println("Cloud! " + id());
-        System.out.println(this);
+//        System.out.println("Cloud! " + id());
+//        System.out.println(this);
     }
 
     public AABB bounds() {

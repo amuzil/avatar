@@ -1,6 +1,5 @@
 package com.amuzil.carryon.physics.bullet.collision.space;
 
-import com.amuzil.av3.network.AvatarNetwork;
 import com.amuzil.carryon.api.event.collision.CollisionEvent;
 import com.amuzil.carryon.api.event.space.PhysicsSpaceEvent;
 import com.amuzil.carryon.physics.bullet.collision.body.ElementRigidBody;
@@ -26,6 +25,7 @@ import com.jme3.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.NeoForge;
@@ -141,8 +141,8 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
                 this.chunkCache.refreshAll();
 
                 // Substeps for Bullet + ForceSystem, all on the SAME thread
-                final float subDt    = 1f / 60f;
-                final int   subSteps = 3;
+                final float subDt = 1f / 60f;
+                final int subSteps = 3;
 
                 for (int i = 0; i < subSteps; i++) {
                     // Bullet collision events
@@ -155,7 +155,8 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
                     this.update(subDt);
 
                     // Your particle / force system
-                    System.out.println("Server? " + isServer());
+                    if (!isServer())
+                        System.out.println("Server? " + isServer());
                     this.forceSystem.tick(subDt);
                 }
 
@@ -209,6 +210,8 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
                 if (this.isServer()) {
                     // Need to figure out how to sync properly here
                     PacketDistributor.sendToPlayersTrackingEntity(spawner, new ForceCloudSpawnPacket(forceCloud));
+                    if (spawner instanceof ServerPlayer)
+                        PacketDistributor.sendToPlayer((ServerPlayer) spawner, new ForceCloudSpawnPacket(forceCloud));
                 }
                 forceSystem.addCloud(forceCloud);
             }
@@ -218,9 +221,8 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
     public void addForceCloud(ForceCloud forceCloud) {
         if (forceSystem != null) {
             // TODO: Set frames here and post a spawn event
-            if (!forceSystem.clouds().contains(forceCloud)) {
-                forceSystem.addCloud(forceCloud);
-            }
+            forceSystem.addCloud(forceCloud);
+
         }
     }
 
