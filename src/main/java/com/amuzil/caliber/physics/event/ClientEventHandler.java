@@ -7,6 +7,7 @@ import com.amuzil.caliber.physics.bullet.collision.space.supplier.entity.ClientE
 import com.amuzil.caliber.physics.bullet.collision.space.supplier.level.ClientLevelSupplier;
 import com.amuzil.caliber.physics.bullet.thread.PhysicsThreadStore;
 import com.amuzil.caliber.physics.utils.debug.CollisionObjectDebugger;
+import com.jme3.bullet.objects.PhysicsSoftBody;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.Entity;

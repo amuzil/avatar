@@ -5,6 +5,7 @@ import com.amuzil.caliber.physics.bullet.collision.body.PlayerRigidBody;
 import com.amuzil.caliber.physics.bullet.collision.body.shape.MinecraftShape;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -24,6 +25,8 @@ public interface PlayerPhysicsElement extends PhysicsElement<Player> {
     @Override
     @Nullable
     PlayerRigidBody getRigidBody();
+
+    void setGroundContact(boolean onCollider, Vec3 supportVelocity);
 
     @Override
     default MinecraftShape.Convex createShape() {

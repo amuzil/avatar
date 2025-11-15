@@ -1,10 +1,14 @@
 package com.amuzil.caliber.physics.event;
 
 import com.amuzil.caliber.api.EntityPhysicsElement;
+import com.amuzil.caliber.api.PlayerPhysicsElement;
 import com.amuzil.caliber.api.event.space.PhysicsSpaceEvent;
+import com.amuzil.caliber.physics.bullet.collision.body.ElementRigidBody;
 import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
+import com.amuzil.caliber.physics.bullet.collision.body.PlayerRigidBody;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.caliber.physics.bullet.collision.space.generator.EntityCollisionGenerator;
+import com.amuzil.caliber.physics.bullet.collision.space.generator.PlayerCollisionGenerator;
 import com.amuzil.caliber.physics.bullet.collision.space.storage.SpaceStorage;
 import com.amuzil.caliber.physics.bullet.collision.space.supplier.entity.ServerEntitySupplier;
 import com.amuzil.caliber.physics.bullet.collision.space.supplier.level.ServerLevelSupplier;
@@ -28,6 +32,8 @@ import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
+
+import java.util.List;
 
 public final class ServerEventHandler {
 
@@ -66,33 +72,67 @@ public final class ServerEventHandler {
         if (!level.isClientSide) {
             MinecraftSpace space = MinecraftSpace.get(level);
             space.step();
+//            PlayerCollisionGenerator.step(space);
             EntityCollisionGenerator.step(space);
-
-            for (var rigidBody : space.getRigidBodiesByClass(EntityRigidBody.class)) {
-                if (rigidBody.isActive()) {
-
-                    // Movement sync
-                    if (rigidBody.isPositionDirty()) {
-                        CaliberNetwork.sendToPlayersTrackingEntity(
-                                rigidBody.getElement().cast(),
-                                new SendRigidBodyMovementPacket(rigidBody)
-                        );
-                    }
-
-                    // Properties sync
-                    if (rigidBody.arePropertiesDirty()) {
-                        CaliberNetwork.sendToPlayersTrackingEntity(
-                                rigidBody.getElement().cast(),
-                                new SendRigidBodyPropertiesPacket(rigidBody)
-                        );
-                    }
-                }
-
-                // Update entity position to physics body location
-                var location = rigidBody.getFrame().getLocation(new Vector3f(), 1.0f);
-                rigidBody.getElement().cast().absMoveTo(location.x, location.y, location.z);
+            List<EntityRigidBody> entityBodies = space.getRigidBodiesByClass(EntityRigidBody.class);
+            List<PlayerRigidBody> playerBodies = space.getRigidBodiesByClass(PlayerRigidBody.class);
+            for (var rigidBody : entityBodies) {
+                syncRigidbody(rigidBody);
+            }
+            for (var rigidBody : playerBodies) {
+                syncRigidbody(rigidBody);
             }
         }
+    }
+
+    private static void syncRigidbody(EntityRigidBody rigidBody) {
+        if (rigidBody.isActive()) {
+
+            // Movement sync
+            if (rigidBody.isPositionDirty()) {
+                CaliberNetwork.sendToPlayersTrackingEntity(
+                        rigidBody.getElement().cast(),
+                        new SendRigidBodyMovementPacket(rigidBody)
+                );
+            }
+
+            // Properties sync
+            if (rigidBody.arePropertiesDirty()) {
+                CaliberNetwork.sendToPlayersTrackingEntity(
+                        rigidBody.getElement().cast(),
+                        new SendRigidBodyPropertiesPacket(rigidBody)
+                );
+            }
+        }
+
+        // Update entity position to physics body location
+        var location = rigidBody.getFrame().getLocation(new Vector3f(), 1.0f);
+        rigidBody.getElement().cast().absMoveTo(location.x, location.y, location.z);
+    }
+
+    private static void syncRigidbody(PlayerRigidBody rigidBody) {
+//        if (rigidBody.isActive()) {
+//
+//            // Movement sync
+//            if (rigidBody.isPositionDirty()) {
+//                CaliberNetwork.sendToPlayersTrackingEntity(
+//                        rigidBody.getElement().cast(),
+//                        new SendRigidBodyMovementPacket(rigidBody)
+//                );
+//            }
+//
+//            // Properties sync
+//            if (rigidBody.arePropertiesDirty()) {
+//                CaliberNetwork.sendToPlayersTrackingEntity(
+//                        rigidBody.getElement().cast(),
+//                        new SendRigidBodyPropertiesPacket(rigidBody)
+//                );
+//            }
+//        }
+
+        // Update entity position to physics body location
+        var location = rigidBody.getFrame().getLocation(new Vector3f(), 1.0f);
+        rigidBody.getElement().cast().absMoveTo(location.x, location.y, location.z);
     }
 
     /** When a level loads — create its MinecraftSpace for physics. */
@@ -108,9 +148,33 @@ public final class ServerEventHandler {
     /** When a rigid body element is added to a physics space. */
     @SubscribeEvent
     public static void onElementAddedToSpace(PhysicsSpaceEvent.ElementAdded event) {
-        if (event.getRigidBody() instanceof EntityRigidBody entityBody) {
+        var rb = event.getRigidBody();
+        if (rb instanceof EntityRigidBody entityBody) {
             var pos = entityBody.getElement().cast().position();
             entityBody.setPhysicsLocation(Convert.toBullet(pos));
+        } else if(rb instanceof PlayerRigidBody playerBody) {
+            var pos = playerBody.getElement().cast().position();
+            playerBody.setPhysicsLocation(Convert.toBullet(pos));
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
+        Player entity = event.getEntity();
+        if (PlayerPhysicsElement.is(entity)) {
+            var space = MinecraftSpace.get(entity.level());
+            space.getWorkerThread().execute(() ->
+                    space.addCollisionObject(PlayerPhysicsElement.get(entity).getRigidBody()));
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLeave(PlayerEvent.PlayerLoggedOutEvent event) {
+        Player entity = event.getEntity();
+        if (PlayerPhysicsElement.is(entity)) {
+            var space = MinecraftSpace.get(entity.level());
+            space.getWorkerThread().execute(() ->
+                    space.removeCollisionObject(PlayerPhysicsElement.get(entity).getRigidBody()));
         }
     }
 
@@ -118,7 +182,7 @@ public final class ServerEventHandler {
     @SubscribeEvent
     public static void onStartTrackingEntity(PlayerEvent.StartTracking event) {
         Entity entity = event.getTarget();
-        if (EntityPhysicsElement.is(entity) && !(entity instanceof Player)) {
+        if (EntityPhysicsElement.is(entity)) {
             var space = MinecraftSpace.get(entity.level());
             space.getWorkerThread().execute(() ->
                     space.addCollisionObject(EntityPhysicsElement.get(entity).getRigidBody()));
