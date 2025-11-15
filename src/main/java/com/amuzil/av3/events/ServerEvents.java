@@ -74,14 +74,14 @@ public class ServerEvents {
             AvatarCapabilities.syncBender(event.getEntity());
     }
 
-    @SubscribeEvent
-    public static void onBlockBreak(BlockEvent.BreakEvent event) {
-        Bender bender = AvatarCapabilities.getOrCreateBender(event.getPlayer());
-        if (bender == null) return;
-        if (bender.getElement() == Elements.EARTH) {
-            event.setCanceled(true);
-        }
-    }
+//    @SubscribeEvent
+//    public static void onBlockBreak(BlockEvent.BreakEvent event) {
+//        Bender bender = AvatarCapabilities.getOrCreateBender(event.getPlayer());
+//        if (bender == null) return;
+//        if (bender.getElement() == Elements.EARTH) {
+//            event.setCanceled(true);
+//        }
+//    }
 
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Pre event) {

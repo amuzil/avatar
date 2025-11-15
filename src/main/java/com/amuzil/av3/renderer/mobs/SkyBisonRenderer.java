@@ -1,7 +1,7 @@
 package com.amuzil.av3.renderer.mobs;
 
 import com.amuzil.av3.entity.mobs.SkyBisonEntity;
-import com.amuzil.av3.entity.model.SkyBisonModel;
+import com.amuzil.av3.entity.mobs.model.SkyBisonModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;

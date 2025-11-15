@@ -1,4 +1,4 @@
-package com.amuzil.av3.entity.model;
+package com.amuzil.av3.entity.mobs.model;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.entity.mobs.SkyBisonEntity;
