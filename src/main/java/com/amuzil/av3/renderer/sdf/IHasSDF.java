@@ -1,6 +1,5 @@
-package com.amuzil.av3.entity.api;
+package com.amuzil.av3.renderer.sdf;
 
-import com.amuzil.av3.renderer.sdf.SignedDistanceFunction;
 import org.joml.Vector3f;
 
 public interface IHasSDF {

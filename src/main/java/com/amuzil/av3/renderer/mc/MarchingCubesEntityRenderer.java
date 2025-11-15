@@ -2,7 +2,7 @@ package com.amuzil.av3.renderer.mc;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.entity.AvatarEntity;
-import com.amuzil.av3.entity.api.IHasSDF;
+import com.amuzil.av3.renderer.sdf.IHasSDF;
 import com.amuzil.av3.renderer.sdf.SignedDistanceFunction;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
