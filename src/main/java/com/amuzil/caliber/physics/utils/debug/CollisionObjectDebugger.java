@@ -1,8 +1,8 @@
 package com.amuzil.caliber.physics.utils.debug;
 
 import com.amuzil.caliber.api.event.render.DebugRenderEvent;
-import com.amuzil.caliber.physics.bullet.collision.body.ElementRigidBody;
-import com.amuzil.caliber.physics.bullet.collision.body.MinecraftRigidBody;
+import com.amuzil.caliber.physics.bullet.collision.body.rigidbody.ElementRigidBody;
+import com.amuzil.caliber.physics.bullet.collision.body.rigidbody.MinecraftRigidBody;
 import com.amuzil.caliber.physics.bullet.collision.body.shape.MinecraftShape;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.caliber.physics.bullet.math.Convert;

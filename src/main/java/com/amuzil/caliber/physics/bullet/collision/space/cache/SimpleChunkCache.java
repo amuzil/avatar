@@ -1,6 +1,6 @@
 package com.amuzil.caliber.physics.bullet.collision.space.cache;
 
-import com.amuzil.caliber.physics.bullet.collision.body.ElementRigidBody;
+import com.amuzil.caliber.physics.bullet.collision.body.rigidbody.ElementRigidBody;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;

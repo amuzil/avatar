@@ -1,7 +1,7 @@
 package com.amuzil.caliber.physics.network.impl;
 
 import com.amuzil.caliber.CaliberPhysics;
-import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
+import com.amuzil.caliber.physics.bullet.collision.body.rigidbody.EntityRigidBody;
 import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.amuzil.caliber.physics.network.CaliberClientPacketHandler;
 import com.amuzil.caliber.physics.network.CaliberPacket;

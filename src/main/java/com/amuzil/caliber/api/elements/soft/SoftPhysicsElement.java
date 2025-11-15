@@ -1,7 +1,9 @@
-package com.amuzil.caliber.api;
+package com.amuzil.caliber.api.elements.soft;
 
-import com.amuzil.caliber.physics.bullet.collision.body.ElementRigidBody;
+import com.amuzil.caliber.api.elements.PhysicsElement;
+import com.amuzil.caliber.api.elements.rigid.EntityRigidPhysicsElement;
 import com.amuzil.caliber.physics.bullet.collision.body.shape.MinecraftShape;
+import com.amuzil.caliber.physics.bullet.collision.body.softbody.ElementSoftBody;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
@@ -10,23 +12,23 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * This is the main interface you'll want to implement into your physics object.
- * It provides the basic components that a {@link PhysicsElement} needs in order
+ * It provides the basic components that a {@link SoftPhysicsElement} needs in order
  * to behave properly in the {@link MinecraftSpace}.
  * 
  * @since 1.0.0
  */
-public interface PhysicsElement<T> {
+public interface SoftPhysicsElement<T> extends PhysicsElement<T> {
 
     /**
-     * Gets {@link ElementRigidBody} object associated with this element. You should
-     * create and store this in your {@link PhysicsElement} implementation in the
+     * Gets {@link ElementSoftBody} object associated with this element. You should
+     * create and store this in your {@link SoftPhysicsElement} implementation in the
      * constructor. You're able to set up the attributes and settings of your rigid
      * body however you like that way.
      * 
-     * @return the {@link ElementRigidBody}
+     * @return the {@link ElementSoftBody}
      */
     @Nullable
-    ElementRigidBody getRigidBody();
+    ElementSoftBody getPhysicsBody();
 
     /**
      * For generating a new {@link MinecraftShape.Convex}.
@@ -43,7 +45,7 @@ public interface PhysicsElement<T> {
      * @return the lerped vector
      */
     default Vector3f getPhysicsLocation(Vector3f store, float tickDelta) {
-        var rigidBody = this.getRigidBody();
+        var rigidBody = this.getPhysicsBody();
         if (rigidBody == null)
             return new Vector3f();
         return rigidBody.getFrame().getLocation(store, tickDelta);
@@ -57,14 +59,14 @@ public interface PhysicsElement<T> {
      * @return the "slerped" quaternion
      */
     default Quaternion getPhysicsRotation(Quaternion store, float tickDelta) {
-        var rigidBody = this.getRigidBody();
+        var rigidBody = this.getPhysicsBody();
         if (rigidBody == null)
             return new Quaternion();
         return rigidBody.getFrame().getRotation(store, tickDelta);
     }
 
     /**
-     * Returns the object as its generic type. (e.g. {@link EntityPhysicsElement} ->
+     * Returns the object as its generic type. (e.g. {@link EntityRigidPhysicsElement} ->
      * {@link Entity})
      * 
      * @return this as {@link T}

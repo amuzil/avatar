@@ -1,8 +1,8 @@
 package com.amuzil.caliber.physics.network.impl;
 
 import com.amuzil.caliber.CaliberPhysics;
-import com.amuzil.caliber.physics.bullet.collision.body.ElementRigidBody;
-import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
+import com.amuzil.caliber.physics.bullet.collision.body.rigidbody.ElementRigidBody;
+import com.amuzil.caliber.physics.bullet.collision.body.rigidbody.EntityRigidBody;
 import com.amuzil.caliber.physics.network.CaliberClientPacketHandler;
 import com.amuzil.caliber.physics.network.CaliberPacket;
 import net.minecraft.network.FriendlyByteBuf;

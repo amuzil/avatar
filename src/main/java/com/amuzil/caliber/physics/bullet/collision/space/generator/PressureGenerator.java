@@ -1,7 +1,7 @@
 package com.amuzil.caliber.physics.bullet.collision.space.generator;
 
 import com.amuzil.caliber.api.event.space.PhysicsSpaceEvent;
-import com.amuzil.caliber.physics.bullet.collision.body.ElementRigidBody;
+import com.amuzil.caliber.physics.bullet.collision.body.rigidbody.ElementRigidBody;
 import com.amuzil.caliber.physics.bullet.collision.body.shape.Triangle;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.caliber.physics.bullet.math.Convert;

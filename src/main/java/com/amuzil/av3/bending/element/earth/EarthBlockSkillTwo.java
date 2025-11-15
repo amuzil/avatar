@@ -18,11 +18,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 import static com.amuzil.av3.bending.form.BendingForms.BLOCK;
+import static com.amuzil.av3.bending.form.BendingForms.STRIKE;
 
 
-public class EarthBlockSkill extends EarthSkill {
+public class EarthBlockSkillTwo extends EarthSkill {
 
-    public EarthBlockSkill() {
+    public EarthBlockSkillTwo() {
         super(Avatar.MOD_ID, "earth_block");
         addTrait(new DamageTrait(Constants.DAMAGE, 3.5f));
         addTrait(new TimedTrait(Constants.LIFETIME, 100)); // Ticks not seconds...
@@ -31,7 +32,7 @@ public class EarthBlockSkill extends EarthSkill {
         addTrait(new KnockbackTrait(Constants.KNOCKBACK, 1.5f));
 
         this.startPaths = SkillPathBuilder.getInstance()
-                .add(BLOCK)
+                .add(STRIKE)
                 .build();
     }
 

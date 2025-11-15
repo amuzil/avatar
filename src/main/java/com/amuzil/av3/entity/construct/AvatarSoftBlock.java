@@ -4,8 +4,8 @@ import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.api.IForceModule;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
 import com.amuzil.av3.entity.api.modules.force.ControlModule;
-import com.amuzil.caliber.api.elements.rigid.EntityRigidPhysicsElement;
-import com.amuzil.caliber.physics.bullet.collision.body.rigidbody.EntityRigidBody;
+import com.amuzil.caliber.api.elements.soft.EntitySoftPhysicsElement;
+import com.amuzil.caliber.physics.bullet.collision.body.softbody.EntitySoftBody;
 import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
@@ -16,29 +16,29 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 
-public class AvatarRigidBlock extends AvatarConstruct implements EntityRigidPhysicsElement {
-    private final EntityRigidBody rigidBody;
+public class AvatarSoftBlock extends AvatarConstruct implements EntitySoftPhysicsElement {
+    private final EntitySoftBody softBody;
 
-    public AvatarRigidBlock(EntityType<? extends AvatarRigidBlock> type, Level level) {
+    public AvatarSoftBlock(EntityType<? extends AvatarSoftBlock> type, Level level) {
         super(type, level);
-        this.rigidBody = new EntityRigidBody(this);
+        this.softBody = new EntitySoftBody(this);
         addForceModule((IForceModule) ModuleRegistry.create(ControlModule.id));
     }
 
-    public AvatarRigidBlock(Level pLevel) {
-        this(AvatarEntities.AVATAR_RIGID_BLOCK_ENTITY_TYPE.get(), pLevel);
+    public AvatarSoftBlock(Level pLevel) {
+        this(AvatarEntities.AVATAR_SOFT_BLOCK_ENTITY_TYPE.get(), pLevel);
     }
 
     @Override
-    public @Nullable EntityRigidBody getPhysicsBody() {
-        return this.rigidBody;
+    public @Nullable EntitySoftBody getPhysicsBody() {
+        return this.softBody;
     }
 
     @Override
     public void shoot(Vec3 location, Vec3 direction, double speed, double inAccuracy) {
         setPos(location);
         Vec3 vec3 = direction.normalize().scale(200);
-        rigidBody.applyCentralImpulse(Convert.toBullet(vec3));
+        softBody.applyForce(Convert.toBullet(vec3));
     }
 
     @Override
@@ -62,7 +62,7 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityRigidPhys
         Quaternion q = new Quaternion();
         q.fromRotationMatrix(mat);
 
-        rigidBody.setPhysicsLocation(Convert.toBullet(newPos));
-        rigidBody.setPhysicsRotation(q);
+        softBody.setPhysicsLocation(Convert.toBullet(newPos));
+        softBody.applyRotation(q);
     }
 }

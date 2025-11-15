@@ -1,6 +1,6 @@
 package com.amuzil.caliber.api.event.space;
 
-import com.amuzil.caliber.physics.bullet.collision.body.ElementRigidBody;
+import com.amuzil.caliber.physics.bullet.collision.body.rigidbody.ElementRigidBody;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import net.neoforged.bus.api.Event;
 

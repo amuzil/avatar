@@ -1,7 +1,7 @@
 package com.amuzil.caliber.physics.bullet.thread;
 
 import com.amuzil.caliber.CaliberPhysics;
-import com.amuzil.caliber.api.PhysicsElement;
+import com.amuzil.caliber.api.elements.PhysicsElement;
 import com.amuzil.caliber.api.event.space.PhysicsSpaceEvent;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.caliber.physics.bullet.collision.space.supplier.entity.EntitySupplier;
