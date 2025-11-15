@@ -25,7 +25,7 @@ public class PhotonModule implements IRenderModule {
     @Override
     public void tick(AvatarEntity entity) {
         // For starting effects per tick
-        if (entity.level().isClientSide && entity.fxLocation() != null) {
+        if (entity.fxLocation() != null) {
             if (entity.oneShotFX()) {
                 if (entity.tickCount <= 1) {
                     startEntityEffect(FXHelper.getFX(entity.fxLocation()), entity);

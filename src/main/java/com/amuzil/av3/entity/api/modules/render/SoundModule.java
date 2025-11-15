@@ -28,7 +28,7 @@ public class SoundModule implements IRenderModule {
 
     @Override
     public void tick(AvatarEntity entity) {
-        if (entity.level().isClientSide && entity.fxName() != null) {
+        if (entity.fxName() != null) {
             if (entity.oneShotFX()) {
                 if (entity.tickCount <= 1) {
                     startSoundEffect(entity.fxName(), entity);
