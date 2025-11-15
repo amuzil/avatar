@@ -6,6 +6,7 @@ import com.amuzil.av3.network.packets.api.AvatarPacket;
 import com.amuzil.av3.utils.network.AvatarPacketUtils;
 import com.amuzil.carryon.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.magus.physics.core.ForceCloud;
+import com.amuzil.magus.physics.core.ForceSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -39,6 +40,8 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
     private final Vec3 aabbMin;
     private final Vec3 aabbMax;
 
+    private final double lifetime;
+
     // SERVER-SIDE CONSTRUCTOR
     public ForceCloudSpawnPacket(ForceCloud cloud) {
         this.id = cloud.id();
@@ -53,10 +56,12 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
         this.cellSize = cloud.grid().cellSize();
 
         this.origin = cloud.pos();      // or cloud.pos()
-        this.direction = cloud.vel();// or cloud.dir()
+        this.direction = cloud.vel(); // or cloud.dir()
         this.force = cloud.force();
         this.aabbMin = cloud.bounds().getMinPosition();
         this.aabbMax = cloud.bounds().getMaxPosition();
+
+        this.lifetime = cloud.lifetime();
     }
 
     // CLIENT-SIDE DECODING CONSTRUCTOR
@@ -77,6 +82,8 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
         this.force = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
         this.aabbMin = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
         this.aabbMax = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
+
+        this.lifetime = buf.readDouble();
     }
 
     public static void handle(ForceCloudSpawnPacket msg, IPayloadContext ctx) {
@@ -117,6 +124,8 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
         AvatarPacketUtils.writeVec3(aabbMin, buf);
 
         AvatarPacketUtils.writeVec3(aabbMax, buf);
+
+        buf.writeDouble(this.lifetime);
     }
 
     @Override
@@ -127,6 +136,8 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
 
     public ForceCloud cloud() {
         // Client doesn't need multithreading and we don't need it for now anyway
-        return new ForceCloud(type, maxPoints, id, origin, direction, force, ownerUuid, null);
+        ForceCloud cloud = new ForceCloud(type, maxPoints, id, origin, direction, force, ownerUuid, null);
+        cloud.setLifetimeSeconds(lifetime);
+        return cloud;
     }
 }

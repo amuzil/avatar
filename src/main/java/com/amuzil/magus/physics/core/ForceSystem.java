@@ -1,6 +1,7 @@
 package com.amuzil.magus.physics.core;
 
 import com.amuzil.carryon.physics.bullet.collision.space.MinecraftSpace;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -32,17 +33,19 @@ public class ForceSystem {
         this.workerPool = null;
     }
 
-    public ForceCloud createCloud(int type, int maxPoints, Vec3 pos, Vec3 vel, Vec3 force) {
+    public ForceCloud createCloud(int type, int maxPoints, String id, Entity owner, Vec3 pos, Vec3 vel, Vec3 force) {
         // choose some grid dims; you can make this smarter later
         ForceCloud cloud = new ForceCloud(
                 type,
                 maxPoints,
+                id,
                 pos,
                 vel,
                 force,
+                owner.getUUID(),
                 workerPool
         );
-        this.clouds.add(cloud);
+        space.addForceCloud(cloud, owner);
         return cloud;
     }
 

@@ -19,11 +19,11 @@ public class ForceCloud extends PhysicsElement {
     private final List<IPhysicsModule> modules;
     private final double cellSize;
     private final ForceGrid<ForcePoint> spaceGrid;
+    private final UUID owner;
     private double[] rotation;
     private AABB bounds = new AABB(0, 0, 0, 0, 0, 0);
     private double remainingLifeSeconds = -1.0; // -1 = infinite
     private boolean hasLifetime = false;
-    private final UUID owner;
 
     public ForceCloud(int type, int maxPoints, String id, Vec3 pos, Vec3 vel, Vec3 force, UUID owner,
                       @Nullable ExecutorService pool) {
@@ -113,7 +113,8 @@ public class ForceCloud extends PhysicsElement {
     // lifetime API
     public void setLifetimeSeconds(double seconds) {
         this.remainingLifeSeconds = seconds;
-        this.hasLifetime = true;
+        if (seconds >= 0)
+            this.hasLifetime = true;
     }
 
     public void tickLifetime(double dt) {
@@ -267,6 +268,9 @@ public class ForceCloud extends PhysicsElement {
         integratePoints(dt);
 
         updateBoundsFromPoints();
+
+        System.out.println("Cloud! " + id());
+        System.out.println(this);
     }
 
     public AABB bounds() {

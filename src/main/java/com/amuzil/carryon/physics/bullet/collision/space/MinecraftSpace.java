@@ -155,6 +155,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
                     this.update(subDt);
 
                     // Your particle / force system
+                    System.out.println("Server? " + isServer());
                     this.forceSystem.tick(subDt);
                 }
 
