@@ -54,37 +54,30 @@ public class AirStepSkill extends AirSkill {
         bound.setNoGravity(true);
         bound.setPos(entity.position());
         bound.init();
+        entity.level().addFreshEntity(bound);
 
-        if (!entity.level().isClientSide()) {
-            entity.level().addFreshEntity(bound);
-
-            float dashSpeed = (float) Objects.requireNonNull(
-                    skillData.getTrait(Constants.DASH_SPEED, SpeedTrait.class)).getSpeed();
-            Vec3 dashVec = Vec3.ZERO;
-            switch (motion) {
-                case FORWARD -> dashVec = entity.getLookAngle().multiply(1, 0, 1).normalize().scale(dashSpeed);
-                case BACKWARD -> dashVec = entity.getLookAngle().multiply(1, 0, 1).normalize().scale(-dashSpeed);
-                case LEFTWARD -> dashVec = entity.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(-dashSpeed);
-                case RIGHTWARD -> dashVec = entity.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(dashSpeed);
-                case UPWARD -> dashVec = bender.getDeltaMovement().add(0, dashSpeed / 2, 0).multiply(4, 1, 4);
-                case DOWNWARD -> dashVec = bender.getDeltaMovement().add(0, -(dashSpeed / 3), 0);
-            }
-            if (motion != BendingForm.Type.Motion.DOWNWARD)
-                dashVec = dashVec.add(0, 0.3D, 0);
-
-            entity.setDeltaMovement(dashVec);
-            entity.hurtMarked = true;
-            entity.hasImpulse = true;
+        float dashSpeed = (float) Objects.requireNonNull(
+                skillData.getTrait(Constants.DASH_SPEED, SpeedTrait.class)).getSpeed();
+        Vec3 dashVec = Vec3.ZERO;
+        switch (motion) {
+            case FORWARD -> dashVec = entity.getLookAngle().multiply(1, 0, 1).normalize().scale(dashSpeed);
+            case BACKWARD -> dashVec = entity.getLookAngle().multiply(1, 0, 1).normalize().scale(-dashSpeed);
+            case LEFTWARD -> dashVec = entity.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(-dashSpeed);
+            case RIGHTWARD -> dashVec = entity.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(dashSpeed);
+            case UPWARD -> dashVec = bender.getDeltaMovement().add(0, dashSpeed / 2, 0).multiply(4, 1, 4);
+            case DOWNWARD -> dashVec = bender.getDeltaMovement().add(0, -(dashSpeed / 3), 0);
         }
+        if (motion != BendingForm.Type.Motion.DOWNWARD)
+            dashVec = dashVec.add(0, 0.3D, 0);
+        entity.setDeltaMovement(dashVec);
+        entity.hurtMarked = true;
+        entity.hasImpulse = true;
     }
 
     @Override
     public void run(Bender bender) {
         super.run(bender);
-        if (!bender.getEntity().level().isClientSide()) {
-            bender.getEntity().fallDistance = 0.0F;
-            incrementTimedTrait(skillData, Constants.RUNTIME,
-                    skillData.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime());
-        }
+        bender.getEntity().fallDistance = 0.0F;
+        incrementTimedTrait(skillData, Constants.RUNTIME, skillData.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime());
     }
 }
