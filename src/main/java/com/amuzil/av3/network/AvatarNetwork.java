@@ -7,6 +7,8 @@ import com.amuzil.av3.network.packets.form.ReleaseFormPacket;
 import com.amuzil.av3.network.packets.sync.SyncBenderPacket;
 import com.amuzil.av3.network.packets.sync.SyncMovementPacket;
 import com.amuzil.av3.network.packets.sync.SyncSelectionPacket;
+import com.amuzil.carryon.physics.network.impl.ForceCloudCollisionPacket;
+import com.amuzil.carryon.physics.network.impl.ForceCloudSpawnPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -22,6 +24,8 @@ public class AvatarNetwork {
     public static void register(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar(Avatar.MOD_ID).versioned(VERSION);
 
+        /** Bi-Direction **/
+
         registrar.playBidirectional(
                 SyncBenderPacket.TYPE,
                 SyncBenderPacket.CODEC,
@@ -34,6 +38,7 @@ public class AvatarNetwork {
                 SyncSelectionPacket::handle
         );
 
+        /** Server **/
         registrar.playToServer(
                 SyncMovementPacket.TYPE,
                 SyncMovementPacket.CODEC,
@@ -49,6 +54,19 @@ public class AvatarNetwork {
                 ReleaseFormPacket.TYPE,
                 ReleaseFormPacket.CODEC,
                 ReleaseFormPacket::handle
+        );
+
+        /** Client **/
+        registrar.playToClient(
+                ForceCloudCollisionPacket.TYPE,
+                ForceCloudCollisionPacket.CODEC,
+                ForceCloudCollisionPacket::handle
+        );
+
+        registrar.playToClient(
+                ForceCloudSpawnPacket.TYPE,
+                ForceCloudSpawnPacket.CODEC,
+                ForceCloudSpawnPacket::handle
         );
     }
 
