@@ -26,7 +26,7 @@ public class EarthBlockSkill extends EarthSkill {
         super(Avatar.MOD_ID, "earth_block");
         addTrait(new DamageTrait(Constants.DAMAGE, 3.5f));
         addTrait(new TimedTrait(Constants.LIFETIME, 200)); // Ticks not seconds...
-        addTrait(new SpeedTrait(Constants.SPEED, 0.5d));
+        addTrait(new SpeedTrait(Constants.SPEED, 5d));
         addTrait(new SizeTrait(Constants.SIZE, 1.0f));
         addTrait(new KnockbackTrait(Constants.KNOCKBACK, 1.5f));
 
