@@ -192,6 +192,7 @@ public class Bender implements IBender {
         }
     }
 
+    // Used for when we have momentum when double jump is executed
     @Override
     public Vec3 getDeltaMovement() {
         return lastDeltaMovement;

@@ -88,8 +88,6 @@ public class WaterBallSkill extends WaterSkill {
         bender.formPath.clear();
         data.setSkillState(SkillState.IDLE);
 
-        if (!bender.getEntity().level().isClientSide) {
-            bender.getEntity().level().addFreshEntity(projectile);
-        }
+        bender.getEntity().level().addFreshEntity(projectile);
     }
 }

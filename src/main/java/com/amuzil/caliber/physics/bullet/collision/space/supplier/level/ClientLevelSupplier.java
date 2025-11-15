@@ -13,7 +13,7 @@ import java.util.Optional;
  * This is a {@link LevelSupplier} which returns a single {@link ClientLevel}
  * object in a {@link List} object.
  */
-@Deprecated
+//@Deprecated
 public record ClientLevelSupplier(Minecraft minecraft) implements LevelSupplier {
     @Override
     public List<Level> getAll() {

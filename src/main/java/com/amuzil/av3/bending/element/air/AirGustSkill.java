@@ -106,9 +106,7 @@ public class AirGustSkill extends AirSkill {
         bender.formPath.clear();
         data.setSkillState(SkillState.IDLE);
 
-        if (!bender.getEntity().level().isClientSide) {
-            bender.getEntity().level().addFreshEntity(projectile);
-        }
+        bender.getEntity().level().addFreshEntity(projectile);
 //        else {
 //            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
 //                Minecraft.getInstance().getSoundManager()

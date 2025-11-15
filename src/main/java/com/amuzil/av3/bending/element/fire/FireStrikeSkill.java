@@ -109,9 +109,7 @@ public class FireStrikeSkill extends FireSkill {
         bender.formPath.clear();
         skillData.setSkillState(SkillState.IDLE);
 
-        if (!bender.getEntity().level().isClientSide) {
-            bender.getEntity().level().addFreshEntity(projectile);
-        }
+        bender.getEntity().level().addFreshEntity(projectile);
 //        else {
 //            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
 //                Minecraft.getInstance().getSoundManager()

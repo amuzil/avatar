@@ -108,8 +108,6 @@ public class BlazingRingsSkill extends FireSkill {
         bender.formPath.clear();
         skillData.setSkillState(SkillState.IDLE);
 
-        if (!bender.getEntity().level().isClientSide) {
-            bender.getEntity().level().addFreshEntity(projectile);
-        }
+        bender.getEntity().level().addFreshEntity(projectile);
     }
 }

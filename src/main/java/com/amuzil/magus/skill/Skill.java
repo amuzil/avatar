@@ -115,42 +115,6 @@ public abstract class Skill {
         return this.skillTypes;
     }
 
-    // Execute Skill on server
-//    public void execute(Bender bender) {
-//        FormPath formPath = bender.formPath;
-//        // Remember, for some reason post only returns true upon the event being cancelled. Blame Forge.
-//        SkillData skillData = bender.getSkillData(this);
-//
-//        switch (skillData.getSkillState()) {
-//            case START -> {
-//                if (shouldStart(bender, formPath)) {
-//                    if (NeoForge.EVENT_BUS.post(new SkillExecutionEvent.Start(bender.getEntity(), formPath, this)))
-//                        return;
-//                    executeOnClient(bender.getEntity(), skillData, SkillState.START);
-//                    start(bender);
-//                }
-//            }
-//
-//            case RUN -> {
-//                if (shouldRun(bender, formPath)) {
-//                    if (NeoForge.EVENT_BUS.post(new SkillExecutionEvent.Run(bender.getEntity(), formPath, this)))
-//                        return;
-//                    executeOnClient(bender.getEntity(), skillData, SkillState.RUN);
-//                    run(bender);
-//                }
-//            }
-//
-//            case STOP -> {
-//                if (shouldStop(bender, formPath)) {
-//                    if (NeoForge.EVENT_BUS.post(new SkillExecutionEvent.Stop(bender.getEntity(), formPath, this)))
-//                        return;
-//                    executeOnClient(bender.getEntity(), skillData, SkillState.STOP);
-//                    stop(bender);
-//                }
-//            }
-//        }
-//    }
-
     protected <T extends Event> void listen(Class<T> eventType, Consumer<T> runnable) {
         NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, eventType, runnable);
     }
@@ -166,20 +130,6 @@ public abstract class Skill {
             run(bender);
         }
     }
-
-    // Execute Skill on client(s) and sync SkillState
-//    public void executeOnClient(LivingEntity entity, SkillData skillData, SkillState skillState) {
-//        // Handle which player clients should receive the packet based on Skill
-//        if (!entity.level().isClientSide()) {
-//            skillData.setSkillState(skillState); // Set SkillState on server
-//            ServerLevel level = (ServerLevel) entity.level();
-//            ActivatedSkillPacket packet = new ActivatedSkillPacket(id, skillState.ordinal());
-//            Predicate<ServerPlayer> predicate = (serverPlayer) -> entity.distanceToSqr(serverPlayer) < 2500;
-//            for (ServerPlayer nearbyPlayer : level.getPlayers(predicate.and(LivingEntity::isAlive))) {
-//                AvatarNetwork.sendToClient(packet, nearbyPlayer);
-//            }
-//        }
-//    }
 
     public abstract List<Form> startPaths();
 

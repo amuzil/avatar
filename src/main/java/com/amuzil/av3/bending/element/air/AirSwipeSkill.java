@@ -103,8 +103,6 @@ public class AirSwipeSkill extends AirSkill {
         bender.formPath.clear();
         data.setSkillState(SkillState.IDLE);
 
-        if (!bender.getEntity().level().isClientSide) {
-            bender.getEntity().level().addFreshEntity(projectile);
-        }
+        bender.getEntity().level().addFreshEntity(projectile);
     }
 }
