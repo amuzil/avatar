@@ -4,7 +4,7 @@ import com.amuzil.av3.bending.BendingSelection;
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.bending.form.BendingForm;
 import com.amuzil.av3.data.attachment.BenderData;
-import com.amuzil.av3.events.FormActivatedEvent;
+import com.amuzil.magus.form.FormActivatedEvent;
 import com.amuzil.av3.network.AvatarNetwork;
 import com.amuzil.av3.network.packets.sync.SyncMovementPacket;
 import com.amuzil.av3.network.packets.sync.SyncSelectionPacket;
@@ -27,7 +27,6 @@ import net.neoforged.bus.api.EventPriority;
 import net.neoforged.neoforge.common.NeoForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.checkerframework.checker.units.qual.A;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;

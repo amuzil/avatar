@@ -308,7 +308,6 @@ public abstract class AvatarEntity extends Entity {
         return entityData.get(DAMAGEABLE);
     }
 
-    // TODO: Can we remove this?
     /** These were copied from the projectile class. Need to update these to account for the other data
      * serializers and important values that this class keeps track of.
      */
