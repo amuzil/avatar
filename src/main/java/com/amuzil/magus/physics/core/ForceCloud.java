@@ -242,7 +242,8 @@ public class ForceCloud extends PhysicsElement {
         // Velocity
         element.insert(vel, 2);
 
-        Vec3 newPos = newPos(dt);
+        //
+        Vec3 newPos = element.newPos(dt);
 
         // write back into the point's data columns:
         // 0 = pos, 1 = prevPos, 2 = vel, 3 = prevVel, 4 = force

@@ -2,6 +2,7 @@ package com.amuzil.av3.events;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.carryon.physics.bullet.collision.space.MinecraftSpace;
+import com.amuzil.carryon.physics.bullet.thread.util.ClientUtil;
 import com.amuzil.magus.physics.core.ForceCloud;
 import com.amuzil.magus.physics.core.ForcePoint;
 import com.amuzil.magus.physics.core.ForceSystem;
@@ -22,7 +23,7 @@ import org.joml.Matrix4f;
 
 @EventBusSubscriber(modid = Avatar.MOD_ID, value = Dist.CLIENT)
 public class ClientEvents {
-    public static final ByteBufferBuilder DEBUG_BUILDER = new ByteBufferBuilder(262_144);
+    public static final ByteBufferBuilder DEBUG_BUILDER = new ByteBufferBuilder(256);
     @SubscribeEvent
     public static void onClientLogin(ClientPlayerNetworkEvent.LoggingIn event) {
         Avatar.inputModule.registerListeners();
@@ -36,7 +37,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onRenderLevel(RenderLevelStageEvent e) {
-        if (e.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) return;
+        if (e.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES || ClientUtil.isPaused()) return;
         Minecraft mc = Minecraft.getInstance();
         Level level = mc.level; if (level == null) return;
 
@@ -47,21 +48,21 @@ public class ClientEvents {
 
         PoseStack pose = e.getPoseStack();
         pose.pushPose();
-        RenderSystem.disableDepthTest();
-        RenderSystem.disableCull();
+//        RenderSystem.disableDepthTest();
+//        RenderSystem.disableCull();
 //        pose.translate(-camPos.x, -camPos.y, -camPos.z);
 
         PoseStack.Pose last = pose.last();
-//        var buffers = Minecraft.getInstance().levelRenderer.renderBuffers().outlineBufferSource();
+        MultiBufferSource.BufferSource buffers = Minecraft.getInstance().renderBuffers().bufferSource();
 
-        var immediate = MultiBufferSource.immediate(DEBUG_BUILDER);
+//        MultiBufferSource.BufferSource immediate = MultiBufferSource.immediate(DEBUG_BUILDER);
 //        var vc = immediate.getBuffer(RenderType.lines());
 
-        VertexConsumer vc = immediate.getBuffer(RenderType.lightning());
+        VertexConsumer vc = buffers.getBuffer(RenderType.debugLineStrip(0.3));
 
-        line(vc, last.pose(), 0, 0, 0, 0.25f, 0, 0, 120, 200, 255, 255);
-        line(vc, last.pose(), 0, 0, 0, 0, 0.25f, 0, 120, 200, 255, 255);
-        line(vc, last.pose(), 0, 0, 0, 0, 0, 0.25f, 120, 200, 255, 255);
+//        line(vc, last.pose(), 0, 0, 0, 0.25f, 0, 0, 120, 200, 255, 255);
+//        line(vc, last.pose(), 0, 0, 0, 0, 0.25f, 0, 120, 200, 255, 255);
+//        line(vc, last.pose(), 0, 0, 0, 0, 0, 0.25f, 120, 200, 255, 255);
 
 //        fs.clouds().clear();
         for (ForceCloud cloud : fs.clouds()) {
@@ -69,26 +70,28 @@ public class ClientEvents {
                 Thread.dumpStack();
                 continue;
             }
+            int i = 0;
             for (ForcePoint p : cloud.points()) {
                 Vec3 wp = p.pos();
 //                System.out.println(wp);
                 float x = (float) (wp.x - camPos.x);
                 float y = (float) (wp.y - camPos.y);
                 float z = (float) (wp.z - camPos.z);
+//                System.out.println("X: " + x + ", Y: " + y + ", Z: " + z);
                 vc.addVertex(last.pose(), x, y, z).setColor(255,255,0,255)
-
                         .setNormal(last, 0,1,0);
                 vc.addVertex(last.pose(), x, y + 0.05f, z).setColor(255,255,0,255)
-
                         .setNormal(last, 0,1,0);
-//                System.out.println("Pos: " + wp);
+//                System.out.println("Pos: " + wp + ", i: " + i);
+//                i++;
             }
+//            System.out.println("Cloud tick: " + cloud.lifetime());
 
         }
         pose.popPose();
 //       / RenderSystem.enableCull();
-        RenderSystem.enableDepthTest();
-        immediate.endBatch();
+//        RenderSystem.enableDepthTest();
+//        immediate.endBatch();
 
     }
 
