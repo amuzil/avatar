@@ -93,14 +93,11 @@ public abstract class AvatarEntity extends Entity {
         AABB expanded = getBoundingBox().inflate(-0.03, 0.1, -0.03);
         List<Entity> colliders = level().getEntities(this, expanded, e -> true);
         if (!colliders.isEmpty()) {
-            System.out.println("actively colliding with atleast one entity");
             for (Entity possibleStandingMob : colliders) {
-                System.out.println("actively colliding with " + possibleStandingMob.getType());
-                System.out.println("bb height:  " + getBbHeight());
                 if (possibleStandingMob instanceof LivingEntity
                         && possibleStandingMob.getY() >= getY() + getBbHeight() - 0.06) {
-                    System.out.println("moving an entity");
                     Vec3 vel = getDeltaMovement().scale(0.833333333333);
+                    System.out.println("moving an entity by vel: " + possibleStandingMob.getType() + " : " + vel);
                     possibleStandingMob.setDeltaMovement(
                             possibleStandingMob.getDeltaMovement().add(vel)
                     );
@@ -295,7 +292,7 @@ public abstract class AvatarEntity extends Entity {
         builder.define(DAMAGEABLE, false);
         builder.define(PHYSICS, false);
         builder.define(TIER, 0);
-        builder.define(MAX_LIFETIME, 100);
+        builder.define(MAX_LIFETIME, 10000);
     }
 
     public void checkBlocks() {
@@ -304,7 +301,6 @@ public abstract class AvatarEntity extends Entity {
 
     @Override
     public boolean canCollideWith(Entity other) {
-        super.canCollideWith(other);
         System.out.println("collided with an entity: " + other.getType());
         boolean collides = getY() + 0.01 >= other.getY() + other.getBoundingBox().getYsize();
         return collides;
@@ -315,7 +311,6 @@ public abstract class AvatarEntity extends Entity {
      */
     @Override
     public boolean canBeCollidedWith() {
-        System.out.println("checking if can collide");
         return entityData.get(COLLIDABLE);
     }
 
