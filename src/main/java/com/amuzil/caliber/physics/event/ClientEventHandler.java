@@ -25,7 +25,7 @@ public final class ClientEventHandler {
         if (event.getLevel().isClientSide) {
             MinecraftSpace space = MinecraftSpace.get(event.getLevel());
             space.step();
-            EntityCollisionGenerator.step(space);
+//            EntityCollisionGenerator.step(space);
         }
     }
 
