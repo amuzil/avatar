@@ -127,7 +127,7 @@ public class ForceCloud extends PhysicsElement {
     }
 
     public boolean isDead() {
-        return !hasLifetime || remainingLifeSeconds <= 0.0;
+        return hasLifetime && remainingLifeSeconds <= 0.0;
     }
 
     public void updateBoundsFromPoints() {

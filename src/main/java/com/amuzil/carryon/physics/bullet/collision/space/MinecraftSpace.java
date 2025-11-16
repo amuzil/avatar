@@ -104,79 +104,129 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
      * @see PhysicsSpaceEvent
      */
     public void step() {
+//
+//        if (!isServer())
+//            System.out.println("Client Thread.");
+
         // Keep existing rigidbody per-frame update
         MinecraftSpace.get(this.level)
                 .getRigidBodiesByClass(ElementRigidBody.class)
                 .forEach(ElementRigidBody::updateFrame);
 
+
         // If we're already mid-step, don't schedule another
-        if (this.stepping) {
-            return;
-        }
+//        if (this.stepping) {
+//            return;
+//        }
 
         // Nothing to simulate: no rigid bodies and no force clouds
         if (this.isEmpty() && this.forceSystem.clouds().isEmpty()) {
             return;
         }
 
-        this.stepping = true;
-
-        // Run the whole physics + force system step on the physics worker as ONE job
-        CompletableFuture.runAsync(() -> {
-            try {
-                // Wake nearby rigidbodies based on recent block updates
-                for (var rigidBody : this.getRigidBodiesByClass(ElementRigidBody.class)) {
-                    if (!rigidBody.terrainLoadingEnabled()) {
-                        continue;
-                    }
-                    for (var blockPos : this.previousBlockUpdates) {
-                        if (rigidBody.isNear(blockPos)) {
-                            rigidBody.activate();
-                            break;
-                        }
-                    }
-                }
-                this.previousBlockUpdates.clear();
-
-                this.chunkCache.refreshAll();
-
-                // Substeps for Bullet + ForceSystem, all on the SAME thread
-                final float subDt = 1f / 60f;
-                final int subSteps = 3;
-
-                for (int i = 0; i < subSteps; i++) {
-                    // Bullet collision events
-                    this.distributeEvents();
-
-                    // World Step event
-                    NeoForge.EVENT_BUS.post(new PhysicsSpaceEvent.Step(this));
-
-                    // Bullet integration
-                    this.update(subDt);
-
-                    // Your particle / force system
-                    if (forceSystem.clouds().size() > 0) {
-                        if (!isServer())
-                            System.out.println("Lifetime: " + forceSystem.clouds().get(0).lifetime());
-//                        System.out.println("Server: " + isServer() + " Points: " + forceSystem.clouds().get(0).points().size());
-                    }
-
-                    this.forceSystem.tick(subDt);
-                }
-
-                // Optional debug
-//            int clouds = 0;
-//            for (ForceCloud cloud : forceSystem.clouds()) {
-//                clouds++;
-//                System.out.println("[Physics] Cloud " + System.identityHashCode(cloud)
-//                        + " has " + cloud.points().size() + " points.");
-//            }
-//            System.out.println("[Physics] Total clouds: " + clouds);
-
-            } finally {
-                this.stepping = false;
+        // Wake nearby rigidbodies based on recent block updates
+        for (var rigidBody : this.getRigidBodiesByClass(ElementRigidBody.class)) {
+            if (!rigidBody.terrainLoadingEnabled()) {
+                continue;
             }
-        }, this.getWorkerThread());
+            for (var blockPos : this.previousBlockUpdates) {
+                if (rigidBody.isNear(blockPos)) {
+                    rigidBody.activate();
+                    break;
+                }
+            }
+        }
+        this.previousBlockUpdates.clear();
+
+        this.chunkCache.refreshAll();
+
+        // Substeps for Bullet + ForceSystem, all on the SAME thread
+        final float subDt = 1f / 60f;
+        final int subSteps = 3;
+
+        for (int i = 0; i < subSteps; i++) {
+            // Bullet collision events
+            this.distributeEvents();
+
+            // World Step event
+            NeoForge.EVENT_BUS.post(new PhysicsSpaceEvent.Step(this));
+
+            // Bullet integration
+            this.update(subDt);
+
+            // Your particle / force system
+            if (!forceSystem.clouds().isEmpty()) {
+//                        if (!isServer())
+//                            System.out.println("Lifetime: " + forceSystem.clouds().get(0).lifetime());
+//                        System.out.println("Server: " + isServer() + " Points: " + forceSystem.clouds().get(0).points().size());
+                this.forceSystem.tick(subDt);
+            }
+
+
+        }
+
+//        this.stepping = true;
+////        forceSystem.tick(1  / 20f);
+////        if (!isServer() && forceSystem.clouds().size() > 0)
+////            System.out.println("Lifetime: " + forceSystem.clouds().get(0).lifetime());
+//
+//        // Run the whole physics + force system step on the physics worker as ONE job
+//        CompletableFuture.runAsync(() -> {
+//            try {
+//                // Wake nearby rigidbodies based on recent block updates
+//                for (var rigidBody : this.getRigidBodiesByClass(ElementRigidBody.class)) {
+//                    if (!rigidBody.terrainLoadingEnabled()) {
+//                        continue;
+//                    }
+//                    for (var blockPos : this.previousBlockUpdates) {
+//                        if (rigidBody.isNear(blockPos)) {
+//                            rigidBody.activate();
+//                            break;
+//                        }
+//                    }
+//                }
+//                this.previousBlockUpdates.clear();
+//
+//                this.chunkCache.refreshAll();
+//
+//                // Substeps for Bullet + ForceSystem, all on the SAME thread
+//                final float subDt = 1f / 60f;
+//                final int subSteps = 3;
+//
+//                for (int i = 0; i < subSteps; i++) {
+//                    // Bullet collision events
+//                    this.distributeEvents();
+//
+//                    // World Step event
+//                    NeoForge.EVENT_BUS.post(new PhysicsSpaceEvent.Step(this));
+//
+//                    // Bullet integration
+//                    this.update(subDt);
+//
+//                    // Your particle / force system
+//                    if (!forceSystem.clouds().isEmpty()) {
+////                        if (!isServer())
+////                            System.out.println("Lifetime: " + forceSystem.clouds().get(0).lifetime());
+////                        System.out.println("Server: " + isServer() + " Points: " + forceSystem.clouds().get(0).points().size());
+//                        this.forceSystem.tick(subDt);
+//                    }
+//
+//
+//                }
+//
+//                // Optional debug
+////            int clouds = 0;
+////            for (ForceCloud cloud : forceSystem.clouds()) {
+////                clouds++;
+////                System.out.println("[Physics] Cloud " + System.identityHashCode(cloud)
+////                        + " has " + cloud.points().size() + " points.");
+////            }
+////            System.out.println("[Physics] Total clouds: " + clouds);
+//
+//            } finally {
+//                this.stepping = false;
+//            }
+//        }, this.getWorkerThread());
     }
 
     public ForceSystem forceSystem() {
@@ -216,8 +266,9 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
                     PacketDistributor.sendToPlayersTrackingEntity(spawner, new ForceCloudSpawnPacket(forceCloud));
                     if (spawner instanceof ServerPlayer)
                         PacketDistributor.sendToPlayer((ServerPlayer) spawner, new ForceCloudSpawnPacket(forceCloud));
+
+                    forceSystem.addCloud(forceCloud);
                 }
-                forceSystem.addCloud(forceCloud);
             }
         }
     }

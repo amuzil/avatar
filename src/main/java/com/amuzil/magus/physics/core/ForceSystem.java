@@ -99,6 +99,8 @@ public class ForceSystem {
 //            System.out.println("Cloud Ticking.");
             cloud.tick(dt);
             cloud.rebuildSpatialGrid();
+//            if (cloud.isDead())
+//                Thread.dumpStack();
         }
 
 ////         3) self-collisions
