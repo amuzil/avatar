@@ -98,7 +98,7 @@ public class SimpleChunkCache implements ChunkCache {
 
                 var pos = blockPos.immutable();
                 this.activeColumn.computeIfAbsent(columnIndex(pos), (a) -> new ObjectArrayList<>(512)).add(pos);
-                this.activePositions.add(pos.asLong());
+                this.activePositions.add(pos.asLong()); // TODO: Error thrown here: `java.lang.OutOfMemoryError: Java heap space`
 
                 var blockData = this.blockData.get(pos);
                 final var blockState = level.getBlockState(pos);
