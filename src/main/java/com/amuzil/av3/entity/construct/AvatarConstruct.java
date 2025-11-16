@@ -4,6 +4,7 @@ import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.IAvatarConstruct;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
+import com.amuzil.av3.entity.api.modules.entity.TimeoutModule;
 import com.amuzil.av3.entity.api.modules.render.SoundModule;
 import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.mojang.logging.LogUtils;
@@ -61,6 +62,7 @@ public class AvatarConstruct extends AvatarEntity implements IAvatarConstruct {
     public boolean dropItem;
     private boolean cancelDrop;
     private boolean hurtEntities;
+    private boolean controlled;
     private int fallDamageMax;
     private float fallDamagePerDistance;
     public @Nullable CompoundTag blockData;
@@ -72,9 +74,11 @@ public class AvatarConstruct extends AvatarEntity implements IAvatarConstruct {
     public AvatarConstruct(EntityType<? extends AvatarConstruct> entityType, Level level) {
         super(entityType, level);
         addModule(ModuleRegistry.create(SoundModule.id));
+        addModule(ModuleRegistry.create(TimeoutModule.id));
         this.blockState = Blocks.STONE.defaultBlockState();
         this.dropItem = true;
         this.fallDamageMax = 40;
+        this.controlled = false;
     }
 
     private AvatarConstruct(Level level, double x, double y, double z, BlockState state) {
@@ -415,6 +419,16 @@ public class AvatarConstruct extends AvatarEntity implements IAvatarConstruct {
         pose[1] = pose[1].scale((scale)).add((0), (owner.getEyeHeight()), (0));
         Vec3 newPos = pose[1].add(pose[0]);
         this.setPos(newPos);
+    }
+
+    @Override
+    public boolean isControlled() {
+        return controlled;
+    }
+
+    @Override
+    public void setControlled(boolean controlled) {
+        this.controlled = controlled;
     }
 
     @Override

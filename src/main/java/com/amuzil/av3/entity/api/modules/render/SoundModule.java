@@ -56,7 +56,7 @@ public class SoundModule implements IRenderModule {
             SoundEvent soundEvent = BuiltInRegistries.SOUND_EVENT.get(id);
             if (soundEvent != null)
                 Minecraft.getInstance().getSoundManager()
-                        .play(new AvatarEntitySound(entity, soundEvent, entity.maxLifetime()));
+                        .play(new AvatarEntitySound(entity, soundEvent, entity.maxLifetime(), false));
         }
     }
 }

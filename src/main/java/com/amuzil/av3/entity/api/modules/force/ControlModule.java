@@ -25,7 +25,9 @@ public class ControlModule implements IForceModule {
     @Override
     public void tick(AvatarEntity entity) {
         if (entity instanceof IAvatarConstruct construct) {
-            construct.control(1.0f);
+            if (construct.isControlled()) {
+                construct.control(1.0f);
+            }
         }
     }
 

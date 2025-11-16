@@ -36,7 +36,7 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
 
     public BendingSelection(CompoundTag tag) {
         this.deserializeNBT(null, tag);
-    } // todo: whats this holder thing about
+    }
 
     public void reset() {
         blockPos = null;
@@ -52,8 +52,13 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
     public Map<Long, OriginalBlocks> originalBlocksMap() {
         return originalBlocksMap;
     }
+
     public List<String> skillIds() {
         return skillIds;
+    }
+
+    public List<UUID> entityIds() {
+        return entityIds;
     }
 
     public void addOriginalBlocks(long id, BlockPos blockPos, BlockState blockState) {
