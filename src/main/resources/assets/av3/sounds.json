@@ -16,5 +16,23 @@
         "stream": false
       }
     ]
+  },
+  "earth_block": {
+    "sounds": [
+      {
+        "attenuation_distance": 4,
+        "name": "av3:earth_block",
+        "stream": false
+      }
+    ]
+  },
+  "earth_toss": {
+    "sounds": [
+      {
+        "attenuation_distance": 4,
+        "name": "av3:earth_toss",
+        "stream": false
+      }
+    ]
   }
 }
