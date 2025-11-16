@@ -44,7 +44,7 @@ public final class ClientEventHandler {
 
     @SubscribeEvent
     public static void onDebugRender(RenderLevelStageEvent event) {
-        if (CollisionObjectDebugger.isEnabled()) {
+        if (CollisionObjectDebugger.isEnabled() && event.getStage() == RenderLevelStageEvent.Stage.AFTER_ENTITIES) {
             Minecraft mc = Minecraft.getInstance();
             CollisionObjectDebugger.renderSpace(MinecraftSpace.get(mc.level), event.getPoseStack(), event.getPartialTick().getGameTimeDeltaTicks());
         }
