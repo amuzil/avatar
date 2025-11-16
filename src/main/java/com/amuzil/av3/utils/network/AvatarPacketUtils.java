@@ -10,4 +10,18 @@ public class AvatarPacketUtils {
         buffer.writeDouble(vec.y);
         buffer.writeDouble(vec.z);
     }
+
+    public static void writeDoubleArray(double[] arr, FriendlyByteBuf buffer) {
+        buffer.writeInt(arr.length);
+        for (double d : arr)
+            buffer.writeDouble(d);
+    }
+
+    public static double[] readDoubleArray(FriendlyByteBuf buffer) {
+        double[] arr = new double[buffer.readInt()];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = buffer.readDouble();
+        }
+        return arr;
+    }
 }

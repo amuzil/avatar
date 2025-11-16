@@ -45,8 +45,12 @@ public class ForceSystem {
                 owner.getUUID(),
                 workerPool
         );
-        space.addForceCloud(cloud, owner);
         return cloud;
+    }
+
+
+    public void spawnCloud(ForceCloud cloud, Entity owner) {
+        space.addForceCloud(cloud, owner);
     }
 
     public void addCloud(ForceCloud cloud) {

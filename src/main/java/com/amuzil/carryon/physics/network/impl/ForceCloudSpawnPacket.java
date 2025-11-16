@@ -6,7 +6,7 @@ import com.amuzil.av3.network.packets.api.AvatarPacket;
 import com.amuzil.av3.utils.network.AvatarPacketUtils;
 import com.amuzil.carryon.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.magus.physics.core.ForceCloud;
-import com.amuzil.magus.physics.core.ForceSystem;
+import com.amuzil.magus.physics.core.ForcePoint;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -15,6 +15,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class ForceCloudSpawnPacket implements AvatarPacket {
@@ -41,6 +43,9 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
     private final Vec3 aabbMax;
 
     private final double lifetime;
+    private final List<Integer> pointTypes = new ArrayList<>();
+    private final List<Integer> lifetimes = new ArrayList<>();
+    private final List<double[]> pointData = new ArrayList<>();
 
     // SERVER-SIDE CONSTRUCTOR
     public ForceCloudSpawnPacket(ForceCloud cloud) {
@@ -62,6 +67,10 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
         this.aabbMax = cloud.bounds().getMaxPosition();
 
         this.lifetime = cloud.lifetime();
+        cloud.pointsCopy().forEach(point -> pointData.add(point.data()));
+        cloud.pointsCopy().forEach(point -> pointTypes.add(point.type()));
+        cloud.pointsCopy().forEach(point -> lifetimes.add(point.lifetime()));
+
     }
 
     // CLIENT-SIDE DECODING CONSTRUCTOR
@@ -84,6 +93,25 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
         this.aabbMax = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
 
         this.lifetime = buf.readDouble();
+
+        this.lifetimes.clear();
+        int lifetimeSize = buf.readInt();
+        for (int i = 0; i < lifetimeSize; i++) {
+            lifetimes.add(buf.readInt());
+        }
+
+        this.pointTypes.clear();
+        int typeSize = buf.readInt();
+        for (int i = 0 ; i < typeSize; i++) {
+            pointTypes.add(buf.readInt());
+        }
+
+        this.pointData.clear();
+        int size = buf.readInt();
+        for (int i = 0; i < size; i++) {
+            pointData.add(AvatarPacketUtils.readDoubleArray(buf));
+        }
+
     }
 
     public static void handle(ForceCloudSpawnPacket msg, IPayloadContext ctx) {
@@ -127,6 +155,20 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
         AvatarPacketUtils.writeVec3(aabbMax, buf);
 
         buf.writeDouble(this.lifetime);
+
+        buf.writeInt(this.lifetimes.size());
+        for (int l : lifetimes)
+            buf.writeInt(l);
+
+        buf.writeInt(this.pointTypes.size());
+        for (int type : pointTypes)
+            buf.writeInt(type);
+
+        buf.writeInt(this.pointData.size());
+        for (double[] data : pointData)
+            AvatarPacketUtils.writeDoubleArray(data, buf);
+        // Now we write points
+
     }
 
     @Override
@@ -139,6 +181,11 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
         // Client doesn't need multithreading and we don't need it for now anyway
         ForceCloud cloud = new ForceCloud(type, maxPoints, id, origin, direction, force, ownerUuid, null);
         cloud.setLifetimeSeconds(lifetime);
+        for (int i = 0; i < pointData.size(); i++) {
+            ForcePoint point = new ForcePoint(pointTypes.get(i), Vec3.ZERO, Vec3.ZERO, Vec3.ZERO);
+            point.data(pointData.get(i));
+            cloud.addPoints(point);
+        }
         return cloud;
     }
 }

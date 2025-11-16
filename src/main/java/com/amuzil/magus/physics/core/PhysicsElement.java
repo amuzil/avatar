@@ -70,6 +70,12 @@ public abstract class PhysicsElement implements IPhysicsElement {
         return data;
     }
 
+    // Immutability is important.
+    @Override
+    public void data(double[] data) {
+        this.data = data.clone();
+    }
+
     public String id() {
         return this.id;
     }

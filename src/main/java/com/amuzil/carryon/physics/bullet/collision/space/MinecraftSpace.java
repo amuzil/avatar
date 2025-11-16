@@ -155,8 +155,12 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
                     this.update(subDt);
 
                     // Your particle / force system
-                    if (!isServer())
-                        System.out.println("Server? " + isServer());
+                    if (forceSystem.clouds().size() > 0) {
+                        if (!isServer())
+                            System.out.println("Lifetime: " + forceSystem.clouds().get(0).lifetime());
+//                        System.out.println("Server: " + isServer() + " Points: " + forceSystem.clouds().get(0).points().size());
+                    }
+
                     this.forceSystem.tick(subDt);
                 }
 
@@ -221,7 +225,8 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
     public void addForceCloud(ForceCloud forceCloud) {
         if (forceSystem != null) {
             // TODO: Set frames here and post a spawn event
-            forceSystem.addCloud(forceCloud);
+            if (!forceSystem.clouds().contains(forceCloud))
+                forceSystem.addCloud(forceCloud);
 
         }
     }

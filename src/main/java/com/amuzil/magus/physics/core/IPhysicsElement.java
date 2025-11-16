@@ -10,6 +10,8 @@ public interface IPhysicsElement {
 
     double[] data();
 
+    void data(double[] data);
+
     double mass();
 
     double damping();
