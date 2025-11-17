@@ -23,7 +23,7 @@ import org.joml.Matrix4f;
 
 @EventBusSubscriber(modid = Avatar.MOD_ID, value = Dist.CLIENT)
 public class ClientEvents {
-    public static final ByteBufferBuilder DEBUG_BUILDER = new ByteBufferBuilder(256);
+//    public static final ByteBufferBuilder DEBUG_BUILDER = new ByteBufferBuilder(256);
     @SubscribeEvent
     public static void onClientLogin(ClientPlayerNetworkEvent.LoggingIn event) {
         Avatar.inputModule.registerListeners();
@@ -43,14 +43,11 @@ public class ClientEvents {
 
         MinecraftSpace space = MinecraftSpace.get(level);
         ForceSystem fs = space.forceSystem();
-        var camPos = mc.gameRenderer.getMainCamera().getPosition();
+
 
 
         PoseStack pose = e.getPoseStack();
         pose.pushPose();
-//        RenderSystem.disableDepthTest();
-//        RenderSystem.disableCull();
-//        pose.translate(-camPos.x, -camPos.y, -camPos.z);
 
         PoseStack.Pose last = pose.last();
         MultiBufferSource.BufferSource buffers = Minecraft.getInstance().renderBuffers().bufferSource();
@@ -58,32 +55,37 @@ public class ClientEvents {
 //        MultiBufferSource.BufferSource immediate = MultiBufferSource.immediate(DEBUG_BUILDER);
 //        var vc = immediate.getBuffer(RenderType.lines());
 
-        VertexConsumer vc = buffers.getBuffer(RenderType.debugLineStrip(0.3));
+        VertexConsumer vc = buffers.getBuffer(RenderType.lines());
 
-//        line(vc, last.pose(), 0, 0, 0, 0.25f, 0, 0, 120, 200, 255, 255);
-//        line(vc, last.pose(), 0, 0, 0, 0, 0.25f, 0, 120, 200, 255, 255);
-//        line(vc, last.pose(), 0, 0, 0, 0, 0, 0.25f, 120, 200, 255, 255);
+
 
 //        fs.clouds().clear();
+        Vec3 relativePos;
         for (ForceCloud cloud : fs.clouds()) {
+
             if (cloud == null || cloud.isDead()) {
                 Thread.dumpStack();
                 continue;
             }
+            relativePos = cloud.pos();
             int i = 0;
             for (ForcePoint p : cloud.points()) {
+//                if (!p.surface())
+//                    continue;
                 Vec3 wp = p.pos();
 //                System.out.println(wp);
-                float x = (float) (wp.x - camPos.x);
-                float y = (float) (wp.y - camPos.y);
-                float z = (float) (wp.z - camPos.z);
+                float x = (float) (wp.x - relativePos.x);
+                float y = (float) (wp.y - relativePos.y);
+                float z = (float) (wp.z - relativePos.z);
 //                System.out.println("X: " + x + ", Y: " + y + ", Z: " + z);
                 vc.addVertex(last.pose(), x, y, z).setColor(255,255,0,255)
                         .setNormal(last, 0,1,0);
                 vc.addVertex(last.pose(), x, y + 0.05f, z).setColor(255,255,0,255)
                         .setNormal(last, 0,1,0);
-//                System.out.println("Pos: " + wp + ", i: " + i);
-//                i++;
+
+                line(vc, last.pose(), x, y, z, x + 0.25f, y, z, 120, 200, 255, 255);
+                line(vc, last.pose(), x, y, z, x, y + 0.25f, z, 120, 200, 255, 255);
+                line(vc, last.pose(), x, y, z, x, y, z + 0.25f, 120, 200, 255, 255);
             }
 //            System.out.println("Cloud tick: " + cloud.lifetime());
 
