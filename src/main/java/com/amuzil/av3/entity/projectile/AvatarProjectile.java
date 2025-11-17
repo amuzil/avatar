@@ -211,7 +211,7 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
     }
 
     /**
-     * Similar to setArrowHeading, it's point to throw entity to a (x, y, z) direction.
+     * Similar to setArrowHeading, it throws an entity toward a (x, y, z) direction
      */
     public void shoot(double x, double y, double z, float velocity, float inaccuracy) {
         Vec3 vec3 = (new Vec3(x, y, z)).normalize().add(this.random.triangle(0.0D, 0.0172275D * (double)inaccuracy), this.random.triangle(0.0D, 0.0172275D * (double)inaccuracy), this.random.triangle(0.0D, 0.0172275D * (double)inaccuracy)).scale((double)velocity);
