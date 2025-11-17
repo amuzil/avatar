@@ -1,6 +1,7 @@
 package com.amuzil.magus.physics.core;
 
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -24,10 +25,9 @@ public class ForceGrid<T extends IPhysicsElement> {
     // Threading one day...
     private final ExecutorService threadPool;
     private final int parallelism;
-
+    private final int maxPoints;
     private int usedBinCount = 0;
     private long originX, originY, originZ;
-    private final int maxPoints;
 
     @SuppressWarnings("unchecked")
     public ForceGrid(double cellSize, int binCountX, int binCountY, int binCountZ, int maxPoints, long originX, long originY, long originZ, @Nullable ExecutorService threadPool) {
@@ -196,6 +196,37 @@ public class ForceGrid<T extends IPhysicsElement> {
         List<T> l = bins[bi];
         return l == null || l.isEmpty();
     }
+
+    public Vector3f[] surfaceGridForDC() {
+        Vector3f[] dcPos = new Vector3f[totalBins];
+
+        // Only iterate usedBins so we don't touch empty cells unnecessarily.
+        for (int i = 0; i < usedBinCount; i++) {
+            int bi = usedBins[i];
+            T elem = surfaceElementInBin(bi);
+            if (elem == null) continue;
+
+            Vec3 pos = elem.pos(); // world-space
+            dcPos[bi] = new Vector3f((float) pos.x, (float) pos.y, (float) pos.z);
+        }
+
+        return dcPos;
+    }
+
+    private @Nullable T surfaceElementInBin(int bi) {
+        if (bi < 0 || bi >= totalBins) return null;
+
+        List<T> bin = bins[bi];
+        if (bin == null || bin.isEmpty()) return null;
+
+        for (T p : bin) {
+            if (p instanceof PhysicsElement pe && pe.surface()) {
+                return p;
+            }
+        }
+        return null;
+    }
+
 
     private boolean isSurfaceBin(int bi) {
         if (binEmpty(bi)) return false;
