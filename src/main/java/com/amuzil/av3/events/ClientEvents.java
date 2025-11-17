@@ -7,9 +7,10 @@ import com.amuzil.carryon.physics.bullet.thread.util.ClientUtil;
 import com.amuzil.magus.physics.core.ForceCloud;
 import com.amuzil.magus.physics.core.ForcePoint;
 import com.amuzil.magus.physics.core.ForceSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -58,13 +59,17 @@ public class ClientEvents {
         PoseStack pose = e.getPoseStack();
         pose.pushPose();
 
-
+        RenderSystem.disableCull();
         MultiBufferSource.BufferSource buffers = Minecraft.getInstance().renderBuffers().bufferSource();
-        VertexConsumer vc = buffers.getBuffer(RenderType.lines());//RenderType.entityTranslucent(WHITE_TEX, true));
+        VertexConsumer vc = buffers.getBuffer(RenderType.entityTranslucent(WHITE_TEX, true));
 
+//        Tesselator.getInstance().begin(DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP)
         Vec3 cameraPos = Minecraft.getInstance().getCameraEntity().getEyePosition();
         pose.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
         PoseStack.Pose last = pose.last();
+
+        int packedLight = LightTexture.FULL_BRIGHT;
+
         for (ForceCloud cloud : fs.clouds()) {
 
             if (cloud == null || cloud.isDead()) {
@@ -73,88 +78,88 @@ public class ClientEvents {
             }
 
 //            int i = 0;
-            for (ForcePoint p : cloud.points()) {
-                if (!p.surface())
-                    continue;
-                Vec3 wp = p.pos();
-                float x = (float) (wp.x);
-                float y = (float) (wp.y);
-                float z = (float) (wp.z);
-//                System.out.println("X: " + x + ", Y: " + y + ", Z: " + z);
-                vc.addVertex(last.pose(), x, y, z).setColor(255, 255, 0, 255)
-                        .setNormal(last, 0, 1, 0);
-                vc.addVertex(last.pose(), x, y + 0.05f, z).setColor(255, 255, 0, 255)
-                        .setNormal(last, 0, 1, 0);
-//
-                line(vc, last.pose(), x, y, z, x + 0.25f, y, z, 120, 200, 255, 255);
-                line(vc, last.pose(), x, y, z, x, y + 0.25f, z, 120, 200, 255, 255);
-                line(vc, last.pose(), x, y, z, x, y, z + 0.25f, 120, 200, 255, 255);
-            }
-//            DCStitcher.Mesh mesh = DCStitcher.build(128, 128, 128, cloud.grid().surfaceGridForDC(), false);
-//            if (mesh == null || mesh.triangles.isEmpty()) {
-//                continue;
-//            }
-//
-//            // For now: wireframe the triangles so we don't fight vanilla solid pipeline yet.
-//            Vector3f edge1 = new Vector3f();
-//            Vector3f edge2 = new Vector3f();
-//            Vector3f n = new Vector3f();
-//
-//            for (int[] tri : mesh.triangles) {
-//                Vector3f a = mesh.positions.get(tri[0]);
-//                Vector3f b = mesh.positions.get(tri[1]);
-//                Vector3f c = mesh.positions.get(tri[2]);
-//
-////                // Three edges per triangle
-////                line(vc, last.pose(), a.x, a.y, a.z, b.x, b.y, b.z, 0, 255, 0, 255);
-////                line(vc, last.pose(), b.x, b.y, b.z, c.x, c.y, c.z, 0, 255, 0, 255);
-////                line(vc, last.pose(), c.x, c.y, c.z, a.x, a.y, a.z, 0, 255, 0, 255);
-//                // n = normalize( (b - a) x (c - a) )
-//                edge1.set(b).sub(a);
-//                edge2.set(c).sub(a);
-//                n.set(edge2).cross(edge1);
-//
-//                if (n.lengthSquared() == 0f) {
-//                    // Degenerate triangle, skip
+//            for (ForcePoint p : cloud.points()) {
+//                if (!p.surface())
 //                    continue;
-//                }
-//                n.normalize();
-//                n = cloud.vel().toVector3f();
-//
-//                float[] uv0 = uvPlanar(a, n, 2f);
-//                float[] uv1 = uvPlanar(b, n, 2f);
-//                float[] uv2 = uvPlanar(c, n, 2f);
-//
-//                //            vc.vertex( p0.x, p0.y, p0.z)
-//                vc.addVertex(last.pose(), a.x, a.y, a.z)
-//                        .setColor(255, 255, 255, 255).setUv(uv0[0], uv0[1])
-//                        .setOverlay(OverlayTexture.NO_OVERLAY)
-//                        .setLight(70)
-//                        .setNormal(last, n.x, n.y, n.z);
-//
-////                System.out.println(a);
-//                //            vc.vertex(p1.x, p1.y, p1.z)
-//                vc.addVertex(last.pose(), b.x, b.y, b.z)
-//                        .setColor(255, 255, 255, 255).setUv(uv1[0], uv1[1])
-//                        .setOverlay(OverlayTexture.NO_OVERLAY)
-//                        .setLight(70)
-//                        .setNormal(last, n.x, n.y, n.z);
-//
-//                //            vc.vertex(p2.x, p2.y, p2.z)
-//                vc.addVertex(last.pose(), c.x, c.y, c.z)
-//                        .setColor(255, 255, 255, 255).setUv(uv2[0], uv2[1])
-//                        .setOverlay(OverlayTexture.NO_OVERLAY)
-//                        .setLight(70)
-//                        .setNormal(last, n.x, n.y, n.z);
-//
-//                vc.addVertex(last.pose(), c.x, c.y, c.z)
-//                        .setColor(255, 255, 255, 255).setUv(uv2[0], uv2[1])
-//                        .setOverlay(OverlayTexture.NO_OVERLAY)
-//                        .setLight(70)
-//                        .setNormal(last, n.x, n.y, n.z);
+//                Vec3 wp = p.pos();
+//                float x = (float) (wp.x);
+//                float y = (float) (wp.y);
+//                float z = (float) (wp.z);
+////                System.out.println("X: " + x + ", Y: " + y + ", Z: " + z);
+//                vc.addVertex(last.pose(), x, y, z).setColor(255, 255, 0, 255)
+//                        .setNormal(last, 0, 1, 0);
+//                vc.addVertex(last.pose(), x, y + 0.05f, z).setColor(255, 255, 0, 255)
+//                        .setNormal(last, 0, 1, 0);
+////
+////                line(vc, last.pose(), x, y, z, x + 0.25f, y, z, 120, 200, 255, 255);
+////                line(vc, last.pose(), x, y, z, x, y + 0.25f, z, 120, 200, 255, 255);
+////                line(vc, last.pose(), x, y, z, x, y, z + 0.25f, 120, 200, 255, 255);
+//            }
+            DCStitcher.Mesh mesh = DCStitcher.build(cloud.grid().binX(), cloud.grid().binY(), cloud.grid().binZ(), cloud.grid().surfaceGridForDC(), false);
+            if (mesh == null || mesh.triangles.isEmpty()) {
+                continue;
+            }
+
+            // For now: wireframe the triangles so we don't fight vanilla solid pipeline yet.
+            Vector3f edge1 = new Vector3f();
+            Vector3f edge2 = new Vector3f();
+            Vector3f n = new Vector3f();
+
+            for (int[] tri : mesh.triangles) {
+                Vector3f a = mesh.positions.get(tri[0]);
+                Vector3f b = mesh.positions.get(tri[1]);
+                Vector3f c = mesh.positions.get(tri[2]);
+
+//                // Three edges per triangle
+//                line(vc, last.pose(), a.x, a.y, a.z, b.x, b.y, b.z, 0, 255, 0, 255);
+//                line(vc, last.pose(), b.x, b.y, b.z, c.x, c.y, c.z, 0, 255, 0, 255);
+//                line(vc, last.pose(), c.x, c.y, c.z, a.x, a.y, a.z, 0, 255, 0, 255);
+                // n = normalize( (b - a) x (c - a) )
+                edge1.set(b).sub(a);
+                edge2.set(c).sub(a);
+                n.set(edge2).cross(edge1);
+
+                if (n.lengthSquared() == 0f) {
+                    // Degenerate triangle, skip
+                    continue;
+                }
+                n.normalize().mul(-1);
+//                n = cloud.vel().toVector3f().mul(-1);
+
+                float[] uv0 = uvPlanar(a, n, 2f);
+                float[] uv1 = uvPlanar(b, n, 2f);
+                float[] uv2 = uvPlanar(c, n, 2f);
+
+                //            vc.vertex( p0.x, p0.y, p0.z)
+                vc.addVertex(last.pose(), a.x, a.y, a.z)
+                        .setColor(255, 255, 255, 255).setUv(uv0[0], uv0[1])
+                        .setOverlay(OverlayTexture.NO_OVERLAY)
+                        .setLight(packedLight)
+                        .setNormal(last, n.x, n.y, n.z);
+
+//                System.out.println(a);
+                //            vc.vertex(p1.x, p1.y, p1.z)
+                vc.addVertex(last.pose(), b.x, b.y, b.z)
+                        .setColor(255, 255, 255, 255).setUv(uv1[0], uv1[1])
+                        .setOverlay(OverlayTexture.NO_OVERLAY)
+                        .setLight(packedLight)
+                        .setNormal(last, n.x, n.y, n.z);
+
+                //            vc.vertex(p2.x, p2.y, p2.z)
+                vc.addVertex(last.pose(), c.x, c.y, c.z)
+                        .setColor(255, 255, 255, 255).setUv(uv2[0], uv2[1])
+                        .setOverlay(OverlayTexture.NO_OVERLAY)
+                        .setLight(packedLight)
+                        .setNormal(last, n.x, n.y, n.z);
+
+                vc.addVertex(last.pose(), c.x, c.y, c.z)
+                        .setColor(255, 255, 255, 255).setUv(uv2[0], uv2[1])
+                        .setOverlay(OverlayTexture.NO_OVERLAY)
+                        .setLight(packedLight)
+                        .setNormal(last, n.x, n.y, n.z);
 //
 //            }
-//        }
+        }
 //            System.out.println("Cloud tick: " + cloud.lifetime());
         }
 
@@ -162,6 +167,7 @@ public class ClientEvents {
 //       / RenderSystem.enableCull();
 //        RenderSystem.enableDepthTest();
 //        immediate.endBatch();
+        RenderSystem.enableCull();
 
     }
 
