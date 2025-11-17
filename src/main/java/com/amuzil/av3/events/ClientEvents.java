@@ -10,6 +10,7 @@ import com.amuzil.magus.physics.core.ForceSystem;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -29,7 +30,6 @@ import java.util.List;
 
 import static com.amuzil.av3.entity.renderer.MarchingCubesEntityRenderer.WHITE_TEX;
 import static com.amuzil.av3.entity.renderer.MarchingCubesEntityRenderer.uvPlanar;
-import static net.minecraft.world.level.levelgen.Column.line;
 
 @EventBusSubscriber(modid = Avatar.MOD_ID, value = Dist.CLIENT)
 public class ClientEvents {
@@ -60,6 +60,17 @@ public class ClientEvents {
         pose.pushPose();
 
         RenderSystem.disableCull();
+        final BufferBuilder builder = Tesselator.getInstance()
+                .begin(VertexFormat.Mode.TRIANGLES, VertexFormat.builder()
+                        .add("Position", VertexFormatElement.POSITION)
+                        .add("Color", VertexFormatElement.COLOR)
+                        .add("UV0", VertexFormatElement.UV0)
+                        .add("UV1", VertexFormatElement.UV1)
+                        .add("Normal", VertexFormatElement.NORMAL)
+                        .padding(1)
+                        .build());
+
+
         MultiBufferSource.BufferSource buffers = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer vc = buffers.getBuffer(RenderType.entityTranslucent(WHITE_TEX, true));
 
@@ -68,7 +79,7 @@ public class ClientEvents {
         pose.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
         PoseStack.Pose last = pose.last();
 
-        int packedLight = LightTexture.FULL_BRIGHT;
+        int packedLight = LightTexture.FULL_BLOCK;
 
         for (ForceCloud cloud : fs.clouds()) {
 
@@ -106,15 +117,18 @@ public class ClientEvents {
             Vector3f n = new Vector3f();
 
             for (int[] tri : mesh.triangles) {
+//                Vector3f a = mesh.vertices.get(tri[0]).position;
+//                Vector3f b = mesh.vertices.get(tri[1]).position;
+//                Vector3f c = mesh.vertices.get(tri[2]).position;
                 Vector3f a = mesh.positions.get(tri[0]);
                 Vector3f b = mesh.positions.get(tri[1]);
                 Vector3f c = mesh.positions.get(tri[2]);
-
+//                n = mesh.vertices.get(tri[3]).normal;
 //                // Three edges per triangle
 //                line(vc, last.pose(), a.x, a.y, a.z, b.x, b.y, b.z, 0, 255, 0, 255);
 //                line(vc, last.pose(), b.x, b.y, b.z, c.x, c.y, c.z, 0, 255, 0, 255);
 //                line(vc, last.pose(), c.x, c.y, c.z, a.x, a.y, a.z, 0, 255, 0, 255);
-                // n = normalize( (b - a) x (c - a) )
+//                 n = normalize( (b - a) x (c - a) )
                 edge1.set(b).sub(a);
                 edge2.set(c).sub(a);
                 n.set(edge2).cross(edge1);
@@ -157,17 +171,30 @@ public class ClientEvents {
                         .setOverlay(OverlayTexture.NO_OVERLAY)
                         .setLight(packedLight)
                         .setNormal(last, n.x, n.y, n.z);
-//
 //            }
-        }
+            }
 //            System.out.println("Cloud tick: " + cloud.lifetime());
         }
 
         pose.popPose();
+        MeshData meshData = null;
+        try {
+            meshData = builder.build();
+            if (meshData != null) {
+                RenderSystem.setShader(GameRenderer::getPositionColorShader);;
+                BufferUploader.drawWithShader(meshData);
+            }
+        } finally {
+            if (meshData != null) {
+                meshData.close(); // release native data
+            }
+        }
+        RenderSystem.enableCull();
+
 //       / RenderSystem.enableCull();
 //        RenderSystem.enableDepthTest();
 //        immediate.endBatch();
-        RenderSystem.enableCull();
+
 
     }
 
@@ -223,7 +250,7 @@ public class ClientEvents {
             }
         }
 
-        return DCStitcher.build(nx, ny, nz, dcPos, true);
+        return DCStitcher.build(nx, ny, nz, dcPos, false);
     }
 
     private static void drawWireSphere(VertexConsumer vc, Matrix4f m, float cx, float cy, float cz,
