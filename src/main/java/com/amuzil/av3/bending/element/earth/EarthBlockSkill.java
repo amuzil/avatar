@@ -58,7 +58,7 @@ public class EarthBlockSkill extends EarthSkill {
         rigidBlock.setHeight((float) size);
         rigidBlock.setControlled(true);
         rigidBlock.setDamageable(false);
-        rigidBlock.setHittable(true);
+        rigidBlock.setHittable(false);
 
 //        rigidBlock.addTraits(data.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
 //        rigidBlock.addTraits(new DirectionTrait(Constants.KNOCKBACK_DIRECTION, new Vec3(0, 0.45, 0)));

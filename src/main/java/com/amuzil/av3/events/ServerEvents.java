@@ -44,13 +44,11 @@ public class ServerEvents {
     @SubscribeEvent
     public static void onPlayerLoginEvent(PlayerEvent.PlayerLoggedInEvent event) {
         Bender bender = AvatarCapabilities.syncBender(event.getEntity());
-        ServerPlayer player = (ServerPlayer) event.getEntity();
-
-        PhysicsBenderEntity physicsBenderEntity = new PhysicsBenderEntity(player.level());
-        physicsBenderEntity.setOwner(player);
-        player.level().addFreshEntity(physicsBenderEntity);
-        bender.physicsBenderEntity = physicsBenderEntity;
-
+//        ServerPlayer player = (ServerPlayer) event.getEntity();
+//        PhysicsBenderEntity physicsBenderEntity = new PhysicsBenderEntity(player.level());
+//        physicsBenderEntity.setOwner(player);
+//        player.level().addFreshEntity(physicsBenderEntity);
+//        bender.physicsBenderEntity = physicsBenderEntity;
         if (bender == null) return;
         bender.register();
     }
@@ -58,7 +56,6 @@ public class ServerEvents {
     @SubscribeEvent
     public static void onPlayerLoggedOutEvent(PlayerEvent.PlayerLoggedOutEvent event) {
         Bender bender = AvatarCapabilities.removeCachedBender(event.getEntity());
-        if (bender == null) return;
         bender.unregister();
     }
 
