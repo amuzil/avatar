@@ -6,7 +6,6 @@ import com.amuzil.av3.entity.api.IAvatarConstruct;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
 import com.amuzil.av3.entity.api.modules.entity.TimeoutModule;
 import com.amuzil.av3.entity.api.modules.render.SoundModule;
-import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.mojang.logging.LogUtils;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.core.BlockPos;
@@ -188,13 +187,13 @@ public class AvatarConstruct extends AvatarEntity implements IAvatarConstruct {
                 }
 
                 if (!this.onGround() && !flag1) {
-                    if (!this.level().isClientSide && (this.time > 100 && (blockpos.getY() <= this.level().getMinBuildHeight() || blockpos.getY() > this.level().getMaxBuildHeight()) || this.time > 600)) {
-                        if (this.dropItem && this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
-                            this.spawnAtLocation(block);
-                        }
-
-                        this.discard();
-                    }
+//                    if (!this.level().isClientSide && (this.time > 100 && (blockpos.getY() <= this.level().getMinBuildHeight() || blockpos.getY() > this.level().getMaxBuildHeight()) || this.time > 600)) {
+//                        if (this.dropItem && this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+//                            this.spawnAtLocation(block);
+//                        }
+//
+//                        this.discard();
+//                    }
                 } else {
                     BlockState blockstate = this.level().getBlockState(blockpos);
                     this.setDeltaMovement(this.getDeltaMovement().multiply(0.7, (double)-0.5F, 0.7));

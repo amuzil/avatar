@@ -24,9 +24,8 @@ public class TerrainGenerator {
         final var keep = new HashSet<TerrainRigidBody>();
 
         for (var rigidBody : space.getRigidBodiesByClass(ElementRigidBody.class)) {
-            if (!rigidBody.terrainLoadingEnabled() || !rigidBody.isActive()) {
+            if (!rigidBody.terrainLoadingEnabled() || !rigidBody.isActive())
                 continue;
-            }
 
             final var aabb = rigidBody.getCurrentMinecraftBoundingBox().inflate(0.5f);
 

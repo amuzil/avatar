@@ -15,6 +15,4 @@ public abstract class EarthSkill extends BendingSkill {
     public SkillCategory getCategory() {
         return Elements.EARTH;
     }
-
-
 }

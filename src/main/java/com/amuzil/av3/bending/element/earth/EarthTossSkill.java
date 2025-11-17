@@ -3,12 +3,20 @@ package com.amuzil.av3.bending.element.earth;
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.skill.EarthSkill;
 import com.amuzil.av3.data.capability.Bender;
+import com.amuzil.av3.entity.api.modules.ModuleRegistry;
+import com.amuzil.av3.entity.api.modules.collision.SimpleDamageModule;
+import com.amuzil.av3.entity.api.modules.collision.SimpleKnockbackModule;
+import com.amuzil.av3.entity.construct.AvatarRigidBlock;
 import com.amuzil.av3.utils.Constants;
+import com.amuzil.magus.skill.data.SkillData;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
-import com.amuzil.magus.skill.traits.skilltraits.KnockbackTrait;
-import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
-import net.minecraft.core.BlockPos;
+import com.amuzil.magus.skill.traits.skilltraits.*;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
+import java.util.UUID;
 
 import static com.amuzil.av3.bending.form.BendingForms.STRIKE;
 
@@ -17,8 +25,11 @@ public class EarthTossSkill extends EarthSkill {
 
     public EarthTossSkill() {
         super(Avatar.MOD_ID, "earth_toss");
+        addTrait(new StringTrait(Constants.FX, "earth_toss"));
+        addTrait(new TimedTrait(Constants.LIFETIME, 100)); // Ticks not seconds...
+        addTrait(new DamageTrait(Constants.DAMAGE, 4.5f));
+        addTrait(new SpeedTrait(Constants.SPEED, 3d));
         addTrait(new KnockbackTrait(Constants.KNOCKBACK, 1.5f));
-        addTrait(new SizeTrait(Constants.SIZE, 1.0f));
 
         this.startPaths = SkillPathBuilder.getInstance()
                 .add(STRIKE)
@@ -28,8 +39,52 @@ public class EarthTossSkill extends EarthSkill {
     @Override
     public void start(Bender bender) {
         super.start(bender);
-
+        LivingEntity entity = bender.getEntity();
+//        if (!canEarthBend(entity)) return; // Can't earth bend if too far from ground
         ServerLevel level = (ServerLevel) bender.getEntity().level();
-        BlockPos blockPos = bender.getSelection().blockPos();
+        SkillData data = bender.getSkillData(this);
+
+        int lifetime = data.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
+        double speed = data.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
+
+        List<UUID> entityIds = bender.getSelection().entityIds();
+        if (entityIds.isEmpty()) {
+            bender.formPath.clear();
+            bender.getSelection().reset();
+            data.setSkillState(SkillState.IDLE);
+            return;
+        }
+        if (!(level.getEntity(entityIds.getFirst()) instanceof AvatarRigidBlock rigidBlock)) {
+            bender.formPath.clear();
+            bender.getSelection().reset();
+            data.setSkillState(SkillState.IDLE);
+            return;
+        }
+
+        rigidBlock.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
+        rigidBlock.tickCount = 0; // Reset for another one shot FX
+        rigidBlock.setKinematic(false);
+//        rigidBlock.getRigidBody().setGravity(Vector3f.ZERO);
+//        rigidBlock.getRigidBody().setProtectGravity(true);
+        rigidBlock.setOwner(entity);
+//        rigidBlock.setMaxLifetime(lifetime);
+        rigidBlock.setControlled(false);
+
+        rigidBlock.addTraits(data.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
+        rigidBlock.addTraits(new DirectionTrait(Constants.KNOCKBACK_DIRECTION, new Vec3(0, 0.45, 0)));
+        rigidBlock.addModule(ModuleRegistry.create(SimpleKnockbackModule.id));
+
+        // Damage module
+        rigidBlock.addTraits(data.getTrait(Constants.DAMAGE, DamageTrait.class));
+        rigidBlock.addModule(ModuleRegistry.create(SimpleDamageModule.id));
+        rigidBlock.addTraits(new CollisionTrait(Constants.COLLISION_TYPE, "Blaze", "Fireball", "AbstractArrow", "FireProjectile"));
+//        projectile.addCollisionModule((ICollisionModule) ModuleRegistry.create(AirCollisionModule.id));
+
+        rigidBlock.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
+        rigidBlock.init();
+
+        bender.formPath.clear();
+        bender.getSelection().reset();
+        data.setSkillState(SkillState.IDLE);
     }
 }

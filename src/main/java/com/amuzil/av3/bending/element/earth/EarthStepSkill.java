@@ -38,12 +38,12 @@ public class EarthStepSkill extends EarthSkill {
     public void start(Bender bender) {
         super.startRun();
         LivingEntity entity = bender.getEntity();
+        if (!canEarthBend(entity)) return; // Can't earth bend if too far from ground
 
         BendingForm.Type.Motion motion = bender.getStepDirection();
-        if (motion == BendingForm.Type.Motion.NONE)
+        if (motion == BendingForm.Type.Motion.NONE) {
             motion = BendingForm.Type.Motion.FORWARD;
-
-        if (!canEarthBend(entity)) return; // Can't earth bend if too far from ground
+        }
 
         int lifetime = skillData.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime();
         TimedTrait time = skillData.getTrait(Constants.RUNTIME, TimedTrait.class);

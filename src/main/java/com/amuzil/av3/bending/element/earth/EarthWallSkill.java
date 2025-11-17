@@ -7,8 +7,10 @@ import com.amuzil.av3.utils.Constants;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.traits.skilltraits.KnockbackTrait;
 import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
+import net.minecraft.world.entity.LivingEntity;
 
 import static com.amuzil.av3.bending.form.BendingForms.RAISE;
+import static com.amuzil.av3.utils.bending.SkillHelper.canEarthBend;
 
 
 public class EarthWallSkill extends EarthSkill {
@@ -25,6 +27,8 @@ public class EarthWallSkill extends EarthSkill {
 
     @Override
     public void start(Bender bender) {
+        LivingEntity entity = bender.getEntity();
+        if (!canEarthBend(entity)) return; // Can't earth bend if too far from ground
     }
 
     @Override
