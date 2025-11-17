@@ -60,17 +60,6 @@ public class EarthBlockSkill extends EarthSkill {
         rigidBlock.setDamageable(false);
         rigidBlock.setHittable(false);
 
-//        rigidBlock.addTraits(data.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
-//        rigidBlock.addTraits(new DirectionTrait(Constants.KNOCKBACK_DIRECTION, new Vec3(0, 0.45, 0)));
-//        rigidBlock.addModule(ModuleRegistry.create(SimpleKnockbackModule.id));
-//
-//        // Damage module
-//        rigidBlock.addTraits(data.getTrait(Constants.DAMAGE, DamageTrait.class));
-//        rigidBlock.addTraits(data.getTrait(Constants.SIZE, SizeTrait.class));
-//        rigidBlock.addModule(ModuleRegistry.create(SimpleDamageModule.id));
-//        rigidBlock.addTraits(new CollisionTrait(Constants.COLLISION_TYPE, "Blaze", "Fireball", "AbstractArrow", "FireProjectile"));
-//        projectile.addCollisionModule((ICollisionModule) ModuleRegistry.create(AirCollisionModule.id));
-
         rigidBlock.init();
 
         bender.formPath.clear();
