@@ -125,51 +125,51 @@ public class FireStrikeSkill extends FireSkill {
 
         // Test physics
 
-        MinecraftSpace space = MinecraftSpace.get(level);
-        // 4-5 clouds doing flamethrower shit
-        // 20 clouds doing flamethrower shit
-        // 20 * 200 * 20 = 800,000
-        // 20 * 50 * 20  = 200,000
-
-        if (space != null) {
-            ForceSystem fs = space.forceSystem();
-
-            // type is whatever you use for element (e.g. FIRE = 1, WATER = 2, etc.)
-            int type = 1; // example
-            int maxPoints = 2000;
-
-            ForceCloud cloud = fs.createCloud(type, maxPoints);
-            cloud.setLifetimeSeconds(3.0f);
-
-            // create some points
-            int count = 400000;
-            Vec3 origin = projectile.position();
-            Vec3 direction = entity.getLookAngle();
-            for (int i = 0; i < count; i++) {
-                // scatter a bit around origin
-                double rx = (level.random.nextDouble() - 0.5) * 0.5;
-                double ry = (level.random.nextDouble() - 0.5) * 0.5;
-                double rz = (level.random.nextDouble() - 0.5) * 0.5;
-
-                Vec3 pos = origin.add(rx, ry, rz);
-
-                // initial velocity roughly in 'direction'
-                Vec3 vel = direction.normalize().scale(0.3)
-                        .add((level.random.nextDouble() - 0.5) * 0.1,
-                                (level.random.nextDouble() - 0.5) * 0.1,
-                                (level.random.nextDouble() - 0.5) * 0.1);
-
-                Vec3 force = Vec3.ZERO; // start with no force, just velocity
-
-                ForcePoint p = new ForcePoint(type, pos, vel, force);
-                p.mass(1.0);    // if you have mass setters
-                p.damping(0.1); // mild drag
-//                if (level instanceof ServerLevel server && entity instanceof ServerPlayer)
-//                   server.sendParticles((ServerPlayer) entity, ParticleTypes.SMOKE, false, pos.x, pos.y, pos.z, 1, 0, 0, 0, 0.1f);
-
-                cloud.addPoints(p);
-            }
-        }
+//        MinecraftSpace space = MinecraftSpace.get(level);
+//        // 4-5 clouds doing flamethrower shit
+//        // 20 clouds doing flamethrower shit
+//        // 20 * 200 * 20 = 800,000
+//        // 20 * 50 * 20  = 200,000
+//
+//        if (space != null) {
+//            ForceSystem fs = space.forceSystem();
+//
+//            // type is whatever you use for element (e.g. FIRE = 1, WATER = 2, etc.)
+//            int type = 1; // example
+//            int maxPoints = 2000;
+//
+//            ForceCloud cloud = fs.createCloud(type, maxPoints);
+//            cloud.setLifetimeSeconds(3.0f);
+//
+//            // create some points
+//            int count = 400;
+//            Vec3 origin = projectile.position();
+//            Vec3 direction = entity.getLookAngle();
+//            for (int i = 0; i < count; i++) {
+//                // scatter a bit around origin
+//                double rx = (level.random.nextDouble() - 0.5) * 0.5;
+//                double ry = (level.random.nextDouble() - 0.5) * 0.5;
+//                double rz = (level.random.nextDouble() - 0.5) * 0.5;
+//
+//                Vec3 pos = origin.add(rx, ry, rz);
+//
+//                // initial velocity roughly in 'direction'
+//                Vec3 vel = direction.normalize().scale(0.3)
+//                        .add((level.random.nextDouble() - 0.5) * 0.1,
+//                                (level.random.nextDouble() - 0.5) * 0.1,
+//                                (level.random.nextDouble() - 0.5) * 0.1);
+//
+//                Vec3 force = Vec3.ZERO; // start with no force, just velocity
+//
+//                ForcePoint p = new ForcePoint(type, pos, vel, force);
+//                p.mass(1.0);    // if you have mass setters
+//                p.damping(0.1); // mild drag
+////                if (level instanceof ServerLevel server && entity instanceof ServerPlayer)
+////                   server.sendParticles((ServerPlayer) entity, ParticleTypes.SMOKE, false, pos.x, pos.y, pos.z, 1, 0, 0, 0, 0.1f);
+//
+//                cloud.addPoints(p);
+//            }
+//        }
 //        else {
 //            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
 //                Minecraft.getInstance().getSoundManager()

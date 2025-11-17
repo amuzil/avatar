@@ -1,5 +1,7 @@
 package com.amuzil.magus.physics.core;
 
+import com.amuzil.av3.entity.renderer.DCStitcher;
+import com.amuzil.av3.entity.renderer.Vertex;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
@@ -249,6 +251,48 @@ public class ForceGrid<T extends IPhysicsElement> {
         return b;
     }
 
+    NormalProvider<PhysicsElement> velNormal = pe -> {
+        Vec3 v = pe.vel(); // or whatever you call it
+        return new Vector3f((float) v.x, (float) v.y, (float) v.z);
+    };
+
+    /**
+     * Builds a CellVertexProvider that pulls from this grid's lazy bins.
+     * We only ever touch bins that actually exist.
+     */
+    public <E extends IPhysicsElement> DCStitcher.CellVertexProvider toDCProvider(NormalProvider<E> normalProvider) {
+        int Bx = this.binCountX;
+        int By = this.binCountY;
+        int Bz = this.binCountZ;
+
+        return (x, y, z) -> {
+            if (x < 0 || x >= Bx || y < 0 || y >= By || z < 0 || z >= Bz) return null;
+
+            int bi = computeLinearBinIndex(x, y, z);
+            List<T> bin = bins[bi];
+            if (bin == null || bin.isEmpty()) return null;
+
+            // Pick a surface element; if you prefer any element, drop the instanceof/surface() check.
+            for (T p : bin) {
+                if (p instanceof PhysicsElement pe && pe.surface()) {
+                    Vec3 wp = p.pos();
+                    @SuppressWarnings("unchecked")
+                    E elem = (E) p;
+                    Vector3f normal = normalProvider.normalFor(elem);
+                    if (normal.lengthSquared() == 0f) {
+                        normal.set(0, 1, 0); // fallback
+                    } else {
+                        normal.normalize();
+                    }
+                    return new Vertex(
+                            new Vector3f((float) wp.x, (float) wp.y, (float) wp.z),
+                            normal
+                    );
+                }
+            }
+            return null;
+        };
+    }
 
     public T surfaceElement(int cellX, int cellY, int cellZ) {
         int bi = computeLinearBinIndex(cellX, cellY, cellZ);
@@ -348,7 +392,6 @@ public class ForceGrid<T extends IPhysicsElement> {
         return null;
     }
 
-
     public @Nullable Vec3 queryCellCentroid(Vec3 pos) {
         List<T> cellPoints = queryCell(pos);
         if (cellPoints.isEmpty()) {
@@ -371,5 +414,10 @@ public class ForceGrid<T extends IPhysicsElement> {
         this.originX = x;
         this.originY = y;
         this.originZ = z;
+    }
+
+    // Choose how to compute "direction" per point.
+    public interface NormalProvider<T extends IPhysicsElement> {
+        Vector3f normalFor(T element);
     }
 }
