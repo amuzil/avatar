@@ -1,19 +1,16 @@
 package com.amuzil.av3.events;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.av3.bending.element.Elements;
 import com.amuzil.av3.data.capability.AvatarCapabilities;
 import com.amuzil.av3.data.capability.Bender;
+import com.amuzil.av3.entity.construct.PhysicsBenderEntity;
 import com.amuzil.magus.skill.event.SkillTickEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
-import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
@@ -47,6 +44,13 @@ public class ServerEvents {
     @SubscribeEvent
     public static void onPlayerLoginEvent(PlayerEvent.PlayerLoggedInEvent event) {
         Bender bender = AvatarCapabilities.syncBender(event.getEntity());
+        ServerPlayer player = (ServerPlayer) event.getEntity();
+
+        PhysicsBenderEntity physicsBenderEntity = new PhysicsBenderEntity(player.level());
+        physicsBenderEntity.setOwner(player);
+        player.level().addFreshEntity(physicsBenderEntity);
+        bender.physicsBenderEntity = physicsBenderEntity;
+
         if (bender == null) return;
         bender.register();
     }

@@ -4,13 +4,15 @@ import com.amuzil.av3.bending.BendingSelection;
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.bending.form.BendingForm;
 import com.amuzil.av3.data.attachment.BenderData;
-import com.amuzil.magus.form.FormActivatedEvent;
+import com.amuzil.av3.entity.construct.PhysicsBenderEntity;
 import com.amuzil.av3.network.AvatarNetwork;
 import com.amuzil.av3.network.packets.sync.SyncMovementPacket;
 import com.amuzil.av3.network.packets.sync.SyncSelectionPacket;
 import com.amuzil.av3.utils.bending.OriginalBlocks;
+import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.amuzil.magus.form.ActiveForm;
 import com.amuzil.magus.form.Form;
+import com.amuzil.magus.form.FormActivatedEvent;
 import com.amuzil.magus.registry.Registries;
 import com.amuzil.magus.skill.Skill;
 import com.amuzil.magus.skill.data.SkillCategoryData;
@@ -56,6 +58,7 @@ public class Bender implements IBender {
     private Skill skillToActivate = null;
     private final int SKILL_ACTIVATION_THRESHOLD = 10;
     private int skillActivationTimer = SKILL_ACTIVATION_THRESHOLD;
+    public PhysicsBenderEntity physicsBenderEntity;
 
     public Bender(LivingEntity entity) {
         this.entity = entity;
@@ -145,6 +148,8 @@ public class Bender implements IBender {
     }
 
     private void serverTick() {
+        if (physicsBenderEntity != null && physicsBenderEntity.getRigidBody() != null)
+            physicsBenderEntity.getRigidBody().setPhysicsLocation(Convert.toBullet(entity.position().add(0, 1, 0)));
         if (skillToActivate != null) {
             skillActivationTimer--;
             if (skillActivationTimer <= 0) {

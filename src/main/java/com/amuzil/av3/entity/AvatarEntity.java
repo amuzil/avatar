@@ -8,7 +8,6 @@ import com.amuzil.av3.entity.api.IEntityModule;
 import com.amuzil.av3.entity.api.IForceModule;
 import com.amuzil.av3.entity.api.IRenderModule;
 import com.amuzil.magus.skill.traits.DataTrait;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -21,11 +20,8 @@ import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.EventHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -89,20 +85,6 @@ public abstract class AvatarEntity extends Entity {
             modules.forEach(mod -> mod.tick(this));
             forceModules.forEach(mod -> mod.tick(this));
             collisionModules.forEach(mod -> mod.tick(this));
-        }
-        AABB expanded = getBoundingBox().inflate(-0.03, 0.1, -0.03);
-        List<Entity> colliders = level().getEntities(this, expanded, e -> true);
-        if (!colliders.isEmpty()) {
-            for (Entity possibleStandingMob : colliders) {
-                if (possibleStandingMob instanceof LivingEntity
-                        && possibleStandingMob.getY() >= getY() + getBbHeight() - 0.06) {
-                    Vec3 vel = getDeltaMovement().scale(0.833333333333);
-                    System.out.println("moving an entity by vel: " + possibleStandingMob.getType() + " : " + vel);
-                    possibleStandingMob.setDeltaMovement(
-                            possibleStandingMob.getDeltaMovement().add(vel)
-                    );
-                }
-            }
         }
     }
 
@@ -288,7 +270,7 @@ public abstract class AvatarEntity extends Entity {
         builder.define(ELEMENT, Elements.FIRE.getId().toString());
         builder.define(FX, "");
         builder.define(ONE_SHOT_FX, true);
-        builder.define(COLLIDABLE, true);
+        builder.define(COLLIDABLE, false);
         builder.define(DAMAGEABLE, false);
         builder.define(PHYSICS, false);
         builder.define(TIER, 0);
