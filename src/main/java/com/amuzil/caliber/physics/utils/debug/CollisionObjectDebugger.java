@@ -34,41 +34,92 @@ public final class CollisionObjectDebugger {
 
     public static void renderSpace(MinecraftSpace space, PoseStack stack, float tickDelta) {
         final var cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
-        final var builder = Tesselator.getInstance().begin(VertexFormat.Mode.DEBUG_LINES, DefaultVertexFormat.POSITION_COLOR);
 
+        // Start a batch of debug lines
+        final BufferBuilder builder = Tesselator.getInstance()
+                .begin(VertexFormat.Mode.DEBUG_LINES, DefaultVertexFormat.POSITION_COLOR);
+
+        // Let external debug handlers draw if they want
         NeoForge.EVENT_BUS.post(new DebugRenderEvent(space, builder, stack, cameraPos, tickDelta));
+
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
-        space.getTerrainMap().values().forEach(terrain -> CollisionObjectDebugger.renderBody(terrain, builder, stack, tickDelta));
-        space.getRigidBodiesByClass(ElementRigidBody.class).forEach(elementRigidBody -> CollisionObjectDebugger.renderBody(elementRigidBody, builder, stack, tickDelta));
-        builder.build();
+        // Our terrain + rigid bodies
+        space.getTerrainMap().values()
+                .forEach(terrain -> CollisionObjectDebugger.renderBody(terrain, builder, stack, tickDelta, cameraPos));
+        space.getRigidBodiesByClass(ElementRigidBody.class)
+                .forEach(elementRigidBody -> CollisionObjectDebugger.renderBody(elementRigidBody, builder, stack, tickDelta, cameraPos));
+
+        // Finalize and draw
+        MeshData meshData = null;
+        try {
+            meshData = builder.build();
+            if (meshData != null) {
+                BufferUploader.drawWithShader(meshData);
+            }
+        } finally {
+            if (meshData != null) {
+                meshData.close(); // release native data
+            }
+        }
     }
 
-    public static void renderBody(MinecraftRigidBody rigidBody, BufferBuilder builder, PoseStack stack, float tickDelta) {
-        final var position = rigidBody.isStatic() ? rigidBody.getPhysicsLocation(new Vector3f()) : ((ElementRigidBody) rigidBody).getFrame().getLocation(new Vector3f(), tickDelta);
-        final var rotation = rigidBody.isStatic() ? rigidBody.getPhysicsRotation(new Quaternion()) : ((ElementRigidBody) rigidBody).getFrame().getRotation(new Quaternion(), tickDelta);
-        renderShape(rigidBody.getMinecraftShape(), position, rotation, builder, stack, rigidBody.getOutlineColor(), 1.0f);
+    public static void renderBody(MinecraftRigidBody rigidBody,
+                                  BufferBuilder builder,
+                                  PoseStack stack,
+                                  float tickDelta,
+                                  net.minecraft.world.phys.Vec3 cameraPos) {
+        final Vector3f position = rigidBody.isStatic()
+                ? rigidBody.getPhysicsLocation(new Vector3f())
+                : ((ElementRigidBody) rigidBody).getFrame().getLocation(new Vector3f(), tickDelta);
+
+        final Quaternion rotation = rigidBody.isStatic()
+                ? rigidBody.getPhysicsRotation(new Quaternion())
+                : ((ElementRigidBody) rigidBody).getFrame().getRotation(new Quaternion(), tickDelta);
+
+        renderShape(rigidBody.getMinecraftShape(), position, rotation,
+                builder, stack, rigidBody.getOutlineColor(), 1.0f, cameraPos);
     }
 
-    public static void renderShape(MinecraftShape shape, Vector3f position, Quaternion rotation, BufferBuilder builder, PoseStack stack, Vector3f color, float alpha) {
+    public static void renderShape(MinecraftShape shape,
+                                   Vector3f position,
+                                   Quaternion rotation,
+                                   BufferBuilder builder,
+                                   PoseStack stack,
+                                   Vector3f color,
+                                   float alpha,
+                                   net.minecraft.world.phys.Vec3 cameraPos) {
         final var triangles = shape.getTriangles(Quaternion.IDENTITY);
-        final var cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+
+        // Here we assume PoseStack is NOT already camera-relative,
+        // so we convert world position into camera space ourselves.
+        stack.pushPose();
+        stack.translate(
+                position.x - (float) cameraPos.x,
+                position.y - (float) cameraPos.y,
+                position.z - (float) cameraPos.z
+        );
+        stack.mulPose(Convert.toMinecraft(rotation));
+
+        final var pose = stack.last().pose();
 
         for (var triangle : triangles) {
             final var vertices = triangle.getVertices();
-
-            stack.pushPose();
-            stack.translate(position.x - cameraPos.x, position.y - cameraPos.y, position.z - cameraPos.z);
-            stack.mulPose(Convert.toMinecraft(rotation));
             final var p1 = vertices[0];
             final var p2 = vertices[1];
             final var p3 = vertices[2];
 
-            builder.addVertex(stack.last().pose(), p1.x, p1.y, p1.z).setColor(color.x, color.y, color.z, alpha);
-            builder.addVertex(stack.last().pose(), p2.x, p2.y, p2.z).setColor(color.x, color.y, color.z, alpha);
-            builder.addVertex(stack.last().pose(), p3.x, p3.y, p3.z).setColor(color.x, color.y, color.z, alpha);
-            builder.addVertex(stack.last().pose(), p1.x, p1.y, p1.z).setColor(color.x, color.y, color.z, alpha);
-            stack.popPose();
+            // Draw triangle edges as lines
+            builder.addVertex(pose, p1.x, p1.y, p1.z).setColor(color.x, color.y, color.z, alpha);
+            builder.addVertex(pose, p2.x, p2.y, p2.z).setColor(color.x, color.y, color.z, alpha);
+
+            builder.addVertex(pose, p2.x, p2.y, p2.z).setColor(color.x, color.y, color.z, alpha);
+            builder.addVertex(pose, p3.x, p3.y, p3.z).setColor(color.x, color.y, color.z, alpha);
+
+            builder.addVertex(pose, p3.x, p3.y, p3.z).setColor(color.x, color.y, color.z, alpha);
+            builder.addVertex(pose, p1.x, p1.y, p1.z).setColor(color.x, color.y, color.z, alpha);
         }
+
+        stack.popPose();
     }
 }
