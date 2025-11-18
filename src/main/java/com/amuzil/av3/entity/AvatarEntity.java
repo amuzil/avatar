@@ -51,18 +51,9 @@ public abstract class AvatarEntity extends Entity {
     private final List<IRenderModule> renderModules = new ArrayList<>();
     private final List<DataTrait> traits = new LinkedList<>();
     private Entity owner;
-    private Element element;
-    private String fxName;
-    private boolean fxOneShot = true;
-    private boolean damageable = false;
 
-    // Data Sync for Owner
-    // Data Sync for Element
-    // Data Sync for Behaviour
-    // Data Sync for each trait
-
-    public AvatarEntity(EntityType<?> entityType, Level pLevel) {
-        super(entityType, pLevel);
+    public AvatarEntity(EntityType<?> entityType, Level level) {
+        super(entityType, level);
     }
 
     /** Call this after adding it to a world.
@@ -224,7 +215,6 @@ public abstract class AvatarEntity extends Entity {
 
     public void setElement(Element element) {
         this.entityData.set(ELEMENT, element.getId().toString());
-        this.element = Elements.get(ResourceLocation.parse(this.entityData.get(ELEMENT))); // Doesn't live to see the next tick
     }
 
     public Element element() {
@@ -233,7 +223,6 @@ public abstract class AvatarEntity extends Entity {
 
     public void setFX(String fxName) {
         this.entityData.set(FX, fxName);
-        this.fxName = this.entityData.get(FX); // Doesn't live to see the next tick
     }
 
     public String fxName() {
@@ -249,7 +238,6 @@ public abstract class AvatarEntity extends Entity {
 
     public void setFXOneShot(boolean fxOneShot) {
         this.entityData.set(ONE_SHOT_FX, fxOneShot);
-        this.fxOneShot = this.entityData.get(ONE_SHOT_FX); // Doesn't live to see the next tick
     }
 
     public boolean oneShotFX() {
@@ -299,7 +287,7 @@ public abstract class AvatarEntity extends Entity {
      */
     @Override
     public boolean isPushable() {
-        return entityData.get(COLLIDABLE);
+        return false;
     }
 
     @Override
@@ -340,7 +328,7 @@ public abstract class AvatarEntity extends Entity {
         entityData.set(DAMAGEABLE, damageable);
     }
 
-    public void setHittable(boolean hittable) {
-        entityData.set(COLLIDABLE, hittable);
+    public void setCollidable(boolean collidable) {
+        entityData.set(COLLIDABLE, collidable);
     }
 }
