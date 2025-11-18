@@ -52,6 +52,7 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
     @Nullable
     private Entity cachedOwner;
     private boolean hasBeenShot;
+    public ForceCloud cloud;
 
     public AvatarProjectile(EntityType<? extends AvatarProjectile> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -127,7 +128,37 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
         this.setXRot(owner().getXRot());
         this.setYRot(owner().getYRot());
 
+        int count = 64;
+        ForceCloud cloud = new ForceCloud(0, count, "projectile_cloud", location, vec3, Vec3.ZERO, getUUID(), null);
+        cloud.setLifetimeSeconds(12.0f);
+//
+        for (int i = 0; i < count; i++) {
+            // scatter a bit around origin
+            double rx = (level().random.nextDouble() - 0.5) * 0.75;
+            double ry = (level().random.nextDouble() - 0.5) * 0.75;
+            double rz = (level().random.nextDouble() - 0.5) * 0.75;
+
+            Vec3 pos = location.add(rx, ry, rz);
+
+            // initial velocity roughly in 'direction'
+//                                  .add((float) ((level().random.nextDouble() - 0.5) * 0.1),
+//                                        (float) ((level().random.nextDouble() - 0.5) * 0.1),
+//                                        (float) ((level().random.nextDouble() - 0.5) * 0.1));
+
+            Vec3 force = Vec3.ZERO; // start with no force, just velocity
+
+            ForcePoint p = new ForcePoint(0, pos, Vec3.ZERO, force);
+            p.mass(1.0);    // if you have mass setters
+            p.damping(0.1); // mild drag
+//                if (level instanceof ServerLevel server && entity instanceof ServerPlayer)
+//                   server.sendParticles((ServerPlayer) entity, ParticleTypes.SMOKE, false, pos.x, pos.y, pos.z, 1, 0, 0, 0, 0.1f);
+
+            cloud.addPoints(p);
+        }
+
     }
+
+
 
     @Override
     public @NotNull ItemStack getItem() {
@@ -209,7 +240,7 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
             this.hasBeenShot = true;
 
 
-            MinecraftSpace space = MinecraftSpace.get(level());
+//            MinecraftSpace space = MinecraftSpace.get(level());
             // 4-5 clouds doing flamethrower shit
             // 20 clouds doing flamethrower shit
             // 20 * 200 * 20 = 800,000
@@ -217,53 +248,61 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
 
             Vec3 motion = getDeltaMovement().scale(2);
 
-            if (space != null) {
-                ForceSystem fs = space.forceSystem();
-
-                // type is whatever you use for element (e.g. FIRE = 1, WATER = 2, etc.)
-                int type = 1; // example
-                int maxPoints = 64;
-
-                // create some points
-                int count = 64;
-                Vec3 origin = position();
-
-                Random rand = new Random();
-                Vector3f vel = this.getMotionDirection().step().normalize();
-
-                for (int j = 0; j < 1; j++) {
-                    ForceCloud cloud = fs.createCloud(type, maxPoints, "test", owner() == null ? this : owner(), position(), Vec3.ZERO, Vec3.ZERO);
-                    cloud.setLifetimeSeconds(6.0f);
+//            if (space != null) {
+//                ForceSystem fs = space.forceSystem();
 //
-                    for (int i = 0; i < count; i++) {
-                        // scatter a bit around origin
-                        double rx = (level().random.nextDouble() - 0.5) * 0.75;
-                        double ry = (level().random.nextDouble() - 0.5) * 0.75;
-                        double rz = (level().random.nextDouble() - 0.5) * 0.75;
+//                // type is whatever you use for element (e.g. FIRE = 1, WATER = 2, etc.)
+//                int type = 1; // example
+//                int maxPoints = 64;
+//
+//                // create some points
+//                int count = 64;
+//                Vec3 origin = position();
+//
+//                Random rand = new Random();
+//                Vector3f vel = this.getMotionDirection().step().normalize();
+//
+//                for (int j = 0; j < 1; j++) {
+//                    ForceCloud cloud = fs.createCloud(type, maxPoints, "test", owner() == null ? this : owner(), position(), Vec3.ZERO, Vec3.ZERO);
+//                    cloud.setLifetimeSeconds(6.0f);
+////
+//                    for (int i = 0; i < count; i++) {
+//                        // scatter a bit around origin
+//                        double rx = (level().random.nextDouble() - 0.5) * 0.75;
+//                        double ry = (level().random.nextDouble() - 0.5) * 0.75;
+//                        double rz = (level().random.nextDouble() - 0.5) * 0.75;
+//
+//                        Vec3 pos = origin.add(rx * 2, ry, rz);
+//
+//                        // initial velocity roughly in 'direction'
+////                                  .add((float) ((level().random.nextDouble() - 0.5) * 0.1),
+////                                        (float) ((level().random.nextDouble() - 0.5) * 0.1),
+////                                        (float) ((level().random.nextDouble() - 0.5) * 0.1));
+//
+//                        Vec3 force = Vec3.ZERO; // start with no force, just velocity
+//
+//                        ForcePoint p = new ForcePoint(type, pos, Vec3.ZERO, force);
+//                        p.mass(1.0);    // if you have mass setters
+//                        p.damping(0.1); // mild drag
+////                if (level instanceof ServerLevel server && entity instanceof ServerPlayer)
+////                   server.sendParticles((ServerPlayer) entity, ParticleTypes.SMOKE, false, pos.x, pos.y, pos.z, 1, 0, 0, 0, 0.1f);
+//
+//                        cloud.addPoints(p);
+//                    }
+//
+//                    if (!level().isClientSide) {
+//                        space.forceSystem().spawnCloud(cloud, owner() == null ? this : owner());
+//                    }
+//                }
+//            }
+        }
 
-                        Vec3 pos = origin.add(rx * 2, ry, rz);
+        if (cloud != null) {
+            cloud.tick(1 / 20f);
+            cloud.rebuildSpatialGrid();
 
-                        // initial velocity roughly in 'direction'
-//                                  .add((float) ((level().random.nextDouble() - 0.5) * 0.1),
-//                                        (float) ((level().random.nextDouble() - 0.5) * 0.1),
-//                                        (float) ((level().random.nextDouble() - 0.5) * 0.1));
-
-                        Vec3 force = Vec3.ZERO; // start with no force, just velocity
-
-                        ForcePoint p = new ForcePoint(type, pos, Vec3.ZERO, force);
-                        p.mass(1.0);    // if you have mass setters
-                        p.damping(0.1); // mild drag
-//                if (level instanceof ServerLevel server && entity instanceof ServerPlayer)
-//                   server.sendParticles((ServerPlayer) entity, ParticleTypes.SMOKE, false, pos.x, pos.y, pos.z, 1, 0, 0, 0, 0.1f);
-
-                        cloud.addPoints(p);
-                    }
-
-                    if (!level().isClientSide) {
-                        space.forceSystem().spawnCloud(cloud, owner() == null ? this : owner());
-                    }
-                }
-            }
+            if (cloud.isDead())
+                cloud = null;
         }
 
         if (!this.leftOwner) {
@@ -306,6 +345,10 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
         this.setXRot((float) (Mth.atan2(vec3.y, d0) * (double) (180F / (float) Math.PI)));
         this.yRotO = this.getYRot();
         this.xRotO = this.getXRot();
+
+
+
+
     }
 
     public void shootFromRotation(Entity pShooter, float pX, float pY, float pZ, float pVelocity, float pInaccuracy) {
@@ -330,6 +373,13 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
         }
         if (!this.level().isClientSide)
             this.level().broadcastEntityEvent(this, (byte) 3);
+
+    }
+
+    @Override
+    public void kill() {
+        super.kill();
+        cloud = null;
     }
 
     /**

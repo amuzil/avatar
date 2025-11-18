@@ -7,16 +7,16 @@ import java.util.List;
 
 /**
  * SurfaceNets-style stitching for Dual Contouring vertices.
- *
+ * <p>
  * Inputs:
- *  - dims: grid resolution (cells) along X,Y,Z
- *  - provider: per-cell vertex (or null) for DC vertex
- *  - emitTrianglesIfThree: if a face has exactly 3 valid cells, emit one triangle
- *
+ * - dims: grid resolution (cells) along X,Y,Z
+ * - provider: per-cell vertex (or null) for DC vertex
+ * - emitTrianglesIfThree: if a face has exactly 3 valid cells, emit one triangle
+ * <p>
  * Output:
- *  - vertices: packed list of unique vertices actually used
- *  - quads:    quad index buffer (faces with 4 valid corners)
- *  - tris:     triangle index buffer (only when emitTrianglesIfThree && exactly 3 corners)
+ * - vertices: packed list of unique vertices actually used
+ * - quads:    quad index buffer (faces with 4 valid corners)
+ * - tris:     triangle index buffer (only when emitTrianglesIfThree && exactly 3 corners)
  */
 public final class DCStitcher {
 
@@ -40,7 +40,7 @@ public final class DCStitcher {
             for (int y = 0; y < ny; y++) {
                 int base = z * sz + y * sy;
                 for (int x = 0; x < nx; x++) {
-                    int i = base + x    * sx;
+                    int i = base + x * sx;
                     Vertex v = provider.cellVertex(x, y, z);
                     if (v != null) {
                         gridToV[i] = mesh.vertices.size();
@@ -105,7 +105,7 @@ public final class DCStitcher {
             mesh.quads.add(new int[]{v0, v1, v2, v3});
         } else if (allowTriIfThree && valid == 3) {
             // Optional: still emit triangle for the 3-corner case
-            if (v0 < 0)      mesh.tris.add(new int[]{v1, v2, v3});
+            if (v0 < 0) mesh.tris.add(new int[]{v1, v2, v3});
             else if (v1 < 0) mesh.tris.add(new int[]{v2, v3, v0});
             else if (v2 < 0) mesh.tris.add(new int[]{v3, v0, v1});
             else /* v3 < 0 */mesh.tris.add(new int[]{v0, v1, v2});
@@ -129,6 +129,6 @@ public final class DCStitcher {
         // primary: quads
         public final List<int[]> quads = new ArrayList<>(); // each int[4]
         // optional: triangles from 3-corner faces if you want to use them
-        public final List<int[]> tris  = new ArrayList<>(); // each int[3]
+        public final List<int[]> tris = new ArrayList<>(); // each int[3]
     }
 }

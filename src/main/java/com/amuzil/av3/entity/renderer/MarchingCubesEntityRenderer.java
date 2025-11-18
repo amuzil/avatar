@@ -3,6 +3,7 @@ package com.amuzil.av3.entity.renderer;
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.IHasSDF;
+import com.amuzil.av3.entity.projectile.AvatarProjectile;
 import com.amuzil.av3.entity.renderer.sdf.SignedDistanceFunction;
 import com.amuzil.carryon.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.magus.physics.core.*;
@@ -197,11 +198,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
 //        pose.popPose();
 
 //
-        MinecraftSpace space = MinecraftSpace.get(entity.level());
-        if (space == null) return;
 
-        ForceSystem fs = space.forceSystem();
-        if (fs == null) return;
 
 //        fs.clouds().clear();
 //        pose.pushPose();
@@ -217,7 +214,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
         double cy = camPos.y;
         double cz = camPos.z;
 
-        pose.translate(-cx, -cy, -cz);
+//        pose.translate(-cx, -cy, -cz);
         // 3. Undo the entity translation so pose is back in camera space
 //        pose.translate(cx - ex, cy - ey, cz - ez);
 //
@@ -227,77 +224,90 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
 ////        fs.clouds().clear();
 ////        System.out.println("Remder tick.");
 //
-        for (ForceCloud cloud : fs.clouds()) {
-//            last = pose.last();
-//
-//            if (cloud == null || cloud.isDead()) {
-//                continue;
-//            }
-//            ForceGrid<ForcePoint> grid = cloud.grid();
-//            int nx = grid.binX();
-//            int ny = grid.binY();
-//            int nz = grid.binZ();
-//
-//            DCStitcher.CellVertexProvider provider =
-//                    grid.toDCProvider((PhysicsElement pe) -> {
-//                        Vec3 v = pe.vel(); // or your "direction"
-//                        return new Vector3f((float) v.x, (float) v.y + 1, (float) v.z);
-//                    });
-//
-//            DCStitcher.Mesh mesh = DCStitcher.build(nx, ny, nz, provider, true);
-//            if (mesh.quads.isEmpty()) continue;
-//
-//
-//            for (int[] quad : mesh.quads) {
-//                Vertex v1 = mesh.vertices.get(quad[0]);
-//                Vertex v2 = mesh.vertices.get(quad[1]);
-//                Vertex v3 = mesh.vertices.get(quad[2]);
-//                Vertex v4 = mesh.vertices.get(quad[3]);
-//
-//
-//                Vector3f p1 = v1.position;
-//                Vector3f p2 = v2.position;
-//                Vector3f p3 = v3.position;
-//                Vector3f p4 = v4.position;
-//
-//                Vector3f na = v1.normal;
-//                Vector3f nb = v2.normal;
-//                Vector3f nc = v3.normal;
-//                Vector3f nd = v4.normal;
-//
-//                float[] uv0 = uvPlanar(p1, na, 2f);
-//                float[] uv1 = uvPlanar(p2, nb, 2f);
-//                float[] uv2 = uvPlanar(p3, nc, 2f);
-//                float[] uv3 = uvPlanar(p4, nd, 2f);
-//
-//                vc.addVertex(last.pose(), p1.x, p1.y, p1.z)
-//                        .setColor(255, 255, 255, 255)
-//                        .setUv(uv0[0], uv0[1])
-//                        .setOverlay(OverlayTexture.NO_OVERLAY)
-//                        .setLight(packedLight)
-//                        .setNormal(last, na.x, na.y, na.z);
-//
-//                vc.addVertex(last.pose(), p2.x, p2.y, p2.z)
-//                        .setColor(255, 255, 255, 255)
-//                        .setUv(uv1[0], uv1[1])
-//                        .setOverlay(OverlayTexture.NO_OVERLAY)
-//                        .setLight(packedLight)
-//                        .setNormal(last, nb.x, nb.y, nb.z);
-//
-//                vc.addVertex(last.pose(), p3.x, p3.y, p3.z)
-//                        .setColor(255, 255, 255, 255)
-//                        .setUv(uv2[0], uv2[1])
-//                        .setOverlay(OverlayTexture.NO_OVERLAY)
-//                        .setLight(packedLight)
-//                        .setNormal(last, nc.x, nc.y, nc.z);
-//
-//                vc.addVertex(last.pose(), p4.x, p4.y, p4.z)
-//                        .setColor(255, 255, 255, 255)
-//                        .setUv(uv3[0], uv3[1])
-//                        .setOverlay(OverlayTexture.NO_OVERLAY)
-//                        .setLight(packedLight)
-//                        .setNormal(last, nd.x, nd.y, nd.z);
-//            }
+        if (!(entity instanceof AvatarProjectile)) {
+            pose.popPose();
+            return;
+        }
+        ForceCloud cloud = ((AvatarProjectile) entity).cloud;
+        if (cloud == null) {
+
+            pose.popPose();
+            return;
+        }
+
+        last = pose.last();
+
+        if (cloud.isDead()) {
+            pose.popPose();
+            return;
+        }
+        ForceGrid<ForcePoint> grid = cloud.grid();
+        int nx = grid.binX();
+        int ny = grid.binY();
+        int nz = grid.binZ();
+
+        DCStitcher.CellVertexProvider provider =
+                grid.toDCProvider((PhysicsElement pe) -> {
+                    Vec3 v = pe.vel(); // or your "direction"
+                    return new Vector3f((float) v.x, (float) v.y + 1, (float) v.z);
+                });
+
+        DCStitcher.Mesh mesh = DCStitcher.build(nx, ny, nz, provider, true);
+        if (mesh.quads.isEmpty()) {
+            pose.popPose();
+            return;
+        }
+
+
+        for (int[] quad : mesh.quads) {
+            Vertex v1 = mesh.vertices.get(quad[0]);
+            Vertex v2 = mesh.vertices.get(quad[1]);
+            Vertex v3 = mesh.vertices.get(quad[2]);
+            Vertex v4 = mesh.vertices.get(quad[3]);
+
+
+            Vector3f p1 = v1.position;
+            Vector3f p2 = v2.position;
+            Vector3f p3 = v3.position;
+            Vector3f p4 = v4.position;
+
+            Vector3f na = v1.normal;
+            Vector3f nb = v2.normal;
+            Vector3f nc = v3.normal;
+            Vector3f nd = v4.normal;
+
+            float[] uv0 = uvPlanar(p1, na, 2f);
+            float[] uv1 = uvPlanar(p2, nb, 2f);
+            float[] uv2 = uvPlanar(p3, nc, 2f);
+            float[] uv3 = uvPlanar(p4, nd, 2f);
+
+            vc.addVertex(last.pose(), p1.x, p1.y, p1.z)
+                    .setColor(255, 255, 255, 255)
+                    .setUv(uv0[0], uv0[1])
+                    .setOverlay(OverlayTexture.NO_OVERLAY)
+                    .setLight(packedLight)
+                    .setNormal(last, na.x, na.y, na.z);
+
+            vc.addVertex(last.pose(), p2.x, p2.y, p2.z)
+                    .setColor(255, 255, 255, 255)
+                    .setUv(uv1[0], uv1[1])
+                    .setOverlay(OverlayTexture.NO_OVERLAY)
+                    .setLight(packedLight)
+                    .setNormal(last, nb.x, nb.y, nb.z);
+
+            vc.addVertex(last.pose(), p3.x, p3.y, p3.z)
+                    .setColor(255, 255, 255, 255)
+                    .setUv(uv2[0], uv2[1])
+                    .setOverlay(OverlayTexture.NO_OVERLAY)
+                    .setLight(packedLight)
+                    .setNormal(last, nc.x, nc.y, nc.z);
+
+            vc.addVertex(last.pose(), p4.x, p4.y, p4.z)
+                    .setColor(255, 255, 255, 255)
+                    .setUv(uv3[0], uv3[1])
+                    .setOverlay(OverlayTexture.NO_OVERLAY)
+                    .setLight(packedLight)
+                    .setNormal(last, nd.x, nd.y, nd.z);
         }
         pose.popPose();
 
