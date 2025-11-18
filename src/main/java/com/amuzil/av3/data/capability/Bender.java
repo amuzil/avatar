@@ -58,7 +58,6 @@ public class Bender implements IBender {
     private Skill skillToActivate = null;
     private final int SKILL_ACTIVATION_THRESHOLD = 10;
     private int skillActivationTimer = SKILL_ACTIVATION_THRESHOLD;
-    public PhysicsBenderEntity physicsBenderEntity;
 
     public Bender(LivingEntity entity) {
         this.entity = entity;
@@ -74,7 +73,7 @@ public class Bender implements IBender {
     @Override
     public String toString() {
         return String.format("Bender[ %s | activeElement=%s ]",
-                entity.getName() , getElement().name());
+                entity.getName().getString() , getElement().name());
     }
 
     public void tick() {
@@ -148,8 +147,6 @@ public class Bender implements IBender {
     }
 
     private void serverTick() {
-        if (physicsBenderEntity != null && physicsBenderEntity.getRigidBody() != null)
-            physicsBenderEntity.getRigidBody().setPhysicsLocation(Convert.toBullet(entity.position().add(0, 1, 0)));
         if (skillToActivate != null) {
             skillActivationTimer--;
             if (skillActivationTimer <= 0) {
