@@ -22,7 +22,6 @@ public class EntityCollisionGenerator {
             final var vanillaBox = rigidBody.getCurrentMinecraftBoundingBox();
 
             for (var entity: space.getWorkerThread().getEntitySupplier().getInsideOf(rigidBody, vanillaBox)) {
-
                 AABB entityAABB = entity.getBoundingBox();
 
                 if (entityAABB.intersects(vanillaBox)) {
