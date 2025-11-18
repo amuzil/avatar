@@ -30,17 +30,17 @@ public class ServerEvents {
 //        }
 //    }
 
-    @SubscribeEvent
-    public static void onEntityLeaveLevel(EntityLeaveLevelEvent event) {
-        if (!(event.getEntity() instanceof Player)) return; // Ignore non-player entities
-
-        if (event.getEntity() instanceof ServerPlayer player) {
-            Bender bender = AvatarCapabilities.getOrCreateBender(player);
-            AvatarCapabilities.removeCachedBender(player);
-            if (bender == null) return;
-            bender.unregister();
-        }
-    }
+//    @SubscribeEvent
+//    public static void onEntityLeaveLevel(EntityLeaveLevelEvent event) {
+//        if (!(event.getEntity() instanceof Player)) return; // Ignore non-player entities
+//
+//        if (event.getEntity() instanceof ServerPlayer player) {
+//            Bender bender = AvatarCapabilities.getOrCreateBender(player);
+//            AvatarCapabilities.removeCachedBender(player);
+//            if (bender == null) return;
+//            bender.unregister();
+//        }
+//    }
 
     @SubscribeEvent
     public static void onPlayerLoginEvent(PlayerEvent.PlayerLoggedInEvent event) {

@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static com.amuzil.av3.bending.form.BendingForms.BLOCK;
 import static com.amuzil.av3.utils.bending.SkillHelper.canEarthBend;
+import static com.amuzil.av3.utils.bending.SkillHelper.getRightPivot;
 
 
 public class EarthBlockSkill extends EarthSkill {
@@ -49,7 +50,7 @@ public class EarthBlockSkill extends EarthSkill {
         rigidBlock.setElement(element());
         rigidBlock.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
         rigidBlock.setBlockState(blockState);
-        rigidBlock.setPos(entity.position().add(0, entity.getEyeHeight(), 0));
+        rigidBlock.setPos(getRightPivot(entity, 1.0f));
         rigidBlock.getRigidBody().setMass(0f);
         rigidBlock.getRigidBody().setKinematic(true);
         rigidBlock.setOwner(entity);

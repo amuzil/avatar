@@ -20,6 +20,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
+import static com.amuzil.av3.utils.bending.SkillHelper.getRightPivot;
+
 
 public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsElement {
 
@@ -43,6 +45,13 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
     }
 
     @Override
+    public void setOwner(@NotNull Entity owner) {
+        super.setOwner(owner);
+        if (owner instanceof Player)
+            this.rigidBody.prioritize((Player) owner);
+    }
+
+    @Override
     public void shoot(Vec3 location, Vec3 direction, double speed, double inAccuracy) {
         setPos(location);
         Vec3 vec3 = direction.normalize().scale(300);
@@ -55,14 +64,10 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
         if (owner == null) return;
 
         // Calculate right pivot position
-        Vec3 eyePos = owner.getEyePosition();
         Vec3 look = owner.getLookAngle().normalize();
         Vec3 up = new Vec3(0, 1, 0);
         Vec3 right = look.cross(up).normalize(); // cross product gives right vector
-        double sideOffset = 0.8;  // how far to the right
-        Vec3 newPos = eyePos
-                .add(right.scale(sideOffset))
-                .add(look.scale(scale+0.5));
+        Vec3 newPos = getRightPivot(owner, scale);
 
         // Calculate rotation to match owner's look direction
         Matrix3f mat = new Matrix3f();

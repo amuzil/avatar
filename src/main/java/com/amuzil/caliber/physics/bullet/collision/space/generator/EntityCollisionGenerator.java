@@ -23,11 +23,10 @@ public class EntityCollisionGenerator {
 
             for (var entity: space.getWorkerThread().getEntitySupplier().getInsideOf(rigidBody, vanillaBox)) {
 
-                AABB boxA = entity.getBoundingBox();
-                AABB boxB = vanillaBox; // your rigidBody box
+                AABB entityAABB = entity.getBoundingBox();
 
-                if (boxA.intersects(boxB)) {
-                    Vector3f mtv = computeMTV(boxA, boxB);
+                if (entityAABB.intersects(vanillaBox)) {
+                    Vector3f mtv = computeMTV(entityAABB, vanillaBox);
 
                     // Move ENTITY out of physics block
                     Vec3 newPos = entity.position().add(mtv.x, mtv.y, mtv.z);
