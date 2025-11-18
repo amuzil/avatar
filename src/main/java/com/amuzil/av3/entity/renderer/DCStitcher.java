@@ -40,7 +40,7 @@ public final class DCStitcher {
             for (int y = 0; y < ny; y++) {
                 int base = z * sz + y * sy;
                 for (int x = 0; x < nx; x++) {
-                    int i = base + x * sx;
+                    int i = base + x    * sx;
                     Vertex v = provider.cellVertex(x, y, z);
                     if (v != null) {
                         gridToV[i] = mesh.vertices.size();

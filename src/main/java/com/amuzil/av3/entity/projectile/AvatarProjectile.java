@@ -196,8 +196,8 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
 
     @Override
     public Vec3 getDeltaMovement() {
-//        return Vec3.ZERO;
-        return super.getDeltaMovement();
+        return Vec3.ZERO;
+//        return super.getDeltaMovement();
     }
 
     /**
@@ -241,7 +241,7 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
                         double ry = (level().random.nextDouble() - 0.5) * 0.75;
                         double rz = (level().random.nextDouble() - 0.5) * 0.75;
 
-                        Vec3 pos = origin.add(rx, ry, rz);
+                        Vec3 pos = origin.add(rx * 2, ry, rz);
 
                         // initial velocity roughly in 'direction'
 //                                  .add((float) ((level().random.nextDouble() - 0.5) * 0.1),
