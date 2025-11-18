@@ -16,6 +16,8 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 
 import java.util.HashMap;
 
+import static com.amuzil.av3.data.capability.AvatarCapabilities.getOrCreateBender;
+
 
 @EventBusSubscriber(modid = Avatar.MOD_ID, value = Dist.CLIENT)
 public class KeyBindings {
@@ -100,8 +102,8 @@ public class KeyBindings {
             if (Minecraft.getInstance().screen != null) return; // Ignore input when in GUI
             if (key.getKey() == toggleBendingKey.getKey().getValue()
                 && key.getAction() == InputConstants.RELEASE) {
-                Bender bender = Bender.getBender(Minecraft.getInstance().player);
-                if(bender.getElement() == null)
+                Bender bender = getOrCreateBender(Minecraft.getInstance().player);
+                if (bender.getElement() == null)
                     Minecraft.getInstance().setScreen(new ElementSelectScreen());
                 else
                     Avatar.inputModule.toggleListeners();

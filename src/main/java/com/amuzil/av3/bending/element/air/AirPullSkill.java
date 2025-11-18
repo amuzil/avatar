@@ -62,7 +62,6 @@ public class AirPullSkill extends AirSkill {
         projectile.setHeight((float) size);
         projectile.setNoGravity(true);
         projectile.setDamageable(false);
-        projectile.setHittable(true);
 
         projectile.addTraits(data.getTrait(Constants.MAX_SIZE, SizeTrait.class));
 

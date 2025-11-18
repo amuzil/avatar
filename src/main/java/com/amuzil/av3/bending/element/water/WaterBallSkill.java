@@ -58,7 +58,6 @@ public class WaterBallSkill extends WaterSkill {
         projectile.setHeight((float) size);
         projectile.setNoGravity(true);
         projectile.setDamageable(false);
-        projectile.setHittable(true);
 
         projectile.addTraits(skillData.getTrait(Constants.ANGLE, AngleTrait.class));
         projectile.addTraits(skillData.getTrait(Constants.SPEED, SpeedTrait.class));

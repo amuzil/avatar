@@ -67,7 +67,6 @@ public class FlameStreamSkill extends FireSkill {
         projectile.setHeight((float) size);
         projectile.setNoGravity(true);
         projectile.setDamageable(false);
-        projectile.setHittable(true);
 
         projectile.addTraits(skillData.getTrait(Constants.MAX_SIZE, SizeTrait.class));
 
@@ -134,7 +133,6 @@ public class FlameStreamSkill extends FireSkill {
         projectile.setHeight((float) size);
         projectile.setNoGravity(true);
         projectile.setDamageable(false);
-        projectile.setHittable(true);
 
         projectile.addTraits(skillData.getTrait(Constants.MAX_SIZE, SizeTrait.class));
 

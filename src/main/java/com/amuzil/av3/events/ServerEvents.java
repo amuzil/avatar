@@ -10,6 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
@@ -29,17 +30,17 @@ public class ServerEvents {
 //        }
 //    }
 
-//    @SubscribeEvent
-//    public static void onEntityLeaveLevel(EntityLeaveLevelEvent event) {
-//        if (!(event.getEntity() instanceof Player)) return; // Ignore non-player entities
-//
-//        if (event.getEntity() instanceof ServerPlayer player) {
-//            Bender bender = AvatarCapabilities.getOrCreateBender(player);
-//            AvatarCapabilities.removeCachedBender(player);
-//            if (bender == null) return;
-//            bender.unregister();
-//        }
-//    }
+    @SubscribeEvent
+    public static void onEntityLeaveLevel(EntityLeaveLevelEvent event) {
+        if (!(event.getEntity() instanceof Player)) return; // Ignore non-player entities
+
+        if (event.getEntity() instanceof ServerPlayer player) {
+            Bender bender = AvatarCapabilities.getOrCreateBender(player);
+            AvatarCapabilities.removeCachedBender(player);
+            if (bender == null) return;
+            bender.unregister();
+        }
+    }
 
     @SubscribeEvent
     public static void onPlayerLoginEvent(PlayerEvent.PlayerLoggedInEvent event) {
@@ -56,6 +57,7 @@ public class ServerEvents {
     @SubscribeEvent
     public static void onPlayerLoggedOutEvent(PlayerEvent.PlayerLoggedOutEvent event) {
         Bender bender = AvatarCapabilities.removeCachedBender(event.getEntity());
+        if (bender == null) return;
         bender.unregister();
     }
 

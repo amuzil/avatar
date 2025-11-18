@@ -48,7 +48,7 @@ public class ElementSelectScreen extends Screen {
     private Element selectedElement;
 
     public ElementSelectScreen() {
-        super(Component.translatable("screen." + Avatar.MOD_ID + ".element_select"));
+        super(Component.translatable("screen.av3.element_select"));
     }
 
     @Override
@@ -107,8 +107,6 @@ public class ElementSelectScreen extends Screen {
 
     private void onElementClicked(Element element) {
         this.selectedElement = element;
-
-        System.out.println("Selected element: " + element);
 
         Minecraft.getInstance().setScreen(null);
         AvatarNetwork.sendToServer(new ChooseElementPacket(Minecraft.getInstance().player.getUUID(), element.getId().toString()));

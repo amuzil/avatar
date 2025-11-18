@@ -281,12 +281,10 @@ public abstract class AvatarEntity extends Entity {
         checkInsideBlocks();
     }
 
-    @Override
-    public boolean canCollideWith(Entity other) {
-        System.out.println("collided with an entity: " + other.getType());
-        boolean collides = getY() + 0.01 >= other.getY() + other.getBoundingBox().getYsize();
-        return collides;
-    }
+//    @Override
+//    public boolean canCollideWith(Entity other) {
+//        return getY() + 0.01 >= other.getY() + other.getBoundingBox().getYsize();
+//    }
 
     /**
      * Returns {@code true} if this entity can be collided with
