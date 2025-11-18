@@ -3,6 +3,8 @@ package com.amuzil.av3.input;
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.form.BendingForm;
 import com.amuzil.av3.bending.form.BendingForms;
+import com.amuzil.av3.data.capability.Bender;
+import com.amuzil.av3.gui.ElementSelectScreen;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -98,7 +100,11 @@ public class KeyBindings {
             if (Minecraft.getInstance().screen != null) return; // Ignore input when in GUI
             if (key.getKey() == toggleBendingKey.getKey().getValue()
                 && key.getAction() == InputConstants.RELEASE) {
-                Avatar.inputModule.toggleListeners();
+                Bender bender = Bender.getBender(Minecraft.getInstance().player);
+                if(bender.getElement() == null)
+                    Minecraft.getInstance().setScreen(new ElementSelectScreen());
+                else
+                    Avatar.inputModule.toggleListeners();
             }
         }
     }
