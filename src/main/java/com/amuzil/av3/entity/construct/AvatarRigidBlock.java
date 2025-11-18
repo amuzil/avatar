@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 
 public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsElement {
+
     private final EntityRigidBody rigidBody;
     private float defaultMass;
 
@@ -61,7 +62,7 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
 
         // Calculate rotation to match owner's look direction
         Matrix3f mat = new Matrix3f();
-        mat.fromAxes(Convert.toBullet(right), Convert.toBullet(up), Convert.toBullet(look)); // columns = basis vectors
+        mat.fromAxes(Convert.toBullet(right), Convert.toBullet(up), Convert.toBullet(look));
         Quaternion q = new Quaternion();
         q.fromRotationMatrix(mat);
 
