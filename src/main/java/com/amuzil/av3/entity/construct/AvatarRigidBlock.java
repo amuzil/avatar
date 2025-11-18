@@ -28,8 +28,8 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
         defaultMass = rigidBody.getMass();
     }
 
-    public AvatarRigidBlock(Level pLevel) {
-        this(AvatarEntities.AVATAR_RIGID_BLOCK_ENTITY_TYPE.get(), pLevel);
+    public AvatarRigidBlock(Level level) {
+        this(AvatarEntities.AVATAR_RIGID_BLOCK_ENTITY_TYPE.get(), level);
     }
 
     @Override

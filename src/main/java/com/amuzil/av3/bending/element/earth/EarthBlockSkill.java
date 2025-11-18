@@ -56,9 +56,9 @@ public class EarthBlockSkill extends EarthSkill {
         rigidBlock.setMaxLifetime(lifetime);
         rigidBlock.setWidth((float) size);
         rigidBlock.setHeight((float) size);
-        rigidBlock.setControlled(true);
         rigidBlock.setDamageable(false);
         rigidBlock.setHittable(false);
+        rigidBlock.setControlled(true);
 
         rigidBlock.init();
 
