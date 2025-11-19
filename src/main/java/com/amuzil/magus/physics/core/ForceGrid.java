@@ -2,11 +2,13 @@ package com.amuzil.magus.physics.core;
 
 import com.amuzil.av3.renderer.mc.DCStitcher;
 import com.amuzil.av3.renderer.mc.Vertex;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
@@ -254,41 +256,83 @@ public class ForceGrid<T extends IPhysicsElement> {
     }
 
     /**
-     * Builds a CellVertexProvider that pulls from this grid's lazy bins.
-     * We only ever touch bins that actually exist.
+     * Fills DC cell vertex + active-cell buffers from this grid.
+     * Only surface bins (per isSurfaceBin) and surface elements are used.
+     *
+     * Call this once per DC rebuild, then feed into DCStitcher.buildSparse.
      */
-    public <E extends IPhysicsElement> DCStitcher.CellVertexProvider toDCProvider(NormalProvider<E> normalProvider) {
-        int Bx = this.binCountX;
-        int By = this.binCountY;
-        int Bz = this.binCountZ;
+    public <E extends IPhysicsElement> void fillDCBuffers(
+            DCStitcher.DCMesh mesh,                       // reuse if you want, or ignore
+            NormalProvider<E> normalProvider,
+            Vertex[] outCellVertices,                     // length = totalBins
+            IntArrayList outActiveCells                   // cleared & refilled
+    ) {
+        if (outCellVertices.length != totalBins) {
+            throw new IllegalArgumentException("outCellVertices must have length = totalBins");
+        }
 
-        return (x, y, z) -> {
-            if (x < 0 || x >= Bx || y < 0 || y >= By || z < 0 || z >= Bz) return null;
+        Arrays.fill(outCellVertices, null);
+        outActiveCells.clear();
+        mesh.vertices.clear();
+        mesh.quads.clear();
+        mesh.tris.clear();
 
-            int bi = computeLinearBinIndex(x, y, z);
-            List<T> bin = bins[bi];
-            if (bin == null || bin.isEmpty()) return null;
-
-            // Pick a surface element; if you prefer any element, drop the instanceof/surface() check.
-            for (T p : bin) {
-                if (p instanceof PhysicsElement pe && pe.surface()) {
-                    Vec3 wp = p.pos();
-                    @SuppressWarnings("unchecked")
-                    E elem = (E) p;
-                    Vector3f normal = normalProvider.normalFor(elem);
-                    if (normal.lengthSquared() == 0f) {
-                        normal.set(0, 1, 0); // fallback
-                    } else {
-                        normal.normalize();
-                    }
-                    return new Vertex(
-                            new Vector3f((float) wp.x, (float) wp.y, (float) wp.z),
-                            normal
-                    );
-                }
+        // Iterate only used bins, then filter to actual surface bins
+        for (int i = 0; i < usedBinCount; i++) {
+            int bi = usedBins[i];
+            if (!isSurfaceBin(bi)) {
+                continue;
             }
-            return null;
-        };
+
+            T elem = surfaceElementInBin(bi);
+            if (elem == null) {
+                continue;
+            }
+
+            Vec3 wp = elem.pos();
+            @SuppressWarnings("unchecked")
+            E e = (E) elem;
+
+            Vector3f normal = normalProvider.normalFor(e);
+            if (normal == null || normal.lengthSquared() == 0f) {
+                normal = new Vector3f(0, 1, 0); // fallback
+            } else {
+                normal.normalize();
+            }
+
+            // Bin index == DC cell index
+            outCellVertices[bi] = new Vertex(
+                    new Vector3f((float) wp.x, (float) wp.y, (float) wp.z),
+                    normal
+            );
+            outActiveCells.add(bi);
+        }
+    }
+
+    /**
+     * Convenience one-shot DC mesh builder.
+     * This allocates buffers; for real use, hoist Vertex[] / IntArrayList / DCMesh
+     * into the ForceCloud/ForceGrid and reuse them.
+     */
+    public <E extends IPhysicsElement> DCStitcher.DCMesh buildDCMesh(
+            NormalProvider<E> normalProvider,
+            boolean emitTrianglesIfThree
+    ) {
+        DCStitcher.DCMesh mesh = new DCStitcher.DCMesh();
+        Vertex[] cellVertices = new Vertex[totalBins];
+        IntArrayList activeCells = new IntArrayList(usedBinCount);
+
+        fillDCBuffers(mesh, normalProvider, cellVertices, activeCells);
+
+        // Now stitch
+        return DCStitcher.buildSparse(
+                binCountX,
+                binCountY,
+                binCountZ,
+                activeCells,
+                cellVertices,
+                emitTrianglesIfThree
+        );
     }
 
     public T surfaceElement(int cellX, int cellY, int cellZ) {

@@ -1,6 +1,7 @@
 package com.amuzil.av3.renderer.mc;
 
-import javax.annotation.Nullable;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,72 +21,67 @@ import java.util.List;
  */
 public final class DCStitcher {
 
-    public static Mesh build(
+    public static DCMesh buildSparse(
             int nx, int ny, int nz,
-            CellVertexProvider provider,
+            IntArrayList activeCells,
+            Vertex[] cellVertices,
             boolean emitTrianglesIfThree
     ) {
-        Mesh mesh = new Mesh();
+        DCMesh mesh = new DCMesh();
 
-        int totalCells = nx * ny * nz;
-        int[] gridToV = new int[totalCells];
-        Arrays.fill(gridToV, -1);
+        final int totalCells = nx * ny * nz;
+        final int[] cellToV = new int[totalCells];
+        Arrays.fill(cellToV, -1);
 
-        // Pack vertices in deterministic order, but ask the provider lazily.
-        final int sx = 1;
-        final int sy = nx;
-        final int sz = nx * ny;
+        // 1) Pack vertices only for active cells
+        for (int i = 0, n = activeCells.size(); i < n; i++) {
+            int cellIndex = activeCells.getInt(i);
+            Vertex v = cellVertices[cellIndex];
+            if (v == null) continue;
 
-        for (int z = 0; z < nz; z++) {
-            for (int y = 0; y < ny; y++) {
-                int base = z * sz + y * sy;
-                for (int x = 0; x < nx; x++) {
-                    int i = base + x * sx;
-                    Vertex v = provider.cellVertex(x, y, z);
-                    if (v != null) {
-                        gridToV[i] = mesh.vertices.size();
-                        mesh.vertices.add(v);
-                    }
-                }
-            }
+            int vertIndex = mesh.vertices.size();
+            cellToV[cellIndex] = vertIndex;
+            mesh.vertices.add(v);
         }
 
-        int nx1 = nx - 1, ny1 = ny - 1, nz1 = nz - 1;
+        final int strideX = 1;
+        final int strideY = nx;
+        final int strideZ = nx * ny;
 
-        // Same face emission logic as before, just using gridToV.
-        for (int z = 0; z < nz; z++) {
-            for (int y = 0; y < ny; y++) {
-                int base = z * sz + y * sy;
-                for (int x = 0; x < nx; x++) {
-                    int i000 = base + x * sx;
+        // 2) Emit faces: treat each active cell as the "min corner" for three faces
+        for (int i = 0, n = activeCells.size(); i < n; i++) {
+            int cellIndex = activeCells.getInt(i);
 
-                    if (x < nx1 && y < ny1 && z < nz1) {
-                        // +X
-                        int c00 = i000;
-                        int c01 = i000 + sz;
-                        int c10 = i000 + sy;
-                        int c11 = i000 + sy + sz;
-                        emitFaceQuad(mesh, gridToV, c00, c01, c11, c10, emitTrianglesIfThree);
-                    }
+            int x = cellIndex % nx;
+            int tmp = cellIndex / nx;
+            int y = tmp % ny;
+            int z = tmp / ny;
 
-                    if (x < nx1 && y < ny1 && z < nz1) {
-                        // +Y
-                        int c00 = i000;
-                        int c10 = i000 + sx;
-                        int c01 = i000 + sz;
-                        int c11 = i000 + sx + sz;
-                        emitFaceQuad(mesh, gridToV, c00, c10, c11, c01, emitTrianglesIfThree);
-                    }
+            // Face in X-Y plane (normal +Z): (x,y,z) – (x+1,y,z) – (x+1,y+1,z) – (x,y+1,z)
+            if (x + 1 < nx && y + 1 < ny) {
+                int c00 = cellIndex;
+                int c10 = cellIndex + strideX;          // +X
+                int c11 = c10 + strideY;                // +X,+Y
+                int c01 = cellIndex + strideY;          // +Y
+                emitFaceQuad(mesh, cellToV, c00, c10, c11, c01, emitTrianglesIfThree);
+            }
 
-                    if (x < nx1 && y < ny1 && z < nz1) {
-                        // +Z
-                        int c00 = i000;
-                        int c10 = i000 + sx;
-                        int c11 = i000 + sx + sy;
-                        int c01 = i000 + sy;
-                        emitFaceQuad(mesh, gridToV, c00, c10, c11, c01, emitTrianglesIfThree);
-                    }
-                }
+            // Face in Y-Z plane (normal +X): (x,y,z) – (x,y,z+1) – (x,y+1,z+1) – (x,y+1,z)
+            if (y + 1 < ny && z + 1 < nz) {
+                int c00 = cellIndex;
+                int c01 = cellIndex + strideZ;          // +Z
+                int c11 = c01 + strideY;                // +Z,+Y
+                int c10 = cellIndex + strideY;          // +Y
+                emitFaceQuad(mesh, cellToV, c00, c01, c11, c10, emitTrianglesIfThree);
+            }
+
+            // Face in X-Z plane (normal +Y): (x,y,z) – (x+1,y,z) – (x+1,y,z+1) – (x,y,z+1)
+            if (x + 1 < nx && z + 1 < nz) {
+                int c00 = cellIndex;
+                int c10 = cellIndex + strideX;          // +X
+                int c11 = c10 + strideZ;                // +X,+Z
+                int c01 = cellIndex + strideZ;          // +Z
+                emitFaceQuad(mesh, cellToV, c00, c10, c11, c01, emitTrianglesIfThree);
             }
         }
 
@@ -93,22 +89,28 @@ public final class DCStitcher {
     }
 
     private static void emitFaceQuad(
-            Mesh mesh, int[] gridToV,
+            DCMesh mesh, int[] cellToV,
             int c0, int c1, int c2, int c3,
             boolean allowTriIfThree
     ) {
-        int v0 = gridToV[c0], v1 = gridToV[c1], v2 = gridToV[c2], v3 = gridToV[c3];
-        int valid = (v0 >= 0 ? 1 : 0) + (v1 >= 0 ? 1 : 0) + (v2 >= 0 ? 1 : 0) + (v3 >= 0 ? 1 : 0);
+        int v0 = cellToV[c0];
+        int v1 = cellToV[c1];
+        int v2 = cellToV[c2];
+        int v3 = cellToV[c3];
+
+        int valid = (v0 >= 0 ? 1 : 0)
+                + (v1 >= 0 ? 1 : 0)
+                + (v2 >= 0 ? 1 : 0)
+                + (v3 >= 0 ? 1 : 0);
 
         if (valid == 4) {
-            // One proper quad
-            mesh.quads.add(new int[]{v0, v1, v2, v3});
+            addQuad(mesh, v0, v1, v2, v3);
         } else if (allowTriIfThree && valid == 3) {
-            // Optional: still emit triangle for the 3-corner case
-            if (v0 < 0) mesh.tris.add(new int[]{v1, v2, v3});
-            else if (v1 < 0) mesh.tris.add(new int[]{v2, v3, v0});
-            else if (v2 < 0) mesh.tris.add(new int[]{v3, v0, v1});
-            else /* v3 < 0 */mesh.tris.add(new int[]{v0, v1, v2});
+            // Emit a triangle using the 3 valid corners
+            if (v0 < 0) addTri(mesh, v1, v2, v3);
+            else if (v1 < 0) addTri(mesh, v2, v3, v0);
+            else if (v2 < 0) addTri(mesh, v3, v0, v1);
+            else /* v3 < 0 */ addTri(mesh, v0, v1, v2);
         }
         // valid <= 2: emit nothing
     }
@@ -117,18 +119,22 @@ public final class DCStitcher {
         return (z * ny + y) * nx + x;
     }
 
-    @FunctionalInterface
-    public interface CellVertexProvider {
-        // Return a per-cell vertex or null if no DC vertex for that cell.
-        @Nullable
-        Vertex cellVertex(int x, int y, int z);
+    private static void addQuad(DCMesh mesh, int a, int b, int c, int d) {
+        mesh.quads.add(a);
+        mesh.quads.add(b);
+        mesh.quads.add(c);
+        mesh.quads.add(d);
     }
 
-    public static final class Mesh {
+    private static void addTri(DCMesh mesh, int a, int b, int c) {
+        mesh.tris.add(a);
+        mesh.tris.add(b);
+        mesh.tris.add(c);
+    }
+
+    public static final class DCMesh {
         public final List<Vertex> vertices = new ArrayList<>();
-        // primary: quads
-        public final List<int[]> quads = new ArrayList<>(); // each int[4]
-        // optional: triangles from 3-corner faces if you want to use them
-        public final List<int[]> tris = new ArrayList<>(); // each int[3]
+        public final IntArrayList quads = new IntArrayList(); // 4*i..4*i+3
+        public final IntArrayList tris = new IntArrayList(); // 3*i..3*i+2
     }
 }
