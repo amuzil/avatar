@@ -1,4 +1,4 @@
-package com.amuzil.carryon.physics.network.impl;
+package com.amuzil.caliber.physics.network.impl;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.network.packets.api.AvatarPacket;

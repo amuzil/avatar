@@ -1,7 +1,7 @@
 package com.amuzil.magus.physics.core;
 
-import com.amuzil.av3.entity.renderer.DCStitcher;
-import com.amuzil.av3.entity.renderer.Vertex;
+import com.amuzil.av3.renderer.mc.DCStitcher;
+import com.amuzil.av3.renderer.mc.Vertex;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
@@ -28,6 +28,10 @@ public class ForceGrid<T extends IPhysicsElement> {
     private final ExecutorService threadPool;
     private final int parallelism;
     private final int maxPoints;
+    NormalProvider<PhysicsElement> velNormal = pe -> {
+        Vec3 v = pe.vel(); // or whatever you call it
+        return new Vector3f((float) v.x, (float) v.y, (float) v.z);
+    };
     private int usedBinCount = 0;
     private long originX, originY, originZ;
 
@@ -107,7 +111,6 @@ public class ForceGrid<T extends IPhysicsElement> {
         allPoints.clear();
         // bins will be cleared lazily in rebuild()
     }
-
 
     public void clearUsedBins() {
         for (int i = 0; i < usedBinCount; i++) {
@@ -229,7 +232,6 @@ public class ForceGrid<T extends IPhysicsElement> {
         return null;
     }
 
-
     private boolean isSurfaceBin(int bi) {
         if (binEmpty(bi)) return false;
         int[] xyz = new int[3];
@@ -250,11 +252,6 @@ public class ForceGrid<T extends IPhysicsElement> {
         }
         return b;
     }
-
-    NormalProvider<PhysicsElement> velNormal = pe -> {
-        Vec3 v = pe.vel(); // or whatever you call it
-        return new Vector3f((float) v.x, (float) v.y, (float) v.z);
-    };
 
     /**
      * Builds a CellVertexProvider that pulls from this grid's lazy bins.

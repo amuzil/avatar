@@ -1,6 +1,6 @@
 package com.amuzil.magus.physics.core;
 
-import com.amuzil.carryon.physics.bullet.collision.space.MinecraftSpace;
+import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 

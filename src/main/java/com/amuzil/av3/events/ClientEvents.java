@@ -1,30 +1,13 @@
 package com.amuzil.av3.events;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.av3.entity.renderer.DCStitcher;
-import com.amuzil.av3.entity.renderer.Vertex;
-import com.amuzil.carryon.physics.bullet.collision.space.MinecraftSpace;
-import com.amuzil.carryon.physics.bullet.thread.util.ClientUtil;
-import com.amuzil.magus.physics.core.*;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
-
-import static com.amuzil.av3.entity.renderer.MarchingCubesEntityRenderer.WHITE_TEX;
-import static com.amuzil.av3.entity.renderer.MarchingCubesEntityRenderer.uvPlanar;
 
 @EventBusSubscriber(modid = Avatar.MOD_ID, value = Dist.CLIENT)
 public class ClientEvents {

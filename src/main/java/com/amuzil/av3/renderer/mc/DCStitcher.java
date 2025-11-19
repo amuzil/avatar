@@ -1,4 +1,4 @@
-package com.amuzil.av3.entity.renderer;
+package com.amuzil.av3.renderer.mc;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
