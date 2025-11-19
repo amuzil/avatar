@@ -4,7 +4,7 @@ import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.bending.element.Elements;
 import com.amuzil.av3.network.AvatarNetwork;
-import com.amuzil.av3.network.packets.bender.ChooseElementPacket;
+import com.amuzil.av3.network.packets.bending.ChooseElementPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;

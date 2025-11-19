@@ -13,7 +13,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import java.util.Objects;
 import java.util.UUID;
 
-import static com.amuzil.av3.data.capability.AvatarCapabilities.getOrCreateBender;
+import static com.amuzil.av3.data.capability.AvatarCapabilities.getBender;
 
 public class SyncMovementPacket implements AvatarPacket {
     public static final Type<SyncMovementPacket> TYPE = new Type<>(Avatar.id(SyncMovementPacket.class));
@@ -46,7 +46,7 @@ public class SyncMovementPacket implements AvatarPacket {
                 // Update Bender's movement on server
                 ServerPlayer player = Objects.requireNonNull(ctx.player().getServer()).getPlayerList().getPlayer(msg.playerUUID);
                 assert player != null;
-                Bender bender = getOrCreateBender(player);
+                Bender bender = getBender(player);
                 if (bender != null) {
                     bender.setDeltaMovement(msg.movement);
                     bender.markClean();

@@ -167,7 +167,6 @@ public class Bender implements IBender {
         Skill newSkill = Objects.requireNonNull(Registries.getSkill(skillToActivate.getId())).create(this);
         if (canUseSkill(newSkill)) {
             newSkill.start(this);
-            System.out.println("newSkill.started");
 //            formPath.clear(); // Please don't clear formPath until `applyFormsToSkill()` is implemented
             skillToActivate = null;
             skillActivationTimer = SKILL_ACTIVATION_THRESHOLD;
@@ -197,6 +196,10 @@ public class Bender implements IBender {
     @Override
     public void unregister() {
         NeoForge.EVENT_BUS.unregister(formListener);
+    }
+
+    public LivingEntity getEntity() {
+        return entity;
     }
 
     @Override
@@ -363,36 +366,10 @@ public class Bender implements IBender {
             entity.syncData(ACTIVE_ELEMENT);
             markClean();
         }
-//            if (entity instanceof ServerPlayer player)
-//                AvatarNetwork.sendToClient(new SyncBenderPacket(this.serializeNBT(player.registryAccess()), player.getUUID()), player);
     }
-
-    // TODO - Create generic method to check & return if data in NBT tag exists & warn if it doesn't
-//    private <T> T validate(CompoundTag tag, String key, byte type) {
-//        if (tag.contains(key, type)) {
-//            return (T) tag.get(key);
-//        } else {
-//            LOGGER.warn("Missing data for: {}", key);
-//            return null;
-//        }
-//        return list != null && !list.isEmpty();
-//    }
 
     private void printFormPath() {
         LOGGER.info("Forms: {}", formPath);
-    }
-
-    public void printBenderData() {
-        CompoundTag tag = entity.getData(BENDER_DATA).serializeNBT(null);
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format(
-                """
-                \nData Version: %d
-                Active Element: %s
-                """, tag.getInt("DataVersion"), getElement()));
-        benderData.skillCategoryData.forEach(catData -> sb.append(tag.get(catData.name())).append("\n"));
-        benderData.skillDataMap.values().forEach(skillData -> sb.append(tag.get(skillData.name())).append("\n"));
-        LOGGER.info(sb.toString());
     }
 
     @Override

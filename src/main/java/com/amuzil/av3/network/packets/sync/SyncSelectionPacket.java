@@ -18,7 +18,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import java.util.Objects;
 import java.util.UUID;
 
-import static com.amuzil.av3.data.capability.AvatarCapabilities.getOrCreateBender;
+import static com.amuzil.av3.data.capability.AvatarCapabilities.getBender;
 
 public class SyncSelectionPacket implements AvatarPacket {
     public static final Type<SyncSelectionPacket> TYPE = new Type<>(Avatar.id(SyncSelectionPacket.class));
@@ -45,13 +45,11 @@ public class SyncSelectionPacket implements AvatarPacket {
 
     public static void handle(SyncSelectionPacket msg, IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
-            if (ctx.flow().getReceptionSide().isClient()) {
-                handleClientSide(msg);
-            } else {
+            if (ctx.flow().getReceptionSide().isServer()) {
                 // Update Bender's BendingSelection on server
                 ServerPlayer player = Objects.requireNonNull(ctx.player().getServer()).getPlayerList().getPlayer(msg.playerUUID);
                 assert player != null;
-                Bender bender = getOrCreateBender(player);
+                Bender bender = getBender(player);
                 if (bender != null) {
                     BendingSelection newBendingSelection = new BendingSelection(msg.tag);
                     newBendingSelection.setOriginalBlocksMap(bender.getSelection().originalBlocksMap());
@@ -60,21 +58,6 @@ public class SyncSelectionPacket implements AvatarPacket {
                 }
             }
         });
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    private static void handleClientSide(SyncSelectionPacket msg) {
-        // Update Bender's BendingSelection on their client
-        LocalPlayer player = Minecraft.getInstance().player;
-        if (player != null) {
-            Bender bender = getOrCreateBender(player);
-            if (bender != null) {
-                BendingSelection newBendingSelection = new BendingSelection(msg.tag);
-                newBendingSelection.setOriginalBlocksMap(bender.getSelection().originalBlocksMap());
-                bender.setSelection(newBendingSelection);
-                bender.markClean();
-            }
-        }
     }
 
     @Override
