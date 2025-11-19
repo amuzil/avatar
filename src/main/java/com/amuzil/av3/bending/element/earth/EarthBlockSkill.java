@@ -37,7 +37,7 @@ public class EarthBlockSkill extends EarthSkill {
     public void start(Bender bender) {
         super.start(bender);
         LivingEntity entity = bender.getEntity();
-//        if (!canEarthBend(entity)) return; // Can't earth bend if too far from ground
+        if (!canEarthBend(entity)) return; // Can't earth bend if too far from ground
         Level level = bender.getEntity().level();
         SkillData data = bender.getSkillData(this);
         BlockPos blockPos = bender.getEntity().blockPosition().below();
