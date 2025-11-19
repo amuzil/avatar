@@ -34,8 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 
-import static com.amuzil.av3.data.attachment.AvatarAttachments.ACTIVE_ELEMENT;
-import static com.amuzil.av3.data.attachment.AvatarAttachments.BENDER_DATA;
+import static com.amuzil.av3.data.attachment.AvatarAttachments.*;
 
 
 public class Bender implements IBender {
@@ -358,6 +357,12 @@ public class Bender implements IBender {
         return this.selection;
     }
 
+    public boolean isBending() { return entity.getData(IS_BENDING.get()); }
+    public void setBending(boolean active) {
+        entity.setData(IS_BENDING.get(), active);
+        markDirty();
+    }
+
     @Override
     public void markDirty() {
         this.isDirty = true;
@@ -390,6 +395,7 @@ public class Bender implements IBender {
         if (!entity.level().isClientSide()) {
             entity.syncData(BENDER_DATA);
             entity.syncData(ACTIVE_ELEMENT);
+            entity.syncData(IS_BENDING);
             markClean();
         }
 //            if (entity instanceof ServerPlayer player)

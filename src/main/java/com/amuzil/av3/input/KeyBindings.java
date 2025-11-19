@@ -103,6 +103,7 @@ public class KeyBindings {
             if (key.getKey() == toggleBendingKey.getKey().getValue()
                 && key.getAction() == InputConstants.RELEASE) {
                 Bender bender = getOrCreateBender(Minecraft.getInstance().player);
+
                 if (bender.getElement() == null)
                     Minecraft.getInstance().setScreen(new ElementSelectScreen());
                 else
