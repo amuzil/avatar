@@ -1,7 +1,7 @@
 package com.amuzil.av3.network.packets.skill;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.av3.capability.Bender;
+import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.network.packets.api.AvatarPacket;
 import com.amuzil.magus.registry.Registries;
 import com.amuzil.magus.skill.Skill;
@@ -18,6 +18,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.UUID;
 
+@Deprecated
 public class SkillDataPacket implements AvatarPacket {
     public static final Type<SkillDataPacket> TYPE = new Type<>(Avatar.id(SkillDataPacket.class));
     public static final StreamCodec<FriendlyByteBuf, SkillDataPacket> CODEC =
@@ -47,7 +48,7 @@ public class SkillDataPacket implements AvatarPacket {
     private static void handleClientSide(ResourceLocation skillId, String skillUUID, SkillData skillData) {
         Player player = Minecraft.getInstance().player;
         assert player != null;
-        Bender bender = (Bender) Bender.getBender(player);
+        Bender bender = Bender.getBender(player);
         Skill skill = Registries.getSkill(skillId);
         assert skill != null;
         assert bender != null;

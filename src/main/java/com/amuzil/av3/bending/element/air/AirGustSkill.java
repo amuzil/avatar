@@ -2,13 +2,13 @@ package com.amuzil.av3.bending.element.air;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.skill.AirSkill;
-import com.amuzil.av3.capability.Bender;
+import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.entity.api.ICollisionModule;
-import com.amuzil.av3.entity.modules.ModuleRegistry;
-import com.amuzil.av3.entity.modules.collision.AirCollisionModule;
-import com.amuzil.av3.entity.modules.collision.SimpleKnockbackModule;
-import com.amuzil.av3.entity.modules.entity.GrowModule;
-import com.amuzil.av3.entity.modules.force.ChangeSpeedModule;
+import com.amuzil.av3.entity.api.modules.ModuleRegistry;
+import com.amuzil.av3.entity.api.modules.collision.AirCollisionModule;
+import com.amuzil.av3.entity.api.modules.collision.SimpleKnockbackModule;
+import com.amuzil.av3.entity.api.modules.entity.GrowModule;
+import com.amuzil.av3.entity.api.modules.force.ChangeSpeedModule;
 import com.amuzil.av3.entity.projectile.AvatarCurveProjectile;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.av3.utils.maths.Point;
@@ -60,7 +60,6 @@ public class AirGustSkill extends AirSkill {
         projectile.setHeight((float) size);
         projectile.setNoGravity(true);
         projectile.setDamageable(false);
-        projectile.setHittable(true);
 
         projectile.addTraits(data.getTrait(Constants.MAX_SIZE, SizeTrait.class));
 
@@ -106,9 +105,7 @@ public class AirGustSkill extends AirSkill {
         bender.formPath.clear();
         data.setSkillState(SkillState.IDLE);
 
-        if (!bender.getEntity().level().isClientSide) {
-            bender.getEntity().level().addFreshEntity(projectile);
-        }
+        bender.getEntity().level().addFreshEntity(projectile);
 //        else {
 //            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
 //                Minecraft.getInstance().getSoundManager()

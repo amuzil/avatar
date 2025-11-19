@@ -22,7 +22,11 @@ public class AvatarEntitySound extends AbstractTickableSoundInstance {
     }
 
     public AvatarEntitySound(AvatarEntity entity, SoundEvent sound, int lifetime) {
-        this(entity, sound, lifetime, true, 1.0f, 0);
+        this(entity, sound, lifetime, false, 1.0f, 0);
+    }
+
+    public AvatarEntitySound(AvatarEntity entity, SoundEvent sound, int lifetime, boolean looping) {
+        this(entity, sound, lifetime, looping, 1.0f, 0);
     }
 
     @Override

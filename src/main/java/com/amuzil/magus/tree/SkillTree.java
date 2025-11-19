@@ -1,7 +1,7 @@
 package com.amuzil.magus.tree;
 
 import com.amuzil.av3.bending.element.Element;
-import com.amuzil.av3.capability.Bender;
+import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.magus.form.Form;
 import com.amuzil.magus.skill.Skill;
 

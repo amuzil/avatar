@@ -2,24 +2,30 @@ package com.amuzil.av3.bending.element.earth;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.skill.EarthSkill;
-import com.amuzil.av3.capability.Bender;
+import com.amuzil.av3.data.capability.Bender;
+import com.amuzil.av3.entity.construct.AvatarRigidBlock;
 import com.amuzil.av3.utils.Constants;
+import com.amuzil.magus.skill.data.SkillData;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
-import com.amuzil.magus.skill.traits.skilltraits.KnockbackTrait;
 import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
+import com.amuzil.magus.skill.traits.skilltraits.StringTrait;
+import com.amuzil.magus.skill.traits.skilltraits.TimedTrait;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 import static com.amuzil.av3.bending.form.BendingForms.BLOCK;
+import static com.amuzil.av3.utils.bending.SkillHelper.canEarthBend;
+import static com.amuzil.av3.utils.bending.SkillHelper.getRightPivot;
 
 
 public class EarthBlockSkill extends EarthSkill {
-    // TODO: Add auto-block selection feature
-    //  and multi-block control feature
-    BlockPos blockPosCache = null;
 
     public EarthBlockSkill() {
         super(Avatar.MOD_ID, "earth_block");
-        addTrait(new KnockbackTrait(Constants.KNOCKBACK, 1.5f));
+        addTrait(new StringTrait(Constants.FX, "earth_block"));
+        addTrait(new TimedTrait(Constants.LIFETIME, 500)); // Ticks not seconds...
         addTrait(new SizeTrait(Constants.SIZE, 1.0f));
 
         this.startPaths = SkillPathBuilder.getInstance()
@@ -29,27 +35,47 @@ public class EarthBlockSkill extends EarthSkill {
 
     @Override
     public void start(Bender bender) {
+        super.start(bender);
+        LivingEntity entity = bender.getEntity();
+        if (!canEarthBend(entity)) return; // Can't earth bend if too far from ground
+        Level level = bender.getEntity().level();
+        SkillData data = bender.getSkillData(this);
+        BlockPos blockPos = bender.getEntity().blockPosition().below();
+        BlockState blockState = level.getBlockState(blockPos);
 
-//        if (bender.getEntity() instanceof AbstractClientPlayer benderPlayer) {
-//            AnimationStack animationStack = PlayerAnimationAccess.getPlayerAnimLayer(benderPlayer);
-//            animationStack.addAnimLayer(null, true);
-//            var animation = (ModifierLayer<IAnimation>) PlayerAnimationAccess.getPlayerAssociatedData(benderPlayer).get(
-//                    Avatar.id("animation"));
-//            if (animation != null) {
-//                animation.setAnimation(new KeyframeAnimationPlayer(PlayerAnimationRegistry.getAnimation(Avatar.id("earth_block"))));
-//                // You might use  animation.replaceAnimationWithFade(); to create fade effect instead of sudden change
-//                // See javadoc for details
-//            }
-//        }
+        int lifetime = data.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
+        double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
+
+        AvatarRigidBlock rigidBlock = new AvatarRigidBlock(level);
+        rigidBlock.setElement(element());
+        rigidBlock.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
+        rigidBlock.setBlockState(blockState);
+        rigidBlock.setPos(getRightPivot(entity, 1.0f));
+        rigidBlock.getRigidBody().setMass(0f);
+        rigidBlock.getRigidBody().setKinematic(true);
+        rigidBlock.setOwner(entity);
+        rigidBlock.setMaxLifetime(lifetime);
+        rigidBlock.setWidth((float) size);
+        rigidBlock.setHeight((float) size);
+        rigidBlock.setDamageable(false);
+        rigidBlock.setControlled(true);
+
+        rigidBlock.init();
+
+        bender.formPath.clear();
+        data.setSkillState(SkillState.IDLE);
+
+        bender.getSelection().addEntityId(rigidBlock.getUUID());
+        entity.level().addFreshEntity(rigidBlock);
     }
 
-    @Override
-    public void run(Bender bender) {
-        super.run(bender);
-    }
-
-    @Override
-    public void stop(Bender bender) {
-        super.stop(bender);
-    }
+//    @Override
+//    public void run(Bender bender) {
+//        super.run(bender);
+//    }
+//
+//    @Override
+//    public void stop(Bender bender) {
+//        super.stop(bender);
+//    }
 }

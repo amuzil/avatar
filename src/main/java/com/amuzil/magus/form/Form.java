@@ -1,14 +1,11 @@
 package com.amuzil.magus.form;
 
-import com.amuzil.magus.registry.Registries;
-
 
 public class Form {
     protected final String name;
 
     public Form(String name) {
         this.name = name;
-        Registries.registerForm(this);
     }
 
     public String name() {

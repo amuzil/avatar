@@ -2,16 +2,16 @@ package com.amuzil.av3.entity.projectile;
 
 import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.api.IForceModule;
-import com.amuzil.av3.entity.modules.ModuleRegistry;
-import com.amuzil.av3.entity.modules.force.MoveModule;
+import com.amuzil.av3.entity.api.modules.ModuleRegistry;
+import com.amuzil.av3.entity.api.modules.force.MoveModule;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
 
 public class AvatarDirectProjectile extends AvatarProjectile {
 
-    public AvatarDirectProjectile(EntityType<AvatarDirectProjectile> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public AvatarDirectProjectile(EntityType<AvatarDirectProjectile> entityType, Level pLevel) {
+        super(entityType, pLevel);
         addForceModule((IForceModule) ModuleRegistry.create(MoveModule.id));
     }
 

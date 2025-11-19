@@ -2,9 +2,9 @@ package com.amuzil.av3.network;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.network.packets.api.AvatarPacket;
+import com.amuzil.av3.network.packets.bending.ChooseElementPacket;
 import com.amuzil.av3.network.packets.form.ExecuteFormPacket;
 import com.amuzil.av3.network.packets.form.ReleaseFormPacket;
-import com.amuzil.av3.network.packets.sync.SyncBenderPacket;
 import com.amuzil.av3.network.packets.sync.SyncMovementPacket;
 import com.amuzil.av3.network.packets.sync.SyncSelectionPacket;
 import com.amuzil.carryon.physics.network.impl.ForceCloudCollisionPacket;
@@ -24,15 +24,8 @@ public class AvatarNetwork {
     public static void register(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar(Avatar.MOD_ID).versioned(VERSION);
 
-        /** Bi-Direction **/
 
-        registrar.playBidirectional(
-                SyncBenderPacket.TYPE,
-                SyncBenderPacket.CODEC,
-                SyncBenderPacket::handle
-        );
-
-        registrar.playBidirectional(
+        registrar.playToServer(
                 SyncSelectionPacket.TYPE,
                 SyncSelectionPacket.CODEC,
                 SyncSelectionPacket::handle
@@ -67,6 +60,13 @@ public class AvatarNetwork {
                 ForceCloudSpawnPacket.TYPE,
                 ForceCloudSpawnPacket.CODEC,
                 ForceCloudSpawnPacket::handle
+        );
+
+        registrar.playToServer(
+                ChooseElementPacket.TYPE,
+                ChooseElementPacket.CODEC,
+                ChooseElementPacket::handle
+
         );
     }
 

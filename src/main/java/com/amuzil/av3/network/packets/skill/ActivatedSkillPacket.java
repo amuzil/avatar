@@ -1,7 +1,7 @@
 package com.amuzil.av3.network.packets.skill;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.av3.capability.Bender;
+import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.network.packets.api.AvatarPacket;
 import com.amuzil.magus.registry.Registries;
 import com.amuzil.magus.skill.Skill;
@@ -15,6 +15,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
+@Deprecated
 public class ActivatedSkillPacket implements AvatarPacket {
     public static final Type<ActivatedSkillPacket> TYPE = new Type<>(Avatar.id(ActivatedSkillPacket.class));
     public static final StreamCodec<FriendlyByteBuf, ActivatedSkillPacket> CODEC =
@@ -42,13 +43,12 @@ public class ActivatedSkillPacket implements AvatarPacket {
     private static void handleClientSide(ResourceLocation skillId, int skillState) {
         Player player = Minecraft.getInstance().player;
         assert player != null;
-        Bender bender = (Bender) Bender.getBender(player);
+        Bender bender = Bender.getBender(player);
 //        Skill skill = Registries.SKILLS.get().getValue(skillId);
         Skill skill = Registries.getSkill(skillId);
         assert skill != null;
         Skill.SkillState newSkillState = Skill.SkillState.values()[skillState];
         // If you want this to work, pass SkillUUID instead.
-//        System.out.println("DEBUG: ActivatedSkillPacket " + bender.getSkillData(skill) + " "  + newSkillState);
         bender.getSkillData(skill).setSkillState(newSkillState); // Sync SkillState to client
         switch (newSkillState) {
             case START -> skill.start(bender);

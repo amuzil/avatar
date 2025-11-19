@@ -1,5 +1,6 @@
 package com.amuzil.av3.utils.bending;
 
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -36,6 +37,15 @@ public class SkillHelper {
 
         // No block found below within 5 blocks
         return Double.MAX_VALUE;
+    }
+
+    public static Vec3 getRightPivot(Entity entity, float scale) {
+        Vec3 eyePos = entity.getEyePosition();
+        Vec3 look = entity.getLookAngle().normalize();
+        Vec3 up = new Vec3(0, 1, 0);
+        Vec3 right = look.cross(up).normalize(); // cross product gives right vector
+        double sideOffset = 0.8;  // how far to the right
+        return eyePos.add(right.scale(sideOffset)).add(look.scale(scale));
     }
 
 }

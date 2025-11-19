@@ -7,12 +7,8 @@ import com.amuzil.av3.entity.api.ICollisionModule;
 import com.amuzil.av3.entity.api.IEntityModule;
 import com.amuzil.av3.entity.api.IForceModule;
 import com.amuzil.av3.entity.api.IRenderModule;
-import com.amuzil.av3.entity.modules.ModuleRegistry;
 import com.amuzil.magus.skill.traits.DataTrait;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
@@ -55,19 +51,9 @@ public abstract class AvatarEntity extends Entity {
     private final List<IRenderModule> renderModules = new ArrayList<>();
     private final List<DataTrait> traits = new LinkedList<>();
     private Entity owner;
-    private Element element;
-    private String fxName;
-    private boolean fxOneShot = true;
-    private boolean hittable = false;
-    private boolean damageable = false;
 
-    // Data Sync for Owner
-    // Data Sync for Element
-    // Data Sync for Behaviour
-    // Data Sync for each trait
-
-    public AvatarEntity(EntityType<?> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public AvatarEntity(EntityType<?> entityType, Level level) {
+        super(entityType, level);
     }
 
     /** Call this after adding it to a world.
@@ -79,18 +65,18 @@ public abstract class AvatarEntity extends Entity {
         renderModules.forEach(mod -> mod.init(this));
     }
 
-    /**
-     * Called to update the entity's position/logic.
-     */
     @Override
     public void tick() {
         super.tick();
 
         // Tick appropriate modules in each order
-        modules.forEach(mod -> mod.tick(this));
-        forceModules.forEach(mod -> mod.tick(this));
-        collisionModules.forEach(mod -> mod.tick(this));
-        renderModules.forEach(mod -> mod.tick(this));
+        if (this.level().isClientSide()) {
+            renderModules.forEach(mod -> mod.tick(this));
+        } else {
+            modules.forEach(mod -> mod.tick(this));
+            forceModules.forEach(mod -> mod.tick(this));
+            collisionModules.forEach(mod -> mod.tick(this));
+        }
     }
 
     public void tickDespawn() {
@@ -229,7 +215,6 @@ public abstract class AvatarEntity extends Entity {
 
     public void setElement(Element element) {
         this.entityData.set(ELEMENT, element.getId().toString());
-        this.element = Elements.get(ResourceLocation.parse(this.entityData.get(ELEMENT))); // Doesn't live to see the next tick
     }
 
     public Element element() {
@@ -238,7 +223,6 @@ public abstract class AvatarEntity extends Entity {
 
     public void setFX(String fxName) {
         this.entityData.set(FX, fxName);
-        this.fxName = this.entityData.get(FX); // Doesn't live to see the next tick
     }
 
     public String fxName() {
@@ -254,7 +238,6 @@ public abstract class AvatarEntity extends Entity {
 
     public void setFXOneShot(boolean fxOneShot) {
         this.entityData.set(ONE_SHOT_FX, fxOneShot);
-        this.fxOneShot = this.entityData.get(ONE_SHOT_FX); // Doesn't live to see the next tick
     }
 
     public boolean oneShotFX() {
@@ -279,114 +262,24 @@ public abstract class AvatarEntity extends Entity {
         builder.define(DAMAGEABLE, false);
         builder.define(PHYSICS, false);
         builder.define(TIER, 0);
-        builder.define(MAX_LIFETIME, 100);
-    }
-
-    /**
-     * (abstract) Protected helper method to read subclass entity data from NBT.
-     *
-     * @param pCompound
-     */
-    @Override
-    protected void readAdditionalSaveData(CompoundTag pCompound) {
-        if (pCompound.hasUUID("OwnerUUID")) {
-            this.entityData.set(OWNER_ID, Optional.of(pCompound.getUUID("OwnerUUID")));
-        }
-
-        // Element
-        if (pCompound.contains("Element")) {
-            this.element = Elements.get(ResourceLocation.parse(pCompound.getString("Element")));
-            this.entityData.set(ELEMENT, pCompound.getString("Element"));
-        }
-
-        this.hittable = pCompound.getBoolean("Collidable");
-        this.damageable = pCompound.getBoolean("Damageable");
-
-        readTraits(pCompound);
-        readModuleList(pCompound, "GenericModules", modules);
-        readModuleList(pCompound, "ForceModules", forceModules);
-        readModuleList(pCompound, "CollisionModules", collisionModules);
-        readModuleList(pCompound, "RenderModules", renderModules);
-    }
-
-    @Override
-    protected void addAdditionalSaveData(CompoundTag pCompound) {
-        this.entityData.get(OWNER_ID).ifPresent(uuid -> pCompound.putUUID("OwnerUUID", uuid));
-
-        // Element
-        if (element != null) {
-            pCompound.putString("Element", element.name());
-        }
-
-        pCompound.putBoolean("Collidable", hittable);
-        pCompound.putBoolean("Damageable", damageable);
-
-        writeTraits(pCompound);
-        writeModuleList(pCompound, "GenericModules", modules);
-        writeModuleList(pCompound, "ForceModules", forceModules);
-        writeModuleList(pCompound, "CollisionModules", collisionModules);
-        writeModuleList(pCompound, "RenderModules", renderModules);
-
+        builder.define(MAX_LIFETIME, 10000);
     }
 
     public void checkBlocks() {
         checkInsideBlocks();
     }
 
-    private <T> void readModuleList(CompoundTag parent, String key, List<T> list) {
-        // Clears the list before re-adding whatever modules it needs toAdd commentMore actions
-        list.clear();
-        ListTag mods = parent.getList(key, Tag.TAG_COMPOUND);
-        for (Tag t : mods) {
-            CompoundTag mTag = (CompoundTag) t;
-            String id = mTag.getString("Module ID");
-            IEntityModule mod = ModuleRegistry.create(id);
-            if (mod != null) {
-                mod.load(mTag);
-                @SuppressWarnings("unchecked") T casted = (T) mod;
-                list.add(casted);
-            }
-        }
-    }
-
-    private void writeModuleList(CompoundTag parent, String key, List<? extends IEntityModule> list) {
-        ListTag mods = new ListTag();
-        for (IEntityModule mod : list) {
-            CompoundTag mTag = new CompoundTag();
-            mTag.putString("Module ID", mod.id());
-            mod.save(mTag);
-            mods.add(mTag);
-        }
-        parent.put(key, mods);
-    }
-
-    private void writeTraits(CompoundTag parent) {
-        ListTag list = new ListTag();
-        for (DataTrait trait : traits) {
-            CompoundTag tTag = new CompoundTag();
-            // TODO: check whether ensuring ID is included is necessary
-            tTag.put("Trait Data", trait.serializeNBT(null));
-            list.add(tTag);
-        }
-        parent.put("DataTraits", list);
-    }
-
-    private void readTraits(CompoundTag parent) {
-        ListTag list = parent.getList("DataTraits", Tag.TAG_COMPOUND);
-
-        int limit = Math.min(list.size(), traits.size());
-        for (int i = 0; i < limit; i++) {
-            CompoundTag tTag = list.getCompound(i);
-            traits.get(i).deserializeNBT(null, tTag.getCompound("Trait Data"));
-        }
-    }
+//    @Override
+//    public boolean canCollideWith(Entity other) {
+//        return getY() + 0.01 >= other.getY() + other.getBoundingBox().getYsize();
+//    }
 
     /**
      * Returns {@code true} if this entity can be collided with
      */
     @Override
     public boolean canBeCollidedWith() {
-        return hittable;
+        return entityData.get(COLLIDABLE);
     }
 
     /**
@@ -394,7 +287,7 @@ public abstract class AvatarEntity extends Entity {
      */
     @Override
     public boolean isPushable() {
-        return hittable;
+        return false;
     }
 
     @Override
@@ -407,12 +300,11 @@ public abstract class AvatarEntity extends Entity {
         return entityData.get(DAMAGEABLE);
     }
 
-    // TODO: Can we remove this?
     /** These were copied from the projectile class. Need to update these to account for the other data
      * serializers and important values that this class keeps track of.
      */
     @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity serverEntity) {
+    public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity serverEntity) {
         Entity entity = this.getOwner();
         return new ClientboundAddEntityPacket(this, serverEntity, entity == null ? 0 : entity.getId());
     }
@@ -436,7 +328,7 @@ public abstract class AvatarEntity extends Entity {
         entityData.set(DAMAGEABLE, damageable);
     }
 
-    public void setHittable(boolean hittable) {
-        entityData.set(COLLIDABLE, hittable);
+    public void setCollidable(boolean collidable) {
+        entityData.set(COLLIDABLE, collidable);
     }
 }

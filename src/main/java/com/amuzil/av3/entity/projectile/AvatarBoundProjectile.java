@@ -2,16 +2,16 @@ package com.amuzil.av3.entity.projectile;
 
 import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.api.IForceModule;
-import com.amuzil.av3.entity.modules.ModuleRegistry;
-import com.amuzil.av3.entity.modules.force.BindModule;
+import com.amuzil.av3.entity.api.modules.ModuleRegistry;
+import com.amuzil.av3.entity.api.modules.force.BindModule;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
 
 public class AvatarBoundProjectile extends AvatarProjectile {
 
-    public AvatarBoundProjectile(EntityType<AvatarBoundProjectile> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public AvatarBoundProjectile(EntityType<AvatarBoundProjectile> entityType, Level pLevel) {
+        super(entityType, pLevel);
         addForceModule((IForceModule) ModuleRegistry.create(BindModule.id));
     }
 

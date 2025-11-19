@@ -15,4 +15,8 @@ public interface IAvatarConstruct extends ItemSupplier, TraceableEntity {
     Entity owner();
 
     void setOwner(Entity entity);
+
+    boolean isControlled();
+
+    void setControlled(boolean controlled);
 }

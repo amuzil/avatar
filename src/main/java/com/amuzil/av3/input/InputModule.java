@@ -3,7 +3,8 @@ package com.amuzil.av3.input;
 import com.amuzil.av3.bending.BendingSelection;
 import com.amuzil.av3.bending.form.BendingForm;
 import com.amuzil.av3.bending.form.BendingForms;
-import com.amuzil.av3.capability.Bender;
+import com.amuzil.av3.data.attachment.BenderData;
+import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.network.AvatarNetwork;
 import com.amuzil.av3.network.packets.form.ExecuteFormPacket;
 import com.amuzil.av3.network.packets.form.ReleaseFormPacket;
@@ -25,6 +26,8 @@ import net.neoforged.neoforge.common.NeoForge;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
+import static com.amuzil.av3.data.attachment.AvatarAttachments.BENDER_DATA;
+import static com.amuzil.av3.data.capability.AvatarCapabilities.getBender;
 import static com.amuzil.av3.input.KeyBindings.*;
 
 
@@ -43,7 +46,7 @@ public class InputModule {
     private final long DOUBLE_TAP_THRESHOLD = 250; // milliseconds
     private final HashMap<BendingForm.Type.Motion, Long> lastPressedForm = new HashMap<>();
     private final HashMap<Integer, Integer> glfwKeysDown = new HashMap<>();
-    private Bender bender;
+    public Bender bender;
 
     public InputModule() {
         this.keyboardListener = keyboardEvent -> {
@@ -92,6 +95,11 @@ public class InputModule {
             if (Minecraft.getInstance().getConnection() != null &&
                 Minecraft.getInstance().getOverlay() == null &&
                 Minecraft.getInstance().screen == null) {
+                if (bender == null) {
+                    Player player = Minecraft.getInstance().player;
+                    if (player != null)
+                        bender = Bender.getBender(player);
+                }
                 checkInputs();
             }
         };
@@ -132,11 +140,12 @@ public class InputModule {
                 glfwKeysDown.put(key, heldTicks + 1);
                 if (heldTicks == 0)
                     checkForm(form);
-            } else {
+            }
+//            else {
 //                if (glfwKeysDown.containsKey(key)) {
 //                    releaseForm(form, key);
 //                }
-            }
+//            }
         });
 
         if (selectTargetKey.isDown() && !isSelecting) {
@@ -186,7 +195,6 @@ public class InputModule {
     }
 
     private void trackBlockResult(BlockHitResult result) {
-//        System.out.println("Selected BlockPos: " + result.getBlockPos());
         bender.getSelection().setBlockPos(result.getBlockPos());
     }
 
@@ -247,7 +255,6 @@ public class InputModule {
     }
 
     public void registerListeners() {
-        bender = (Bender) Bender.getBender(Minecraft.getInstance().player);
         NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, InputEvent.Key.class, keyboardListener);
         NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, InputEvent.MouseButton.Pre.class, mouseListener);
         NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, ClientTickEvent.Pre.class, tickEventConsumer);
@@ -266,11 +273,7 @@ public class InputModule {
         unRegisterListeners();
         glfwKeysDown.clear();
         lastPressedForm.clear();
-        assert Minecraft.getInstance().player != null;
-        bender = (Bender) Bender.getBender(Minecraft.getInstance().player);
-        if (bender != null) { // Need this on startup!
-            bender.reset();
-        }
+        bender = null;
     }
 
     public void toggleListeners() {
@@ -280,8 +283,8 @@ public class InputModule {
             System.out.println("Enabled!");
             Player player = Minecraft.getInstance().player;
             assert player != null;
-            Bender bender = (Bender) Bender.getBender(player);
-            bender.printNBT();
+            BenderData benderData = player.getData(BENDER_DATA);
+            benderData.printBenderData();
         } else {
             terminate();
             isBending = false;

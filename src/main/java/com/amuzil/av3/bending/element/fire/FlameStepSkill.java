@@ -4,7 +4,7 @@ import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.element.Elements;
 import com.amuzil.av3.bending.form.BendingForm;
 import com.amuzil.av3.bending.skill.FireSkill;
-import com.amuzil.av3.capability.Bender;
+import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.projectile.AvatarBoundProjectile;
 import com.amuzil.av3.utils.Constants;
@@ -46,6 +46,7 @@ public class FlameStepSkill extends FireSkill {
         int lifetime = skillData.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime();
         TimedTrait time = skillData.getTrait(Constants.RUNTIME, TimedTrait.class);
         time.setTime(0); // Reset fall damage nullification timer
+
         AvatarEntity bound = new AvatarBoundProjectile(entity.level());
         bound.setElement(Elements.FIRE);
         bound.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
@@ -54,40 +55,35 @@ public class FlameStepSkill extends FireSkill {
         bound.setNoGravity(true);
         bound.setPos(entity.position());
         bound.init();
+        entity.level().addFreshEntity(bound);
 
-        if (!bender.getEntity().level().isClientSide()) {
-            bender.getEntity().level().addFreshEntity(bound);
-            float dashSpeed = (float) Objects.requireNonNull(skillData.getTrait(Constants.DASH_SPEED, SpeedTrait.class)).getSpeed();
-            Vec3 dashVec = Vec3.ZERO;
-            switch (motion) {
-                case FORWARD ->
-                        dashVec = entity.getLookAngle().multiply(1, 0, 1).normalize().scale(dashSpeed); // W
-                case BACKWARD ->
-                        dashVec = entity.getLookAngle().multiply(1, 0, 1).normalize().scale(-dashSpeed); // S
-                case LEFTWARD ->
-                        dashVec = entity.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(-dashSpeed); // A
-                case RIGHTWARD ->
-                        dashVec = entity.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(dashSpeed); // D
-                case UPWARD ->
-                    dashVec = bender.getDeltaMovement().add(0, dashSpeed / 2, 0).multiply(4, 1, 4); // SPACE
-                case DOWNWARD ->
-                    dashVec = bender.getDeltaMovement().add(0, -(dashSpeed / 3), 0);
-            }
-            if (motion != BendingForm.Type.Motion.DOWNWARD)
-                dashVec = dashVec.add(0, 0.3D, 0); // Add a little hop for better dash
-//            System.out.println("Dash Vec: " + dashVec);
-            entity.setDeltaMovement(dashVec);
-            entity.hurtMarked = true;
-            entity.hasImpulse = true;
+        float dashSpeed = (float) Objects.requireNonNull(skillData.getTrait(Constants.DASH_SPEED, SpeedTrait.class)).getSpeed();
+        Vec3 dashVec = Vec3.ZERO;
+        switch (motion) {
+            case FORWARD ->
+                    dashVec = entity.getLookAngle().multiply(1, 0, 1).normalize().scale(dashSpeed); // W
+            case BACKWARD ->
+                    dashVec = entity.getLookAngle().multiply(1, 0, 1).normalize().scale(-dashSpeed); // S
+            case LEFTWARD ->
+                    dashVec = entity.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(-dashSpeed); // A
+            case RIGHTWARD ->
+                    dashVec = entity.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(dashSpeed); // D
+            case UPWARD ->
+                dashVec = bender.getDeltaMovement().add(0, dashSpeed / 2, 0).multiply(4, 1, 4); // SPACE
+            case DOWNWARD ->
+                dashVec = bender.getDeltaMovement().add(0, -(dashSpeed / 3), 0);
         }
+        if (motion != BendingForm.Type.Motion.DOWNWARD)
+            dashVec = dashVec.add(0, 0.3D, 0); // Add a little hop for better dash
+        entity.setDeltaMovement(dashVec);
+        entity.hurtMarked = true;
+        entity.hasImpulse = true;
     }
 
     @Override
     public void run(Bender bender) {
         super.run(bender);
-        if (!bender.getEntity().level().isClientSide()) {
-            bender.getEntity().fallDistance = 0.0F;
-            incrementTimedTrait(skillData, Constants.RUNTIME, skillData.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime());
-        }
+        bender.getEntity().fallDistance = 0.0F;
+        incrementTimedTrait(skillData, Constants.RUNTIME, skillData.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime());
     }
 }

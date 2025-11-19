@@ -2,11 +2,11 @@ package com.amuzil.av3.bending.element.water;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.skill.WaterSkill;
-import com.amuzil.av3.capability.Bender;
+import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.entity.api.ICollisionModule;
-import com.amuzil.av3.entity.modules.ModuleRegistry;
-import com.amuzil.av3.entity.modules.collision.SimpleKnockbackModule;
-import com.amuzil.av3.entity.modules.collision.WaterCollisionModule;
+import com.amuzil.av3.entity.api.modules.ModuleRegistry;
+import com.amuzil.av3.entity.api.modules.collision.SimpleKnockbackModule;
+import com.amuzil.av3.entity.api.modules.collision.WaterCollisionModule;
 import com.amuzil.av3.entity.projectile.AvatarWaterProjectile;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.magus.skill.data.SkillData;
@@ -58,7 +58,6 @@ public class WaterBallSkill extends WaterSkill {
         projectile.setHeight((float) size);
         projectile.setNoGravity(true);
         projectile.setDamageable(false);
-        projectile.setHittable(true);
 
         projectile.addTraits(skillData.getTrait(Constants.ANGLE, AngleTrait.class));
         projectile.addTraits(skillData.getTrait(Constants.SPEED, SpeedTrait.class));
@@ -88,8 +87,6 @@ public class WaterBallSkill extends WaterSkill {
         bender.formPath.clear();
         data.setSkillState(SkillState.IDLE);
 
-        if (!bender.getEntity().level().isClientSide) {
-            bender.getEntity().level().addFreshEntity(projectile);
-        }
+        bender.getEntity().level().addFreshEntity(projectile);
     }
 }

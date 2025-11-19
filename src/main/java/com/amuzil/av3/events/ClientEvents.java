@@ -31,13 +31,13 @@ public class ClientEvents {
     //    public static final ByteBufferBuilder DEBUG_BUILDER = new ByteBufferBuilder(256);
     @SubscribeEvent
     public static void onClientLogin(ClientPlayerNetworkEvent.LoggingIn event) {
-        Avatar.inputModule.registerListeners();
+        Avatar.INPUT_MODULE.registerListeners();
     }
 
     @SubscribeEvent
     public static void onClientLogout(ClientPlayerNetworkEvent.LoggingOut event) {
-        if (Avatar.inputModule != null)
-            Avatar.inputModule.terminate();
+        if (Avatar.INPUT_MODULE != null)
+            Avatar.INPUT_MODULE.terminate();
     }
 
     @SubscribeEvent

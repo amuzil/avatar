@@ -1,11 +1,15 @@
 package com.amuzil.av3.input;
 
 import com.amuzil.av3.Avatar;
+import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.bending.form.BendingForm;
 import com.amuzil.av3.bending.form.BendingForms;
+import com.amuzil.av3.data.capability.Bender;
+import com.amuzil.av3.gui.ElementSelectScreen;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -13,6 +17,9 @@ import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 
 import java.util.HashMap;
+
+import static com.amuzil.av3.data.attachment.AvatarAttachments.ACTIVE_ELEMENT;
+import static com.amuzil.av3.data.capability.AvatarCapabilities.getBender;
 
 
 @EventBusSubscriber(modid = Avatar.MOD_ID, value = Dist.CLIENT)
@@ -92,13 +99,19 @@ public class KeyBindings {
     }
 
     @EventBusSubscriber(modid = Avatar.MOD_ID, value = Dist.CLIENT)
-    public static class ModKeyInputHandler {
+    public static class BenderToggleInputHandler {
         @SubscribeEvent
         public static void keyPress(InputEvent.Key key) {
             if (Minecraft.getInstance().screen != null) return; // Ignore input when in GUI
             if (key.getKey() == toggleBendingKey.getKey().getValue()
                 && key.getAction() == InputConstants.RELEASE) {
-                Avatar.inputModule.toggleListeners();
+                Player player = Minecraft.getInstance().player;
+                if (player != null) { // TODO: Make way to check if player is new Bender
+                    Element element = player.getData(ACTIVE_ELEMENT);
+                    if (element == null)
+                        Minecraft.getInstance().setScreen(new ElementSelectScreen());
+                }
+                Avatar.INPUT_MODULE.toggleListeners();
             }
         }
     }

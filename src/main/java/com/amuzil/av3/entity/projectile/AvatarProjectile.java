@@ -4,41 +4,31 @@ import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.IAvatarProjectile;
 import com.amuzil.av3.entity.api.IRenderModule;
-import com.amuzil.av3.entity.modules.ModuleRegistry;
-import com.amuzil.av3.entity.modules.entity.SoundModule;
-import com.amuzil.av3.entity.modules.entity.TimeoutModule;
-import com.amuzil.av3.entity.modules.render.PhotonModule;
-import com.amuzil.carryon.physics.bullet.collision.space.MinecraftSpace;
+import com.amuzil.av3.entity.api.modules.ModuleRegistry;
+import com.amuzil.av3.entity.api.modules.render.SoundModule;
+import com.amuzil.av3.entity.api.modules.entity.TimeoutModule;
+import com.amuzil.av3.entity.api.modules.render.PhotonModule;
 import com.amuzil.magus.physics.core.ForceCloud;
 import com.amuzil.magus.physics.core.ForcePoint;
-import com.amuzil.magus.physics.core.ForceSystem;
 import com.google.common.base.MoreObjects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerEntity;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.*;
-import net.neoforged.neoforge.event.EventHooks;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
-import java.util.Random;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -47,15 +37,15 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
     private static final EntityDataAccessor<Float> WIDTH = SynchedEntityData.defineId(AvatarProjectile.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> HEIGHT = SynchedEntityData.defineId(AvatarProjectile.class, EntityDataSerializers.FLOAT);
     public boolean leftOwner;
+    public ForceCloud cloud;
     @Nullable
     private UUID ownerUUID;
     @Nullable
     private Entity cachedOwner;
     private boolean hasBeenShot;
-    public ForceCloud cloud;
 
-    public AvatarProjectile(EntityType<? extends AvatarProjectile> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public AvatarProjectile(EntityType<? extends AvatarProjectile> entityType, Level pLevel) {
+        super(entityType, pLevel);
         // NOTE: Modules are not synced between client and server unless added to the entity's constructor!
         addRenderModule((IRenderModule) ModuleRegistry.create(PhotonModule.id));
         addModule(ModuleRegistry.create(SoundModule.id));
@@ -159,7 +149,6 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
     }
 
 
-
     @Override
     public @NotNull ItemStack getItem() {
         return new ItemStack(Blocks.AIR);
@@ -196,33 +185,33 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
         return MoreObjects.firstNonNull(this.getOwner(), this);
     }
 
-    protected void addAdditionalSaveData(CompoundTag pCompound) {
+    protected void addAdditionalSaveData(CompoundTag tag) {
         if (this.ownerUUID != null) {
-            pCompound.putUUID("Owner", this.ownerUUID);
+            tag.putUUID("Owner", this.ownerUUID);
         }
 
         if (this.leftOwner) {
-            pCompound.putBoolean("LeftOwner", true);
+            tag.putBoolean("LeftOwner", true);
         }
 
-        pCompound.putBoolean("HasBeenShot", this.hasBeenShot);
+        tag.putBoolean("HasBeenShot", this.hasBeenShot);
     }
 
-    protected boolean ownedBy(Entity pEntity) {
-        return pEntity.getUUID().equals(this.ownerUUID);
+    protected boolean ownedBy(Entity entity) {
+        return entity.getUUID().equals(this.ownerUUID);
     }
 
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    protected void readAdditionalSaveData(CompoundTag pCompound) {
-        if (pCompound.hasUUID("Owner")) {
-            this.ownerUUID = pCompound.getUUID("Owner");
+    protected void readAdditionalSaveData(CompoundTag tag) {
+        if (tag.hasUUID("Owner")) {
+            this.ownerUUID = tag.getUUID("Owner");
             this.cachedOwner = null;
         }
 
-        this.leftOwner = pCompound.getBoolean("LeftOwner");
-        this.hasBeenShot = pCompound.getBoolean("HasBeenShot");
+        this.leftOwner = tag.getBoolean("LeftOwner");
+        this.hasBeenShot = tag.getBoolean("HasBeenShot");
     }
 
     @Override
@@ -313,12 +302,12 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
     }
 
     private boolean checkLeftOwner() {
-        Entity entity = this.getOwner();
-        if (entity != null) {
-            for (Entity entity1 : this.level().getEntities(this, this.getBoundingBox().expandTowards(this.getDeltaMovement()).inflate(1.0D), (p_37272_) -> {
-                return !p_37272_.isSpectator() && p_37272_.isPickable();
-            })) {
-                if (entity1.getRootVehicle() == entity.getRootVehicle()) {
+        Entity owner = this.getOwner();
+        if (owner != null) {
+            for (Entity entity1 : this.level().getEntities(
+                    this, this.getBoundingBox().expandTowards(this.getDeltaMovement()).inflate(1.0D),
+                    (entity) -> !entity.isSpectator() && entity.isPickable())) {
+                if (entity1.getRootVehicle() == owner.getRootVehicle()) {
                     return false;
                 }
             }
@@ -335,10 +324,11 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
     }
 
     /**
-     * Similar to setArrowHeading, it's point the throwable entity to a x, y, z direction.
+     * Similar to setArrowHeading, it throws an entity toward a (x, y, z) direction
      */
-    public void shoot(double pX, double pY, double pZ, float pVelocity, float pInaccuracy) {
-        Vec3 vec3 = (new Vec3(pX, pY, pZ)).normalize().add(this.random.triangle(0.0D, 0.0172275D * (double) pInaccuracy), this.random.triangle(0.0D, 0.0172275D * (double) pInaccuracy), this.random.triangle(0.0D, 0.0172275D * (double) pInaccuracy)).scale(pVelocity);
+
+    public void shoot(double x, double y, double z, float velocity, float inaccuracy) {
+        Vec3 vec3 = (new Vec3(x, y, z)).normalize().add(this.random.triangle(0.0D, 0.0172275D * (double) inaccuracy), this.random.triangle(0.0D, 0.0172275D * (double) inaccuracy), this.random.triangle(0.0D, 0.0172275D * (double) inaccuracy)).scale(velocity);
         this.setDeltaMovement(vec3);
         double d0 = vec3.horizontalDistance();
         this.setYRot((float) (Mth.atan2(vec3.x, vec3.z) * (double) (180F / (float) Math.PI)));
@@ -346,27 +336,25 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
         this.yRotO = this.getYRot();
         this.xRotO = this.getXRot();
 
-
-
-
     }
 
-    public void shootFromRotation(Entity pShooter, float pX, float pY, float pZ, float pVelocity, float pInaccuracy) {
-        float f = -Mth.sin(pY * ((float) Math.PI / 180F)) * Mth.cos(pX * ((float) Math.PI / 180F));
-        float f1 = -Mth.sin((pX + pZ) * ((float) Math.PI / 180F));
-        float f2 = Mth.cos(pY * ((float) Math.PI / 180F)) * Mth.cos(pX * ((float) Math.PI / 180F));
-        this.shoot(f, f1, f2, pVelocity, pInaccuracy);
-        Vec3 vec3 = pShooter.getDeltaMovement();
-        this.setDeltaMovement(this.getDeltaMovement().add(vec3.x, pShooter.onGround() ? 0.0D : vec3.y, vec3.z));
+
+    public void shootFromRotation(Entity shooter, float x, float y, float z, float velocity, float inaccuracy) {
+        float f = -Mth.sin(y * ((float) Math.PI / 180F)) * Mth.cos(x * ((float) Math.PI / 180F));
+        float f1 = -Mth.sin((x + z) * ((float) Math.PI / 180F));
+        float f2 = Mth.cos(y * ((float) Math.PI / 180F)) * Mth.cos(x * ((float) Math.PI / 180F));
+        this.shoot(f, f1, f2, velocity, inaccuracy);
+        Vec3 vec3 = shooter.getDeltaMovement();
+        this.setDeltaMovement(this.getDeltaMovement().add(vec3.x, shooter.onGround() ? 0.0D : vec3.y, vec3.z));
     }
 
-    protected void onHit(HitResult pResult) {
-        HitResult.Type hitresult$type = pResult.getType();
+    protected void onHit(HitResult result) {
+        HitResult.Type hitresult$type = result.getType();
         if (hitresult$type == HitResult.Type.ENTITY) {
-            this.onHitEntity((EntityHitResult) pResult);
-            this.level().gameEvent(GameEvent.PROJECTILE_LAND, pResult.getLocation(), GameEvent.Context.of(this, null));
+            this.onHitEntity((EntityHitResult) result);
+            this.level().gameEvent(GameEvent.PROJECTILE_LAND, result.getLocation(), GameEvent.Context.of(this, null));
         } else if (hitresult$type == HitResult.Type.BLOCK) {
-            BlockHitResult blockhitresult = (BlockHitResult) pResult;
+            BlockHitResult blockhitresult = (BlockHitResult) result;
             this.onHitBlock(blockhitresult);
             BlockPos blockpos = blockhitresult.getBlockPos();
             this.level().gameEvent(GameEvent.PROJECTILE_LAND, blockpos, GameEvent.Context.of(this, this.level().getBlockState(blockpos)));
@@ -385,23 +373,23 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
     /**
      * Called when the arrow hits an entity
      */
-    protected void onHitEntity(EntityHitResult pResult) {
+    protected void onHitEntity(EntityHitResult result) {
     }
 
-    protected void onHitBlock(BlockHitResult pResult) {
-        BlockState blockstate = this.level().getBlockState(pResult.getBlockPos());
-//        blockstate.onProjectileHit(this.level(), blockstate, pResult, this);
+    protected void onHitBlock(BlockHitResult result) {
+        BlockState blockstate = this.level().getBlockState(result.getBlockPos());
+//        blockstate.onProjectileHit(this.level(), blockstate, result, this);
     }
 
     /**
      * Updates the entity motion clientside, called by packets from the server
      */
-    public void lerpMotion(double pX, double pY, double pZ) {
-        this.setDeltaMovement(pX, pY, pZ);
+    public void lerpMotion(double x, double y, double z) {
+        this.setDeltaMovement(x, y, z);
         if (this.xRotO == 0.0F && this.yRotO == 0.0F) {
-            double d0 = Math.sqrt(pX * pX + pZ * pZ);
-            this.setXRot((float) (Mth.atan2(pY, d0) * (double) (180F / (float) Math.PI)));
-            this.setYRot((float) (Mth.atan2(pX, pZ) * (double) (180F / (float) Math.PI)));
+            double d0 = Math.sqrt(x * x + z * z);
+            this.setXRot((float) (Mth.atan2(y, d0) * (double) (180F / (float) Math.PI)));
+            this.setYRot((float) (Mth.atan2(x, z) * (double) (180F / (float) Math.PI)));
             this.xRotO = this.getXRot();
             this.yRotO = this.getYRot();
             this.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
@@ -425,24 +413,15 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
         this.setYRot(lerpRotation(this.yRotO, (float) (Mth.atan2(vec3.x, vec3.z) * (double) (180F / (float) Math.PI))));
     }
 
-    @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity serverEntity) {
-        Entity entity = this.getOwner();
-        return new ClientboundAddEntityPacket(this, serverEntity, entity == null ? 0 : entity.getId());
-    }
-
-    @Override
-    public void recreateFromPacket(ClientboundAddEntityPacket packet) {
-        super.recreateFromPacket(packet);
-        Entity entity = this.level().getEntity(packet.getData());
-        if (entity != null) {
-            this.setOwner(entity);
-        }
-    }
-
-    @Override
-    public boolean mayInteract(Level level, BlockPos pos) {
-        Entity entity = this.getOwner();
-        return entity instanceof Player ? entity.mayInteract(level, pos) : entity == null || EventHooks.canEntityGrief(level, entity);
-    }
+//    protected static float lerpRotation(float currentRotation, float targetRotation) {
+//        while(targetRotation - currentRotation < -180.0F) {
+//            currentRotation -= 360.0F;
+//        }
+//
+//        while(targetRotation - currentRotation >= 180.0F) {
+//            currentRotation += 360.0F;
+//        }
+//
+//        return Mth.lerp(0.2F, currentRotation, targetRotation);
+//    }
 }

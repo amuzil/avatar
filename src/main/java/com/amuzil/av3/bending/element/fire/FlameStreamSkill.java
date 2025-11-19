@@ -3,14 +3,14 @@ package com.amuzil.av3.bending.element.fire;
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.form.BendingForms;
 import com.amuzil.av3.bending.skill.FireSkill;
-import com.amuzil.av3.capability.Bender;
+import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.entity.api.ICollisionModule;
-import com.amuzil.av3.entity.modules.ModuleRegistry;
-import com.amuzil.av3.entity.modules.collision.FireCollisionModule;
-import com.amuzil.av3.entity.modules.collision.FireModule;
-import com.amuzil.av3.entity.modules.collision.SimpleKnockbackModule;
-import com.amuzil.av3.entity.modules.entity.GrowModule;
-import com.amuzil.av3.entity.modules.force.ChangeSpeedModule;
+import com.amuzil.av3.entity.api.modules.ModuleRegistry;
+import com.amuzil.av3.entity.api.modules.collision.FireCollisionModule;
+import com.amuzil.av3.entity.api.modules.collision.FireModule;
+import com.amuzil.av3.entity.api.modules.collision.SimpleKnockbackModule;
+import com.amuzil.av3.entity.api.modules.entity.GrowModule;
+import com.amuzil.av3.entity.api.modules.force.ChangeSpeedModule;
 import com.amuzil.av3.entity.projectile.AvatarDirectProjectile;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.av3.utils.maths.Point;
@@ -67,7 +67,6 @@ public class FlameStreamSkill extends FireSkill {
         projectile.setHeight((float) size);
         projectile.setNoGravity(true);
         projectile.setDamageable(false);
-        projectile.setHittable(true);
 
         projectile.addTraits(skillData.getTrait(Constants.MAX_SIZE, SizeTrait.class));
 
@@ -134,7 +133,6 @@ public class FlameStreamSkill extends FireSkill {
         projectile.setHeight((float) size);
         projectile.setNoGravity(true);
         projectile.setDamageable(false);
-        projectile.setHittable(true);
 
         projectile.addTraits(skillData.getTrait(Constants.MAX_SIZE, SizeTrait.class));
 
