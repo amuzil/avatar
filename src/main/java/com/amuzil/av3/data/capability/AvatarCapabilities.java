@@ -2,7 +2,6 @@ package com.amuzil.av3.data.capability;
 
 import com.amuzil.av3.Avatar;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -10,16 +9,16 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.capabilities.EntityCapability;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.WeakHashMap;
 
 
 @EventBusSubscriber(modid = Avatar.MOD_ID)
 public final class AvatarCapabilities {
     public static final ResourceLocation ID = Avatar.id("bender");
     public static final EntityCapability<Bender, Void> BENDER = EntityCapability.createVoid(ID, Bender.class);
-    public static final Map<UUID, Bender> BENDER_CACHE = new HashMap<>();
+    public static final Map<UUID, Bender> BENDER_CACHE = new WeakHashMap<>();
 
     @SubscribeEvent
     private static void register(RegisterCapabilitiesEvent event) {

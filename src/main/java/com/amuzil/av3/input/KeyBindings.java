@@ -96,17 +96,18 @@ public class KeyBindings {
     }
 
     @EventBusSubscriber(modid = Avatar.MOD_ID, value = Dist.CLIENT)
-    public static class ModKeyInputHandler {
+    public static class BenderToggleInputHandler {
         @SubscribeEvent
         public static void keyPress(InputEvent.Key key) {
             if (Minecraft.getInstance().screen != null) return; // Ignore input when in GUI
             if (key.getKey() == toggleBendingKey.getKey().getValue()
                 && key.getAction() == InputConstants.RELEASE) {
-                Bender bender = getOrCreateBender(Minecraft.getInstance().player);
-                if (bender.getElement() == null)
-                    Minecraft.getInstance().setScreen(new ElementSelectScreen());
-                else
-                    Avatar.inputModule.toggleListeners();
+                if (Minecraft.getInstance().player != null) { // TODO: Make way to check if player is new Bender
+                    Bender bender = getOrCreateBender(Minecraft.getInstance().player);
+                    if (bender.getElement() == null)
+                        Minecraft.getInstance().setScreen(new ElementSelectScreen());
+                }
+                Avatar.inputModule.toggleListeners();
             }
         }
     }

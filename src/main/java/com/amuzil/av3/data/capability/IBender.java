@@ -32,10 +32,6 @@ public interface IBender extends INBTSerializable<CompoundTag> {
 
     void unregister();
 
-    void setEntity(LivingEntity entity);
-
-    LivingEntity getEntity();
-
     List<Form> getFormPath();
 
     SkillCategoryData getSkillCategoryData(Element element);

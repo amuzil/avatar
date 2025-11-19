@@ -167,29 +167,10 @@ public class Bender implements IBender {
         Skill newSkill = Objects.requireNonNull(Registries.getSkill(skillToActivate.getId())).create(this);
         if (canUseSkill(newSkill)) {
             newSkill.start(this);
+            System.out.println("newSkill.started");
 //            formPath.clear(); // Please don't clear formPath until `applyFormsToSkill()` is implemented
             skillToActivate = null;
             skillActivationTimer = SKILL_ACTIVATION_THRESHOLD;
-        }
-    }
-
-    public void startTickingOriginalBlocks(Long shipId) {
-        OriginalBlocks originalBlocks = selection.originalBlocksMap().get(shipId);
-        if (originalBlocks != null)
-            originalBlocks.startTicking(true);
-    }
-
-    private void restoreOriginalBlocks() {
-        Iterator<Map.Entry<Long, OriginalBlocks>> iterator = selection.originalBlocksMap().entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<Long, OriginalBlocks> entry = iterator.next();
-            OriginalBlocks originalBlocks = entry.getValue();
-            if (originalBlocks.startedTicking() && entity.level() instanceof ServerLevel level) {
-                if (originalBlocks.incrementAndGetTickCount() > 400) {
-                    originalBlocks.restore(level);
-                    iterator.remove();
-                }
-            }
         }
     }
 
@@ -216,16 +197,6 @@ public class Bender implements IBender {
     @Override
     public void unregister() {
         NeoForge.EVENT_BUS.unregister(formListener);
-    }
-
-    @Override
-    public void setEntity(LivingEntity entity) {
-        this.entity = entity;
-    }
-
-    @Override
-    public LivingEntity getEntity() {
-        return entity;
     }
 
     @Override
