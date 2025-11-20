@@ -79,6 +79,20 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
         rigidBody.setPhysicsRotation(q);
     }
 
+    @Override
+    public void tick() {
+        // Save previous tick position
+        this.xOld = this.getX();
+        this.yOld = this.getY();
+        this.zOld = this.getZ();
+
+        super.tick();
+    }
+
+    public void syncFromPhysics() {
+        this.setPos(Convert.toVec3(rigidBody.getPhysicsLocation(new Vector3f())));
+    }
+
     public float getDefaultMass() {
         return defaultMass;
     }
