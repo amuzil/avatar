@@ -53,6 +53,9 @@ import javax.annotation.Nullable;
 import java.util.function.Predicate;
 
 
+/**
+ * Used for entities like Earth Walls or Rigid Block Constructs
+ */
 public class AvatarConstruct extends AvatarEntity implements IAvatarConstruct {
 
     private static final Logger LOGGER = LogUtils.getLogger();

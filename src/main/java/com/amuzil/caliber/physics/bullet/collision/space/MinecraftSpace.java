@@ -10,8 +10,11 @@ import com.amuzil.caliber.physics.bullet.collision.space.generator.TerrainGenera
 import com.amuzil.caliber.physics.bullet.collision.space.storage.SpaceStorage;
 import com.amuzil.caliber.physics.bullet.thread.PhysicsThread;
 import com.amuzil.caliber.physics.network.CaliberNetwork;
+import com.amuzil.caliber.physics.network.impl.ForceCloudSpawnPacket;
 import com.amuzil.caliber.physics.network.impl.SendRigidBodyMovementPacket;
 import com.amuzil.caliber.physics.network.impl.SendRigidBodyPropertiesPacket;
+import com.amuzil.magus.physics.core.ForceCloud;
+import com.amuzil.magus.physics.core.ForceSystem;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
@@ -22,8 +25,11 @@ import com.jme3.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -38,7 +44,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * the last step has taken longer than 50ms and is still executing upon the next
  * tick. This really only happens if you are dealing with an ungodly amount of
  * rigid bodies or your computer is slo.
- * 
+ *
  * @see PhysicsThread
  * @see PhysicsSpaceEvent
  */
@@ -48,24 +54,9 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
     private final PhysicsThread thread;
     private final Level level;
     private final ChunkCache chunkCache;
-
-    private volatile boolean stepping;
     private final Set<SectionPos> previousBlockUpdates;
-
-    /**
-     * Allows users to retrieve the {@link MinecraftSpace} associated with any given
-     * {@link Level} object (client or server).
-     * 
-     * @param level the level to get the physics space from
-     * @return the {@link MinecraftSpace}
-     */
-    public static MinecraftSpace get(Level level) {
-        return ((SpaceStorage) level).getSpace();
-    }
-
-    public static Optional<MinecraftSpace> getOptional(Level level) {
-        return Optional.ofNullable(get(level));
-    }
+    private ForceSystem system;
+    private volatile boolean stepping;
 
     public MinecraftSpace(PhysicsThread thread, Level level) {
         super(BroadphaseType.DBVT);
@@ -77,6 +68,22 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
         this.setGravity(new Vector3f(0, -9.807f, 0));
 //        this.addCollisionListener(this);
         this.setAccuracy(1f / 60f);
+        this.system = new ForceSystem(this);
+    }
+
+    /**
+     * Allows users to retrieve the {@link MinecraftSpace} associated with any given
+     * {@link Level} object (client or server).
+     *
+     * @param level the level to get the physics space from
+     * @return the {@link MinecraftSpace}
+     */
+    public static MinecraftSpace get(Level level) {
+        return ((SpaceStorage) level).getSpace();
+    }
+
+    public static Optional<MinecraftSpace> getOptional(Level level) {
+        return Optional.ofNullable(get(level));
     }
 
     /**
@@ -87,7 +94,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
      * <li>Steps the simulation asynchronously.</li>
      * <li>Triggers collision events.</li>
      * </ul>
-     *
+     * <p>
      * Additionally, none of the above steps execute when either the world is empty
      * (no {@link PhysicsRigidBody}s) or when the game is paused.
      *
@@ -128,6 +135,9 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
 
                     /* Step the Simulation */
                     this.update(1 / 60f);
+
+                    if (getForceSystem() != null)
+                        getForceSystem().tick(1 / 60f);
                 }, this.getWorkerThread());
             }
 
@@ -151,8 +161,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
                     CaliberNetwork.sendToPlayersTrackingEntity(entityRigidBody.getElement().cast(), new SendRigidBodyMovementPacket(entityRigidBody));
                     CaliberNetwork.sendToPlayersTrackingEntity(entityRigidBody.getElement().cast(), new SendRigidBodyPropertiesPacket(entityRigidBody));
                 }
-            }
-            else if (collisionObject instanceof TerrainRigidBody terrain) {
+            } else if (collisionObject instanceof TerrainRigidBody terrain) {
                 this.terrainMap.put(terrain.getBlockPos(), terrain);
             }
 
@@ -192,6 +201,26 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
             if (rigidBody.isNear(blockPos))
                 rigidBody.activate();
         }
+    }
+
+    public void addCloud(ForceCloud forceCloud) {
+        if (!this.system.clouds().contains(forceCloud))
+            this.system.addCloud(forceCloud);
+    }
+
+    public void addCloud(ForceCloud cloud, Level level, Entity spawner) {
+        if (!this.system.clouds().contains(cloud)) {
+            if (!level.isClientSide) {
+                addCloud(cloud);
+                PacketDistributor.sendToPlayersTrackingEntity(spawner, new ForceCloudSpawnPacket(cloud));
+                if (spawner instanceof ServerPlayer)
+                    PacketDistributor.sendToPlayer((ServerPlayer) spawner, new ForceCloudSpawnPacket(cloud));
+            }
+        }
+    }
+
+    public ForceSystem getForceSystem() {
+        return this.system;
     }
 
     public Map<BlockPos, TerrainRigidBody> getTerrainMap() {
@@ -234,7 +263,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
 
     /**
      * Trigger all collision events (e.g. block/element or element/element).
-     * 
+     *
      * @param event the event context
      */
     @Override
@@ -244,10 +273,10 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
         /* Element on Element */
         if (event.getObjectA() instanceof ElementRigidBody rigidBodyA && event.getObjectB() instanceof ElementRigidBody rigidBodyB)
             NeoForge.EVENT_BUS.post(new CollisionEvent(CollisionEvent.Type.ELEMENT, rigidBodyA, rigidBodyB, impulse));
-        /* Block on Element */
+            /* Block on Element */
         else if (event.getObjectA() instanceof TerrainRigidBody terrain && event.getObjectB() instanceof ElementRigidBody rigidBody)
             NeoForge.EVENT_BUS.post(new CollisionEvent(CollisionEvent.Type.BLOCK, rigidBody, terrain, impulse));
-        /* Element on Block */
+            /* Element on Block */
         else if (event.getObjectA() instanceof ElementRigidBody rigidBody && event.getObjectB() instanceof TerrainRigidBody terrain)
             NeoForge.EVENT_BUS.post(new CollisionEvent(CollisionEvent.Type.BLOCK, rigidBody, terrain, impulse));
     }

@@ -125,7 +125,7 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
             Level level = mc.level;
             MinecraftSpace space = MinecraftSpace.get(level);
             if (!space.isServer()) {
-//                space.getWorkerThread().execute(() -> space.addForceCloud(msg.cloud()));
+                space.getWorkerThread().execute(() -> space.addCloud(msg.cloud()));
             }
         });
     }
