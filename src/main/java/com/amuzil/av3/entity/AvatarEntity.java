@@ -176,6 +176,16 @@ public abstract class AvatarEntity extends Entity {
         return traits.stream().filter(filter).collect(Collectors.toList());
     }
 
+
+    public String skillId() {
+        return entityData.get(SKILL_ID);
+    }
+
+    public void setSkillId(String skillId) {
+        entityData.set(SKILL_ID, skillId);
+    }
+
+
     @Nullable
     public DataTrait getTrait(String name) {
         for (DataTrait trait : traits)

@@ -12,6 +12,7 @@ import net.minecraft.world.level.Level;
 public class AvatarPhysicsController extends AvatarEntity implements IAvatarController {
 
 
+    // Physics is automatically handled.
     private ForceCloud forceCloud;
 
     // We ideally
@@ -47,14 +48,12 @@ public class AvatarPhysicsController extends AvatarEntity implements IAvatarCont
         this.forceCloud = cloud;
     }
 
-
     @Override
-    public String skillId() {
-        return "";
-    }
-
-    @Override
-    public void setSkillId(String skillId) {
-
+    public void kill() {
+        if (forceCloud != null) {
+            // Should automatically remove itself from the physics space.
+            forceCloud.kill();
+        }
+        super.kill();
     }
 }

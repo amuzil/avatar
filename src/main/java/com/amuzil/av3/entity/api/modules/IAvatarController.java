@@ -6,15 +6,18 @@ import net.minecraft.world.entity.Entity;
 
 public interface IAvatarController {
 
-    Entity owner();
-
-    void setOwner(Entity entity);
-
     ForceCloud forceCloud();
 
     void setForceCloud(ForceCloud cloud);
 
-    String skillId();
+    // Methods are here for clarity but anythingt hat extends AvatarEntity will contain them.
 
+    Entity owner();
+    void setOwner(Entity entity);
+
+    Element element();
+    void setElement(Element element);
+
+    String skillId();
     void setSkillId(String skillId);
 }

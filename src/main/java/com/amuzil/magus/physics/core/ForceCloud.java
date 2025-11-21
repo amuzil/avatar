@@ -24,6 +24,7 @@ public class ForceCloud extends PhysicsElement {
     private AABB bounds = new AABB(0, 0, 0, 0, 0, 0);
     private double remainingLifeSeconds = -1.0; // -1 = infinite
     private boolean hasLifetime = false;
+    private boolean dead = false;
 
     public ForceCloud(int type, int maxPoints, String id, Vec3 pos, Vec3 vel, Vec3 force, UUID owner,
                       @Nullable ExecutorService pool) {
@@ -102,6 +103,10 @@ public class ForceCloud extends PhysicsElement {
         }
     }
 
+    public void kill() {
+        this.dead = true;
+    }
+
     public AABB getBounds() {
         return this.bounds;
     }
@@ -127,7 +132,7 @@ public class ForceCloud extends PhysicsElement {
     }
 
     public boolean isDead() {
-        return hasLifetime && remainingLifeSeconds <= 0.0;
+        return hasLifetime && remainingLifeSeconds <= 0.0 || dead;
     }
 
     public void updateBoundsFromPoints() {
