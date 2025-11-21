@@ -61,10 +61,4 @@ public class SoundModule implements IRenderModule {
                         .play(new AvatarEntitySound(entity, soundEvent, entity.maxLifetime(), false));
         }
     }
-
-//    @OnlyIn(Dist.CLIENT)
-//    @Override
-//    public void renderTick(AvatarEntity entity, float entityYaw, float partialTick, PoseStack pose, MultiBufferSource buffer, int packedLight) {
-//
-//    }
 }

@@ -56,10 +56,4 @@ public class PhotonModule implements IRenderModule {
             entityEffect.start();
         }
     }
-
-//    @OnlyIn(Dist.CLIENT)
-//    @Override
-//    public void renderTick(AvatarEntity entity, float entityYaw, float partialTick, PoseStack pose, MultiBufferSource buffer, int packedLight) {
-//
-//    }
 }
