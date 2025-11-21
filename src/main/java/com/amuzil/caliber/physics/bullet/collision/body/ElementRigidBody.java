@@ -192,11 +192,11 @@ public abstract class ElementRigidBody extends MinecraftRigidBody {
         this.currentMinecraftBoundingBox = Convert.toMinecraft(this.currentBoundingBox);
     }
 
-    public AABB getCurrentMinecraftBoundingBox() {
+    public AABB getMinecraftBoundingBox() {
         return this.currentMinecraftBoundingBox;
     }
 
-    public BoundingBox getCurrentBoundingBox() {
+    public BoundingBox getBoundingBox() {
         return this.currentBoundingBox;
     }
 

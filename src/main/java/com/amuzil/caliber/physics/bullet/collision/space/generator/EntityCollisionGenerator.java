@@ -18,8 +18,8 @@ public class EntityCollisionGenerator {
             if (rigidBody.getElement().skipVanillaEntityCollisions())
                 continue;
 
-            final var box = rigidBody.getCurrentBoundingBox();
-            final var rigidBodyAABB = rigidBody.getCurrentMinecraftBoundingBox();
+            final var box = rigidBody.getBoundingBox();
+            final var rigidBodyAABB = rigidBody.getMinecraftBoundingBox();
 
             Entity rigidBodyEntity = rigidBody.getElement().cast();
             if (!(rigidBodyEntity instanceof AvatarRigidBlock rigidBlock)) continue;
