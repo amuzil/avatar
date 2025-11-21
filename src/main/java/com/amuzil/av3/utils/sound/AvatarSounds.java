@@ -17,6 +17,7 @@ public class AvatarSounds {
     public static final Supplier<SoundEvent> FIRE_STRIKE = register("fires_bloom_perma5");
     public static final Supplier<SoundEvent> EARTH_BLOCK = register("earth_block");
     public static final Supplier<SoundEvent> EARTH_TOSS = register("earth_toss");
+    public static final Supplier<SoundEvent> EARTH_WALL = register("earth_wall");
 
     private static Supplier<SoundEvent> register(String name) {
         return SOUND_EVENTS.register(name,

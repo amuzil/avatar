@@ -26,7 +26,7 @@ public class EarthTossSkill extends EarthSkill {
     public EarthTossSkill() {
         super(Avatar.MOD_ID, "earth_toss");
         addTrait(new StringTrait(Constants.FX, "earth_toss"));
-        addTrait(new TimedTrait(Constants.LIFETIME, 100)); // Ticks not seconds...
+        addTrait(new TimedTrait(Constants.LIFETIME, 100));
         addTrait(new DamageTrait(Constants.DAMAGE, 4.5f));
         addTrait(new SpeedTrait(Constants.SPEED, 3d));
         addTrait(new KnockbackTrait(Constants.KNOCKBACK, 1.5f));
@@ -40,7 +40,6 @@ public class EarthTossSkill extends EarthSkill {
     public void start(Bender bender) {
         super.start(bender);
         LivingEntity entity = bender.getEntity();
-//        if (!canEarthBend(entity)) return; // Can't earth bend if too far from ground
         ServerLevel level = (ServerLevel) bender.getEntity().level();
         SkillData data = bender.getSkillData(this);
 

@@ -34,5 +34,14 @@
         "stream": false
       }
     ]
+  },
+  "earth_wall": {
+    "sounds": [
+      {
+        "attenuation_distance": 4,
+        "name": "av3:earth_wall",
+        "stream": false
+      }
+    ]
   }
 }

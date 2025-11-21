@@ -22,7 +22,6 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.common.NeoForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -72,7 +71,6 @@ public class Avatar {
         ModuleRegistry.register(AirCollisionModule::new);
         ModuleRegistry.register(WaterCollisionModule::new);
         ModuleRegistry.register(FireCollisionModule::new);
-        ModuleRegistry.register(FireEffectModule::new);
         ModuleRegistry.register(SoundModule::new);
         ModuleRegistry.register(PhotonModule::new);
     }

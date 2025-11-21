@@ -39,6 +39,12 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
         this(AvatarEntities.AVATAR_RIGID_BLOCK_ENTITY_TYPE.get(), level);
     }
 
+    public AvatarRigidBlock(Level level, float width, float height) {
+        this(AvatarEntities.AVATAR_RIGID_BLOCK_ENTITY_TYPE.get(), level);
+        setWidth(width);
+        setHeight(height);
+    }
+
     @Override
     public @Nullable EntityRigidBody getRigidBody() {
         return this.rigidBody;

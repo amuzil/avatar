@@ -31,7 +31,7 @@ public class AirPullSkill extends AirSkill {
         addTrait(new SizeTrait(Constants.MAX_SIZE, 1.25f));
         addTrait(new KnockbackTrait(Constants.KNOCKBACK, 0.6f));
         addTrait(new SpeedTrait(Constants.SPEED, 0.875d));
-        addTrait(new TimedTrait(Constants.LIFETIME, 15)); // Ticks not seconds...
+        addTrait(new TimedTrait(Constants.LIFETIME, 15));
         addTrait(new SpeedTrait(Constants.SPEED_FACTOR, 1.0d));
         addTrait(new StringTrait(Constants.FX, "airs_perma10"));
 
