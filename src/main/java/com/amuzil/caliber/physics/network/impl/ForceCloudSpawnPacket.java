@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
@@ -116,20 +117,22 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
 
     }
 
-    @OnlyIn(Dist.CLIENT)
     public static void handle(ForceCloudSpawnPacket msg, IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
-            Minecraft mc = Minecraft.getInstance();
+            // For playToClient, this will be the local client player.
+            // For safety, null-check in case something weird happens.
+            Player player = ctx.player();
 
-            if (mc.level == null)
-                return;
-            // Mirror only: build/update the client cloud from packet contents
+            Level level = player.level();
 
-            Level level = mc.level;
             MinecraftSpace space = MinecraftSpace.get(level);
-            if (!space.isServer()) {
-                space.getWorkerThread().execute(() -> space.addCloud(msg.cloud()));
+            // Extra paranoia – but your MinecraftSpace should already know which side it's on.
+            if (space.isServer() || !level.isClientSide()) {
+                return;
             }
+
+            // Offload to your physics worker
+            space.getWorkerThread().execute(() -> space.addCloud(msg.cloud()));
         });
     }
 

@@ -49,6 +49,13 @@ public class AvatarNetwork {
                 ReleaseFormPacket::handle
         );
 
+        registrar.playToServer(
+                ChooseElementPacket.TYPE,
+                ChooseElementPacket.CODEC,
+                ChooseElementPacket::handle
+
+        );
+
         /** Client **/
         registrar.playToClient(
                 ForceCloudCollisionPacket.TYPE,
@@ -62,12 +69,7 @@ public class AvatarNetwork {
                 ForceCloudSpawnPacket::handle
         );
 
-        registrar.playToServer(
-                ChooseElementPacket.TYPE,
-                ChooseElementPacket.CODEC,
-                ChooseElementPacket::handle
 
-        );
     }
 
     public static void sendToClient(AvatarPacket payload, ServerPlayer player) {
