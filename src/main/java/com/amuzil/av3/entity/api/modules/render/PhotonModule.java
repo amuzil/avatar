@@ -9,6 +9,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 
 public class PhotonModule implements IRenderModule {
@@ -55,8 +57,9 @@ public class PhotonModule implements IRenderModule {
         }
     }
 
-    @Override
-    public void renderTick(AvatarEntity entity, float entityYaw, float partialTick, PoseStack pose, MultiBufferSource buffer, int packedLight) {
-
-    }
+//    @OnlyIn(Dist.CLIENT)
+//    @Override
+//    public void renderTick(AvatarEntity entity, float entityYaw, float partialTick, PoseStack pose, MultiBufferSource buffer, int packedLight) {
+//
+//    }
 }

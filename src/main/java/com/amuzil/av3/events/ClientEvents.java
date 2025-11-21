@@ -3,6 +3,7 @@ package com.amuzil.av3.events;
 import com.amuzil.av3.Avatar;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
@@ -23,6 +24,7 @@ public class ClientEvents {
             Avatar.INPUT_MODULE.terminate();
     }
 
+    @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public static void onRenderLevel(RenderLevelStageEvent e) {
 //        if (e.getStage() != RenderLevelStageEvent.Stage.AFTER_ENTITIES || ClientUtil.isPaused()) return;
@@ -137,43 +139,43 @@ public class ClientEvents {
     }
 
 
-    private static void drawWireSphere(VertexConsumer vc, Matrix4f m, float cx, float cy, float cz,
-                                       float r, int slices, int stacks) {
-        // 3 great-circle loops (XY, XZ, YZ) for cheap visibility
-        circle(vc, m, cx, cy, cz, r, 1, 0, 0, 0, 1, 0); // XY
-        circle(vc, m, cx, cy, cz, r, 1, 0, 0, 0, 0, 1); // XZ
-        circle(vc, m, cx, cy, cz, r, 0, 1, 0, 0, 0, 1); // YZ
-        // optional finer stacks/slices
-        float dTheta = (float) (Math.PI / stacks);
-        for (int i = 1; i < stacks; i++) {
-            float theta = i * dTheta;
-            float yr = (float) Math.cos(theta) * r;
-            float rr = (float) Math.sin(theta) * r;
-            circle(vc, m, cx, cy + yr, cz, rr, 1, 0, 0, 0, 0, 1); // parallel
-        }
-    }
-
-    private static void circle(VertexConsumer vc, Matrix4f m, float cx, float cy, float cz, float r,
-                               float axx, float axy, float axz, float ayx, float ayy, float ayz) {
-        final int segs = 48;
-        float prevx = cx + r * axx, prevy = cy + r * axy, prevz = cz + r * axz;
-        for (int i = 1; i <= segs; i++) {
-            double t = (i * 2.0 * Math.PI) / segs;
-            float cos = (float) Math.cos(t), sin = (float) Math.sin(t);
-            float x = cx + r * (cos * axx + sin * ayx);
-            float y = cy + r * (cos * axy + sin * ayy);
-            float z = cz + r * (cos * axz + sin * ayz);
-            line(vc, m, prevx, prevy, prevz, x, y, z, 80, 200, 255, 255);
-            prevx = x;
-            prevy = y;
-            prevz = z;
-        }
-    }
-
-    private static void line(VertexConsumer vc, Matrix4f m,
-                             float x0, float y0, float z0, float x1, float y1, float z1,
-                             int r, int g, int b, int a) {
-        vc.addVertex(m, x0, y0, z0).setColor(r, g, b, a).setNormal(0, 1, 0);
-        vc.addVertex(m, x1, y1, z1).setColor(r, g, b, a).setNormal(0, 1, 0);
-    }
+//    private static void drawWireSphere(VertexConsumer vc, Matrix4f m, float cx, float cy, float cz,
+//                                       float r, int slices, int stacks) {
+//        // 3 great-circle loops (XY, XZ, YZ) for cheap visibility
+//        circle(vc, m, cx, cy, cz, r, 1, 0, 0, 0, 1, 0); // XY
+//        circle(vc, m, cx, cy, cz, r, 1, 0, 0, 0, 0, 1); // XZ
+//        circle(vc, m, cx, cy, cz, r, 0, 1, 0, 0, 0, 1); // YZ
+//        // optional finer stacks/slices
+//        float dTheta = (float) (Math.PI / stacks);
+//        for (int i = 1; i < stacks; i++) {
+//            float theta = i * dTheta;
+//            float yr = (float) Math.cos(theta) * r;
+//            float rr = (float) Math.sin(theta) * r;
+//            circle(vc, m, cx, cy + yr, cz, rr, 1, 0, 0, 0, 0, 1); // parallel
+//        }
+//    }
+//
+//    private static void circle(VertexConsumer vc, Matrix4f m, float cx, float cy, float cz, float r,
+//                               float axx, float axy, float axz, float ayx, float ayy, float ayz) {
+//        final int segs = 48;
+//        float prevx = cx + r * axx, prevy = cy + r * axy, prevz = cz + r * axz;
+//        for (int i = 1; i <= segs; i++) {
+//            double t = (i * 2.0 * Math.PI) / segs;
+//            float cos = (float) Math.cos(t), sin = (float) Math.sin(t);
+//            float x = cx + r * (cos * axx + sin * ayx);
+//            float y = cy + r * (cos * axy + sin * ayy);
+//            float z = cz + r * (cos * axz + sin * ayz);
+//            line(vc, m, prevx, prevy, prevz, x, y, z, 80, 200, 255, 255);
+//            prevx = x;
+//            prevy = y;
+//            prevz = z;
+//        }
+//    }
+//
+//    private static void line(VertexConsumer vc, Matrix4f m,
+//                             float x0, float y0, float z0, float x1, float y1, float z1,
+//                             int r, int g, int b, int a) {
+//        vc.addVertex(m, x0, y0, z0).setColor(r, g, b, a).setNormal(0, 1, 0);
+//        vc.addVertex(m, x1, y1, z1).setColor(r, g, b, a).setNormal(0, 1, 0);
+//    }
 }
