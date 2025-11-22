@@ -27,7 +27,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import static com.amuzil.av3.data.attachment.AvatarAttachments.ACTIVE_ELEMENT;

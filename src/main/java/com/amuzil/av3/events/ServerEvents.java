@@ -50,7 +50,7 @@ public class ServerEvents {
     @SubscribeEvent
     private static void onServerStarting(ServerStartingEvent event) {
         Avatar.LOGGER.info("Setting up Avatar Mod server-side...");
-        Avatar.BENDER_CACHE = new BenderCache();
+        AvatarCapabilities.initBenderCache();
         AvatarCommands.register(event.getServer().getCommands().getDispatcher());
 
         // Initialize Skill Tree
@@ -63,10 +63,7 @@ public class ServerEvents {
 
     @SubscribeEvent
     private static void onServerStopping(ServerStoppingEvent event) {
-        if (Avatar.BENDER_CACHE != null) {
-            Avatar.BENDER_CACHE.clear();
-            Avatar.BENDER_CACHE = null;
-        }
+        AvatarCapabilities.clearBenderCache();
     }
 
     @SubscribeEvent
@@ -81,7 +78,7 @@ public class ServerEvents {
     @SubscribeEvent
     private static void onPlayerLoggedOutEvent(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            Bender bender = Avatar.BENDER_CACHE.remove(player);
+            Bender bender = AvatarCapabilities.removeBender(player);
             if (bender == null) return;
             bender.unregister();
         }
@@ -92,8 +89,8 @@ public class ServerEvents {
         if (event.getOriginal() instanceof ServerPlayer oldPlayer &&
                 event.getEntity() instanceof ServerPlayer newPlayer) {
 
-            Bender oldBender = Avatar.BENDER_CACHE.remove(oldPlayer);
-            Bender newBender = Avatar.BENDER_CACHE.get(newPlayer);
+            Bender oldBender = AvatarCapabilities.removeBender(oldPlayer);
+            Bender newBender = AvatarCapabilities.getBender(newPlayer);
             if (oldBender == null || newBender == null) return;
             oldBender.unregister();
             newBender.register();

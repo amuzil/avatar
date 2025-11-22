@@ -2,9 +2,9 @@ package com.amuzil.av3.entity.projectile;
 
 import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.api.IForceModule;
-import com.amuzil.av3.renderer.sdf.IHasSDF;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
 import com.amuzil.av3.entity.api.modules.force.CurveModule;
+import com.amuzil.av3.renderer.sdf.IHasSDF;
 import com.amuzil.av3.renderer.sdf.SDFScene;
 import com.amuzil.av3.renderer.sdf.SignedDistanceFunction;
 import com.amuzil.av3.renderer.sdf.channels.Channels;

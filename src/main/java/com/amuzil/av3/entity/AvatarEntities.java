@@ -2,7 +2,6 @@ package com.amuzil.av3.entity;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.entity.construct.AvatarRigidBlock;
-import com.amuzil.av3.entity.construct.PhysicsBenderEntity;
 import com.amuzil.av3.entity.mobs.SkyBisonEntity;
 import com.amuzil.av3.entity.projectile.*;
 import net.minecraft.core.registries.Registries;

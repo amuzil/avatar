@@ -3,9 +3,10 @@ package com.amuzil.av3.entity.construct;
 import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.IAvatarConstruct;
+import com.amuzil.av3.entity.api.IFXModule;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
-import com.amuzil.av3.entity.api.modules.entity.TimeoutModule;
 import com.amuzil.av3.entity.api.modules.client.SoundModule;
+import com.amuzil.av3.entity.api.modules.entity.TimeoutModule;
 import com.mojang.logging.LogUtils;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.core.BlockPos;
@@ -72,7 +73,8 @@ public class AvatarConstruct extends AvatarEntity implements IAvatarConstruct {
 
     public AvatarConstruct(EntityType<? extends AvatarConstruct> entityType, Level level) {
         super(entityType, level);
-        addModule(ModuleRegistry.create(SoundModule.id));
+        // NOTE: Modules are not synced between client and server unless added to the entity's constructor!
+        addClientModule((IFXModule) ModuleRegistry.create(SoundModule.id));
         addModule(ModuleRegistry.create(TimeoutModule.id));
         this.blockState = Blocks.STONE.defaultBlockState();
         this.dropItem = true;

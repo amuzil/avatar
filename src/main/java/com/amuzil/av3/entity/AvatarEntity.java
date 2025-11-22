@@ -3,10 +3,7 @@ package com.amuzil.av3.entity;
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.bending.element.Elements;
-import com.amuzil.av3.entity.api.ICollisionModule;
-import com.amuzil.av3.entity.api.IEntityModule;
-import com.amuzil.av3.entity.api.IForceModule;
-import com.amuzil.av3.entity.api.IFXModule;
+import com.amuzil.av3.entity.api.*;
 import com.amuzil.magus.skill.traits.DataTrait;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.Packet;
@@ -48,7 +45,7 @@ public abstract class AvatarEntity extends Entity {
     private final List<IEntityModule> modules = new ArrayList<>();
     private final List<IForceModule> forceModules = new ArrayList<>();
     private final List<ICollisionModule> collisionModules = new ArrayList<>();
-    private final List<IFXModule> renderModules = new ArrayList<>();
+    private final List<IClientModule> clientModules = new ArrayList<>();
     private final List<DataTrait> traits = new LinkedList<>();
     private Entity owner;
 
@@ -62,7 +59,7 @@ public abstract class AvatarEntity extends Entity {
         modules.forEach(mod -> mod.init(this));
         forceModules.forEach(mod -> mod.init(this));
         collisionModules.forEach(mod -> mod.init(this));
-        renderModules.forEach(mod -> mod.init(this));
+        clientModules.forEach(mod -> mod.init(this));
     }
 
     @Override
@@ -71,7 +68,7 @@ public abstract class AvatarEntity extends Entity {
 
         // Tick appropriate modules in each order
         if (this.level().isClientSide()) {
-            renderModules.forEach(mod -> mod.tick(this));
+            clientModules.forEach(mod -> mod.tick(this));
         } else {
             modules.forEach(mod -> mod.tick(this));
             forceModules.forEach(mod -> mod.tick(this));
@@ -142,21 +139,21 @@ public abstract class AvatarEntity extends Entity {
         return Collections.unmodifiableList(collisionModules);
     }
 
-    // Render modules
-    public void addRenderModule(IFXModule mod) {
-        renderModules.add(mod);
+    // Client-side modules
+    public void addClientModule(IClientModule mod) {
+        clientModules.add(mod);
     }
 
-    public boolean removeRenderModule(IFXModule mod) {
-        return removeRenderModule(mod.id());
+    public boolean removeClientModule(IClientModule mod) {
+        return removeClientModule(mod.id());
     }
 
-    public boolean removeRenderModule(String id) {
-        return renderModules.removeIf(m -> m.id().equals(id));
+    public boolean removeClientModule(String id) {
+        return clientModules.removeIf(m -> m.id().equals(id));
     }
 
-    public List<IFXModule> renderModules() {
-        return Collections.unmodifiableList(renderModules);
+    public List<IClientModule> clientModules() {
+        return Collections.unmodifiableList(clientModules);
     }
 
     public void setMaxLifetime(int max) {

@@ -10,17 +10,12 @@ import com.amuzil.magus.skill.event.SkillTickEvent;
 import com.amuzil.magus.skill.traits.skilltraits.KnockbackTrait;
 import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.state.BlockState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.LinkedHashMap;
 import java.util.Random;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 import static com.amuzil.av3.bending.form.BendingForms.*;
 import static com.amuzil.av3.utils.bending.SkillHelper.canEarthBend;

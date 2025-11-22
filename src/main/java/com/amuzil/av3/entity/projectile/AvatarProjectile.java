@@ -5,9 +5,9 @@ import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.IAvatarProjectile;
 import com.amuzil.av3.entity.api.IFXModule;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
-import com.amuzil.av3.entity.api.modules.entity.TimeoutModule;
 import com.amuzil.av3.entity.api.modules.client.PhotonModule;
 import com.amuzil.av3.entity.api.modules.client.SoundModule;
+import com.amuzil.av3.entity.api.modules.entity.TimeoutModule;
 import com.google.common.base.MoreObjects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -45,8 +45,8 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
     public AvatarProjectile(EntityType<? extends AvatarProjectile> entityType, Level pLevel) {
         super(entityType, pLevel);
         // NOTE: Modules are not synced between client and server unless added to the entity's constructor!
-        addRenderModule((IFXModule) ModuleRegistry.create(PhotonModule.id));
-        addModule(ModuleRegistry.create(SoundModule.id));
+        addClientModule((IFXModule) ModuleRegistry.create(PhotonModule.id));
+        addClientModule((IFXModule) ModuleRegistry.create(SoundModule.id));
         addModule(ModuleRegistry.create(TimeoutModule.id));
     }
 
