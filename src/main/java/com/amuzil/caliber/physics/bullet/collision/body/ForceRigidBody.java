@@ -2,12 +2,13 @@ package com.amuzil.caliber.physics.bullet.collision.body;
 
 import com.amuzil.caliber.physics.bullet.collision.body.shape.MinecraftShape;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
+import com.amuzil.magus.physics.core.ForcePhysicsElement;
 import net.minecraft.world.entity.player.Player;
 
 /**
  * Used in the Force physics API
  */
-public class ForceRigidBody extends ElementRigidBody{
+public class ForceRigidBody extends ElementRigidBody {
     private Player priorityPlayer;
     private boolean dirtyProperties = true;
 
