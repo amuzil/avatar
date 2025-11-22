@@ -10,10 +10,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Quaterniond;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 
 public class ForceCloud extends ForceElement {
@@ -188,7 +185,12 @@ public class ForceCloud extends ForceElement {
     public void deletePoints(List<ForcePoint> points) {
         for (ForcePoint p : points) {
             this.points.remove(p.id());
-        };
+        }
+    }
+
+    @Nullable
+    public ForcePoint getPoint(String id) {
+        return this.points.getOrDefault(id, null);
     }
 
     public void clear() {
@@ -196,11 +198,11 @@ public class ForceCloud extends ForceElement {
     }
 
     public HashMap<String, ForcePoint> pointsCopy() {
-        return new ArrayList<>(this.points);
+        return new HashMap<>(this.points);
     }
 
     public List<ForcePoint> points() {
-        return this.points;
+        return this.points.values().stream().toList();
     }
 
     public void mod(IPhysicsModule... modules) {
@@ -397,7 +399,7 @@ public class ForceCloud extends ForceElement {
     }
 
     private void integratePoints(double dt) {
-        for (ForcePoint p : points) {
+        for (ForcePoint p : points.values()) {
             updatePhysicsElement(dt, p, this);
 //            Vec3 pos = p.pos();
 //            Vec3 vel = p.vel();
@@ -458,9 +460,8 @@ public class ForceCloud extends ForceElement {
 //        }
 
         // Alternative implementation using spatial grid (commented out due to inefficiency with small clouds)
-        if (points.isEmpty()) return;
 
-        for (ForcePoint p : points) {
+        for (ForcePoint p : points.values()) {
             List<ForcePoint> neighbours = spaceGrid.queryRadius(p.pos(), restRadius);
             for (ForcePoint q : neighbours) {
                 if (q == p) continue;
@@ -476,7 +477,7 @@ public class ForceCloud extends ForceElement {
     public void rebuildSpatialGrid() {
         // Build grid...
         if (points.isEmpty()) {
-            spaceGrid.rebuildFrom(points); // clears used bins
+            spaceGrid.rebuildFrom(Collections.emptyList()); // clears used bins
             return;
         }
 
@@ -488,7 +489,7 @@ public class ForceCloud extends ForceElement {
         spaceGrid.setOrigin(originX, originY, originZ);
 
         // Now rebuild from our point list
-        spaceGrid.rebuildFrom(points);
+        spaceGrid.rebuildFrom(points.values().stream().toList());
     }
 
     /**
