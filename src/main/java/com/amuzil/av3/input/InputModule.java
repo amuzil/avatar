@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.function.Consumer;
 
 import static com.amuzil.av3.data.attachment.AvatarAttachments.BENDER_DATA;
-import static com.amuzil.av3.data.capability.AvatarCapabilities.getBender;
 import static com.amuzil.av3.input.KeyBindings.*;
 
 

@@ -4,12 +4,12 @@ import com.amuzil.av3.data.BenderCache;
 import com.amuzil.av3.data.attachment.AvatarAttachments;
 import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
+import com.amuzil.av3.entity.api.modules.client.PhotonModule;
+import com.amuzil.av3.entity.api.modules.client.SoundModule;
 import com.amuzil.av3.entity.api.modules.collision.*;
-import com.amuzil.av3.entity.api.modules.force.*;
 import com.amuzil.av3.entity.api.modules.entity.GrowModule;
 import com.amuzil.av3.entity.api.modules.entity.TimeoutModule;
-import com.amuzil.av3.entity.api.modules.render.PhotonModule;
-import com.amuzil.av3.entity.api.modules.render.SoundModule;
+import com.amuzil.av3.entity.api.modules.force.*;
 import com.amuzil.av3.input.InputModule;
 import com.amuzil.av3.network.AvatarNetwork;
 import com.amuzil.av3.utils.sound.AvatarSounds;
@@ -22,7 +22,6 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.common.NeoForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -72,7 +71,6 @@ public class Avatar {
         ModuleRegistry.register(AirCollisionModule::new);
         ModuleRegistry.register(WaterCollisionModule::new);
         ModuleRegistry.register(FireCollisionModule::new);
-        ModuleRegistry.register(FireEffectModule::new);
         ModuleRegistry.register(SoundModule::new);
         ModuleRegistry.register(PhotonModule::new);
     }

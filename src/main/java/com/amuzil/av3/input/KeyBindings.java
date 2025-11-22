@@ -4,7 +4,6 @@ import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.bending.form.BendingForm;
 import com.amuzil.av3.bending.form.BendingForms;
-import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.gui.ElementSelectScreen;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
@@ -19,7 +18,6 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import java.util.HashMap;
 
 import static com.amuzil.av3.data.attachment.AvatarAttachments.ACTIVE_ELEMENT;
-import static com.amuzil.av3.data.capability.AvatarCapabilities.getBender;
 
 
 @EventBusSubscriber(modid = Avatar.MOD_ID, value = Dist.CLIENT)

@@ -25,7 +25,7 @@ public class EarthBlockSkill extends EarthSkill {
     public EarthBlockSkill() {
         super(Avatar.MOD_ID, "earth_block");
         addTrait(new StringTrait(Constants.FX, "earth_block"));
-        addTrait(new TimedTrait(Constants.LIFETIME, 500)); // Ticks not seconds...
+        addTrait(new TimedTrait(Constants.LIFETIME, 500));
         addTrait(new SizeTrait(Constants.SIZE, 1.0f));
 
         this.startPaths = SkillPathBuilder.getInstance()
@@ -68,14 +68,4 @@ public class EarthBlockSkill extends EarthSkill {
         bender.getSelection().addEntityId(rigidBlock.getUUID());
         entity.level().addFreshEntity(rigidBlock);
     }
-
-//    @Override
-//    public void run(Bender bender) {
-//        super.run(bender);
-//    }
-//
-//    @Override
-//    public void stop(Bender bender) {
-//        super.stop(bender);
-//    }
 }

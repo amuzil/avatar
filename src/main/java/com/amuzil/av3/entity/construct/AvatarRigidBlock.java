@@ -18,8 +18,6 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
-
 import static com.amuzil.av3.utils.bending.SkillHelper.getRightPivot;
 
 
@@ -30,6 +28,14 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
 
     public AvatarRigidBlock(EntityType<? extends AvatarRigidBlock> type, Level level) {
         super(type, level);
+        this.rigidBody = new EntityRigidBody(this);
+        addForceModule((IForceModule) ModuleRegistry.create(ControlModule.id));
+        defaultMass = rigidBody.getMass();
+    }
+
+    public AvatarRigidBlock(Level level, Vec3 pos, double width, double height, double depth) {
+        super(AvatarEntities.AVATAR_RIGID_BLOCK_ENTITY_TYPE.get(), level, width, height, depth);
+        this.setPos(pos);
         this.rigidBody = new EntityRigidBody(this);
         addForceModule((IForceModule) ModuleRegistry.create(ControlModule.id));
         defaultMass = rigidBody.getMass();
@@ -77,6 +83,19 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
 
         rigidBody.setPhysicsLocation(Convert.toBullet(newPos));
         rigidBody.setPhysicsRotation(q);
+    }
+
+    @Override
+    public void tick() {
+        // Save previous tick position
+        this.xOld = this.getX();
+        this.yOld = this.getY();
+        this.zOld = this.getZ();
+        super.tick();
+    }
+
+    public void syncFromPhysics() {
+        this.setPos(Convert.toVec3(rigidBody.getPhysicsLocation(new Vector3f())));
     }
 
     public float getDefaultMass() {

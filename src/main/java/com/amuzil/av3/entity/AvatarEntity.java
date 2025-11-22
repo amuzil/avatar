@@ -3,10 +3,7 @@ package com.amuzil.av3.entity;
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.bending.element.Elements;
-import com.amuzil.av3.entity.api.ICollisionModule;
-import com.amuzil.av3.entity.api.IEntityModule;
-import com.amuzil.av3.entity.api.IForceModule;
-import com.amuzil.av3.entity.api.IRenderModule;
+import com.amuzil.av3.entity.api.*;
 import com.amuzil.magus.skill.traits.DataTrait;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.Packet;
@@ -49,7 +46,7 @@ public abstract class AvatarEntity extends Entity {
     private final List<IEntityModule> modules = new ArrayList<>();
     private final List<IForceModule> forceModules = new ArrayList<>();
     private final List<ICollisionModule> collisionModules = new ArrayList<>();
-    private final List<IRenderModule> renderModules = new ArrayList<>();
+    private final List<IClientModule> clientModules = new ArrayList<>();
     private final List<DataTrait> traits = new LinkedList<>();
     private Entity owner;
 
@@ -60,10 +57,11 @@ public abstract class AvatarEntity extends Entity {
     /** Call this after adding it to a world.
      */
     public void init() {
+        // TODO: Send Packet for client-side init
+        clientModules.forEach(mod -> mod.init(this));
         modules.forEach(mod -> mod.init(this));
         forceModules.forEach(mod -> mod.init(this));
         collisionModules.forEach(mod -> mod.init(this));
-        renderModules.forEach(mod -> mod.init(this));
     }
 
     @Override
@@ -72,7 +70,7 @@ public abstract class AvatarEntity extends Entity {
 
         // Tick appropriate modules in each order
         if (this.level().isClientSide()) {
-            renderModules.forEach(mod -> mod.tick(this));
+            clientModules.forEach(mod -> mod.tick(this));
         } else {
             modules.forEach(mod -> mod.tick(this));
             forceModules.forEach(mod -> mod.tick(this));
@@ -143,21 +141,21 @@ public abstract class AvatarEntity extends Entity {
         return Collections.unmodifiableList(collisionModules);
     }
 
-    // Render modules
-    public void addRenderModule(IRenderModule mod) {
-        renderModules.add(mod);
+    // Client-side modules
+    public void addClientModule(IClientModule mod) {
+        clientModules.add(mod);
     }
 
-    public boolean removeRenderModule(IRenderModule mod) {
-        return removeRenderModule(mod.id());
+    public boolean removeClientModule(IClientModule mod) {
+        return removeClientModule(mod.id());
     }
 
-    public boolean removeRenderModule(String id) {
-        return renderModules.removeIf(m -> m.id().equals(id));
+    public boolean removeClientModule(String id) {
+        return clientModules.removeIf(m -> m.id().equals(id));
     }
 
-    public List<IRenderModule> renderModules() {
-        return Collections.unmodifiableList(renderModules);
+    public List<IClientModule> clientModules() {
+        return Collections.unmodifiableList(clientModules);
     }
 
     public void setMaxLifetime(int max) {

@@ -22,7 +22,7 @@ public class PressureGenerator {
     public static final float STOPPING_TIME = 2; // number of time steps to apply slamming force on fluid collision
 
     // Fluid-Related Constants
-    public static final float WATER_DENSITY = 1000f; // kg/m^3
+    public static final float WATER_DENSITY = 100f; // kg/m^3
 
     // Gas-Related Constants
     public static final float AIR_DENSITY = 1.225f; // kg/m^3

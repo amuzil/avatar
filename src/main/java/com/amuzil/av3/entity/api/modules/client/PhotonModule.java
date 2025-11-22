@@ -1,7 +1,7 @@
-package com.amuzil.av3.entity.api.modules.render;
+package com.amuzil.av3.entity.api.modules.client;
 
 import com.amuzil.av3.entity.AvatarEntity;
-import com.amuzil.av3.entity.api.IRenderModule;
+import com.amuzil.av3.entity.api.IFXModule;
 import com.lowdragmc.photon.client.fx.EntityEffectExecutor;
 import com.lowdragmc.photon.client.fx.FX;
 import com.lowdragmc.photon.client.fx.FXHelper;
@@ -13,7 +13,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 
-public class PhotonModule implements IRenderModule {
+public class PhotonModule implements IFXModule {
 
     public static String id = PhotonModule.class.getSimpleName();
 

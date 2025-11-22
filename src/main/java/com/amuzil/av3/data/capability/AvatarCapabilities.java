@@ -1,6 +1,7 @@
 package com.amuzil.av3.data.capability;
 
 import com.amuzil.av3.Avatar;
+import com.amuzil.av3.data.BenderCache;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
@@ -20,14 +21,29 @@ public final class AvatarCapabilities {
         event.registerEntity(BENDER, EntityType.PLAYER, (entity, ctx) -> new Bender(entity));
     }
 
+    public static void initBenderCache() {
+        Avatar.BENDER_CACHE = new BenderCache();
+    }
+
+    public static void clearBenderCache() {
+        if (Avatar.BENDER_CACHE != null) {
+            Avatar.BENDER_CACHE.clear();
+            Avatar.BENDER_CACHE = null;
+        }
+    }
+
+    public static Bender getBender(ServerPlayer player) {
+        return Avatar.BENDER_CACHE.get(player);
+    }
+
+    public static Bender removeBender(ServerPlayer player) {
+        return Avatar.BENDER_CACHE.remove(player);
+    }
+
     public static Bender syncBender(ServerPlayer player) {
         Bender bender = getBender(player);
         if (bender != null && bender.isDirty())
             bender.syncToClient();
         return bender;
-    }
-
-    public static Bender getBender(ServerPlayer player) {
-        return Avatar.BENDER_CACHE.get(player);
     }
 }

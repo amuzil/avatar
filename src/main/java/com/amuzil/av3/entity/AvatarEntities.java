@@ -2,7 +2,6 @@ package com.amuzil.av3.entity;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.entity.construct.AvatarRigidBlock;
-import com.amuzil.av3.entity.construct.PhysicsBenderEntity;
 import com.amuzil.av3.entity.mobs.SkyBisonEntity;
 import com.amuzil.av3.entity.projectile.*;
 import net.minecraft.core.registries.Registries;
@@ -42,15 +41,8 @@ public class AvatarEntities {
             registerPhysicsBody("avatar_rigid_block", AvatarRigidBlock::new, 1.0f, 1.0f, 10, 4);
 
     public static final Supplier<EntityType<SkyBisonEntity>> AVATAR_SKYBISON_ENTITY_TYPE =
-            ENTITY_TYPES.register("avatar_skybison_entity", () -> EntityType.Builder.<SkyBisonEntity>of(SkyBisonEntity::new, MobCategory.CREATURE)
+            ENTITY_TYPES.register("avatar_skybison_entity", () -> EntityType.Builder.of(SkyBisonEntity::new, MobCategory.CREATURE)
                     .sized(0.5f, 0.5f).build("avatar_skybison_entity"));
-
-    public static final Supplier<EntityType<PhysicsBenderEntity>> AVATAR_PHYSICS_BENDER_ENTITY_TYPE =
-            ENTITY_TYPES.register("avatar_bender_entity", () -> EntityType.Builder.<PhysicsBenderEntity>of(PhysicsBenderEntity::new, MobCategory.MISC)
-                    .sized(0.5f, 1.8f)
-                    .clientTrackingRange(64)
-                    .updateInterval(1)
-                    .build("avatar_bender_entity"));
 
     private static <T extends Entity> Supplier<EntityType<T>> registerPhysicsBody(
             String id, EntityType.EntityFactory<T> factory, float width, float height, int trackingRange, int updateInterval) {
