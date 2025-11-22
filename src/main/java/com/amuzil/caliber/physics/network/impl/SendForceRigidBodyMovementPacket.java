@@ -2,6 +2,7 @@ package com.amuzil.caliber.physics.network.impl;
 
 import com.amuzil.caliber.CaliberPhysics;
 import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
+import com.amuzil.caliber.physics.bullet.collision.body.ForceRigidBody;
 import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.amuzil.caliber.physics.network.CaliberClientPacketHandler;
 import com.amuzil.caliber.physics.network.CaliberPacket;
@@ -18,15 +19,15 @@ public class SendForceRigidBodyMovementPacket extends CaliberPacket {
     public static final StreamCodec<FriendlyByteBuf, SendForceRigidBodyMovementPacket> CODEC =
             StreamCodec.ofMember(SendForceRigidBodyMovementPacket::toBytes, SendForceRigidBodyMovementPacket::new);
 
-    private final int id;
+    private final String id;
     private final Quaternionf rotation;
     private final Vector3f pos;
     private final Vector3f linearVel;
     private final Vector3f angularVel;
 
-    public SendForceRigidBodyMovementPacket(EntityRigidBody body) {
+    public SendForceRigidBodyMovementPacket(ForceRigidBody body) {
         super(true);
-        this.id = body.getElement().cast().getId();
+        this.id = body.getElement().cast().id();
         this.rotation = Convert.toMinecraft(body.getPhysicsRotation(new Quaternion()));
         this.pos = Convert.toMinecraft(body.getPhysicsLocation(new com.jme3.math.Vector3f()));
         this.linearVel = Convert.toMinecraft(body.getLinearVelocity(new com.jme3.math.Vector3f()));
@@ -35,14 +36,14 @@ public class SendForceRigidBodyMovementPacket extends CaliberPacket {
 
     public SendForceRigidBodyMovementPacket(FriendlyByteBuf buf) {
         super(true);
-        this.id = buf.readVarInt();
+        this.id = buf.readUtf();
         this.rotation = buf.readQuaternion();
         this.pos = buf.readVector3f();
         this.linearVel = buf.readVector3f();
         this.angularVel = buf.readVector3f();
     }
 
-    public int getId() {
+    public String id() {
         return this.id;
     }
 
@@ -64,7 +65,7 @@ public class SendForceRigidBodyMovementPacket extends CaliberPacket {
 
     @Override
     protected void toBytes(FriendlyByteBuf buf) {
-        buf.writeVarInt(this.id);
+        buf.writeUtf(this.id);
         buf.writeQuaternion(this.rotation);
         buf.writeVector3f(this.pos);
         buf.writeVector3f(this.linearVel);

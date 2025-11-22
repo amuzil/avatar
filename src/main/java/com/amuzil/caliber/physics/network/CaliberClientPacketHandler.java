@@ -11,8 +11,6 @@ import com.amuzil.caliber.physics.network.impl.SendRigidBodyMovementPacket;
 import com.amuzil.caliber.physics.network.impl.SendRigidBodyPropertiesPacket;
 import com.amuzil.magus.physics.core.ForceCloud;
 import com.amuzil.magus.physics.core.ForceElement;
-import com.amuzil.magus.physics.core.ForcePhysicsElement;
-import com.amuzil.magus.physics.core.ForcePoint;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 
@@ -72,13 +70,7 @@ public class CaliberClientPacketHandler {
                     if (cloud.id().equals(packet.id())) {
                         element = cloud;
                         break;
-                    }
-                    for (ForcePoint point : cloud.points()) {
-                        if (point.id().equals(packet.id())) {
-                            element = point;
-                            break;
-                        }
-                    }
+                    } else element = cloud.getPoint(packet.id());
                     if (element != null) break;
 
                 }
@@ -110,13 +102,7 @@ public class CaliberClientPacketHandler {
                     if (cloud.id().equals(packet.id())) {
                         element = cloud;
                         break;
-                    }
-                    for (ForcePoint point : cloud.points()) {
-                        if (point.id().equals(packet.id())) {
-                            element = point;
-                            break;
-                        }
-                    }
+                    } else element = cloud.getPoint(packet.id());
                     if (element != null) break;
 
                 }
