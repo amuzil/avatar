@@ -55,7 +55,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
     private final Level level;
     private final ChunkCache chunkCache;
     private final Set<SectionPos> previousBlockUpdates;
-    private ForceSystem system;
+    private final ForceSystem system;
     private volatile boolean stepping;
 
     public MinecraftSpace(PhysicsThread thread, Level level) {

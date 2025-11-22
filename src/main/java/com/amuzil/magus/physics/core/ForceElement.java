@@ -4,8 +4,6 @@ import com.amuzil.caliber.physics.bullet.collision.body.ForceRigidBody;
 import com.amuzil.magus.physics.constraints.Constraints;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.HashMap;
-import java.util.Objects;
 import java.util.UUID;
 
 // We want these to count as PhysicsElements from the physics engine's perspective, not just my own custom implementation.
