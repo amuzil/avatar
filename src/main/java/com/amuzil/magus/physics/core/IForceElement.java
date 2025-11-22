@@ -4,7 +4,7 @@ import com.amuzil.magus.physics.constraints.ConstraintUtils;
 import com.amuzil.magus.physics.constraints.Constraints;
 import net.minecraft.world.phys.Vec3;
 
-public interface IPhysicsElement {
+public interface IForceElement {
 
     byte[] header();
 

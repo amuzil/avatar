@@ -1,11 +1,10 @@
 package com.amuzil.magus.physics.modules;
 
-import com.amuzil.magus.physics.core.IPhysicsElement;
-import com.amuzil.magus.physics.core.PhysicsElement;
+import com.amuzil.magus.physics.core.IForceElement;
 
 public class LifetimeModule implements IPhysicsModule{
     @Override
-    public void preSolve(IPhysicsElement element) {
+    public void preSolve(IForceElement element) {
 //        if (element instanceof PhysicsElement physics) {
 //            if (physics.maxLife() > 0)
 //                physics.timeExisted() += 1;
@@ -15,12 +14,12 @@ public class LifetimeModule implements IPhysicsModule{
     }
 
     @Override
-    public void solve(IPhysicsElement element) {
+    public void solve(IForceElement element) {
 
     }
 
     @Override
-    public void postSolve(IPhysicsElement element) {
+    public void postSolve(IForceElement element) {
 
     }
 }

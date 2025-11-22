@@ -19,8 +19,10 @@ public class AvatarPhysicsController extends AvatarEntity implements IAvatarCont
     public AvatarPhysicsController(EntityType<?> entityType, Level level) {
         super(entityType, level);
 
-        // This should never be touching physics directly.
-        setPhysics(false);
+        // This should never be collidable. Physics boolean can be used to determine if physics is enabled.
+        setCollidable(false);
+        setDamageable(false);
+        setInvulnerable(true);
     }
 
     /**

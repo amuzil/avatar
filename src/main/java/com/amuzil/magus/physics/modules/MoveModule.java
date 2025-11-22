@@ -1,21 +1,21 @@
 package com.amuzil.magus.physics.modules;
 
-import com.amuzil.magus.physics.core.IPhysicsElement;
+import com.amuzil.magus.physics.core.IForceElement;
 
 public class MoveModule implements IPhysicsModule {
     @Override
-    public void preSolve(IPhysicsElement element) {
+    public void preSolve(IForceElement element) {
 
     }
 
     @Override
-    public void solve(IPhysicsElement element) {
+    public void solve(IForceElement element) {
         // Inserts a new position
         element.insert(element.pos().add(element.vel().scale(1 / 20f)), 0);
     }
 
     @Override
-    public void postSolve(IPhysicsElement element) {
+    public void postSolve(IForceElement element) {
 
     }
 }

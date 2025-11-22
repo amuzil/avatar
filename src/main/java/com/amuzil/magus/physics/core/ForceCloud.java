@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
-public class ForceCloud extends PhysicsElement {
+public class ForceCloud extends ForceElement {
 
     private final List<ForcePoint> points;
     private final List<IPhysicsModule> modules;
@@ -224,7 +224,7 @@ public class ForceCloud extends PhysicsElement {
             System.arraycopy(header, 0, point.header, 0, header.length);
     }
 
-    public void updatePhysicsElement(double dt, IPhysicsElement element, IPhysicsElement parent) {
+    public void updatePhysicsElement(double dt, IForceElement element, IForceElement parent) {
         Vec3 pos = element.pos();
         Vec3 vel = element.vel();
         Vec3 oldVel = vel;

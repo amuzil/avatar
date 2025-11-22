@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 // A spatially hashed grid of forcepoints to prevent per-point neighbour checking. Yay!
-public class ForceGrid<T extends IPhysicsElement> {
+public class ForceGrid<T extends IForceElement> {
     public static final int MIN_POINTS_PER_WORKER = 4096; // keep for future parallelism if you want
 
     private final double cellSize;
@@ -30,7 +30,7 @@ public class ForceGrid<T extends IPhysicsElement> {
     private final ExecutorService threadPool;
     private final int parallelism;
     private final int maxPoints;
-    NormalProvider<PhysicsElement> velNormal = pe -> {
+    NormalProvider<ForceElement> velNormal = pe -> {
         Vec3 v = pe.vel(); // or whatever you call it
         return new Vector3f((float) v.x, (float) v.y, (float) v.z);
     };
@@ -173,8 +173,8 @@ public class ForceGrid<T extends IPhysicsElement> {
 
             int bi = computeLinearBinIndex(coords[0], coords[1], coords[2]);
 
-            if (isSurfaceBin(bi) && p instanceof PhysicsElement) {
-                ((PhysicsElement) p).surface(true);
+            if (isSurfaceBin(bi) && p instanceof ForceElement) {
+                ((ForceElement) p).surface(true);
             }
         }
     }
@@ -227,7 +227,7 @@ public class ForceGrid<T extends IPhysicsElement> {
         if (bin == null || bin.isEmpty()) return null;
 
         for (T p : bin) {
-            if (p instanceof PhysicsElement pe && pe.surface()) {
+            if (p instanceof ForceElement pe && pe.surface()) {
                 return p;
             }
         }
@@ -261,7 +261,7 @@ public class ForceGrid<T extends IPhysicsElement> {
      *
      * Call this once per DC rebuild, then feed into DCStitcher.buildSparse.
      */
-    public <E extends IPhysicsElement> void fillDCBuffers(
+    public <E extends IForceElement> void fillDCBuffers(
             DCStitcher.DCMesh mesh,                       // reuse if you want, or ignore
             NormalProvider<E> normalProvider,
             Vertex[] outCellVertices,                     // length = totalBins
@@ -314,7 +314,7 @@ public class ForceGrid<T extends IPhysicsElement> {
      * This allocates buffers; for real use, hoist Vertex[] / IntArrayList / DCMesh
      * into the ForceCloud/ForceGrid and reuse them.
      */
-    public <E extends IPhysicsElement> DCStitcher.DCMesh buildDCMesh(
+    public <E extends IForceElement> DCStitcher.DCMesh buildDCMesh(
             NormalProvider<E> normalProvider,
             boolean emitTrianglesIfThree
     ) {
@@ -343,9 +343,9 @@ public class ForceGrid<T extends IPhysicsElement> {
         List<T> bin = bins[bi];
         if (bin == null || bin.isEmpty()) return element;
 
-        bin.removeIf(el -> !(el instanceof PhysicsElement));
+        bin.removeIf(el -> !(el instanceof ForceElement));
         for (T p : bin) {
-            if (((PhysicsElement) p).surface()) {
+            if (((ForceElement) p).surface()) {
                 element = p;
             }
         }
@@ -428,7 +428,7 @@ public class ForceGrid<T extends IPhysicsElement> {
 
         // pick the one marked as surface (your rebuildFrom sets PhysicsElement.surface(true))
         for (T p : bin) {
-            if (p instanceof PhysicsElement pe && pe.surface()) return p;
+            if (p instanceof ForceElement pe && pe.surface()) return p;
         }
         return null;
     }
@@ -458,7 +458,7 @@ public class ForceGrid<T extends IPhysicsElement> {
     }
 
     // Choose how to compute "direction" per point.
-    public interface NormalProvider<T extends IPhysicsElement> {
+    public interface NormalProvider<T extends IForceElement> {
         Vector3f normalFor(T element);
     }
 }

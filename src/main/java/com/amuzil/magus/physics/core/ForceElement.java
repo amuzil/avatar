@@ -7,7 +7,8 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
 
-public abstract class PhysicsElement implements IPhysicsElement {
+// We want these to count as PhysicsElements from the physics engine's perspective, not just my own custom implementation.
+public abstract class ForceElement implements IForceElement {
     public double[] data;
 
     /**
@@ -25,11 +26,11 @@ public abstract class PhysicsElement implements IPhysicsElement {
     private boolean surface = false;
     protected long seed = Seeds.fromUuid(UUID.randomUUID());
 
-    public PhysicsElement(int type) {
+    public ForceElement(int type) {
         this(15, type);
     }
 
-    public PhysicsElement(int size, int type) {
+    public ForceElement(int size, int type) {
         this.data = new double[size];
         type(type);
     }

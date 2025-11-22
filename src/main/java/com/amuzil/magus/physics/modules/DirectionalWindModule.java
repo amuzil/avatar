@@ -2,7 +2,7 @@ package com.amuzil.magus.physics.modules;
 
 import com.amuzil.magus.physics.core.ForceCloud;
 import com.amuzil.magus.physics.core.ForcePoint;
-import com.amuzil.magus.physics.core.IPhysicsElement;
+import com.amuzil.magus.physics.core.IForceElement;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Random;
 
@@ -20,7 +20,7 @@ public class DirectionalWindModule implements IPhysicsModule {
     }
 
     @Override
-    public void preSolve(IPhysicsElement element) {
+    public void preSolve(IForceElement element) {
         // or store one in module
 
         if (!(element instanceof ForceCloud))
@@ -39,11 +39,11 @@ public class DirectionalWindModule implements IPhysicsModule {
     }
 
     @Override
-    public void solve(IPhysicsElement cloud) {
+    public void solve(IForceElement cloud) {
     }
 
     @Override
-    public void postSolve(IPhysicsElement cloud) {
+    public void postSolve(IForceElement cloud) {
     }
 
 }
