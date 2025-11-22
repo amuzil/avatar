@@ -26,7 +26,7 @@ public class EarthWallSkill extends EarthSkill {
     public EarthWallSkill() {
         super(Avatar.MOD_ID, "earth_wall");
         addTrait(new StringTrait(Constants.FX, "earth_wall"));
-        addTrait(new TimedTrait(Constants.LIFETIME, 100));
+        addTrait(new TimedTrait(Constants.LIFETIME, 500));
         addTrait(new SizeTrait(Constants.SIZE, 3.0f));
 
         this.startPaths = SkillPathBuilder.getInstance()
@@ -56,7 +56,7 @@ public class EarthWallSkill extends EarthSkill {
         rigidBlock.getRigidBody().setAngularFactor(0f);
         rigidBlock.getRigidBody().setAngularVelocity(new Vector3f(0f, 0f, 0f));
         rigidBlock.setOwner(entity);
-        rigidBlock.setMaxLifetime(lifetime);
+//        rigidBlock.setMaxLifetime(lifetime);
         rigidBlock.setWidth((float) size);
         rigidBlock.setHeight((float) size);
         rigidBlock.setDamageable(false);

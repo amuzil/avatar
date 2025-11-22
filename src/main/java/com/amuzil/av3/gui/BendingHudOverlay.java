@@ -2,7 +2,6 @@ package com.amuzil.av3.gui;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.element.Element;
-import com.amuzil.av3.data.capability.Bender;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
@@ -12,8 +11,8 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 
+import static com.amuzil.av3.data.attachment.AvatarAttachments.ACTIVE_ELEMENT;
 import static com.amuzil.av3.data.attachment.AvatarAttachments.IS_BENDING;
-import static com.amuzil.av3.data.capability.AvatarCapabilities.getOrCreateBender;
 
 @EventBusSubscriber(
         modid = Avatar.MOD_ID,
@@ -42,10 +41,10 @@ public class BendingHudOverlay {
 
         // --- Read current element from your data attachment (client copy) ---
         // Replace this with however you actually store it:
-        Bender bender = getOrCreateBender(player);
-        Element selected = bender.getElement();
+        boolean isBending = player.getData(IS_BENDING);
+        Element selected = player.getData(ACTIVE_ELEMENT);
 
-        if (!bender.isBending() || selected == null) return;
+        if (!isBending || selected == null) return;
 
         ResourceLocation icon = getIconFor(selected);
         if (icon == null) return;

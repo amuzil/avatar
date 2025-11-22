@@ -148,13 +148,7 @@ public class ElementSelectScreen extends Screen {
     }
 
     private void onRandomElementClicked() {
-        Element[] all = new Element[]{
-                Elements.AIR,
-                Elements.WATER,
-                Elements.EARTH,
-                Elements.FIRE
-        };
-        Element random = all[RNG.nextInt(all.length)];
+        Element random = Elements.random();
         onElementClicked(random);
     }
 

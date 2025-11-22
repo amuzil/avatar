@@ -24,7 +24,7 @@ public class AvatarAttachments {
                     .build());
 
     public static final Supplier<AttachmentType<Element>> ACTIVE_ELEMENT = ATTACHMENT_TYPES.register(
-            "active_element", () -> AttachmentType.builder(() -> (Element)null)
+            "active_element", () -> AttachmentType.builder(() -> (Element) null)
                     .serialize(Element.CODEC)
                     .sync(Element.STREAM_CODEC)
                     .copyOnDeath()

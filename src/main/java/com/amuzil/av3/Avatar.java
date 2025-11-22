@@ -76,10 +76,7 @@ public class Avatar {
     }
 
     private void setupClient(final FMLClientSetupEvent event) {
-        LOGGER.info("Setting up Avatar Mod client-side...");
         LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
-        // Initialize the input modules
-        INPUT_MODULE = new InputModule();
     }
 
 //    private void enqueueIMC(final InterModEnqueueEvent event) {}

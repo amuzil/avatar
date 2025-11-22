@@ -331,6 +331,7 @@ public class Bender implements IBender {
     }
 
     public boolean isBending() { return entity.getData(IS_BENDING); }
+
     public void setBending(boolean active) {
         entity.setData(IS_BENDING, active);
         markDirty();

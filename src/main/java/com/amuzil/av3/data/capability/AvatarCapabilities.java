@@ -3,6 +3,7 @@ package com.amuzil.av3.data.capability;
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.data.BenderCache;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;

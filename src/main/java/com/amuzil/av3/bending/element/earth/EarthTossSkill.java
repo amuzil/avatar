@@ -28,7 +28,7 @@ public class EarthTossSkill extends EarthSkill {
         addTrait(new StringTrait(Constants.FX, "earth_toss"));
         addTrait(new TimedTrait(Constants.LIFETIME, 100));
         addTrait(new DamageTrait(Constants.DAMAGE, 4.5f));
-        addTrait(new SpeedTrait(Constants.SPEED, 2d));
+        addTrait(new SpeedTrait(Constants.SPEED, 3d));
         addTrait(new KnockbackTrait(Constants.KNOCKBACK, 1.5f));
 
         this.startPaths = SkillPathBuilder.getInstance()
