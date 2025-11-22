@@ -23,8 +23,6 @@ public class SoundModule implements IFXModule {
 
     @Override
     public void init(AvatarEntity entity) {
-        if (entity.fxName() != null)
-            startSoundEffect(entity.fxName(), entity);
     }
 
     @Override

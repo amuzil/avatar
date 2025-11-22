@@ -20,8 +20,6 @@ public class PhotonModule implements IFXModule {
 
     @Override
     public void init(AvatarEntity entity) {
-        if (entity.fxLocation() != null)
-            startEntityEffect(FXHelper.getFX(entity.fxLocation()), entity);
     }
 
     @Override
