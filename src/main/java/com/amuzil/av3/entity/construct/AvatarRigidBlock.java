@@ -18,8 +18,6 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
-
 import static com.amuzil.av3.utils.bending.SkillHelper.getRightPivot;
 
 
@@ -35,14 +33,16 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
         defaultMass = rigidBody.getMass();
     }
 
-    public AvatarRigidBlock(Level level) {
-        this(AvatarEntities.AVATAR_RIGID_BLOCK_ENTITY_TYPE.get(), level);
+    public AvatarRigidBlock(Level level, Vec3 pos, double width, double height, double depth) {
+        super(AvatarEntities.AVATAR_RIGID_BLOCK_ENTITY_TYPE.get(), level, width, height, depth);
+        this.setPos(pos);
+        this.rigidBody = new EntityRigidBody(this);
+        addForceModule((IForceModule) ModuleRegistry.create(ControlModule.id));
+        defaultMass = rigidBody.getMass();
     }
 
-    public AvatarRigidBlock(Level level, float width, float height) {
+    public AvatarRigidBlock(Level level) {
         this(AvatarEntities.AVATAR_RIGID_BLOCK_ENTITY_TYPE.get(), level);
-        setWidth(width);
-        setHeight(height);
     }
 
     @Override
@@ -91,7 +91,6 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
         this.xOld = this.getX();
         this.yOld = this.getY();
         this.zOld = this.getZ();
-
         super.tick();
     }
 
