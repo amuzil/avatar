@@ -4,6 +4,7 @@ import com.amuzil.av3.entity.controller.AvatarPhysicsController;
 import com.amuzil.caliber.api.EntityPhysicsElement;
 import com.amuzil.caliber.api.event.space.PhysicsSpaceEvent;
 import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
+import com.amuzil.caliber.physics.bullet.collision.body.ForceRigidBody;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.caliber.physics.bullet.collision.space.generator.EntityCollisionGenerator;
 import com.amuzil.caliber.physics.bullet.collision.space.storage.SpaceStorage;
@@ -21,6 +22,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -128,6 +130,11 @@ public final class ServerEventHandler {
             var pos = entityBody.getElement().cast().position();
             entityBody.setPhysicsLocation(Convert.toBullet(pos));
         }
+        // Works for force elements too
+        if (event.getRigidBody() instanceof ForceRigidBody forceRigidBody) {
+            Vec3 pos = forceRigidBody.getElement().cast().pos();
+            forceRigidBody.setPhysicsLocation(Convert.toBullet(pos));
+        }
     }
 
     /**
@@ -142,7 +149,7 @@ public final class ServerEventHandler {
                     space.addCollisionObject(EntityPhysicsElement.get(entity).getRigidBody()));
         }
         // Need to make this happen for every ForceElement in the ForceCloud too
-        else if (entity instanceof AvatarPhysicsController) {
+        if (entity instanceof AvatarPhysicsController) {
             MinecraftSpace space = MinecraftSpace.get(entity.level());
             space.getWorkerThread().execute(() -> {
                 space.addCollisionObject(((AvatarPhysicsController) entity).forceCloud().getRigidBody());
@@ -163,6 +170,17 @@ public final class ServerEventHandler {
             var space = MinecraftSpace.get(entity.level());
             space.getWorkerThread().execute(() ->
                     space.removeCollisionObject(EntityPhysicsElement.get(entity).getRigidBody()));
+        }
+        if (entity instanceof AvatarPhysicsController && Utilities.getTracking(entity).isEmpty()) {
+            MinecraftSpace space = MinecraftSpace.get(entity.level());
+            space.getWorkerThread().execute(() -> {
+                ((AvatarPhysicsController) entity).forceCloud().kill();
+                space.removeCollisionObject(((AvatarPhysicsController) entity).forceCloud().getRigidBody());
+                for (ForcePoint point : ((AvatarPhysicsController) entity).forceCloud().points()) {
+                    space.removeCollisionObject(point.getRigidBody());
+                }
+            });
+
         }
     }
 }
