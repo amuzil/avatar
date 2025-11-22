@@ -88,6 +88,19 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
+    private static void onPlayerCloneEvent(PlayerEvent.Clone event) {
+        if (event.getOriginal() instanceof ServerPlayer oldPlayer &&
+                event.getEntity() instanceof ServerPlayer newPlayer) {
+
+            Bender oldBender = Avatar.BENDER_CACHE.remove(oldPlayer);
+            Bender newBender = Avatar.BENDER_CACHE.get(newPlayer);
+            if (oldBender == null || newBender == null) return;
+            oldBender.unregister();
+            newBender.register();
+        }
+    }
+
+    @SubscribeEvent
     private static void onPlayerRespawnEvent(PlayerEvent.PlayerRespawnEvent event) {
         if (event.getEntity() instanceof ServerPlayer player)
             AvatarCapabilities.syncBender(player);
