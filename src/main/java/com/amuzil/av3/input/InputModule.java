@@ -6,6 +6,7 @@ import com.amuzil.av3.bending.form.BendingForms;
 import com.amuzil.av3.data.attachment.BenderData;
 import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.network.AvatarNetwork;
+import com.amuzil.av3.network.packets.bender.ToggleBendingPacket;
 import com.amuzil.av3.network.packets.form.ExecuteFormPacket;
 import com.amuzil.av3.network.packets.form.ReleaseFormPacket;
 import com.amuzil.magus.form.ActiveForm;
@@ -40,7 +41,6 @@ public class InputModule {
     private boolean isHoldingCtrl = false;
     private boolean isHoldingAlt = false;
     private BendingForm currentForm = BendingForms.NULL;
-    private boolean isBending = true;
     private BendingForm.Type.Motion motion = BendingForm.Type.Motion.NONE;
     private final long DOUBLE_TAP_THRESHOLD = 250; // milliseconds
     private final HashMap<BendingForm.Type.Motion, Long> lastPressedForm = new HashMap<>();
@@ -156,7 +156,7 @@ public class InputModule {
     }
 
     private void checkForm(BendingForm form) { // Check if the form met the conditions before sending the packet
-        if (isBending) {
+        if (bender.isBending()) {
             if (!(isHoldingCtrl || isHoldingAlt)) {
                 if (form.equals(BendingForms.STRIKE) || form.equals(BendingForms.BLOCK))
                     sendFormPacket(form, false);
@@ -276,9 +276,12 @@ public class InputModule {
     }
 
     public void toggleListeners() {
+        boolean isBending = bender.isBending();
+        Player player = Minecraft.getInstance().player;
+        assert player != null;
         if (!isBending) {
             registerListeners();
-            isBending = true;
+            AvatarNetwork.sendToServer(new ToggleBendingPacket(player.getUUID(), true));
             System.out.println("Enabled!");
             Player player = Minecraft.getInstance().player;
             assert player != null;
@@ -286,7 +289,7 @@ public class InputModule {
             benderData.printBenderData();
         } else {
             terminate();
-            isBending = false;
+            AvatarNetwork.sendToServer(new ToggleBendingPacket(player.getUUID(), false));
             System.out.println("Disabled!");
         }
     }

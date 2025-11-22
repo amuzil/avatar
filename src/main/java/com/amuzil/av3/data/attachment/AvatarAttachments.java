@@ -3,6 +3,8 @@ package com.amuzil.av3.data.attachment;
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.bending.element.Elements;
+import com.mojang.serialization.Codec;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -22,11 +24,20 @@ public class AvatarAttachments {
                     .build());
 
     public static final Supplier<AttachmentType<Element>> ACTIVE_ELEMENT = ATTACHMENT_TYPES.register(
-            "active_element", () -> AttachmentType.builder(Elements::random)
+            "active_element", () -> AttachmentType.builder(() -> (Element)null)
                     .serialize(Element.CODEC)
                     .sync(Element.STREAM_CODEC)
                     .copyOnDeath()
                     .build());
+
+    public static final Supplier<AttachmentType<Boolean>> IS_BENDING =
+            ATTACHMENT_TYPES.register(
+                    "is_bending",
+                    () -> AttachmentType.builder(() -> false)
+                            .serialize(Codec.BOOL.fieldOf("is_bending").codec())
+                            .sync(ByteBufCodecs.BOOL)
+                            .copyOnDeath()
+                            .build());
 
     public static void register(IEventBus eventBus) {
         ATTACHMENT_TYPES.register(eventBus);

@@ -33,8 +33,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import static com.amuzil.av3.data.attachment.AvatarAttachments.ACTIVE_ELEMENT;
-import static com.amuzil.av3.data.attachment.AvatarAttachments.BENDER_DATA;
+import static com.amuzil.av3.data.attachment.AvatarAttachments.*;
 
 
 public class Bender implements IBender {
@@ -331,6 +330,12 @@ public class Bender implements IBender {
         return this.selection;
     }
 
+    public boolean isBending() { return entity.getData(IS_BENDING); }
+    public void setBending(boolean active) {
+        entity.setData(IS_BENDING, active);
+        markDirty();
+    }
+
     @Override
     public void markDirty() {
         this.isDirty = true;
@@ -363,6 +368,7 @@ public class Bender implements IBender {
         if (!entity.level().isClientSide()) {
             entity.syncData(BENDER_DATA);
             entity.syncData(ACTIVE_ELEMENT);
+            entity.syncData(IS_BENDING);
             markClean();
         }
     }

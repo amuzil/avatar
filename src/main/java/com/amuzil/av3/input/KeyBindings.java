@@ -108,8 +108,8 @@ public class KeyBindings {
                     Element element = player.getData(ACTIVE_ELEMENT);
                     if (element == null)
                         Minecraft.getInstance().setScreen(new ElementSelectScreen());
-                }
-                Avatar.INPUT_MODULE.toggleListeners();
+                } else
+                	Avatar.INPUT_MODULE.toggleListeners();
             }
         }
     }
