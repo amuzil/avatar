@@ -1,13 +1,13 @@
 package com.amuzil.magus.physics.modules;
 
-import com.amuzil.magus.physics.core.IForceElement;
+import com.amuzil.magus.physics.core.ForcePhysicsElement;
 
 public interface IPhysicsModule {
 
-    void preSolve(IForceElement element);
+    void preSolve(ForcePhysicsElement element);
 
-    void solve(IForceElement element);
+    void solve(ForcePhysicsElement element);
 
-    void postSolve(IForceElement element);
+    void postSolve(ForcePhysicsElement element);
 
 }

@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 // We want these to count as PhysicsElements from the physics engine's perspective, not just my own custom implementation.
-public abstract class ForceElement implements IForceElement {
+public abstract class ForceElement implements ForcePhysicsElement {
     public double[] data;
 
     /**

@@ -1,10 +1,14 @@
 package com.amuzil.magus.physics.core;
 
+import com.amuzil.caliber.api.PhysicsElement;
+import com.amuzil.caliber.physics.bullet.collision.body.ElementRigidBody;
+import com.amuzil.caliber.physics.bullet.collision.body.ForceRigidBody;
 import com.amuzil.magus.physics.constraints.ConstraintUtils;
 import com.amuzil.magus.physics.constraints.Constraints;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
-public interface IForceElement {
+public interface ForcePhysicsElement extends PhysicsElement<ForcePhysicsElement> {
 
     byte[] header();
 
@@ -62,4 +66,14 @@ public interface IForceElement {
 
     Vec3 newPos(double dt);
 
+    /**
+     * Gets {@link ElementRigidBody} object associated with this element. You should
+     * create and store this in your {@link PhysicsElement} implementation in the
+     * constructor. You're able to set up the attributes and settings of your rigid
+     * body however you like that way.
+     *
+     * @return the {@link ElementRigidBody}
+     */
+    @Override
+    @Nullable ForceRigidBody getRigidBody();
 }

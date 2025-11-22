@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 // A spatially hashed grid of forcepoints to prevent per-point neighbour checking. Yay!
-public class ForceGrid<T extends IForceElement> {
+public class ForceGrid<T extends ForcePhysicsElement> {
     public static final int MIN_POINTS_PER_WORKER = 4096; // keep for future parallelism if you want
 
     private final double cellSize;
@@ -261,7 +261,7 @@ public class ForceGrid<T extends IForceElement> {
      *
      * Call this once per DC rebuild, then feed into DCStitcher.buildSparse.
      */
-    public <E extends IForceElement> void fillDCBuffers(
+    public <E extends ForcePhysicsElement> void fillDCBuffers(
             DCStitcher.DCMesh mesh,                       // reuse if you want, or ignore
             NormalProvider<E> normalProvider,
             Vertex[] outCellVertices,                     // length = totalBins
@@ -314,7 +314,7 @@ public class ForceGrid<T extends IForceElement> {
      * This allocates buffers; for real use, hoist Vertex[] / IntArrayList / DCMesh
      * into the ForceCloud/ForceGrid and reuse them.
      */
-    public <E extends IForceElement> DCStitcher.DCMesh buildDCMesh(
+    public <E extends ForcePhysicsElement> DCStitcher.DCMesh buildDCMesh(
             NormalProvider<E> normalProvider,
             boolean emitTrianglesIfThree
     ) {
@@ -458,7 +458,7 @@ public class ForceGrid<T extends IForceElement> {
     }
 
     // Choose how to compute "direction" per point.
-    public interface NormalProvider<T extends IForceElement> {
+    public interface NormalProvider<T extends ForcePhysicsElement> {
         Vector3f normalFor(T element);
     }
 }

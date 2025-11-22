@@ -1,5 +1,8 @@
 package com.amuzil.magus.physics.core;
 
+import com.amuzil.caliber.physics.bullet.collision.body.ElementRigidBody;
+import com.amuzil.caliber.physics.bullet.collision.body.ForceRigidBody;
+import com.amuzil.caliber.physics.bullet.collision.body.shape.MinecraftShape;
 import com.amuzil.magus.physics.PhysicsBuilder;
 import com.amuzil.magus.physics.modules.IPhysicsModule;
 import net.minecraft.world.phys.AABB;
@@ -224,7 +227,7 @@ public class ForceCloud extends ForceElement {
             System.arraycopy(header, 0, point.header, 0, header.length);
     }
 
-    public void updatePhysicsElement(double dt, IForceElement element, IForceElement parent) {
+    public void updatePhysicsElement(double dt, ForcePhysicsElement element, ForcePhysicsElement parent) {
         Vec3 pos = element.pos();
         Vec3 vel = element.vel();
         Vec3 oldVel = vel;
@@ -540,6 +543,30 @@ public class ForceCloud extends ForceElement {
         if (!(obj instanceof ForceCloud)) return false;
 
         return id().equals(((ForceCloud) obj).id()) && owner.equals(((ForceCloud) obj).owner());
+    }
+
+
+    /**
+     * For generating a new {@link MinecraftShape.Convex}.
+     *
+     * @return the newly created {@link MinecraftShape.Convex}
+     */
+    @Override
+    public MinecraftShape.Convex createShape() {
+        return MinecraftShape.convex(bounds());
+    }
+
+    /**
+     * Gets {@link ElementRigidBody} object associated with this element. You should
+     * create and store this in your {@link PhysicsElement} implementation in the
+     * constructor. You're able to set up the attributes and settings of your rigid
+     * body however you like that way.
+     *
+     * @return the {@link ElementRigidBody}
+     */
+    @Override
+    public @Nullable ForceRigidBody getRigidBody() {
+        return null;
     }
 }
 
