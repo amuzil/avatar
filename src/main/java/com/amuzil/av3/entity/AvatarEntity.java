@@ -34,6 +34,7 @@ public abstract class AvatarEntity extends Entity {
 
     private static final EntityDataAccessor<Optional<UUID>> OWNER_ID = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.OPTIONAL_UUID);
     private static final EntityDataAccessor<String> ELEMENT = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> SKILL_ID = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<String> FX = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> ONE_SHOT_FX = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> COLLIDABLE = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
@@ -173,6 +174,16 @@ public abstract class AvatarEntity extends Entity {
         return traits.stream().filter(filter).collect(Collectors.toList());
     }
 
+
+    public String skillId() {
+        return entityData.get(SKILL_ID);
+    }
+
+    public void setSkillId(String skillId) {
+        entityData.set(SKILL_ID, skillId);
+    }
+
+
     @Nullable
     public DataTrait getTrait(String name) {
         for (DataTrait trait : traits)
@@ -254,6 +265,7 @@ public abstract class AvatarEntity extends Entity {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(OWNER_ID, Optional.empty());
         builder.define(ELEMENT, Elements.FIRE.getId().toString());
+        builder.define(SKILL_ID, "");
         builder.define(FX, "");
         builder.define(ONE_SHOT_FX, true);
         builder.define(COLLIDABLE, false);
@@ -261,6 +273,7 @@ public abstract class AvatarEntity extends Entity {
         builder.define(PHYSICS, false);
         builder.define(TIER, 0);
         builder.define(MAX_LIFETIME, 10000);
+
     }
 
     public void checkBlocks() {
