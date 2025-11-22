@@ -18,7 +18,7 @@ import java.util.concurrent.ExecutorService;
 
 public class ForceCloud extends ForceElement {
 
-    private final List<ForcePoint> points;
+    private final HashMap<String, ForcePoint> points;
     private final List<IPhysicsModule> modules;
     private final double cellSize;
     private final ForceGrid<ForcePoint> spaceGrid;
@@ -31,9 +31,9 @@ public class ForceCloud extends ForceElement {
 
     public ForceCloud(int type, int maxPoints, String id, Vec3 pos, Vec3 vel, Vec3 force, UUID owner,
                       @Nullable ExecutorService pool) {
-        super(type);
+        super(type, id);
         this.rotation = new double[4];
-        this.points = new ArrayList<>();
+        this.points = new HashMap<>();
         this.modules = new ArrayList<>();
         this.cellSize = PhysicsBuilder.CELL_SIZE;
         this.spaceGrid = new ForceGrid<>(cellSize,
@@ -54,8 +54,6 @@ public class ForceCloud extends ForceElement {
         insert(Vec3.ZERO, 3);
         // Direction / Force / Acceleration
         insert(force, 4);
-
-        id(id);
         this.owner = owner;
         this.seed = Seeds.fromUuid(owner);
     }
@@ -151,7 +149,7 @@ public class ForceCloud extends ForceElement {
         double maxY = Double.NEGATIVE_INFINITY;
         double maxZ = Double.NEGATIVE_INFINITY;
 
-        for (ForcePoint p : points) {
+        for (ForcePoint p : points.values()) {
             Vec3 pos = p.pos();
             if (pos.x < minX) minX = pos.x;
             if (pos.y < minY) minY = pos.y;
@@ -169,26 +167,35 @@ public class ForceCloud extends ForceElement {
     }
 
     public void addPoints(ForcePoint... points) {
-        this.points.addAll(List.of(points));
+        for (ForcePoint p : points) {
+            this.points.put(p.id(), p);
+        }
     }
 
     public void addPoints(List<ForcePoint> points) {
-        this.points.addAll(points);
+        for (ForcePoint p : points) {
+            this.points.put(p.id(), p);
+        }
     }
 
     public void deletePoints(ForcePoint... points) {
-        this.points.removeAll(List.of(points));
+        for (ForcePoint p : points) {
+            this.points.remove(p.id());
+        }
+
     }
 
     public void deletePoints(List<ForcePoint> points) {
-        this.points.removeAll(points);
+        for (ForcePoint p : points) {
+            this.points.remove(p.id());
+        };
     }
 
     public void clear() {
         this.points.clear();
     }
 
-    public List<ForcePoint> pointsCopy() {
+    public HashMap<String, ForcePoint> pointsCopy() {
         return new ArrayList<>(this.points);
     }
 

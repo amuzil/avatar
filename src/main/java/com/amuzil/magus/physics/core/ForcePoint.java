@@ -19,8 +19,8 @@ public class ForcePoint extends ForceElement {
     private ElementRigidBody rigidBody;
 
     // Size is default 15 (5 vectors x 3 variables for 3d space. We're not using 4d vectors here yet...)
-    public ForcePoint(int size, int type, Vec3 pos, Vec3 vel, Vec3 force) {
-        super(size, type);
+    public ForcePoint(int size, int type, Vec3 pos, Vec3 vel, Vec3 force, String id) {
+        super(size, type, id);
         //Current Pos
         insert(pos, 0);
         // Prev pos
@@ -37,7 +37,11 @@ public class ForcePoint extends ForceElement {
     }
 
     public ForcePoint(int type, Vec3 pos, Vec3 vel, Vec3 force) {
-        this(15, type, pos, vel, force);
+        this(15, type, pos, vel, force, "");
+    }
+
+    public ForcePoint(int type, Vec3 pos, Vec3 vel, Vec3 force, String id) {
+        this(15, type, pos, vel, force, id);
     }
 
 

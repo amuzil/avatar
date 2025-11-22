@@ -14,6 +14,7 @@ import com.amuzil.caliber.physics.network.impl.ForceCloudSpawnPacket;
 import com.amuzil.caliber.physics.network.impl.SendRigidBodyMovementPacket;
 import com.amuzil.caliber.physics.network.impl.SendRigidBodyPropertiesPacket;
 import com.amuzil.magus.physics.core.ForceCloud;
+import com.amuzil.magus.physics.core.ForcePoint;
 import com.amuzil.magus.physics.core.ForceSystem;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
@@ -147,6 +148,12 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
 
     @Override
     public void addCollisionObject(PhysicsCollisionObject collisionObject) {
+        // Ignores adding elements with a null rigidbody. So, if you want the sub components of something to be collidable,
+        // but not the actual holder of those sub components, make the ForceCloud have a null rigidbody, while the sub components have valid rigidbodies.
+
+        if (collisionObject == null)
+            return;
+
         if (!collisionObject.isInWorld()) {
             if (collisionObject instanceof ElementRigidBody rigidBody) {
                 NeoForge.EVENT_BUS.post(new PhysicsSpaceEvent.ElementAdded(this, rigidBody));
@@ -171,6 +178,9 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
 
     @Override
     public void removeCollisionObject(PhysicsCollisionObject collisionObject) {
+        if (collisionObject == null)
+            return;
+
         if (collisionObject.isInWorld()) {
             super.removeCollisionObject(collisionObject);
 
@@ -204,10 +214,15 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
     }
 
     public void addCloud(ForceCloud forceCloud) {
-        if (!this.system.clouds().contains(forceCloud))
+        if (!this.system.clouds().contains(forceCloud)) {
+            addCollisionObject(forceCloud.getRigidBody());
+            for (ForcePoint point : forceCloud.points())
+                addCollisionObject(point.getRigidBody());
             this.system.addCloud(forceCloud);
+        }
     }
 
+    // Used to actually spawn clouods
     public void addCloud(ForceCloud cloud, Level level, Entity spawner) {
         if (!this.system.clouds().contains(cloud)) {
             if (!level.isClientSide) {

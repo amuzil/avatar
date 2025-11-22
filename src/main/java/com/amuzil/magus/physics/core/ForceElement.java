@@ -20,19 +20,21 @@ public abstract class ForceElement implements ForcePhysicsElement {
     int maxLifetime = -1;
     int timeExisted = 0;
     private String id;
+    private String ownerId;
     private double mass = 1;
     private double damping;
     private boolean surface = false;
     protected long seed = Seeds.fromUuid(UUID.randomUUID());
     private ForceRigidBody rigidBody;
 
-    public ForceElement(int type) {
-        this(15, type);
+    public ForceElement(int type, String id) {
+        this(15, type, id);
     }
 
-    public ForceElement(int size, int type) {
+    public ForceElement(int size, int type, String id) {
         this.data = new double[size];
         type(type);
+        this.id = id;
     }
 
     @Override
@@ -77,8 +79,18 @@ public abstract class ForceElement implements ForcePhysicsElement {
         this.data = data.clone();
     }
 
+    @Override
     public String id() {
         return this.id;
+    }
+
+    @Override
+    public String ownerId() {
+        return ownerId;
+    }
+
+    public void owner(String uuid) {
+        this.ownerId = uuid;
     }
 
     public void id(String id) {

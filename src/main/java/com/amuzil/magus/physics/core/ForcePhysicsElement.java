@@ -10,6 +10,10 @@ import org.jetbrains.annotations.Nullable;
 
 public interface ForcePhysicsElement extends PhysicsElement<ForcePhysicsElement> {
 
+    String id();
+
+    String ownerId();
+
     byte[] header();
 
     double[] data();
