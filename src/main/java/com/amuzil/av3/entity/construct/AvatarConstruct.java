@@ -5,7 +5,7 @@ import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.IAvatarConstruct;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
 import com.amuzil.av3.entity.api.modules.entity.TimeoutModule;
-import com.amuzil.av3.entity.api.modules.render.SoundModule;
+import com.amuzil.av3.entity.api.modules.client.SoundModule;
 import com.mojang.logging.LogUtils;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.core.BlockPos;

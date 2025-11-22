@@ -6,7 +6,7 @@ import com.amuzil.av3.bending.element.Elements;
 import com.amuzil.av3.entity.api.ICollisionModule;
 import com.amuzil.av3.entity.api.IEntityModule;
 import com.amuzil.av3.entity.api.IForceModule;
-import com.amuzil.av3.entity.api.IRenderModule;
+import com.amuzil.av3.entity.api.IFXModule;
 import com.amuzil.magus.skill.traits.DataTrait;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.Packet;
@@ -48,7 +48,7 @@ public abstract class AvatarEntity extends Entity {
     private final List<IEntityModule> modules = new ArrayList<>();
     private final List<IForceModule> forceModules = new ArrayList<>();
     private final List<ICollisionModule> collisionModules = new ArrayList<>();
-    private final List<IRenderModule> renderModules = new ArrayList<>();
+    private final List<IFXModule> renderModules = new ArrayList<>();
     private final List<DataTrait> traits = new LinkedList<>();
     private Entity owner;
 
@@ -143,11 +143,11 @@ public abstract class AvatarEntity extends Entity {
     }
 
     // Render modules
-    public void addRenderModule(IRenderModule mod) {
+    public void addRenderModule(IFXModule mod) {
         renderModules.add(mod);
     }
 
-    public boolean removeRenderModule(IRenderModule mod) {
+    public boolean removeRenderModule(IFXModule mod) {
         return removeRenderModule(mod.id());
     }
 
@@ -155,7 +155,7 @@ public abstract class AvatarEntity extends Entity {
         return renderModules.removeIf(m -> m.id().equals(id));
     }
 
-    public List<IRenderModule> renderModules() {
+    public List<IFXModule> renderModules() {
         return Collections.unmodifiableList(renderModules);
     }
 
