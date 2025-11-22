@@ -123,6 +123,16 @@ public class ForceSystem {
             }
         }
 
+        // Remove from physics space
+        for (ForceCloud cloud : clouds) {
+            if (cloud.isDead()) {
+                for (ForcePoint p : cloud.points()) {
+                    space.removeCollisionObject(p.getRigidBody());
+                }
+                space.removeCollisionObject(cloud.getRigidBody());
+            }
+        }
+        // Then remove from the system
         clouds.removeIf(ForceCloud::isDead);
     }
 
