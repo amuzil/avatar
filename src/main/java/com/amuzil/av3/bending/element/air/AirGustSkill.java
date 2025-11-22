@@ -34,7 +34,7 @@ public class AirGustSkill extends AirSkill {
         addTrait(new SpeedTrait(Constants.SPEED, 0.875d));
         addTrait(new TimedTrait(Constants.LIFETIME, 15));
         addTrait(new SpeedTrait(Constants.SPEED_FACTOR, 1.0d));
-        addTrait(new StringTrait(Constants.FX, "airs_perma9"));
+        addTrait(new StringTrait(Constants.FX, "air_gust"));
 
         startPaths = SkillPathBuilder.getInstance().add(STRIKE).build();
     }
