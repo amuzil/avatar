@@ -53,7 +53,6 @@ public class ToggleBendingPacket implements AvatarPacket {
                 Bender bender = getOrCreateBender(player);
                 if (bender != null) {
                     bender.setBending(msg.active);
-                    bender.markDirty();
                 }
             }
         });

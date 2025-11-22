@@ -2,7 +2,6 @@ package com.amuzil.av3.data.capability;
 
 import com.amuzil.av3.Avatar;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;

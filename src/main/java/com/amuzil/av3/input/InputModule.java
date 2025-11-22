@@ -281,6 +281,7 @@ public class InputModule {
         if (!isBending) {
             registerListeners();
             AvatarNetwork.sendToServer(new ToggleBendingPacket(player.getUUID(), true));
+            System.out.println("Enabled!");
         } else {
             terminate();
             AvatarNetwork.sendToServer(new ToggleBendingPacket(player.getUUID(), false));

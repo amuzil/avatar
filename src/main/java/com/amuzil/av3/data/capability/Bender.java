@@ -4,12 +4,10 @@ import com.amuzil.av3.bending.BendingSelection;
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.bending.form.BendingForm;
 import com.amuzil.av3.data.attachment.BenderData;
-import com.amuzil.av3.entity.construct.PhysicsBenderEntity;
 import com.amuzil.av3.network.AvatarNetwork;
 import com.amuzil.av3.network.packets.sync.SyncMovementPacket;
 import com.amuzil.av3.network.packets.sync.SyncSelectionPacket;
 import com.amuzil.av3.utils.bending.OriginalBlocks;
-import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.amuzil.magus.form.ActiveForm;
 import com.amuzil.magus.form.Form;
 import com.amuzil.magus.form.FormActivatedEvent;
@@ -357,9 +355,9 @@ public class Bender implements IBender {
         return this.selection;
     }
 
-    public boolean isBending() { return entity.getData(IS_BENDING.get()); }
+    public boolean isBending() { return entity.getData(IS_BENDING); }
     public void setBending(boolean active) {
-        entity.setData(IS_BENDING.get(), active);
+        entity.setData(IS_BENDING, active);
         markDirty();
     }
 

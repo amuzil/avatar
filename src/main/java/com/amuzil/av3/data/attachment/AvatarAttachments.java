@@ -24,7 +24,7 @@ public class AvatarAttachments {
                     .build());
 
     public static final Supplier<AttachmentType<Element>> ACTIVE_ELEMENT = ATTACHMENT_TYPES.register(
-            "active_element", () -> AttachmentType.builder(Elements::random)
+            "active_element", () -> AttachmentType.builder(() -> (Element)null)
                     .serialize(Element.CODEC)
                     .sync(Element.STREAM_CODEC)
                     .copyOnDeath()
@@ -34,11 +34,8 @@ public class AvatarAttachments {
             ATTACHMENT_TYPES.register(
                     "is_bending",
                     () -> AttachmentType.builder(() -> false)
-                            // persist to disk
                             .serialize(Codec.BOOL.fieldOf("is_bending").codec())
-                            // sync server → client (full value each time)
                             .sync(ByteBufCodecs.BOOL)
-                            // copy on player death if this is a player attachment
                             .copyOnDeath()
                             .build());
 
