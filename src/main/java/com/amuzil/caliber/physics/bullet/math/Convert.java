@@ -42,4 +42,12 @@ public class Convert {
     public static Vector3f toBullet(Vec3 vec3) {
         return new Vector3f((float) vec3.x(), (float) vec3.y(), (float) vec3.z());
     }
+
+    public static Vec3 toVec3(Vector3f vector3f) {
+        return new Vec3(vector3f.x, vector3f.y, vector3f.z);
+    }
+
+    public static Vec3 toVec3(org.joml.Vector3f vector3f) {
+        return new Vec3(vector3f.x(), vector3f.y(), vector3f.z());
+    }
 }

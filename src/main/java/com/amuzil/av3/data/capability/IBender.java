@@ -10,7 +10,6 @@ import com.amuzil.magus.skill.data.SkillData;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 
@@ -31,10 +30,6 @@ public interface IBender extends INBTSerializable<CompoundTag> {
     void register();
 
     void unregister();
-
-    void setEntity(LivingEntity entity);
-
-    LivingEntity getEntity();
 
     List<Form> getFormPath();
 

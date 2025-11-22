@@ -27,7 +27,7 @@ public class TerrainGenerator {
             if (!rigidBody.terrainLoadingEnabled() || !rigidBody.isActive())
                 continue;
 
-            final var aabb = rigidBody.getCurrentMinecraftBoundingBox().inflate(0.5f);
+            final var aabb = rigidBody.getMinecraftBoundingBox().inflate(0.5f);
 
             BlockPos.betweenClosedStream(aabb).forEach(blockPos -> {
                 chunkCache.getBlockData(blockPos).ifPresent(blockData -> {

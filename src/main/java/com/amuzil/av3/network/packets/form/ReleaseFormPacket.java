@@ -1,9 +1,9 @@
 package com.amuzil.av3.network.packets.form;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.magus.form.FormActivatedEvent;
 import com.amuzil.av3.network.packets.api.AvatarPacket;
 import com.amuzil.magus.form.ActiveForm;
+import com.amuzil.magus.form.FormActivatedEvent;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;

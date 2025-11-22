@@ -1,7 +1,6 @@
 package com.amuzil.av3.events;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.av3.data.capability.AvatarCapabilities;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -11,13 +10,12 @@ import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 public class ClientEvents {
     @SubscribeEvent
     public static void onClientLogin(ClientPlayerNetworkEvent.LoggingIn event) {
-        Avatar.inputModule.registerListeners();
+        Avatar.INPUT_MODULE.registerListeners();
     }
 
     @SubscribeEvent
     public static void onClientLogout(ClientPlayerNetworkEvent.LoggingOut event) {
-        if (Avatar.inputModule != null)
-            Avatar.inputModule.terminate();
-        AvatarCapabilities.BENDER_CACHE.clear();
+        if (Avatar.INPUT_MODULE != null)
+            Avatar.INPUT_MODULE.terminate();
     }
 }

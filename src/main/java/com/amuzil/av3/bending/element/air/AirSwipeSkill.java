@@ -31,7 +31,7 @@ public class AirSwipeSkill extends AirSkill {
         addTrait(new SizeTrait(Constants.MAX_SIZE, 1.25f));
         addTrait(new KnockbackTrait(Constants.KNOCKBACK, 0.6f));
         addTrait(new SpeedTrait(Constants.SPEED, 1.5d));
-        addTrait(new TimedTrait(Constants.LIFETIME, 30)); // Ticks not seconds...
+        addTrait(new TimedTrait(Constants.LIFETIME, 30));
         addTrait(new StringTrait(Constants.FX, "airs_perma12"));
 
         startPaths = SkillPathBuilder.getInstance()

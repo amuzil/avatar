@@ -39,6 +39,13 @@ public class SkillHelper {
         return Double.MAX_VALUE;
     }
 
+    public static Vec3 getPivot(Entity entity, float scale) {
+        // Calculate the pivot point in front of the player (avg scale: 1.7)
+        Vec3[] pose = new Vec3[]{entity.position(), entity.getLookAngle()};
+        pose[1] = pose[1].scale((scale)).add((0), (entity.getEyeHeight()), (0));
+        return pose[1].add(pose[0]);
+    }
+
     public static Vec3 getRightPivot(Entity entity, float scale) {
         Vec3 eyePos = entity.getEyePosition();
         Vec3 look = entity.getLookAngle().normalize();

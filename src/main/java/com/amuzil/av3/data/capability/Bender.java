@@ -7,7 +7,6 @@ import com.amuzil.av3.data.attachment.BenderData;
 import com.amuzil.av3.network.AvatarNetwork;
 import com.amuzil.av3.network.packets.sync.SyncMovementPacket;
 import com.amuzil.av3.network.packets.sync.SyncSelectionPacket;
-import com.amuzil.av3.utils.bending.OriginalBlocks;
 import com.amuzil.magus.form.ActiveForm;
 import com.amuzil.magus.form.Form;
 import com.amuzil.magus.form.FormActivatedEvent;
@@ -20,7 +19,6 @@ import com.amuzil.magus.tree.TreeResult;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.EventPriority;
@@ -29,7 +27,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import static com.amuzil.av3.data.attachment.AvatarAttachments.*;
@@ -170,26 +171,6 @@ public class Bender implements IBender {
         }
     }
 
-    public void startTickingOriginalBlocks(Long shipId) {
-        OriginalBlocks originalBlocks = selection.originalBlocksMap().get(shipId);
-        if (originalBlocks != null)
-            originalBlocks.startTicking(true);
-    }
-
-    private void restoreOriginalBlocks() {
-        Iterator<Map.Entry<Long, OriginalBlocks>> iterator = selection.originalBlocksMap().entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<Long, OriginalBlocks> entry = iterator.next();
-            OriginalBlocks originalBlocks = entry.getValue();
-            if (originalBlocks.startedTicking() && entity.level() instanceof ServerLevel level) {
-                if (originalBlocks.incrementAndGetTickCount() > 400) {
-                    originalBlocks.restore(level);
-                    iterator.remove();
-                }
-            }
-        }
-    }
-
     // Used for when we have momentum when double jump is executed
     @Override
     public Vec3 getDeltaMovement() {
@@ -215,12 +196,6 @@ public class Bender implements IBender {
         NeoForge.EVENT_BUS.unregister(formListener);
     }
 
-    @Override
-    public void setEntity(LivingEntity entity) {
-        this.entity = entity;
-    }
-
-    @Override
     public LivingEntity getEntity() {
         return entity;
     }
@@ -396,36 +371,10 @@ public class Bender implements IBender {
             entity.syncData(IS_BENDING);
             markClean();
         }
-//            if (entity instanceof ServerPlayer player)
-//                AvatarNetwork.sendToClient(new SyncBenderPacket(this.serializeNBT(player.registryAccess()), player.getUUID()), player);
     }
-
-    // TODO - Create generic method to check & return if data in NBT tag exists & warn if it doesn't
-//    private <T> T validate(CompoundTag tag, String key, byte type) {
-//        if (tag.contains(key, type)) {
-//            return (T) tag.get(key);
-//        } else {
-//            LOGGER.warn("Missing data for: {}", key);
-//            return null;
-//        }
-//        return list != null && !list.isEmpty();
-//    }
 
     private void printFormPath() {
         LOGGER.info("Forms: {}", formPath);
-    }
-
-    public void printBenderData() {
-        CompoundTag tag = entity.getData(BENDER_DATA).serializeNBT(null);
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format(
-                """
-                \nData Version: %d
-                Active Element: %s
-                """, tag.getInt("DataVersion"), getElement()));
-        benderData.skillCategoryData.forEach(catData -> sb.append(tag.get(catData.name())).append("\n"));
-        benderData.skillDataMap.values().forEach(skillData -> sb.append(tag.get(skillData.name())).append("\n"));
-        LOGGER.info(sb.toString());
     }
 
     @Override

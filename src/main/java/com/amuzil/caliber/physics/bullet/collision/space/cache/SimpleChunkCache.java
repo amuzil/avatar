@@ -91,8 +91,8 @@ public class SimpleChunkCache implements ChunkCache {
                 continue;
 
             final var speed = Mth.sqrt(rigidBody.getSquaredSpeed()) / 20;
-            final var clamp = Mth.clamp(speed, 1, 2.5);
-            final var aabb = rigidBody.getCurrentMinecraftBoundingBox().inflate(clamp);
+            final var clamp = Mth.clamp(speed, 0, 1);
+            final var aabb = rigidBody.getMinecraftBoundingBox().inflate(clamp);
 
             BlockPos.betweenClosedStream(aabb).forEach(blockPos -> {
                 if (this.activePositions.contains(blockPos.asLong()))

@@ -1,6 +1,5 @@
 package com.amuzil.av3.entity.construct;
 
-import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.caliber.api.EntityPhysicsElement;
 import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
@@ -14,7 +13,7 @@ import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-
+@Deprecated
 public class PhysicsBenderEntity extends AvatarEntity implements EntityPhysicsElement, ItemSupplier, TraceableEntity {
     private final EntityRigidBody rigidBody;
 
@@ -22,10 +21,6 @@ public class PhysicsBenderEntity extends AvatarEntity implements EntityPhysicsEl
         super(entityType, level);
         this.rigidBody = new EntityRigidBody(this);
         this.rigidBody.setKinematic(true);
-    }
-
-    public PhysicsBenderEntity(Level level) {
-        this(AvatarEntities.AVATAR_PHYSICS_BENDER_ENTITY_TYPE.get(), level);
     }
 
     @Override

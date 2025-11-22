@@ -3,9 +3,12 @@ package com.amuzil.av3.entity.construct;
 import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.IAvatarConstruct;
+import com.amuzil.av3.entity.api.IFXModule;
+import com.amuzil.av3.entity.api.IForceModule;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
+import com.amuzil.av3.entity.api.modules.client.SoundModule;
 import com.amuzil.av3.entity.api.modules.entity.TimeoutModule;
-import com.amuzil.av3.entity.api.modules.render.SoundModule;
+import com.amuzil.av3.entity.api.modules.force.ControlModule;
 import com.mojang.logging.LogUtils;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.core.BlockPos;
@@ -27,10 +30,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySelector;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.level.ClipContext;
@@ -67,17 +67,27 @@ public class AvatarConstruct extends AvatarEntity implements IAvatarConstruct {
     public @Nullable CompoundTag blockData;
     public boolean forceTickAfterTeleportToDuplicate;
     protected static final EntityDataAccessor<BlockPos> DATA_START_POS = SynchedEntityData.defineId(AvatarConstruct.class, EntityDataSerializers.BLOCK_POS);
-    private static final EntityDataAccessor<Float> WIDTH = SynchedEntityData.defineId(AvatarConstruct.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> HEIGHT = SynchedEntityData.defineId(AvatarConstruct.class, EntityDataSerializers.FLOAT);
+    protected static final EntityDataAccessor<Float> WIDTH = SynchedEntityData.defineId(AvatarConstruct.class, EntityDataSerializers.FLOAT);
+    protected static final EntityDataAccessor<Float> HEIGHT = SynchedEntityData.defineId(AvatarConstruct.class, EntityDataSerializers.FLOAT);
+    protected static final EntityDataAccessor<Float> DEPTH = SynchedEntityData.defineId(AvatarConstruct.class, EntityDataSerializers.FLOAT);
 
     public AvatarConstruct(EntityType<? extends AvatarConstruct> entityType, Level level) {
         super(entityType, level);
-        addModule(ModuleRegistry.create(SoundModule.id));
+        // NOTE: Modules are not synced between client and server unless added to the entity's constructor!
+        addClientModule((IFXModule) ModuleRegistry.create(SoundModule.id));
         addModule(ModuleRegistry.create(TimeoutModule.id));
         this.blockState = Blocks.STONE.defaultBlockState();
         this.dropItem = true;
         this.fallDamageMax = 40;
         this.controlled = false;
+    }
+
+    protected AvatarConstruct(EntityType<? extends AvatarConstruct> entityType, Level level, double width, double height, double depth) {
+        this(entityType, level);
+        this.setWidth((float) width);
+        this.setHeight((float) height);
+        this.setDepth((float) depth);
+        this.refreshDimensions();
     }
 
     private AvatarConstruct(Level level, double x, double y, double z, BlockState state) {
@@ -104,6 +114,10 @@ public class AvatarConstruct extends AvatarEntity implements IAvatarConstruct {
         entityData.set(HEIGHT, height);
     }
 
+    public void setDepth(float depth) {
+        entityData.set(DEPTH, depth);
+    }
+
     public float width() {
         return entityData.get(WIDTH);
     }
@@ -112,9 +126,24 @@ public class AvatarConstruct extends AvatarEntity implements IAvatarConstruct {
         return entityData.get(HEIGHT);
     }
 
-    public AABB getSize() {
-        return new AABB(xo - width() / 2, yo - height() / 2, zo - width() / 2, xo + width() / 2, yo + height() / 2, zo + width() / 2);
+    public float depth() {
+        return entityData.get(DEPTH);
     }
+
+    public AABB getSize() {
+        return new AABB(
+                xo - width() / 2, yo - height() / 2, zo - depth() / 2,
+                xo + width() / 2, yo + height() / 2, zo + depth() / 2
+        );
+    }
+
+//    @Override
+//    public EntityDimensions getDimensions(Pose pose) {
+//        return EntityDimensions.scalable(
+//                entityData.get(WIDTH),
+//                entityData.get(HEIGHT)
+//        );
+//    }
 
     @Override
     protected  AABB makeBoundingBox() {
@@ -125,8 +154,9 @@ public class AvatarConstruct extends AvatarEntity implements IAvatarConstruct {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(DATA_START_POS, BlockPos.ZERO);
-        builder.define(HEIGHT, 1.0f);
         builder.define(WIDTH, 1.0f);
+        builder.define(HEIGHT, 1.0f);
+        builder.define(DEPTH, 1.0f);
     }
 
 

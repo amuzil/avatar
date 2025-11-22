@@ -28,7 +28,7 @@ public class WaterBallSkill extends WaterSkill {
         addTrait(new SizeTrait(Constants.MAX_SIZE, 1.25f));
         addTrait(new KnockbackTrait(Constants.KNOCKBACK, 0.2f));
         addTrait(new SpeedTrait(Constants.SPEED, 0.1d));
-        addTrait(new TimedTrait(Constants.LIFETIME, 200)); // Ticks not seconds...
+        addTrait(new TimedTrait(Constants.LIFETIME, 200));
         addTrait(new SpeedTrait(Constants.SPEED_FACTOR, 0.85d));
         addTrait(new StringTrait(Constants.FX, "water1"));
         addTrait(new AngleTrait(Constants.ANGLE, 0));

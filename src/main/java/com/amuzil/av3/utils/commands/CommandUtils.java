@@ -15,7 +15,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
-import static com.amuzil.av3.data.capability.AvatarCapabilities.getOrCreateBender;
+import static com.amuzil.av3.data.capability.AvatarCapabilities.getBender;
 
 
 class CommandUtils {
@@ -24,7 +24,7 @@ class CommandUtils {
         if (player == null)
             player = ctx.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = player;
-        Bender bender = getOrCreateBender(player);
+        Bender bender = getBender(player);
         if (bender != null) {
             bender.setElement(element);
             bender.syncToClient();
@@ -46,7 +46,7 @@ class CommandUtils {
     static int triggerSkill(CommandContext<CommandSourceStack> ctx, Skill skill, Skill.SkillState state, ServerPlayer player) throws CommandSyntaxException {
         if (player == null)
             player = ctx.getSource().getPlayerOrException();
-        Bender bender = getOrCreateBender(player);
+        Bender bender = getBender(player);
         if (bender  != null) {
             Skill newSkill = skill.create((Bender) bender);
             switch (state) {
@@ -66,7 +66,7 @@ class CommandUtils {
         if (player == null)
             player = ctx.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = player;
-        Bender bender = getOrCreateBender(player);
+        Bender bender = getBender(player);
         if (bender  != null) {
             String action;
             if (skill != null) {
@@ -86,7 +86,7 @@ class CommandUtils {
         if (player == null)
             player = ctx.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = player;
-        Bender bender = getOrCreateBender(player);
+        Bender bender = getBender(player);
         if (bender == null) return 1;
         bender.setCanUseElement(canUse, element);
         bender.syncToClient();
@@ -101,7 +101,7 @@ class CommandUtils {
         if (player == null)
             player = ctx.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = player;
-        Bender bender = getOrCreateBender(player);
+        Bender bender = getBender(player);
         if (bender == null) return 1;
         bender.setCanUseSkill(canUse, skill.name());
         bender.syncToClient();
@@ -116,7 +116,7 @@ class CommandUtils {
         if (player == null)
             player = ctx.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = player;
-        Bender bender = getOrCreateBender(player);
+        Bender bender = getBender(player);
         if (bender == null) return 1;
         bender.setCanUseAllSkills(element);
         bender.syncToClient();
@@ -129,7 +129,7 @@ class CommandUtils {
         if (player == null)
             player = ctx.getSource().getPlayerOrException();
         ServerPlayer targetPlayer = player;
-        Bender bender = getOrCreateBender(player);
+        Bender bender = getBender(player);
         if (bender == null) return 1;
         bender.setCanUseSkill(canUse, skill.name());
         Bender ben = (Bender) bender;

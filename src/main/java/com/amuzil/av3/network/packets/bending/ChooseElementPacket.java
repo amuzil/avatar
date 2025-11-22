@@ -1,11 +1,9 @@
-package com.amuzil.av3.network.packets.bender;
+package com.amuzil.av3.network.packets.bending;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.av3.bending.BendingSelection;
 import com.amuzil.av3.bending.element.Elements;
 import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.network.packets.api.AvatarPacket;
-import com.amuzil.av3.network.packets.sync.SyncSelectionPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -16,7 +14,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import java.util.Objects;
 import java.util.UUID;
 
-import static com.amuzil.av3.data.capability.AvatarCapabilities.getOrCreateBender;
+import static com.amuzil.av3.data.capability.AvatarCapabilities.getBender;
 
 public class ChooseElementPacket implements AvatarPacket {
     public static final Type<ChooseElementPacket> TYPE = new Type<>(Avatar.id(ChooseElementPacket.class));
@@ -52,7 +50,7 @@ public class ChooseElementPacket implements AvatarPacket {
             if (!ctx.flow().getReceptionSide().isClient()) {
                 ServerPlayer player = Objects.requireNonNull(ctx.player().getServer()).getPlayerList().getPlayer(msg.playerUUID);
                 assert player != null;
-                Bender bender = getOrCreateBender(player);
+                Bender bender = getBender(player);
                 if (bender != null) {
                     bender.setElement(Elements.get(ResourceLocation.parse(msg.element)));
                     bender.markDirty();

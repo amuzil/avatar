@@ -3,8 +3,6 @@ package com.amuzil.av3.entity.api.modules.force;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.IAvatarConstruct;
 import com.amuzil.av3.entity.api.IForceModule;
-import com.amuzil.av3.entity.construct.AvatarConstruct;
-import com.amuzil.av3.entity.construct.AvatarRigidBlock;
 import net.minecraft.nbt.CompoundTag;
 
 

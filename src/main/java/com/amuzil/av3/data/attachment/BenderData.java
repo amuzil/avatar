@@ -98,4 +98,24 @@ public class BenderData implements INBTSerializable<CompoundTag> {
             }
         }
     }
+
+    public void printBenderData() {
+        CompoundTag tag = this.serializeNBT(null);
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("\nData Version: %d\n", tag.getInt("DataVersion")));
+        skillCategoryData.forEach(catData -> sb.append(tag.get(catData.name())).append("\n"));
+        skillDataMap.values().forEach(skillData -> sb.append(tag.get(skillData.name())).append("\n"));
+        LOGGER.info(sb.toString());
+    }
+
+    // TODO - Create generic method to check & return if data in NBT tag exists & warn if it doesn't
+//    private <T> T validate(CompoundTag tag, String key, byte type) {
+//        if (tag.contains(key, type)) {
+//            return (T) tag.get(key);
+//        } else {
+//            LOGGER.warn("Missing data for: {}", key);
+//            return null;
+//        }
+//        return list != null && !list.isEmpty();
+//    }
 }

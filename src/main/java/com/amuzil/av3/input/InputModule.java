@@ -3,13 +3,13 @@ package com.amuzil.av3.input;
 import com.amuzil.av3.bending.BendingSelection;
 import com.amuzil.av3.bending.form.BendingForm;
 import com.amuzil.av3.bending.form.BendingForms;
+import com.amuzil.av3.data.attachment.BenderData;
 import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.network.AvatarNetwork;
 import com.amuzil.av3.network.packets.bender.ToggleBendingPacket;
 import com.amuzil.av3.network.packets.form.ExecuteFormPacket;
 import com.amuzil.av3.network.packets.form.ReleaseFormPacket;
 import com.amuzil.magus.form.ActiveForm;
-import com.amuzil.magus.registry.Registries;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -27,7 +27,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
-import static com.amuzil.av3.data.capability.AvatarCapabilities.getOrCreateBender;
+import static com.amuzil.av3.data.attachment.AvatarAttachments.BENDER_DATA;
 import static com.amuzil.av3.input.KeyBindings.*;
 
 
@@ -45,7 +45,7 @@ public class InputModule {
     private final long DOUBLE_TAP_THRESHOLD = 250; // milliseconds
     private final HashMap<BendingForm.Type.Motion, Long> lastPressedForm = new HashMap<>();
     private final HashMap<Integer, Integer> glfwKeysDown = new HashMap<>();
-    private Bender bender;
+    public Bender bender;
 
     public InputModule() {
         this.keyboardListener = keyboardEvent -> {
@@ -97,7 +97,7 @@ public class InputModule {
                 if (bender == null) {
                     Player player = Minecraft.getInstance().player;
                     if (player != null)
-                        bender = getOrCreateBender(player);
+                        bender = Bender.getBender(player);
                 }
                 checkInputs();
             }
@@ -272,6 +272,7 @@ public class InputModule {
         unRegisterListeners();
         glfwKeysDown.clear();
         lastPressedForm.clear();
+        bender = null;
     }
 
     public void toggleListeners() {
@@ -282,6 +283,10 @@ public class InputModule {
             registerListeners();
             AvatarNetwork.sendToServer(new ToggleBendingPacket(player.getUUID(), true));
             System.out.println("Enabled!");
+            Player player = Minecraft.getInstance().player;
+            assert player != null;
+            BenderData benderData = player.getData(BENDER_DATA);
+            benderData.printBenderData();
         } else {
             terminate();
             AvatarNetwork.sendToServer(new ToggleBendingPacket(player.getUUID(), false));

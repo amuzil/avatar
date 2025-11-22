@@ -1,9 +1,11 @@
 package com.amuzil.caliber.physics.bullet.collision.space.generator;
 
+import com.amuzil.av3.entity.construct.AvatarRigidBlock;
+import com.amuzil.caliber.physics.bullet.collision.body.ElementRigidBody;
 import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
-import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.jme3.math.Vector3f;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -13,40 +15,64 @@ import net.minecraft.world.phys.Vec3;
  */
 public class EntityCollisionGenerator {
     public static void step(MinecraftSpace space) {
-        for (var rigidBody : space.getRigidBodiesByClass(EntityRigidBody.class)) {
-            if (rigidBody.getElement().skipVanillaEntityCollisions())
-                continue;
+        for (var rigidBody: space.getRigidBodiesByClass(ElementRigidBody.class)) {
+//            if (rigidBody.getElement().skipVanillaEntityCollisions())
+//                continue;
 
-            final var box = rigidBody.getCurrentBoundingBox();
+            final var box = rigidBody.getBoundingBox();
+            final var rigidBodyAABB = rigidBody.getMinecraftBoundingBox();
 
-            final var vanillaBox = rigidBody.getCurrentMinecraftBoundingBox();
+            Entity rigidBodyEntity = (Entity) rigidBody.getElement().cast();
+            if (!(rigidBodyEntity instanceof AvatarRigidBlock rigidBlock)) continue;
+            rigidBlock.syncFromPhysics();
+            Vec3 current = rigidBlock.position();
+            Vec3 lastPos = new Vec3(rigidBlock.xOld, rigidBlock.yOld, rigidBlock.zOld);
+            Vec3 delta = current.subtract(lastPos);
 
-            for (var entity: space.getWorkerThread().getEntitySupplier().getInsideOf(rigidBody, vanillaBox)) {
+            for (var entity: space.getWorkerThread().getEntitySupplier().getInsideOf(rigidBody, rigidBodyAABB)) {
                 AABB entityAABB = entity.getBoundingBox();
 
-                if (entityAABB.intersects(vanillaBox)) {
-                    Vector3f mtv = computeMTV(entityAABB, vanillaBox);
-
+                if (entityAABB.intersects(rigidBodyAABB)) {
                     // Move ENTITY out of physics block
+                    Vector3f mtv = computeMTV(entityAABB, rigidBodyAABB);
                     Vec3 newPos = entity.position().add(mtv.x, mtv.y, mtv.z);
                     entity.setPos(newPos);
 
-                    // NOW cancel velocity in MTV direction to prevent sliding
+                    // NOW cancel velocity in MTV axis to prevent sliding
                     Vec3 vel = entity.getDeltaMovement();
 
                     if (Math.abs(mtv.x) > 0.0001)
                         vel = new Vec3(0, vel.y, vel.z);
 
+                    boolean pushedUp = false;
                     if (Math.abs(mtv.y) > 0.0001) {
                         vel = new Vec3(vel.x, 0, vel.z);
-                        // mark as grounded if we pushed upward
-                        if (mtv.y > 0) entity.setOnGround(true);
+                        entity.setOnGround(true);
+                        pushedUp = true; // standing on rigid body
                     }
 
                     if (Math.abs(mtv.z) > 0.0001)
                         vel = new Vec3(vel.x, vel.y, 0);
 
                     entity.setDeltaMovement(vel);
+
+                    if (pushedUp && delta.lengthSqr() > 1e-9) {
+                        // Separate horizontal and vertical components
+                        Vec3 horizontalDelta = new Vec3(delta.x, 0, delta.z).scale(0.5); // scale horizontal
+                        Vec3 verticalDelta = new Vec3(0, delta.y, 0); // full vertical
+
+                        // Move horizontally first
+                        entity.move(MoverType.PISTON, horizontalDelta);
+
+                        // Then move vertically to stay on top
+                        entity.move(MoverType.PISTON, verticalDelta);
+
+                        // Blend velocity for smooth walking
+                        entity.setDeltaMovement(entity.getDeltaMovement().add(horizontalDelta).add(verticalDelta));
+
+                        // Keep grounded
+                        entity.setOnGround(true);
+                    }
                 }
             }
         }
@@ -83,6 +109,4 @@ public class EntityCollisionGenerator {
             default -> new Vector3f();
         };
     }
-
-
 }

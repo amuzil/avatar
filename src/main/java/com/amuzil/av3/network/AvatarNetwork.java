@@ -2,7 +2,7 @@ package com.amuzil.av3.network;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.network.packets.api.AvatarPacket;
-import com.amuzil.av3.network.packets.bender.ChooseElementPacket;
+import com.amuzil.av3.network.packets.bending.ChooseElementPacket;
 import com.amuzil.av3.network.packets.bender.ToggleBendingPacket;
 import com.amuzil.av3.network.packets.form.ExecuteFormPacket;
 import com.amuzil.av3.network.packets.form.ReleaseFormPacket;
@@ -23,7 +23,7 @@ public class AvatarNetwork {
     public static void register(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar(Avatar.MOD_ID).versioned(VERSION);
 
-        registrar.playBidirectional(
+        registrar.playToServer(
                 SyncSelectionPacket.TYPE,
                 SyncSelectionPacket.CODEC,
                 SyncSelectionPacket::handle
