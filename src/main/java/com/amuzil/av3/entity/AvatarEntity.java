@@ -56,10 +56,14 @@ public abstract class AvatarEntity extends Entity {
     /** Call this after adding it to a world.
      */
     public void init() {
-        modules.forEach(mod -> mod.init(this));
-        forceModules.forEach(mod -> mod.init(this));
-        collisionModules.forEach(mod -> mod.init(this));
-        clientModules.forEach(mod -> mod.init(this));
+        if (this.level().isClientSide()) {
+            // TODO: Send Packet for client-side init
+            clientModules.forEach(mod -> mod.init(this));
+        } else {
+            modules.forEach(mod -> mod.init(this));
+            forceModules.forEach(mod -> mod.init(this));
+            collisionModules.forEach(mod -> mod.init(this));
+        }
     }
 
     @Override

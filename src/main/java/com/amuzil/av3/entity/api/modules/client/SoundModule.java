@@ -23,14 +23,14 @@ public class SoundModule implements IFXModule {
 
     @Override
     public void init(AvatarEntity entity) {
-
+        if (entity.fxName() != null)
+            startSoundEffect(entity.fxName(), entity);
     }
 
     @Override
     public void tick(AvatarEntity entity) {
         if (entity.fxName() != null) {
             if (entity.oneShotFX()) {
-                // TODO: Make it so that tickCount is synced or allow different one shot sound to be played
                 if (entity.tickCount <= 1) {
                     startSoundEffect(entity.fxName(), entity);
                 }
