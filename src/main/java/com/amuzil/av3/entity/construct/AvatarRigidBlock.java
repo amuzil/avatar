@@ -50,14 +50,12 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
     @Override
     public void setOwner(@NotNull Entity owner) {
         super.setOwner(owner);
-        if (owner instanceof Player)
-            this.rigidBody.prioritize((Player) owner);
     }
 
     @Override
     public void shoot(Vec3 location, Vec3 direction, double speed, double inAccuracy) {
         setPos(location);
-        Vec3 vec3 = direction.normalize().scale(300);
+        Vec3 vec3 = direction.normalize().scale(100 * speed);
         rigidBody.applyCentralImpulse(Convert.toBullet(vec3));
     }
 

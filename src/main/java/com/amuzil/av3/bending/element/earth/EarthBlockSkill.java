@@ -12,6 +12,7 @@ import com.amuzil.magus.skill.traits.skilltraits.StringTrait;
 import com.amuzil.magus.skill.traits.skilltraits.TimedTrait;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -54,6 +55,7 @@ public class EarthBlockSkill extends EarthSkill {
         rigidBlock.getRigidBody().setMass(0f);
         rigidBlock.getRigidBody().setKinematic(true);
         rigidBlock.setOwner(entity);
+        rigidBlock.getRigidBody().prioritize((Player) entity);
         rigidBlock.setMaxLifetime(lifetime);
         rigidBlock.setWidth((float) size);
         rigidBlock.setHeight((float) size);

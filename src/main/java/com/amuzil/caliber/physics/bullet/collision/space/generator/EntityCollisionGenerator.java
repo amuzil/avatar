@@ -15,14 +15,14 @@ import net.minecraft.world.phys.Vec3;
  */
 public class EntityCollisionGenerator {
     public static void step(MinecraftSpace space) {
-        for (var rigidBody: space.getRigidBodiesByClass(ElementRigidBody.class)) {
+        for (var rigidBody: space.getRigidBodiesByClass(EntityRigidBody.class)) {
 //            if (rigidBody.getElement().skipVanillaEntityCollisions())
 //                continue;
 
             final var box = rigidBody.getBoundingBox();
             final var rigidBodyAABB = rigidBody.getMinecraftBoundingBox();
 
-            Entity rigidBodyEntity = (Entity) rigidBody.getElement().cast();
+            Entity rigidBodyEntity = rigidBody.getElement().cast();
             if (!(rigidBodyEntity instanceof AvatarRigidBlock rigidBlock)) continue;
             rigidBlock.syncFromPhysics();
             Vec3 current = rigidBlock.position();
@@ -30,6 +30,7 @@ public class EntityCollisionGenerator {
             Vec3 delta = current.subtract(lastPos);
 
             for (var entity: space.getWorkerThread().getEntitySupplier().getInsideOf(rigidBody, rigidBodyAABB)) {
+                if (rigidBody.getPriorityPlayer() != null && entity.getId() == rigidBody.getPriorityPlayer().getId()) continue;
                 AABB entityAABB = entity.getBoundingBox();
 
                 if (entityAABB.intersects(rigidBodyAABB)) {

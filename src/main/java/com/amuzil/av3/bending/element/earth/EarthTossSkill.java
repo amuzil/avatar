@@ -59,6 +59,7 @@ public class EarthTossSkill extends EarthSkill {
             data.setSkillState(SkillState.IDLE);
             return;
         }
+        // TODO: Fix bug with exponential force of mach 2 by making BendingSelection a Data Attachment
         for (UUID entityId: entityIds) {
             if (level.getEntity(entityId) instanceof AvatarRigidBlock rigidBlock) {
                 rigidBlock.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
