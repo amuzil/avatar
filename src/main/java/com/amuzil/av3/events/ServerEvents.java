@@ -125,7 +125,7 @@ public class ServerEvents {
 //    }
 
     @SubscribeEvent
-    private static void onPlayerTick(PlayerTickEvent.Pre event) {
+    private static void onPlayerTick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         if (!player.isAlive()) return;
 

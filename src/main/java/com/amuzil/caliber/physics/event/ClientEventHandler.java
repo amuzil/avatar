@@ -13,6 +13,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
@@ -39,7 +40,6 @@ public final class ClientEventHandler {
 
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
-        PhysicsThreadStore.checkThrowable(PhysicsThreadStore.INSTANCE.getClientThread());
     }
 
     @SubscribeEvent

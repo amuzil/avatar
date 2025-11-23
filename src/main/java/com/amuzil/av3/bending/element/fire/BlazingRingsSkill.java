@@ -101,7 +101,6 @@ public class BlazingRingsSkill extends FireSkill {
         projectile.addTraits(new CollisionTrait(Constants.COLLISION_TYPE, "Blaze", "Fireball", "AbstractArrow", "FireProjectile"));
         projectile.addCollisionModule((ICollisionModule) ModuleRegistry.create(FireCollisionModule.id));
 
-        // Particle FX
         projectile.init();
 
         bender.formPath.clear();

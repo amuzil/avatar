@@ -1,7 +1,7 @@
 package com.amuzil.av3.events;
 
 import com.amuzil.av3.Avatar;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.amuzil.av3.input.InputModule;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -10,18 +10,27 @@ import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Matrix4f;
 
+import static com.amuzil.av3.data.attachment.AvatarAttachments.IS_BENDING;
+
 @EventBusSubscriber(modid = Avatar.MOD_ID, value = Dist.CLIENT)
 public class ClientEvents {
     //    public static final ByteBufferBuilder DEBUG_BUILDER = new ByteBufferBuilder(256);
     @SubscribeEvent
     public static void onClientLogin(ClientPlayerNetworkEvent.LoggingIn event) {
-        Avatar.INPUT_MODULE.registerListeners();
+        Avatar.LOGGER.info("Setting up Avatar Mod client-side...");
+        Avatar.INPUT_MODULE = new InputModule();
+        boolean isBending = event.getPlayer().getData(IS_BENDING);
+        System.out.println("ClientEvents: " + isBending);
+        if (isBending)
+            Avatar.INPUT_MODULE.registerListeners();
     }
 
     @SubscribeEvent
     public static void onClientLogout(ClientPlayerNetworkEvent.LoggingOut event) {
-        if (Avatar.INPUT_MODULE != null)
+        if (Avatar.INPUT_MODULE != null) {
             Avatar.INPUT_MODULE.terminate();
+            Avatar.INPUT_MODULE = null;
+        }
     }
 
     @OnlyIn(Dist.CLIENT)

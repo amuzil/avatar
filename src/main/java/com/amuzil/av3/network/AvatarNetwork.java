@@ -3,6 +3,7 @@ package com.amuzil.av3.network;
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.network.packets.api.AvatarPacket;
 import com.amuzil.av3.network.packets.bending.ChooseElementPacket;
+import com.amuzil.av3.network.packets.bending.ToggleBendingPacket;
 import com.amuzil.av3.network.packets.form.ExecuteFormPacket;
 import com.amuzil.av3.network.packets.form.ReleaseFormPacket;
 import com.amuzil.av3.network.packets.sync.SyncMovementPacket;
@@ -70,6 +71,11 @@ public class AvatarNetwork {
         );
 
 
+        registrar.playToServer(
+                ToggleBendingPacket.TYPE,
+                ToggleBendingPacket.CODEC,
+                ToggleBendingPacket::handle
+        );
     }
 
     public static void sendToClient(AvatarPacket payload, ServerPlayer player) {

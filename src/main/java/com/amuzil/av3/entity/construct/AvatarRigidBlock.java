@@ -10,6 +10,9 @@ import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -26,16 +29,10 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
     private final EntityRigidBody rigidBody;
     private float defaultMass;
 
+    protected static final EntityDataAccessor<Boolean> RIGID_BODY_DIRTY = SynchedEntityData.defineId(AvatarRigidBlock.class, EntityDataSerializers.BOOLEAN);
+
     public AvatarRigidBlock(EntityType<? extends AvatarRigidBlock> type, Level level) {
         super(type, level);
-        this.rigidBody = new EntityRigidBody(this);
-        addForceModule((IForceModule) ModuleRegistry.create(ControlModule.id));
-        defaultMass = rigidBody.getMass();
-    }
-
-    public AvatarRigidBlock(Level level, Vec3 pos, double width, double height, double depth) {
-        super(AvatarEntities.AVATAR_RIGID_BLOCK_ENTITY_TYPE.get(), level, width, height, depth);
-        this.setPos(pos);
         this.rigidBody = new EntityRigidBody(this);
         addForceModule((IForceModule) ModuleRegistry.create(ControlModule.id));
         defaultMass = rigidBody.getMass();
@@ -85,8 +82,28 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
         rigidBody.setPhysicsRotation(q);
     }
 
+    public boolean isRigidBodyDirty() {
+        return entityData.get(RIGID_BODY_DIRTY);
+    }
+
+    public void setRigidBodyDirty(boolean isDirty) {
+        entityData.set(RIGID_BODY_DIRTY, isDirty);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(RIGID_BODY_DIRTY, false);
+    }
+
     @Override
     public void tick() {
+        if (isRigidBodyDirty()) {
+            rigidBody.setCollisionShape(this.createShape());
+            defaultMass = rigidBody.getMass();
+            setRigidBodyDirty(false);
+        }
+
         // Save previous tick position
         this.xOld = this.getX();
         this.yOld = this.getY();

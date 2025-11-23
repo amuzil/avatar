@@ -53,32 +53,30 @@ public class EarthTossSkill extends EarthSkill {
             data.setSkillState(SkillState.IDLE);
             return;
         }
-        if (!(level.getEntity(entityIds.getFirst()) instanceof AvatarRigidBlock rigidBlock)) {
+        if (!(level.getEntity(entityIds.getFirst()) instanceof AvatarRigidBlock)) {
             bender.formPath.clear();
             bender.getSelection().reset();
             data.setSkillState(SkillState.IDLE);
             return;
         }
+        for (UUID entityId: entityIds) {
+            if (level.getEntity(entityId) instanceof AvatarRigidBlock rigidBlock) {
+                rigidBlock.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
+                rigidBlock.setKinematic(false);
+//                rigidBlock.getRigidBody().setGravity(Vector3f.ZERO);
+//                rigidBlock.getRigidBody().setProtectGravity(true);
+                rigidBlock.setOwner(entity);
+                rigidBlock.setControlled(false);
 
-        rigidBlock.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
-        rigidBlock.tickCount = 0; // Reset for another one shot FX
-        rigidBlock.setKinematic(false);
-//        rigidBlock.getRigidBody().setGravity(Vector3f.ZERO);
-//        rigidBlock.getRigidBody().setProtectGravity(true);
-        rigidBlock.setOwner(entity);
-//        rigidBlock.setMaxLifetime(lifetime);
-        rigidBlock.setControlled(false);
+                rigidBlock.addTraits(data.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
+                rigidBlock.addTraits(new DirectionTrait(Constants.KNOCKBACK_DIRECTION, new Vec3(0, 0.45, 0)));
+                rigidBlock.addModule(ModuleRegistry.create(SimpleKnockbackModule.id));
+                rigidBlock.addTraits(data.getTrait(Constants.DAMAGE, DamageTrait.class));
+                rigidBlock.addModule(ModuleRegistry.create(SimpleDamageModule.id));
 
-        rigidBlock.addTraits(data.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
-        rigidBlock.addTraits(new DirectionTrait(Constants.KNOCKBACK_DIRECTION, new Vec3(0, 0.45, 0)));
-        rigidBlock.addModule(ModuleRegistry.create(SimpleKnockbackModule.id));
-
-        // Damage module
-        rigidBlock.addTraits(data.getTrait(Constants.DAMAGE, DamageTrait.class));
-        rigidBlock.addModule(ModuleRegistry.create(SimpleDamageModule.id));
-
-        rigidBlock.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
-        rigidBlock.init();
+                rigidBlock.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
+            }
+        }
 
         bender.formPath.clear();
         bender.getSelection().reset();

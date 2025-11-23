@@ -26,7 +26,7 @@ public class EarthWallSkill extends EarthSkill {
     public EarthWallSkill() {
         super(Avatar.MOD_ID, "earth_wall");
         addTrait(new StringTrait(Constants.FX, "earth_wall"));
-        addTrait(new TimedTrait(Constants.LIFETIME, 100));
+        addTrait(new TimedTrait(Constants.LIFETIME, 500));
         addTrait(new SizeTrait(Constants.SIZE, 3.0f));
 
         this.startPaths = SkillPathBuilder.getInstance()
@@ -47,18 +47,20 @@ public class EarthWallSkill extends EarthSkill {
         int lifetime = data.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
         double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
-        AvatarRigidBlock rigidBlock = new AvatarRigidBlock(level, getPivot(entity, 3f), size, size, size);
+        AvatarRigidBlock rigidBlock = new AvatarRigidBlock(level);
         rigidBlock.setElement(element());
         rigidBlock.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
         rigidBlock.setBlockState(blockState);
+        rigidBlock.setPos(getPivot(entity, 3f));
         rigidBlock.getRigidBody().setMass(50f);
         rigidBlock.getRigidBody().setAngularFactor(0f);
         rigidBlock.getRigidBody().setAngularVelocity(new Vector3f(0f, 0f, 0f));
         rigidBlock.setOwner(entity);
-        rigidBlock.setMaxLifetime(lifetime);
+//        rigidBlock.setMaxLifetime(lifetime);
         rigidBlock.setWidth((float) size);
         rigidBlock.setHeight((float) size);
         rigidBlock.setDamageable(false);
+        rigidBlock.setRigidBodyDirty(true);
 
         rigidBlock.init();
 
