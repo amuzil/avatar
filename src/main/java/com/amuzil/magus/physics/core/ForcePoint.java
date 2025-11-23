@@ -1,9 +1,17 @@
 package com.amuzil.magus.physics.core;
 
+import com.amuzil.caliber.CaliberPhysics;
 import com.amuzil.caliber.api.PhysicsElement;
 import com.amuzil.caliber.physics.bullet.collision.body.ElementRigidBody;
 import com.amuzil.caliber.physics.bullet.collision.body.ForceRigidBody;
 import com.amuzil.caliber.physics.bullet.collision.body.shape.MinecraftShape;
+import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
+import com.amuzil.caliber.physics.bullet.math.Convert;
+import com.amuzil.caliber.physics.utils.maths.Utilities;
+import com.amuzil.caliber.physics.utils.maths.VectorSerializer;
+import com.jme3.bounding.BoundingBox;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +24,10 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ForcePoint extends ForceElement {
     private final int lifetime = -1;
-    private ElementRigidBody rigidBody;
+    private ForceRigidBody rigidBody;
+    private float size = 0.1f;
+    private BoundingBox boundingBox;
+    private AABB aabb;
 
     // Size is default 15 (5 vectors x 3 variables for 3d space. We're not using 4d vectors here yet...)
     public ForcePoint(int size, int type, Vec3 pos, Vec3 vel, Vec3 force, String id) {
@@ -31,8 +42,6 @@ public class ForcePoint extends ForceElement {
         insert(Vec3.ZERO, 3);
         // Direction / Force / Acceleration
         insert(force, 4);
-//        this.rigidBody = new ElementRigidBody() {
-//        }
 
     }
 
@@ -40,8 +49,13 @@ public class ForcePoint extends ForceElement {
         this(15, type, pos, vel, force, "");
     }
 
-    public ForcePoint(int type, Vec3 pos, Vec3 vel, Vec3 force, String id) {
+    public ForcePoint(int type, Vec3 pos, Vec3 vel, Vec3 force, String id, Level level, float size) {
         this(15, type, pos, vel, force, id);
+        this.rigidBody = new ForceRigidBody(this, MinecraftSpace.get(level), createShape());
+        this.size = size;
+        this.boundingBox = new BoundingBox(Convert.toBullet(pos()), size, size, size);
+        this.aabb = new AABB(pos(), pos());
+        aabb.inflate(size);
     }
 
 
@@ -62,8 +76,7 @@ public class ForcePoint extends ForceElement {
      */
     @Override
     public MinecraftShape.Convex createShape() {
-        return null;
-        // return MinecraftShape.convex();
+        return MinecraftShape.convex(boundingBox);
     }
 
 
@@ -77,6 +90,6 @@ public class ForcePoint extends ForceElement {
      */
     @Override
     public @Nullable ForceRigidBody getRigidBody() {
-        return null;
+        return rigidBody;
     }
 }

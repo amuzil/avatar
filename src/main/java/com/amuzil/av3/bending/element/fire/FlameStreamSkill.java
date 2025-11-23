@@ -40,7 +40,7 @@ public class FlameStreamSkill extends FireSkill {
 
         startPaths = SkillPathBuilder.getInstance()
 //                .simple(new ActiveForm(BendingForms.ARC, true))
-                .add(BendingForms.EXPAND)
+//                .add(BendingForms.EXPAND)
                 .add(BendingForms.BLOCK)
                 .build();
 
@@ -49,7 +49,6 @@ public class FlameStreamSkill extends FireSkill {
 
     @Override
     public void start(Bender bender) {
-        super.startRun();
 
         LivingEntity entity = bender.getEntity();
         Level level = bender.getEntity().level();
@@ -111,6 +110,10 @@ public class FlameStreamSkill extends FireSkill {
         projectile.init();
 
         bender.getEntity().level().addFreshEntity(projectile);
+
+        // Spawn AvatarPhysicsController to handle continuous firing
+        // Set modules on the controller as needed
+        super.startRun();
     }
 
     @Override

@@ -168,6 +168,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
                     CaliberNetwork.sendToPlayersTrackingEntity(entityRigidBody.getElement().cast(), new SendRigidBodyMovementPacket(entityRigidBody));
                     CaliberNetwork.sendToPlayersTrackingEntity(entityRigidBody.getElement().cast(), new SendRigidBodyPropertiesPacket(entityRigidBody));
                 }
+                //TODO: SEnt packets for ForceRigidBody
             } else if (collisionObject instanceof TerrainRigidBody terrain) {
                 this.terrainMap.put(terrain.getBlockPos(), terrain);
             }

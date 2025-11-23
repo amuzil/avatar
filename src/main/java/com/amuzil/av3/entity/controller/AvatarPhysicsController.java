@@ -2,11 +2,15 @@ package com.amuzil.av3.entity.controller;
 
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.entity.AvatarEntity;
+import com.amuzil.av3.entity.api.EntityGrid;
 import com.amuzil.av3.entity.api.modules.IAvatarController;
+import com.amuzil.av3.entity.construct.AvatarElementCollider;
 import com.amuzil.magus.physics.core.ForceCloud;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
+
+import java.util.HashMap;
 
 // Should hold element rigidbodies and a force cloud...
 public class AvatarPhysicsController extends AvatarEntity implements IAvatarController {
@@ -14,6 +18,8 @@ public class AvatarPhysicsController extends AvatarEntity implements IAvatarCont
 
     // Physics is automatically handled.
     private ForceCloud forceCloud;
+    private HashMap<Integer, AvatarElementCollider> elements;
+    private EntityGrid<AvatarElementCollider> elementGrid;
 
     // We ideally
     public AvatarPhysicsController(EntityType<?> entityType, Level level) {
@@ -56,6 +62,8 @@ public class AvatarPhysicsController extends AvatarEntity implements IAvatarCont
             // Should automatically remove itself from the physics space.
             forceCloud.kill();
         }
+        elementGrid.clear();
+        elements.clear();
         super.kill();
     }
 }

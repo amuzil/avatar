@@ -1,7 +1,9 @@
 package com.amuzil.magus.physics.core;
 
 import com.amuzil.caliber.physics.bullet.collision.body.ForceRigidBody;
+import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.amuzil.magus.physics.constraints.Constraints;
+import com.jme3.math.Vector3f;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.UUID;
@@ -35,6 +37,31 @@ public abstract class ForceElement implements ForcePhysicsElement {
         this.data = new double[size];
         type(type);
         this.id = id;
+    }
+
+    public void syncFromPhysics() {
+        pos(Convert.toVec3(rigidBody.getPhysicsLocation(new Vector3f())));
+    }
+
+    // Override these if you don't want your data stored in the double array sa per these defaults.
+    public void pos(Vec3 pos) {
+        insert(pos, 0);
+    }
+
+    public void prevPos(Vec3 pos) {
+        insert(pos, 1);
+    }
+
+    public void vel(Vec3 vel) {
+        insert(vel, 2);
+    }
+
+    public void prevVel(Vec3 vel) {
+        insert(vel, 3);
+    }
+
+    public void force(Vec3 force) {
+        insert(force, 4);
     }
 
     @Override

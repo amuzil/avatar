@@ -7,19 +7,17 @@ import com.amuzil.av3.utils.network.AvatarPacketUtils;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.magus.physics.core.ForceCloud;
 import com.amuzil.magus.physics.core.ForcePoint;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class ForceCloudSpawnPacket implements AvatarPacket {
@@ -70,9 +68,12 @@ public class ForceCloudSpawnPacket implements AvatarPacket {
         this.aabbMax = cloud.bounds().getMaxPosition();
 
         this.lifetime = cloud.lifetime();
-        cloud.pointsCopy().forEach(point -> pointData.add(point.data()));
-        cloud.pointsCopy().forEach(point -> pointTypes.add(point.type()));
-        cloud.pointsCopy().forEach(point -> lifetimes.add(point.lifetime()));
+        for (Map.Entry<String, ForcePoint> point : cloud.pointsCopy().entrySet()) {
+            ForcePoint forcePoint = point.getValue();
+            pointData.add(forcePoint.data());
+            pointTypes.add(forcePoint.type());
+            lifetimes.add(forcePoint.lifetime());
+        }
 
     }
 

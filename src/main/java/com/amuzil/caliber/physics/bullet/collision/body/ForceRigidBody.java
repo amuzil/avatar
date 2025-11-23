@@ -5,6 +5,7 @@ import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.magus.physics.core.ForcePhysicsElement;
 import com.jme3.math.Vector3f;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
 
 /**
  * Used in the Force physics API
@@ -15,7 +16,7 @@ public class ForceRigidBody extends ElementRigidBody {
 
 
     public ForceRigidBody(ForcePhysicsElement element, MinecraftSpace space, MinecraftShape shape) {
-        this(element, space, shape, 10.0f, 0.25f, 1.0f, 0.5f);
+        this(element, space, shape, 1.0f, 0.20f, 0.85f, 0.35f);
     }
 
     public ForceRigidBody(ForcePhysicsElement element, MinecraftSpace space, MinecraftShape shape, float mass, float dragCoefficient, float friction, float restitution) {
@@ -76,5 +77,10 @@ public class ForceRigidBody extends ElementRigidBody {
     public void setTerrainLoadingEnabled(boolean doTerrainLoading) {
         super.setTerrainLoadingEnabled(doTerrainLoading);
         this.dirtyProperties = true;
+    }
+
+    @Override
+    public AABB getMinecraftBoundingBox() {
+        return super.getMinecraftBoundingBox();
     }
 }

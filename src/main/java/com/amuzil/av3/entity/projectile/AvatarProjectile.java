@@ -217,8 +217,8 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
 
     @Override
     public Vec3 getDeltaMovement() {
-        return Vec3.ZERO;
-//        return super.getDeltaMovement();
+//        return Vec3.ZERO;
+        return super.getDeltaMovement();
     }
 
     /**
