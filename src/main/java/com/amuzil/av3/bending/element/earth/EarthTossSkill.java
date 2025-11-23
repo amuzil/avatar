@@ -28,7 +28,7 @@ public class EarthTossSkill extends EarthSkill {
         addTrait(new StringTrait(Constants.FX, "earth_toss"));
         addTrait(new TimedTrait(Constants.LIFETIME, 100));
         addTrait(new DamageTrait(Constants.DAMAGE, 4.5f));
-        addTrait(new SpeedTrait(Constants.SPEED, 3d));
+        addTrait(new SpeedTrait(Constants.SPEED, 2.5d));
         addTrait(new KnockbackTrait(Constants.KNOCKBACK, 1.5f));
 
         this.startPaths = SkillPathBuilder.getInstance()
@@ -53,12 +53,7 @@ public class EarthTossSkill extends EarthSkill {
             data.setSkillState(SkillState.IDLE);
             return;
         }
-        if (!(level.getEntity(entityIds.getFirst()) instanceof AvatarRigidBlock)) {
-            bender.formPath.clear();
-            bender.getSelection().reset();
-            data.setSkillState(SkillState.IDLE);
-            return;
-        }
+
         // TODO: Fix bug with exponential force of mach 2 by making BendingSelection a Data Attachment
         for (UUID entityId: entityIds) {
             if (level.getEntity(entityId) instanceof AvatarRigidBlock rigidBlock) {
