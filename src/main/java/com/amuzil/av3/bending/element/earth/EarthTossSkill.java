@@ -61,6 +61,7 @@ public class EarthTossSkill extends EarthSkill {
                 rigidBlock.setKinematic(false);
 //                rigidBlock.getRigidBody().setGravity(Vector3f.ZERO);
 //                rigidBlock.getRigidBody().setProtectGravity(true);
+                rigidBlock.getRigidBody().prioritize(null);
                 rigidBlock.setOwner(entity);
                 rigidBlock.setControlled(false);
 
