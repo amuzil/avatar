@@ -16,6 +16,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static com.amuzil.av3.bending.form.BendingForms.STRIKE;
@@ -46,7 +47,7 @@ public class EarthTossSkill extends EarthSkill {
         int lifetime = data.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
         double speed = data.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
 
-        List<UUID> entityIds = bender.getSelection().entityIds();
+        Set<UUID> entityIds = bender.getSelection().entityIds();
         if (entityIds.isEmpty()) {
             bender.formPath.clear();
             bender.getSelection().reset();
@@ -54,7 +55,6 @@ public class EarthTossSkill extends EarthSkill {
             return;
         }
 
-        // TODO: Fix bug with exponential force of mach 2 by making BendingSelection a Data Attachment
         for (UUID entityId: entityIds) {
             if (level.getEntity(entityId) instanceof AvatarRigidBlock rigidBlock) {
                 rigidBlock.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
