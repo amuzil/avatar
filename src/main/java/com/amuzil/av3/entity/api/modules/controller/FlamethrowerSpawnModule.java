@@ -3,7 +3,13 @@ package com.amuzil.av3.entity.api.modules.controller;
 import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.IEntityModule;
+import com.amuzil.av3.entity.api.modules.ModuleRegistry;
+import com.amuzil.av3.entity.api.modules.entity.GrowModule;
 import com.amuzil.av3.entity.construct.AvatarElementCollider;
+import com.amuzil.av3.utils.Constants;
+import com.amuzil.av3.utils.maths.Easings;
+import com.amuzil.magus.skill.traits.entitytraits.PointsTrait;
+import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.math.Vector3f;
 import net.minecraft.nbt.CompoundTag;
@@ -47,8 +53,18 @@ public class FlamethrowerSpawnModule implements IEntityModule {
                 collider.getRigidBody().setKinematic(false);
                 collider.setOwner(entity.owner());
                 collider.setMaxLifetime(entity.maxLifetime());
-                collider.setWidth((float) size);
-                collider.setHeight((float) size);
+
+                // Size should probably be set the same as regular flame (with a grow module)
+                collider.setWidth((float) entity.getTrait(Constants.SIZE, SizeTrait.class).getSize());
+                collider.setHeight((float) entity.getTrait(Constants.SIZE, SizeTrait.class).getSize());
+                // Now we add the growth module and point curves
+                collider.addTraits(entity.getTrait(Constants.MAX_SIZE, SizeTrait.class));
+                collider.addTraits(new PointsTrait(Constants.HEIGHT_CURVE, Easings.FIRE_CURVE_HEIGHT));
+                collider.addTraits(new PointsTrait(Constants.WIDTH_CURVE, Easings.FIRE_CURVE_WIDTH));
+                entity.addModule(ModuleRegistry.create(GrowModule.id));
+
+                
+
                 collider.getRigidBody().setGravity(Vector3f.ZERO);
                 collider.setDamageable(false);
                 collider.setControlled(true);
