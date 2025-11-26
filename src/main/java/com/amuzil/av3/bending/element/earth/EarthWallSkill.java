@@ -53,6 +53,7 @@ public class EarthWallSkill extends EarthSkill {
         rigidBlock.setBlockState(blockState);
         rigidBlock.setPos(getPivot(entity, 3f));
         rigidBlock.getRigidBody().setMass(90f);
+        rigidBlock.getRigidBody().setFriction(0.05f);
         rigidBlock.getRigidBody().setAngularFactor(0f);
         rigidBlock.getRigidBody().setAngularVelocity(new Vector3f(0f, 0f, 0f));
         rigidBlock.setOwner(entity);

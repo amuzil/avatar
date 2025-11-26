@@ -53,7 +53,7 @@ public class AvatarNetwork {
         );
         registrar.playToServer(
                 ToggleBendingPacket.TYPE,
-                ToggleBendingPacket.CODEC,
+                ToggleBendingPacket.STREAM_CODEC,
                 ToggleBendingPacket::handle
         );
     }

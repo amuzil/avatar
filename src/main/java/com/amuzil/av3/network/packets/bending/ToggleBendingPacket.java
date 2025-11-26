@@ -16,7 +16,7 @@ import static com.amuzil.av3.data.capability.AvatarCapabilities.getBender;
 
 public class ToggleBendingPacket implements AvatarPacket {
     public static final Type<ToggleBendingPacket> TYPE = new Type<>(Avatar.id(ToggleBendingPacket.class));
-    public static final StreamCodec<FriendlyByteBuf, ToggleBendingPacket> CODEC =
+    public static final StreamCodec<FriendlyByteBuf, ToggleBendingPacket> STREAM_CODEC =
             StreamCodec.ofMember(ToggleBendingPacket::toBytes, ToggleBendingPacket::new);
 
     private final UUID playerUUID;
@@ -45,7 +45,7 @@ public class ToggleBendingPacket implements AvatarPacket {
 
     public static void handle(ToggleBendingPacket msg, IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
-            if (!ctx.flow().getReceptionSide().isClient()) {
+            if (ctx.flow().getReceptionSide().isServer()) {
                 ServerPlayer player = Objects.requireNonNull(ctx.player().getServer()).getPlayerList().getPlayer(msg.playerUUID);
                 assert player != null;
                 Bender bender = getBender(player);
