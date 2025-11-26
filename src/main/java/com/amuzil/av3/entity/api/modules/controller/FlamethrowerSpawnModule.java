@@ -4,6 +4,7 @@ import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.IEntityModule;
 import com.amuzil.av3.entity.construct.AvatarElementCollider;
+import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.math.Vector3f;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
@@ -25,8 +26,18 @@ public class FlamethrowerSpawnModule implements IEntityModule {
             Bender bender = Bender.getBender(owner);
             Level level = entity.level();
             // max should be a skill trait
-            int max = 1;
-            for (int i = 0; i < max; i++) {
+            int maxPerTick = 1;
+            int secondsLoop = 3;
+            // And then we have to batch spawn them....
+            // So we do this in the init phase, and then tick controls their movement
+
+            PhysicsCollisionObject[] objs = new PhysicsCollisionObject[maxPerTick * 20 * secondsLoop];
+            // Default will be 1 entity per tick for 3 seconds with 20 ticks per second
+            for (int i = 0; i < maxPerTick * 20 * secondsLoop; i++) {
+
+                // Spawn an element collider, then set its rigidbody properties.
+                // Eventually, we want to have speical behaviour that moves the collider back to the controller,
+                // rather than killing it (until the controller dies).
                 AvatarElementCollider collider = new AvatarElementCollider(level);
                 collider.setElement(entity.element());
 //                Sound later
@@ -41,6 +52,8 @@ public class FlamethrowerSpawnModule implements IEntityModule {
                 collider.getRigidBody().setGravity(Vector3f.ZERO);
                 collider.setDamageable(false);
                 collider.setControlled(true);
+                // Somehow do this every tick efficiently...
+                collider.getRigidBody().addToIgnoreList();
 
                 collider.init();
                 bender.getSelection().addEntityId(collider.getUUID());
@@ -48,6 +61,12 @@ public class FlamethrowerSpawnModule implements IEntityModule {
                     entity.level().addFreshEntity(collider);
 
                 collider.shoot();
+                objs[i] = collider.getRigidBody();
+            }
+
+            for (PhysicsCollisionObject obj : objs) {
+                // Innate != this check contained within the function so this is fine
+                obj.setIgnoreList(objs);
             }
         }
     }
