@@ -4,6 +4,7 @@ import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.EntityGrid;
 import com.amuzil.av3.entity.api.modules.IAvatarController;
+import com.amuzil.av3.entity.construct.AvatarConstruct;
 import com.amuzil.av3.entity.construct.AvatarElementCollider;
 import com.amuzil.magus.physics.core.ForceCloud;
 import net.minecraft.nbt.CompoundTag;
@@ -13,7 +14,7 @@ import net.minecraft.world.level.Level;
 import java.util.HashMap;
 
 // Should hold element rigidbodies and a force cloud...
-public class AvatarPhysicsController extends AvatarEntity implements IAvatarController {
+public class AvatarPhysicsController extends AvatarConstruct implements IAvatarController {
 
 
     // Physics is automatically handled.
@@ -21,15 +22,13 @@ public class AvatarPhysicsController extends AvatarEntity implements IAvatarCont
     private HashMap<Integer, AvatarElementCollider> elements;
     private EntityGrid<AvatarElementCollider> elementGrid;
 
-    // We ideally
-    public AvatarPhysicsController(EntityType<?> entityType, Level level) {
+    public AvatarPhysicsController(EntityType<? extends AvatarConstruct> entityType, Level level) {
         super(entityType, level);
-
-        // This should never be collidable. Physics boolean can be used to determine if physics is enabled.
         setCollidable(false);
         setDamageable(false);
         setInvulnerable(true);
     }
+
 
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
@@ -65,5 +64,9 @@ public class AvatarPhysicsController extends AvatarEntity implements IAvatarCont
         elementGrid.clear();
         elements.clear();
         super.kill();
+    }
+
+    public EntityGrid<AvatarElementCollider> entityGrid() {
+        return this.elementGrid;
     }
 }
