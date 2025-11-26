@@ -2,7 +2,6 @@ package com.amuzil.av3.events;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.BendingSkill;
-import com.amuzil.av3.data.BenderCache;
 import com.amuzil.av3.data.capability.AvatarCapabilities;
 import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.utils.commands.AvatarCommands;
