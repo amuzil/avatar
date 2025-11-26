@@ -185,6 +185,7 @@ public class InputModule {
             }
         }
         isSelecting = false;
+        bender.resetSelection();
     }
 
     private void handleMiss() {
@@ -277,7 +278,6 @@ public class InputModule {
         boolean isBending = bender.isBending();
         Player player = Minecraft.getInstance().player;
         assert player != null;
-        System.out.println("TOGGLE: " + isBending);
         if (!isBending) {
             registerListeners();
             AvatarNetwork.sendToServer(new ToggleBendingPacket(player.getUUID(), true));

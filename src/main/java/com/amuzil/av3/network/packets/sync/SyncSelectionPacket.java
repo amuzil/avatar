@@ -47,7 +47,7 @@ public class SyncSelectionPacket implements AvatarPacket {
                 assert player != null;
                 Bender bender = getBender(player);
                 if (bender != null) {
-                    BendingSelection newBendingSelection = new BendingSelection(msg.tag);
+                    BendingSelection newBendingSelection = new BendingSelection(player.registryAccess(), msg.tag);
                     newBendingSelection.setOriginalBlocksMap(bender.getSelection().originalBlocksMap());
                     bender.setSelection(newBendingSelection);
                     bender.markClean();

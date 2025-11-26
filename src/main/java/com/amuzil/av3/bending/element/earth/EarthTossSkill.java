@@ -50,7 +50,7 @@ public class EarthTossSkill extends EarthSkill {
         Set<UUID> entityIds = bender.getSelection().entityIds();
         if (entityIds.isEmpty()) {
             bender.formPath.clear();
-            bender.getSelection().reset();
+            bender.resetSelection();
             data.setSkillState(SkillState.IDLE);
             return;
         }
@@ -61,6 +61,7 @@ public class EarthTossSkill extends EarthSkill {
                 rigidBlock.setKinematic(false);
 //                rigidBlock.getRigidBody().setGravity(Vector3f.ZERO);
 //                rigidBlock.getRigidBody().setProtectGravity(true);
+                rigidBlock.getRigidBody().setAngularFactor(1f);
                 rigidBlock.getRigidBody().prioritize(null);
                 rigidBlock.setOwner(entity);
                 rigidBlock.setControlled(false);
@@ -76,7 +77,7 @@ public class EarthTossSkill extends EarthSkill {
         }
 
         bender.formPath.clear();
-        bender.getSelection().reset();
+        bender.resetSelection();
         data.setSkillState(SkillState.IDLE);
     }
 }

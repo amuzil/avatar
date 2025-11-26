@@ -8,6 +8,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.StringTag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 
@@ -15,11 +17,22 @@ import java.util.*;
 
 
 public class BendingSelection implements INBTSerializable<CompoundTag> {
+    public static final StreamCodec<RegistryFriendlyByteBuf, BendingSelection> STREAM_CODEC =
+            StreamCodec.of(BendingSelection::encode, BendingSelection::decode);
+
     private final Map<Long, OriginalBlocks> originalBlocksMap = new HashMap<>();
     private BlockPos blockPos;
     private Set<UUID> entityIds = new LinkedHashSet<>();
     private List<String> skillIds = new ArrayList<>();
     private Target target = Target.NONE;
+
+    public BendingSelection() {
+
+    }
+
+    public BendingSelection(HolderLookup.Provider provider, CompoundTag tag) {
+        this.deserializeNBT(provider, tag);
+    }
 
     public BendingSelection(BlockPos position, Set<UUID> entities, List<String> skills, Target target) {
         blockPos = position;
@@ -28,14 +41,18 @@ public class BendingSelection implements INBTSerializable<CompoundTag> {
         this.target = target;
     }
 
-    public BendingSelection(Target target) {
-        this.target = target;
+    // For Syncing
+    public static void encode(RegistryFriendlyByteBuf buf, BendingSelection data) {
+        CompoundTag tag = data.serializeNBT(buf.registryAccess());
+        buf.writeNbt(tag);
     }
 
-    public BendingSelection() {}
-
-    public BendingSelection(CompoundTag tag) {
-        this.deserializeNBT(null, tag);
+    // For Syncing
+    public static BendingSelection decode(RegistryFriendlyByteBuf buf) {
+        CompoundTag tag = buf.readNbt();
+        if (tag == null)
+            return new BendingSelection();
+        return new BendingSelection(buf.registryAccess(), tag);
     }
 
     public void reset() {
