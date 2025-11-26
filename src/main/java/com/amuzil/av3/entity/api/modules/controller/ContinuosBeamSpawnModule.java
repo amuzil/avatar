@@ -76,6 +76,7 @@ public class ContinuosBeamSpawnModule implements IEntityModule {
                 // Initial properties
                 collider.setPos(pos);
                 collider.setOwner(entity.owner());
+                collider.spawner(controller);
                 collider.setMaxLifetime(entity.maxLifetime());
 
                 // RigidBody

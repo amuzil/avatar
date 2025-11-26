@@ -85,7 +85,7 @@ public abstract class AvatarEntity extends Entity {
 
     public void tickDespawn() {
         if (tickCount >= maxLifetime()) {
-            this.discard();
+            this.kill();
         }
     }
 
