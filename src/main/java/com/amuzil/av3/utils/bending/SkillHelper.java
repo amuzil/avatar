@@ -46,13 +46,22 @@ public class SkillHelper {
         return pose[1].add(pose[0]);
     }
 
+    // Right side pivot methods based on eye position.
     public static Vec3 getRightPivot(Entity entity, float scale) {
+        return getRightPivot(entity, 0.8f, scale);
+    }
+
+    public static Vec3 getRightPivot(Entity entity, float rightScale, float scale) {
         Vec3 eyePos = entity.getEyePosition();
+        return getRightPivot(entity, eyePos, rightScale, scale);
+    }
+
+    // This works for any given origin position
+    public static Vec3 getRightPivot(Entity entity, Vec3 origin, float rightScale, float scale) {
         Vec3 look = entity.getLookAngle().normalize();
         Vec3 up = new Vec3(0, 1, 0);
         Vec3 right = look.cross(up).normalize(); // cross product gives right vector
-        double sideOffset = 0.8;  // how far to the right
-        return eyePos.add(right.scale(sideOffset)).add(look.scale(scale));
+        return origin.add(right.scale(rightScale)).add(look.scale(scale));
     }
 
 }

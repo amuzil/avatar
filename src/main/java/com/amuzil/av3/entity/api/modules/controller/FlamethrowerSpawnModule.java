@@ -15,6 +15,7 @@ import com.jme3.math.Vector3f;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 import static com.amuzil.av3.utils.bending.SkillHelper.getRightPivot;
 
@@ -36,9 +37,22 @@ public class FlamethrowerSpawnModule implements IEntityModule {
             int secondsLoop = 3;
             // And then we have to batch spawn them....
             // So we do this in the init phase, and then tick controls their movement
-
             PhysicsCollisionObject[] objs = new PhysicsCollisionObject[maxPerTick * 20 * secondsLoop];
             // Default will be 1 entity per tick for 3 seconds with 20 ticks per second
+
+
+            // Initialising constants/traits that are the same for all colliders here to reduce memory overhead
+
+            float width = (float) entity.getTrait(Constants.SIZE, SizeTrait.class).getSize();
+            float height = (float) entity.getTrait(Constants.SIZE, SizeTrait.class).getSize();
+
+            SizeTrait maxSize = entity.getTrait(Constants.MAX_SIZE, SizeTrait.class);
+            PointsTrait heightCurve = new PointsTrait(Constants.HEIGHT_CURVE, Easings.FIRE_CURVE_HEIGHT);
+            PointsTrait widthCurve = new PointsTrait(Constants.WIDTH_CURVE, Easings.FIRE_CURVE_WIDTH);
+
+            Vec3 origin = entity.getBoundingBox().getBottomCenter().add(0, (entity.getBoundingBox().maxY - entity.getBoundingBox().minY) / 2, 0);
+            Vec3 pos = getRightPivot(entity, origin, 0.5f, 1.0f);
+
             for (int i = 0; i < maxPerTick * 20 * secondsLoop; i++) {
 
                 // Spawn an element collider, then set its rigidbody properties.
@@ -48,35 +62,32 @@ public class FlamethrowerSpawnModule implements IEntityModule {
                 collider.setElement(entity.element());
 //                Sound later
 //                collider.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
-                collider.setPos(getRightPivot(entity, 1.0f));
+                collider.setPos(pos);
                 collider.getRigidBody().setMass(0f);
                 collider.getRigidBody().setKinematic(false);
                 collider.setOwner(entity.owner());
                 collider.setMaxLifetime(entity.maxLifetime());
 
                 // Size should probably be set the same as regular flame (with a grow module)
-                collider.setWidth((float) entity.getTrait(Constants.SIZE, SizeTrait.class).getSize());
-                collider.setHeight((float) entity.getTrait(Constants.SIZE, SizeTrait.class).getSize());
+                collider.setWidth(width);
+                collider.setHeight(height);
                 // Now we add the growth module and point curves
-                collider.addTraits(entity.getTrait(Constants.MAX_SIZE, SizeTrait.class));
-                collider.addTraits(new PointsTrait(Constants.HEIGHT_CURVE, Easings.FIRE_CURVE_HEIGHT));
-                collider.addTraits(new PointsTrait(Constants.WIDTH_CURVE, Easings.FIRE_CURVE_WIDTH));
+                collider.addTraits(maxSize);
+                collider.addTraits(heightCurve);
+                collider.addTraits(widthCurve);
                 entity.addModule(ModuleRegistry.create(GrowModule.id));
 
-                
+
 
                 collider.getRigidBody().setGravity(Vector3f.ZERO);
                 collider.setDamageable(false);
                 collider.setControlled(true);
-                // Somehow do this every tick efficiently...
-                collider.getRigidBody().addToIgnoreList();
 
                 collider.init();
                 bender.getSelection().addEntityId(collider.getUUID());
                 if (!entity.level().isClientSide)
                     entity.level().addFreshEntity(collider);
-
-                collider.shoot();
+                
                 objs[i] = collider.getRigidBody();
             }
 
