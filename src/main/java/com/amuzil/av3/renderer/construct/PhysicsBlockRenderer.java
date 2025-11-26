@@ -69,7 +69,6 @@ public class PhysicsBlockRenderer extends EntityRenderer<AvatarRigidBlock> {
         stack.popPose();
     }
 
-
     @Override
     public ResourceLocation getTextureLocation(AvatarRigidBlock block) {
         return null;

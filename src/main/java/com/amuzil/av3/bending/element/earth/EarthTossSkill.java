@@ -7,11 +7,15 @@ import com.amuzil.av3.entity.api.modules.ModuleRegistry;
 import com.amuzil.av3.entity.api.modules.collision.SimpleDamageModule;
 import com.amuzil.av3.entity.api.modules.collision.SimpleKnockbackModule;
 import com.amuzil.av3.entity.construct.AvatarRigidBlock;
+import com.amuzil.av3.network.AvatarNetwork;
+import com.amuzil.av3.network.packets.client.TriggerFXPacket;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.magus.skill.data.SkillData;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.traits.skilltraits.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
@@ -55,9 +59,10 @@ public class EarthTossSkill extends EarthSkill {
             return;
         }
 
+        ResourceLocation id = Avatar.id(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
+
         for (UUID entityId: entityIds) {
             if (level.getEntity(entityId) instanceof AvatarRigidBlock rigidBlock) {
-                rigidBlock.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
                 rigidBlock.setKinematic(false);
 //                rigidBlock.getRigidBody().setGravity(Vector3f.ZERO);
 //                rigidBlock.getRigidBody().setProtectGravity(true);
@@ -73,6 +78,8 @@ public class EarthTossSkill extends EarthSkill {
                 rigidBlock.addModule(ModuleRegistry.create(SimpleDamageModule.id));
 
                 rigidBlock.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
+
+                AvatarNetwork.sendToClient(new TriggerFXPacket(id, rigidBlock.getId()), (ServerPlayer) bender.getEntity());
             }
         }
 
