@@ -13,10 +13,12 @@ import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.math.Vector3f;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
+import static com.amuzil.av3.utils.bending.SkillHelper.getLeftPivot;
 import static com.amuzil.av3.utils.bending.SkillHelper.getRightPivot;
 
 public class FlamethrowerSpawnModule implements IEntityModule {
@@ -50,8 +52,16 @@ public class FlamethrowerSpawnModule implements IEntityModule {
             PointsTrait heightCurve = new PointsTrait(Constants.HEIGHT_CURVE, Easings.FIRE_CURVE_HEIGHT);
             PointsTrait widthCurve = new PointsTrait(Constants.WIDTH_CURVE, Easings.FIRE_CURVE_WIDTH);
 
-            Vec3 origin = entity.getBoundingBox().getBottomCenter().add(0, (entity.getBoundingBox().maxY - entity.getBoundingBox().minY) / 2, 0);
-            Vec3 pos = getRightPivot(entity, origin, 0.5f, 1.0f);
+            Vec3 origin = owner.getBoundingBox().getBottomCenter().add(0, (owner.getBoundingBox().maxY - owner.getBoundingBox().minY) / 2, 0);
+            Vec3 pos;
+            if (owner.getMainArm() == HumanoidArm.RIGHT) {
+                pos = getRightPivot(owner, origin, 0.5f, 1.0f);
+            } else {
+                // Left arm
+                pos = getLeftPivot(owner, origin, 0.5f, 1.0f);
+            }
+
+            getRightPivot(entity, origin, 0.5f, 1.0f);
 
             for (int i = 0; i < maxPerTick * 20 * secondsLoop; i++) {
 
@@ -87,7 +97,7 @@ public class FlamethrowerSpawnModule implements IEntityModule {
                 bender.getSelection().addEntityId(collider.getUUID());
                 if (!entity.level().isClientSide)
                     entity.level().addFreshEntity(collider);
-                
+
                 objs[i] = collider.getRigidBody();
             }
 

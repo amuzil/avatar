@@ -64,4 +64,8 @@ public class SkillHelper {
         return origin.add(right.scale(rightScale)).add(look.scale(scale));
     }
 
+    public static Vec3 getLeftPivot(Entity entity, Vec3 origin, float leftScale, float scale) {
+        return getRightPivot(entity, origin, leftScale * -1, scale);
+    }
+
 }
