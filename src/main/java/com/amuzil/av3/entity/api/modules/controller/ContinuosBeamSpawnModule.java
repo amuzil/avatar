@@ -35,7 +35,7 @@ public class ContinuosBeamSpawnModule implements IEntityModule {
             Bender bender = Bender.getBender(owner);
             Level level = entity.level();
             // max should be a skill trait
-            int maxPerTick = 1;
+            float maxPerTick = 0.5f;
             float secondsLoop = 1.5f;
             // And then we have to batch spawn them....
             // So we do this in the init phase, and then tick controls their movement
