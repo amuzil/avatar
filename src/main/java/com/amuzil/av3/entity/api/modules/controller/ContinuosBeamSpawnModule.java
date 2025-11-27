@@ -36,11 +36,11 @@ public class ContinuosBeamSpawnModule implements IEntityModule {
             Level level = entity.level();
             // max should be a skill trait
             int maxPerTick = 1;
-            int secondsLoop = 3;
+            float secondsLoop = 1.5f;
             // And then we have to batch spawn them....
             // So we do this in the init phase, and then tick controls their movement
-            PhysicsCollisionObject[] objs = new PhysicsCollisionObject[maxPerTick * 20 * secondsLoop];
-            // Default will be 1 entity per tick for 3 seconds with 20 ticks per second
+            PhysicsCollisionObject[] objs = new PhysicsCollisionObject[(int) (maxPerTick * 20 * secondsLoop)];
+            // Default will be 1 entity per tick for 1.5 seconds with 20 ticks per second
 
 
             // Initialising constants/traits that are the same for all colliders here to reduce memory overhead
