@@ -1,6 +1,8 @@
 package com.amuzil.av3.entity.construct;
 
-import com.amuzil.av3.entity.AvatarEntity;
+import com.amuzil.caliber.physics.bullet.math.Convert;
+import com.jme3.math.Vector3f;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -8,6 +10,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -18,7 +21,7 @@ import java.util.UUID;
 public class AvatarElementCollider extends AvatarRigidBlock {
 
     private static final EntityDataAccessor<Optional<UUID>> SPAWNER_ID = SynchedEntityData.defineId(AvatarElementCollider.class, EntityDataSerializers.OPTIONAL_UUID);
-
+    private static final EntityDataAccessor<Boolean> RESET = SynchedEntityData.defineId(AvatarElementCollider.class, EntityDataSerializers.BOOLEAN);
     private Entity spawner;
 
     public AvatarElementCollider(EntityType<? extends AvatarRigidBlock> type, Level level) {
@@ -39,6 +42,7 @@ public class AvatarElementCollider extends AvatarRigidBlock {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(SPAWNER_ID, Optional.empty());
+        builder.define(RESET, false);
     }
 
     public void spawner(@NotNull Entity spawner) {
@@ -55,5 +59,25 @@ public class AvatarElementCollider extends AvatarRigidBlock {
             });
         }
         return this.spawner;
+    }
+
+    public boolean reset() {
+        return this.entityData.get(RESET);
+    }
+
+    public void reset(boolean reset) {
+        this.entityData.set(RESET, reset);
+    }
+
+    public void resetPhysics() {
+        this.getRigidBody().setKinematic(true);
+        this.getRigidBody().setLinearVelocity(Vector3f.ZERO);
+        this.getRigidBody().setAngularVelocity(Vector3f.ZERO);
+    }
+
+    public void resetPos(Vec3 pos) {
+        this.setPos(pos);
+        this.getRigidBody().setPhysicsLocation(Convert.toBullet(pos));
+        this.setStartPos(new BlockPos((int) pos.x, (int) pos.y, (int) pos.z));
     }
 }

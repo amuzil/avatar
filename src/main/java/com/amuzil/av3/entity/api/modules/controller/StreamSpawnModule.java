@@ -5,6 +5,7 @@ import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.IEntityModule;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
 import com.amuzil.av3.entity.api.modules.entity.GrowModule;
+import com.amuzil.av3.entity.api.modules.entity.TimeResetModule;
 import com.amuzil.av3.entity.construct.AvatarElementCollider;
 import com.amuzil.av3.entity.controller.AvatarPhysicsController;
 import com.amuzil.av3.utils.Constants;
@@ -18,10 +19,12 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.List;
+
 import static com.amuzil.av3.utils.bending.SkillHelper.getLeftPivot;
 import static com.amuzil.av3.utils.bending.SkillHelper.getRightPivot;
 
-public class ContinuosBeamSpawnModule implements IEntityModule {
+public class StreamSpawnModule implements IEntityModule {
     @Override
     public String id() {
         return "";
@@ -61,8 +64,6 @@ public class ContinuosBeamSpawnModule implements IEntityModule {
                 pos = getLeftPivot(owner, origin, 0.5f, 1.0f);
             }
 
-            getRightPivot(entity, origin, 0.5f, 1.0f);
-
             for (int i = 0; i < maxPerTick * 20 * secondsLoop; i++) {
 
                 // Spawn an element collider, then set its rigidbody properties.
@@ -93,13 +94,14 @@ public class ContinuosBeamSpawnModule implements IEntityModule {
                 collider.addTraits(maxSize);
                 collider.addTraits(heightCurve);
                 collider.addTraits(widthCurve);
-                entity.addModule(ModuleRegistry.create(GrowModule.id));
+                collider.addModule(ModuleRegistry.create(GrowModule.id));
 
                 // Damage & Collision Modules
 
                 // Motion Modules
 
                 // Behaviour Reset Modules
+                collider.addModule(ModuleRegistry.create(TimeResetModule.id));
 
 
                 // Miscellaneous
@@ -133,6 +135,43 @@ public class ContinuosBeamSpawnModule implements IEntityModule {
     public void tick(AvatarEntity entity) {
         // Now want want to actually control the colliders here
         // Basically, enable their motion, and add relevant modules; choose 1 entity per tick to activate
+
+        if (!(entity instanceof AvatarPhysicsController controller && entity.getOwner() instanceof LivingEntity owner))
+            return;
+
+        Vec3 origin = owner.getBoundingBox().getBottomCenter().add(0, (owner.getBoundingBox().maxY - owner.getBoundingBox().minY) / 2, 0);
+        Vec3 pos;
+        if (owner.getMainArm() == HumanoidArm.RIGHT) {
+            pos = getRightPivot(owner, origin, 0.5f, 1.0f);
+        } else {
+            // Left arm
+            pos = getLeftPivot(owner, origin, 0.5f, 1.0f);
+        }
+
+
+        // Otherwise we want a fade out basically
+        if (!controller.dying()) {
+            // Shoot first
+            List<AvatarElementCollider> toShoot = controller.entityGrid().allEntities();
+            toShoot = toShoot.stream().filter(collider -> !collider.reset() && collider.getRigidBody().isKinematic()).toList();
+
+            if (!toShoot.isEmpty()) {
+                AvatarElementCollider next = toShoot.get(0);
+                next.getRigidBody().setKinematic(false);
+                // Other shoot behaviours
+            }
+            // Then reset
+            List<AvatarElementCollider> colliders = controller.entityGrid().allEntities();
+            for (AvatarElementCollider collider : colliders) {
+                // Reset
+                if (collider.reset()) {
+                    collider.resetPhysics();
+                    collider.resetPos(pos);
+                    collider.reset(false);
+                }
+            }
+        }
+
     }
 
     @Override

@@ -26,6 +26,10 @@ public class TimeResetModule implements IEntityModule {
         else {
             if (entity.tickCount >= entity.maxLifetime()) {
                 // Reset
+                if (entity instanceof AvatarElementCollider) {
+                    if (!((AvatarElementCollider) entity).reset())
+                        ((AvatarElementCollider) entity).reset(true);
+                }
             }
         }
     }

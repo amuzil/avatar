@@ -1,13 +1,14 @@
 package com.amuzil.av3.entity.controller;
 
-import com.amuzil.av3.bending.element.Element;
-import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.EntityGrid;
 import com.amuzil.av3.entity.api.modules.IAvatarController;
 import com.amuzil.av3.entity.construct.AvatarConstruct;
 import com.amuzil.av3.entity.construct.AvatarElementCollider;
 import com.amuzil.magus.physics.core.ForceCloud;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
@@ -15,7 +16,8 @@ import java.util.HashMap;
 
 // Should hold element rigidbodies and a force cloud...
 public class AvatarPhysicsController extends AvatarConstruct implements IAvatarController {
-
+    private static final EntityDataAccessor<Boolean> DYING = SynchedEntityData.defineId(AvatarPhysicsController.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> DEATH_TIMER = SynchedEntityData.defineId(AvatarPhysicsController.class, EntityDataSerializers.INT);
 
     // Physics is automatically handled.
     private ForceCloud forceCloud;
@@ -64,6 +66,29 @@ public class AvatarPhysicsController extends AvatarConstruct implements IAvatarC
         elementGrid.clear();
         elements.clear();
         super.kill();
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DYING, false);
+        builder.define(DEATH_TIMER, 15);
+    }
+
+    public boolean dying() {
+        return this.entityData.get(DYING);
+    }
+
+    public void dying(boolean dying) {
+        this.entityData.set(DYING, dying);
+    }
+
+    public  int deathTimer() {
+        return this.entityData.get(DEATH_TIMER);
+    }
+
+    public  void deathTimer(int deathTimer) {
+        this.entityData.set(DEATH_TIMER, deathTimer);
     }
 
     public EntityGrid<AvatarElementCollider> entityGrid() {

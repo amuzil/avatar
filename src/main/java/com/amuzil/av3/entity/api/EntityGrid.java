@@ -28,7 +28,7 @@ public class EntityGrid<T extends AvatarEntity> {
     private final List<T>[] bins;
     // Track which bins are non-empty this frame
     private final int[] usedBins;
-    private final List<T> allPoints;
+    private final List<T> allEntities;
 
     // Threading one day...
     private final ExecutorService threadPool;
@@ -57,7 +57,7 @@ public class EntityGrid<T extends AvatarEntity> {
         this.usedBins = new int[totalBins]; // worst-case: all bins used once this frame
 
         this.maxPoints = maxPoints;
-        this.allPoints = new ArrayList<>(maxPoints);
+        this.allEntities = new ArrayList<>(maxPoints);
         this.threadPool = threadPool;
         this.parallelism = Math.max(Runtime.getRuntime().availableProcessors() / 2, 1);
     }
@@ -110,11 +110,11 @@ public class EntityGrid<T extends AvatarEntity> {
     }
 
     public void insert(T p) {
-        allPoints.add(p);
+        allEntities.add(p);
     }
 
     public void clear() {
-        allPoints.clear();
+        allEntities.clear();
         // bins will be cleared lazily in rebuild()
     }
 
@@ -188,7 +188,7 @@ public class EntityGrid<T extends AvatarEntity> {
      * Complexity: O(numPoints + usedBins) instead of O(totalBins).
      */
     public void rebuild() {
-        rebuildFrom(allPoints);
+        rebuildFrom(allEntities);
     }
 
     private void coordsFromIndex(int bi, int[] outXYZ) {
@@ -464,5 +464,9 @@ public class EntityGrid<T extends AvatarEntity> {
     // Choose how to compute "direction" per point.
     public interface NormalProvider<T extends ForcePhysicsElement> {
         Vector3f normalFor(T element);
+    }
+
+    public List<T> allEntities() {
+        return allEntities;
     }
 }
