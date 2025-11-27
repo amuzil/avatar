@@ -4,6 +4,7 @@ import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.IEntityModule;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
+import com.amuzil.av3.entity.api.modules.collision.FireModule;
 import com.amuzil.av3.entity.api.modules.collision.SimpleDamageModule;
 import com.amuzil.av3.entity.api.modules.collision.SimpleKnockbackModule;
 import com.amuzil.av3.entity.api.modules.entity.GrowModule;
@@ -60,6 +61,8 @@ public class StreamSpawnModule implements IEntityModule {
             DamageTrait damage = entity.getTrait(Constants.DAMAGE, DamageTrait.class);
             KnockbackTrait knockback = entity.getTrait(Constants.KNOCKBACK, KnockbackTrait.class);
             TimedTrait lifetime = entity.getTrait(Constants.COMPONENT_LIFE, TimedTrait.class);
+            TimedTrait firetime = entity.getTrait(Constants.FIRE_TIME, TimedTrait.class);
+            DirectionTrait direction = entity.getTrait(Constants.KNOCKBACK_DIRECTION, DirectionTrait.class);
 
             Vec3 origin = owner.getBoundingBox().getBottomCenter().add(0, (owner.getBoundingBox().maxY - owner.getBoundingBox().minY) / 2, 0);
             Vec3 pos;
@@ -103,7 +106,9 @@ public class StreamSpawnModule implements IEntityModule {
 
                 // Damage & Collision Module Properties
                 collider.addTraits(damage);
+                collider.addTraits(firetime);
                 collider.addTraits(knockback);
+                collider.addTraits(direction);
 
                 // Motion Modules Properties
 
@@ -173,6 +178,7 @@ public class StreamSpawnModule implements IEntityModule {
                 // Add relevant modules (properties defined in init)
                 next.addModule(ModuleRegistry.create(SimpleDamageModule.id));
                 next.addModule(ModuleRegistry.create(SimpleKnockbackModule.id));
+                next.addModule(ModuleRegistry.create(FireModule.id));
                 next.addModule(ModuleRegistry.create(TimeResetModule.id));
                 next.addModule(ModuleRegistry.create(GrowModule.id));
 

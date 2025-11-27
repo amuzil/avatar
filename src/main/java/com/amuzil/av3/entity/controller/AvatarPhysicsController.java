@@ -4,6 +4,7 @@ import com.amuzil.av3.entity.api.EntityGrid;
 import com.amuzil.av3.entity.api.modules.IAvatarController;
 import com.amuzil.av3.entity.construct.AvatarConstruct;
 import com.amuzil.av3.entity.construct.AvatarElementCollider;
+import com.amuzil.magus.physics.PhysicsBuilder;
 import com.amuzil.magus.physics.core.ForceCloud;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -14,11 +15,13 @@ import net.minecraft.world.level.Level;
 
 import java.util.HashMap;
 
+import static com.amuzil.av3.entity.AvatarEntities.AVATAR_PHYSICS_CONTROLLER_ENTITY_TYPE;
+
 // Should hold element rigidbodies and a force cloud...
 public class AvatarPhysicsController extends AvatarConstruct implements IAvatarController {
     private static final EntityDataAccessor<Boolean> DYING = SynchedEntityData.defineId(AvatarPhysicsController.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DEATH_TIMER = SynchedEntityData.defineId(AvatarPhysicsController.class, EntityDataSerializers.INT);
-
+    private float cellSize = PhysicsBuilder.CELL_SIZE;
     // Physics is automatically handled.
     private ForceCloud forceCloud;
     private HashMap<Integer, AvatarElementCollider> elements;
@@ -29,6 +32,13 @@ public class AvatarPhysicsController extends AvatarConstruct implements IAvatarC
         setCollidable(false);
         setDamageable(false);
         setInvulnerable(true);
+    }
+
+    public AvatarPhysicsController(Level level) {
+        this(AVATAR_PHYSICS_CONTROLLER_ENTITY_TYPE.get(), level);
+        this.elements = new HashMap<>();
+        this.elementGrid = new EntityGrid<>(PhysicsBuilder.CELL_SIZE, (int) PhysicsBuilder.GRID_SIZE, (int) PhysicsBuilder.GRID_SIZE, (int) PhysicsBuilder.GRID_SIZE,
+                30, (long) position().x, (long) position().y, (long) position().z, null);
     }
 
 
