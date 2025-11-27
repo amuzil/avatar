@@ -21,12 +21,8 @@ public class DeathTimeModule implements IEntityModule {
     @Override
     public void tick(AvatarEntity entity) {
         if (entity instanceof AvatarPhysicsController controller) {
-            if (controller.dying())
-                controller.deathTimer(controller.deathTimer() - 1);
-
-            if (controller.deathTimer() == 0 && controller.dying())
+            if (controller.tickCount >= controller.maxLifetime() + controller.deathTimer() && controller.dying())
                 controller.kill();
-
         }
     }
 

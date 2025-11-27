@@ -16,6 +16,7 @@ public final class Constants {
     public static final String SPEED = "speed";
     public static final String DASH_SPEED = "dash_speed";
     public static final String LIFETIME = "lifetime";
+    public static final String COMPONENT_LIFE = "component_life";
     public static final String FIRE_TIME = "fire_time";
     public static final String SPEED_FACTOR = "speed_factor";
     public static final String HEIGHT_CURVE = "height_curve";
@@ -28,6 +29,7 @@ public final class Constants {
     public static final String ENTITY_ID = "entity_id";
     public static final String COLLISION_TYPE = "collision_type";
     public static final String ANGLE = "angle";
+    public static final String RANDOMNESS = "randomness";
     public static final String RANGE = "range";
     public static final String BENDING_FORM = "bending_form";
 
