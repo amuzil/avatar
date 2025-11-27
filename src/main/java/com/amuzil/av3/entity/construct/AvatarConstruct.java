@@ -78,7 +78,6 @@ public class AvatarConstruct extends AvatarEntity implements IAvatarConstruct {
         super(entityType, level);
         // NOTE: Modules are not synced between client and server unless added to the entity's constructor!
         addClientModule((IFXModule) ModuleRegistry.create(SoundModule.id));
-        addModule(ModuleRegistry.create(TimeoutModule.id));
         this.blockState = Blocks.STONE.defaultBlockState();
         this.dropItem = true;
         this.fallDamageMax = 40;

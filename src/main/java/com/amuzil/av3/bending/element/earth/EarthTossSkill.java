@@ -6,6 +6,7 @@ import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
 import com.amuzil.av3.entity.api.modules.collision.SimpleDamageModule;
 import com.amuzil.av3.entity.api.modules.collision.SimpleKnockbackModule;
+import com.amuzil.av3.entity.api.modules.entity.TimeoutModule;
 import com.amuzil.av3.entity.construct.AvatarRigidBlock;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.magus.skill.data.SkillData;
@@ -73,6 +74,7 @@ public class EarthTossSkill extends EarthSkill {
                 rigidBlock.addModule(ModuleRegistry.create(SimpleKnockbackModule.id));
                 rigidBlock.addTraits(data.getTrait(Constants.DAMAGE, DamageTrait.class));
                 rigidBlock.addModule(ModuleRegistry.create(SimpleDamageModule.id));
+                rigidBlock.addModule(ModuleRegistry.create(TimeoutModule.id));
 
                 rigidBlock.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
             }

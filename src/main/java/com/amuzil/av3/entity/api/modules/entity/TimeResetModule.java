@@ -7,7 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 
 public class TimeResetModule implements IEntityModule {
 
-    public static String id = TimeoutModule.class.getSimpleName();
+    public static String id = TimeResetModule.class.getSimpleName();
 
     @Override
     public String id() {

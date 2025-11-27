@@ -1,6 +1,8 @@
 package com.amuzil.av3.entity.construct;
 
 import com.amuzil.av3.entity.AvatarEntities;
+import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
+import com.amuzil.caliber.physics.bullet.collision.body.shape.MinecraftShape;
 import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.jme3.math.Vector3f;
 import net.minecraft.core.BlockPos;
@@ -13,6 +15,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -72,6 +75,8 @@ public class AvatarElementCollider extends AvatarRigidBlock {
 
     public void resetPhysics() {
         this.getRigidBody().setKinematic(true);
+        this.getRigidBody().setGravity(Vector3f.ZERO);
+        this.getRigidBody().clearForces();
         this.getRigidBody().setLinearVelocity(Vector3f.ZERO);
         this.getRigidBody().setAngularVelocity(Vector3f.ZERO);
     }
@@ -80,5 +85,18 @@ public class AvatarElementCollider extends AvatarRigidBlock {
         this.setPos(pos);
         this.getRigidBody().setPhysicsLocation(Convert.toBullet(pos));
         this.setStartPos(new BlockPos((int) pos.x, (int) pos.y, (int) pos.z));
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        this.getRigidBody().setCollisionShape(MinecraftShape.box(getBoundingBox()));
+        if (isControlled())
+            control(0.5f);
+    }
+
+    @Override
+    public @Nullable EntityRigidBody getRigidBody() {
+        return super.getRigidBody();
     }
 }

@@ -9,13 +9,15 @@ import com.amuzil.av3.entity.api.modules.collision.SimpleDamageModule;
 import com.amuzil.av3.entity.api.modules.collision.SimpleKnockbackModule;
 import com.amuzil.av3.entity.api.modules.entity.GrowModule;
 import com.amuzil.av3.entity.api.modules.entity.TimeResetModule;
-import com.amuzil.av3.entity.api.modules.entity.TimeoutModule;
+import com.amuzil.av3.entity.api.modules.force.MoveModule;
 import com.amuzil.av3.entity.construct.AvatarElementCollider;
 import com.amuzil.av3.entity.controller.AvatarPhysicsController;
 import com.amuzil.av3.utils.Constants;
+import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.amuzil.magus.skill.traits.entitytraits.PointsTrait;
 import com.amuzil.magus.skill.traits.skilltraits.*;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
+import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.math.Vector3f;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.HumanoidArm;
@@ -90,7 +92,7 @@ public class StreamSpawnModule implements IEntityModule {
                 collider.setPos(pos);
                 collider.setOwner(entity.owner());
                 collider.spawner(controller);
-                collider.setMaxLifetime(entity.maxLifetime());
+                collider.setMaxLifetime(lifetime.getTime());
 
                 // RigidBody
                 collider.getRigidBody().setMass(0f);
@@ -101,6 +103,7 @@ public class StreamSpawnModule implements IEntityModule {
 
                 // Size should probably be set the same as regular flame (with a grow module)
                 collider.setWidth(width);
+                collider.setDepth(width);
                 collider.setHeight(height);
                 // Now we add the growth module and point curve properties
                 collider.addTraits(maxSize);
@@ -122,9 +125,10 @@ public class StreamSpawnModule implements IEntityModule {
                 // Miscellaneous
                 collider.setDamageable(false);
                 collider.setControlled(true);
-
+                collider.addModule(ModuleRegistry.create(MoveModule.id));
                 // Init
                 collider.init();
+
 
                 // Add as a valid selection...
                 bender.getSelection().addEntityId(collider.getUUID());
@@ -152,10 +156,11 @@ public class StreamSpawnModule implements IEntityModule {
         // Now want want to actually control the colliders here
         // Basically, enable their motion, and add relevant modules; choose 1 entity per tick to activate
 
-        System.out.println("Ticking Stream Spawn");
+//        System.out.println("Ticking Stream Spawn");
         if (!(entity instanceof AvatarPhysicsController controller && entity.getOwner() instanceof LivingEntity owner))
             return;
 
+        controller.control(0f);
         Vec3 origin = owner.getBoundingBox().getBottomCenter().add(0, (owner.getBoundingBox().maxY - owner.getBoundingBox().minY) / 2, 0);
         Vec3 pos;
         if (owner.getMainArm() == HumanoidArm.RIGHT) {
@@ -177,6 +182,8 @@ public class StreamSpawnModule implements IEntityModule {
                 // Set physics
                 next.getRigidBody().setKinematic(false);
                 next.setControlled(false);
+                next.getRigidBody().clearForces();
+                next.getRigidBody().setMass(0.0f);
 
                 // Add randomised lifetime?
 
@@ -189,8 +196,9 @@ public class StreamSpawnModule implements IEntityModule {
 
                 // Other shoot behaviours
                 // Speed and randomness should sit on the controller rather then per entity being spawned
-                next.shoot(pos, owner.getLookAngle(), controller.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed(),
+                next.shoot(pos, owner.getLookAngle(), controller.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed() * 0.00005f,
                         controller.getTrait(Constants.RANDOMNESS, FloatTrait.class).getValue());
+//                next.getRigidBody().applyCentralForce(Convert.toBullet(owner.getLookAngle().scale(0.5f)));
             }
             // Then reset
             List<AvatarElementCollider> colliders = controller.entityGrid().allEntities();
@@ -210,11 +218,11 @@ public class StreamSpawnModule implements IEntityModule {
 
     @Override
     public void save(CompoundTag nbt) {
-
+        nbt.putString("ID", id);
     }
 
     @Override
     public void load(CompoundTag nbt) {
-
+        id = nbt.getString("ID");
     }
 }

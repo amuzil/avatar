@@ -44,7 +44,7 @@ public class AvatarPhysicsController extends AvatarConstruct implements IAvatarC
 
     @Override
     public void tick() {
-        System.out.println("Tick Count: " + this.tickCount);
+//        System.out.println("Tick Count: " + this.tickCount);
         super.tick();
 
     }
@@ -81,8 +81,10 @@ public class AvatarPhysicsController extends AvatarConstruct implements IAvatarC
             // Should automatically remove itself from the physics space.
             forceCloud.kill();
         }
-        elementGrid.clear();
-        elements.clear();
+        if (elementGrid != null)
+            elementGrid.clear();
+        if (elements != null)
+            elements.clear();
         super.kill();
         discard();
     }
@@ -102,11 +104,11 @@ public class AvatarPhysicsController extends AvatarConstruct implements IAvatarC
         this.entityData.set(DYING, dying);
     }
 
-    public  int deathTimer() {
+    public int deathTimer() {
         return this.entityData.get(DEATH_TIMER);
     }
 
-    public  void deathTimer(int deathTimer) {
+    public void deathTimer(int deathTimer) {
         this.entityData.set(DEATH_TIMER, deathTimer);
     }
 

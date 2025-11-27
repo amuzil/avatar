@@ -6,6 +6,7 @@ import com.amuzil.av3.bending.skill.FireSkill;
 import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
 import com.amuzil.av3.entity.api.modules.controller.StreamSpawnModule;
+import com.amuzil.av3.entity.api.modules.force.MoveModule;
 import com.amuzil.av3.entity.controller.AvatarPhysicsController;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.av3.utils.maths.Easings;
@@ -60,6 +61,7 @@ public class FlameStreamSkill extends FireSkill {
         flameManager.setOwner(entity);
         flameManager.setMaxLifetime(lifetime);
         flameManager.setWidth((float) size);
+        flameManager.setDepth((float) size);
         flameManager.setHeight((float) size);
         flameManager.setNoGravity(true);
         flameManager.setDamageable(false);
@@ -78,6 +80,7 @@ public class FlameStreamSkill extends FireSkill {
         flameManager.addTraits(new FloatTrait(Constants.RANDOMNESS, 0.1f));
         flameManager.addModule(ModuleRegistry.create(StreamSpawnModule.id));
         flameManager.setPhysics(true);
+        flameManager.addModule(ModuleRegistry.create(MoveModule.id));
 
 //        AvatarDirectProjectile projectile = new AvatarDirectProjectile(level);
 //        projectile.setElement(element());
