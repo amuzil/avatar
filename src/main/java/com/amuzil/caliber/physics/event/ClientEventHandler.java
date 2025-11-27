@@ -50,6 +50,7 @@ public final class ClientEventHandler {
         }
     }
 
+
     @SubscribeEvent
     public static void onEntityLoad(EntityJoinLevelEvent event) {
         if (event.getLevel().isClientSide()) {

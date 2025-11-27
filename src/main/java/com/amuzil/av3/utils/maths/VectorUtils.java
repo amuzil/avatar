@@ -1,0 +1,80 @@
+package com.amuzil.omegasource.utils.maths;
+
+import net.minecraft.world.phys.Vec3;
+
+public class VectorUtils {
+    /**
+     * Sample a 3D vector field at an arbitrary world‐space position, via trilinear interpolation.
+     *
+     * @param field    the Vec3[sizeX][sizeY][sizeZ] array you built with buildVectorField()
+     * @param center   the world‐space center you passed into buildVectorField
+     * @param sizeX    field.length
+     * @param sizeY    field[0].length
+     * @param sizeZ    field[0][0].length
+     * @param cellDim  the cell edge length you passed into buildVectorField
+     * @param worldPos the position you want to sample at
+     * @return         interpolated Vec3 value
+     */
+    public static Vec3 sampleField(Vec3[][][] field,
+                                   Vec3 center,
+                                   int sizeX, int sizeY, int sizeZ,
+                                   double cellDim,
+                                   Vec3 worldPos) {
+        // 1) Recompute origin from center
+        double halfGridX = (sizeX * cellDim) * 0.5;
+        double halfGridY = (sizeY * cellDim) * 0.5;
+        double halfGridZ = (sizeZ * cellDim) * 0.5;
+        double originX   = center.x - halfGridX;
+        double originY   = center.y - halfGridY;
+        double originZ   = center.z - halfGridZ;
+
+        // 2) Compute local (floating‐point) coordinates in grid space
+        double fx = (worldPos.x - originX) / cellDim - 0.5;
+        double fy = (worldPos.y - originY) / cellDim - 0.5;
+        double fz = (worldPos.z - originZ) / cellDim - 0.5;
+
+        // 3) Clamp to valid index range
+        int ix0 = Math.max(0, Math.min(sizeX - 1, (int)Math.floor(fx)));
+        int iy0 = Math.max(0, Math.min(sizeY - 1, (int)Math.floor(fy)));
+        int iz0 = Math.max(0, Math.min(sizeZ - 1, (int)Math.floor(fz)));
+        int ix1 = Math.min(sizeX - 1, ix0 + 1);
+        int iy1 = Math.min(sizeY - 1, iy0 + 1);
+        int iz1 = Math.min(sizeZ - 1, iz0 + 1);
+
+        double dx = fx - ix0;
+        double dy = fy - iy0;
+        double dz = fz - iz0;
+
+        // 4) Fetch the eight corners
+        Vec3 c000 = field[ix0][iy0][iz0];
+        Vec3 c100 = field[ix1][iy0][iz0];
+        Vec3 c010 = field[ix0][iy1][iz0];
+        Vec3 c110 = field[ix1][iy1][iz0];
+        Vec3 c001 = field[ix0][iy0][iz1];
+        Vec3 c101 = field[ix1][iy0][iz1];
+        Vec3 c011 = field[ix0][iy1][iz1];
+        Vec3 c111 = field[ix1][iy1][iz1];
+
+        // 5) Interpolate along X
+        Vec3 c00 = lerp(c000, c100, dx);
+        Vec3 c10 = lerp(c010, c110, dx);
+        Vec3 c01 = lerp(c001, c101, dx);
+        Vec3 c11 = lerp(c011, c111, dx);
+
+        // 6) Interpolate along Y
+        Vec3 c0 = lerp(c00, c10, dy);
+        Vec3 c1 = lerp(c01, c11, dy);
+
+        // 7) Interpolate along Z and return
+        return lerp(c0, c1, dz);
+    }
+
+    /** Simple linear interpolation between two Vec3s. */
+    public static Vec3 lerp(Vec3 a, Vec3 b, double t) {
+        return new Vec3(
+                a.x + (b.x - a.x) * t,
+                a.y + (b.y - a.y) * t,
+                a.z + (b.z - a.z) * t
+        );
+    }
+}

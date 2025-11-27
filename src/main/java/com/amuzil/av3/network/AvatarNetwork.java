@@ -9,6 +9,8 @@ import com.amuzil.av3.network.packets.form.ExecuteFormPacket;
 import com.amuzil.av3.network.packets.form.ReleaseFormPacket;
 import com.amuzil.av3.network.packets.sync.SyncMovementPacket;
 import com.amuzil.av3.network.packets.sync.SyncSelectionPacket;
+import com.amuzil.caliber.physics.network.impl.ForceCloudCollisionPacket;
+import com.amuzil.caliber.physics.network.impl.ForceCloudSpawnPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -24,12 +26,14 @@ public class AvatarNetwork {
     public static void register(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar(Avatar.MOD_ID).versioned(VERSION);
 
+
         registrar.playToServer(
                 SyncSelectionPacket.TYPE,
                 SyncSelectionPacket.CODEC,
                 SyncSelectionPacket::handle
         );
 
+        /** Server **/
         registrar.playToServer(
                 SyncMovementPacket.TYPE,
                 SyncMovementPacket.CODEC,
@@ -51,7 +55,23 @@ public class AvatarNetwork {
                 ChooseElementPacket.TYPE,
                 ChooseElementPacket.CODEC,
                 ChooseElementPacket::handle
+
         );
+
+        /** Client **/
+        registrar.playToClient(
+                ForceCloudCollisionPacket.TYPE,
+                ForceCloudCollisionPacket.CODEC,
+                ForceCloudCollisionPacket::handle
+        );
+
+        registrar.playToClient(
+                ForceCloudSpawnPacket.TYPE,
+                ForceCloudSpawnPacket.CODEC,
+                ForceCloudSpawnPacket::handle
+        );
+
+
         registrar.playToServer(
                 ToggleBendingPacket.TYPE,
                 ToggleBendingPacket.STREAM_CODEC,

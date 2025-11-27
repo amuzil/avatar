@@ -13,6 +13,7 @@ import com.amuzil.av3.entity.api.modules.entity.GrowModule;
 import com.amuzil.av3.entity.api.modules.force.ChangeSpeedModule;
 import com.amuzil.av3.entity.projectile.AvatarDirectProjectile;
 import com.amuzil.av3.utils.Constants;
+import com.amuzil.av3.utils.maths.Easings;
 import com.amuzil.av3.utils.maths.Point;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.traits.entitytraits.PointsTrait;
@@ -40,7 +41,7 @@ public class FlameStreamSkill extends FireSkill {
 
         startPaths = SkillPathBuilder.getInstance()
 //                .simple(new ActiveForm(BendingForms.ARC, true))
-                .add(BendingForms.EXPAND)
+//                .add(BendingForms.EXPAND)
                 .add(BendingForms.BLOCK)
                 .build();
 
@@ -49,7 +50,6 @@ public class FlameStreamSkill extends FireSkill {
 
     @Override
     public void start(Bender bender) {
-        super.startRun();
 
         LivingEntity entity = bender.getEntity();
         Level level = bender.getEntity().level();
@@ -111,6 +111,10 @@ public class FlameStreamSkill extends FireSkill {
         projectile.init();
 
         bender.getEntity().level().addFreshEntity(projectile);
+
+        // Spawn AvatarPhysicsController to handle continuous firing
+        // Set modules on the controller as needed
+        super.startRun();
     }
 
     @Override
@@ -137,20 +141,10 @@ public class FlameStreamSkill extends FireSkill {
         projectile.addTraits(skillData.getTrait(Constants.MAX_SIZE, SizeTrait.class));
 
         // Copied from the fire easing constant
-        projectile.addTraits(new PointsTrait("height_curve", new Point(0.00, 0.5),  // t=0: zero width
-                new Point(0.20, 0.75),  // rise slowly
-                new Point(0.40, 2.5),  // flare to 150%
-                new Point(0.70, 0.40),  // rapid taper
-                new Point(1.00, 0.00)   // die out completely
-        ));
+        projectile.addTraits(new PointsTrait("height_curve", Easings.FIRE_CURVE_HEIGHT));
 
         // Used for bezier curving
-        projectile.addTraits(new PointsTrait("width_curve", new Point(0.00, 0.5),  // t=0: zero width
-                new Point(0.20, 0.75),  // rise slowly
-                new Point(0.40, 1.75),  // flare to 150%
-                new Point(0.70, 0.40),  // rapid taper
-                new Point(1.00, 0.00)   // die out completely
-        ));
+        projectile.addTraits(new PointsTrait("width_curve", Easings.FIRE_CURVE_WIDTH));
 
         projectile.addModule(ModuleRegistry.create(GrowModule.id));
 
