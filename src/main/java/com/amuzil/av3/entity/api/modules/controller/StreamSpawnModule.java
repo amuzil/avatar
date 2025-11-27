@@ -9,6 +9,7 @@ import com.amuzil.av3.entity.api.modules.collision.SimpleDamageModule;
 import com.amuzil.av3.entity.api.modules.collision.SimpleKnockbackModule;
 import com.amuzil.av3.entity.api.modules.entity.GrowModule;
 import com.amuzil.av3.entity.api.modules.entity.TimeResetModule;
+import com.amuzil.av3.entity.api.modules.entity.TimeoutModule;
 import com.amuzil.av3.entity.construct.AvatarElementCollider;
 import com.amuzil.av3.entity.controller.AvatarPhysicsController;
 import com.amuzil.av3.utils.Constants;
@@ -28,9 +29,11 @@ import static com.amuzil.av3.utils.bending.SkillHelper.getLeftPivot;
 import static com.amuzil.av3.utils.bending.SkillHelper.getRightPivot;
 
 public class StreamSpawnModule implements IEntityModule {
+    public static String id = StreamSpawnModule.class.getSimpleName();
+
     @Override
     public String id() {
-        return "";
+        return id;
     }
 
     @Override
@@ -136,6 +139,7 @@ public class StreamSpawnModule implements IEntityModule {
                 controller.entityGrid().insert(collider);
             }
 
+
             for (PhysicsCollisionObject obj : objs) {
                 // Innate != this check contained within the function so this is fine
                 obj.setIgnoreList(objs);
@@ -148,6 +152,7 @@ public class StreamSpawnModule implements IEntityModule {
         // Now want want to actually control the colliders here
         // Basically, enable their motion, and add relevant modules; choose 1 entity per tick to activate
 
+        System.out.println("Ticking Stream Spawn");
         if (!(entity instanceof AvatarPhysicsController controller && entity.getOwner() instanceof LivingEntity owner))
             return;
 

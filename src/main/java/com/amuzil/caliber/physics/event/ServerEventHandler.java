@@ -152,10 +152,10 @@ public final class ServerEventHandler {
         if (entity instanceof AvatarPhysicsController) {
             MinecraftSpace space = MinecraftSpace.get(entity.level());
             space.getWorkerThread().execute(() -> {
-                space.addCollisionObject(((AvatarPhysicsController) entity).forceCloud().getRigidBody());
-                for (ForcePoint point : ((AvatarPhysicsController) entity).forceCloud().points()) {
-                    space.addCollisionObject(point.getRigidBody());
-                }
+//                space.addCollisionObject(((AvatarPhysicsController) entity).forceCloud().getRigidBody());
+//                for (ForcePoint point : ((AvatarPhysicsController) entity).forceCloud().points()) {
+//                    space.addCollisionObject(point.getRigidBody());
+//                }
             });
         }
     }
@@ -172,14 +172,14 @@ public final class ServerEventHandler {
                     space.removeCollisionObject(EntityPhysicsElement.get(entity).getRigidBody()));
         }
         if (entity instanceof AvatarPhysicsController && Utilities.getTracking(entity).isEmpty()) {
-            MinecraftSpace space = MinecraftSpace.get(entity.level());
-            space.getWorkerThread().execute(() -> {
-                ((AvatarPhysicsController) entity).forceCloud().kill();
-                space.removeCollisionObject(((AvatarPhysicsController) entity).forceCloud().getRigidBody());
-                for (ForcePoint point : ((AvatarPhysicsController) entity).forceCloud().points()) {
-                    space.removeCollisionObject(point.getRigidBody());
-                }
-            });
+//            MinecraftSpace space = MinecraftSpace.get(entity.level());
+//            space.getWorkerThread().execute(() -> {
+//                ((AvatarPhysicsController) entity).forceCloud().kill();
+//                space.removeCollisionObject(((AvatarPhysicsController) entity).forceCloud().getRigidBody());
+//                for (ForcePoint point : ((AvatarPhysicsController) entity).forceCloud().points()) {
+//                    space.removeCollisionObject(point.getRigidBody());
+//                }
+//            });
 
         }
     }

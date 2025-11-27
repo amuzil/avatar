@@ -44,7 +44,7 @@ public class AvatarEntities {
 
     // Probably want to change the registration method later
     public static final Supplier<EntityType<AvatarPhysicsController>> AVATAR_PHYSICS_CONTROLLER_ENTITY_TYPE =
-            registerPhysicsBody("avatar_physics_controller", AvatarPhysicsController::new, 0.5f, 0.5f, 10, 2);
+            registerPhysicsBody("avatar_physics_controller", AvatarPhysicsController::new, 0.5f, 0.5f, 10, 4);
 
     public static final Supplier<EntityType<AvatarElementCollider>> AVATAR_ELEMENT_COLLIDER_ENTITY_TYPE =
             registerPhysicsBody("avatar_element_collider", AvatarElementCollider::new, 0.5f, 0.5f, 20, 3);

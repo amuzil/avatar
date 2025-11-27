@@ -4,26 +4,17 @@ import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.form.BendingForms;
 import com.amuzil.av3.bending.skill.FireSkill;
 import com.amuzil.av3.data.capability.Bender;
-import com.amuzil.av3.entity.api.ICollisionModule;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
-import com.amuzil.av3.entity.api.modules.collision.FireCollisionModule;
-import com.amuzil.av3.entity.api.modules.collision.FireModule;
-import com.amuzil.av3.entity.api.modules.collision.SimpleKnockbackModule;
-import com.amuzil.av3.entity.api.modules.entity.GrowModule;
-import com.amuzil.av3.entity.api.modules.force.ChangeSpeedModule;
+import com.amuzil.av3.entity.api.modules.controller.StreamSpawnModule;
 import com.amuzil.av3.entity.controller.AvatarPhysicsController;
-import com.amuzil.av3.entity.projectile.AvatarDirectProjectile;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.av3.utils.maths.Easings;
-import com.amuzil.av3.utils.maths.Point;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.traits.entitytraits.PointsTrait;
 import com.amuzil.magus.skill.traits.skilltraits.*;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import org.checkerframework.checker.units.qual.C;
 
 
 public class FlameStreamSkill extends FireSkill {
@@ -61,6 +52,8 @@ public class FlameStreamSkill extends FireSkill {
         double speed = skillData.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
         double size = skillData.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
+        LivingEntity owner = bender.getEntity();
+        Vec3 pos = owner.position();
         AvatarPhysicsController flameManager = new AvatarPhysicsController(level);
         flameManager.setElement(element());
         flameManager.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
@@ -70,13 +63,21 @@ public class FlameStreamSkill extends FireSkill {
         flameManager.setHeight((float) size);
         flameManager.setNoGravity(true);
         flameManager.setDamageable(false);
+        flameManager.setControlled(true);
+        flameManager.setPos(pos);
         flameManager.addTraits(skillData.getTrait(Constants.MAX_SIZE, SizeTrait.class));
         flameManager.addTraits(skillData.getTrait(Constants.DAMAGE, DamageTrait.class));
         flameManager.addTraits(skillData.getTrait(Constants.SIZE, SizeTrait.class));
         flameManager.addTraits(skillData.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
         flameManager.addTraits(new DirectionTrait(Constants.KNOCKBACK_DIRECTION, new Vec3(0, 0.45, 0)));
         flameManager.addTraits(skillData.getTrait(Constants.FIRE_TIME, TimedTrait.class));
-        flameManager.addTraits(skillData.getTrait(Constants.SPEED_FACTOR, SpeedTrait.class));
+        flameManager.addTraits(skillData.getTrait(Constants.SPEED, SpeedTrait.class));
+        flameManager.addTraits(skillData.getTrait(Constants.COMPONENT_LIFE, TimedTrait.class));
+        flameManager.addTraits(new PointsTrait(Constants.HEIGHT_CURVE, Easings.FIRE_CURVE_HEIGHT));
+        flameManager.addTraits(new PointsTrait(Constants.WIDTH_CURVE, Easings.FIRE_CURVE_WIDTH));
+        flameManager.addTraits(new FloatTrait(Constants.RANDOMNESS, 0.1f));
+        flameManager.addModule(ModuleRegistry.create(StreamSpawnModule.id));
+        flameManager.setPhysics(true);
 
 //        AvatarDirectProjectile projectile = new AvatarDirectProjectile(level);
 //        projectile.setElement(element());
@@ -130,7 +131,8 @@ public class FlameStreamSkill extends FireSkill {
 //        projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
 //        projectile.init();
 //
-//        bender.getEntity().level().addFreshEntity(projectile);
+        flameManager.init();
+        bender.getEntity().level().addFreshEntity(flameManager);
 
         // Spawn AvatarPhysicsController to handle continuous firing
         // Set modules on the controller as needed

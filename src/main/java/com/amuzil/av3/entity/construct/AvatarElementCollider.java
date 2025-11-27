@@ -1,5 +1,6 @@
 package com.amuzil.av3.entity.construct;
 
+import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.jme3.math.Vector3f;
 import net.minecraft.core.BlockPos;
@@ -25,11 +26,11 @@ public class AvatarElementCollider extends AvatarRigidBlock {
     private Entity spawner;
 
     public AvatarElementCollider(EntityType<? extends AvatarRigidBlock> type, Level level) {
-        super(type, level);
+        super(AvatarEntities.AVATAR_ELEMENT_COLLIDER_ENTITY_TYPE.get(), level);
     }
 
     public AvatarElementCollider(Level level) {
-        super(level);
+        super(AvatarEntities.AVATAR_ELEMENT_COLLIDER_ENTITY_TYPE.get(), level);
     }
 
 

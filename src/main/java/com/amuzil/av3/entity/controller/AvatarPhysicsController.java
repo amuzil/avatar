@@ -42,6 +42,13 @@ public class AvatarPhysicsController extends AvatarConstruct implements IAvatarC
     }
 
 
+    @Override
+    public void tick() {
+        System.out.println("Tick Count: " + this.tickCount);
+        super.tick();
+
+    }
+
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      *
@@ -67,6 +74,7 @@ public class AvatarPhysicsController extends AvatarConstruct implements IAvatarC
         this.forceCloud = cloud;
     }
 
+
     @Override
     public void kill() {
         if (forceCloud != null) {
@@ -76,6 +84,7 @@ public class AvatarPhysicsController extends AvatarConstruct implements IAvatarC
         elementGrid.clear();
         elements.clear();
         super.kill();
+        discard();
     }
 
     @Override
