@@ -46,8 +46,8 @@ public class StreamSpawnModule implements IEntityModule {
             Bender bender = Bender.getBender(owner);
             Level level = entity.level();
             // max should be a skill trait
-            float maxPerTick = 0.5f;
-            float secondsLoop = 1.5f;
+            float maxPerTick = 0.6f;
+            float secondsLoop = 2f;
             // And then we have to batch spawn them....
             // So we do this in the init phase, and then tick controls their movement
             PhysicsCollisionObject[] objs = new PhysicsCollisionObject[(int) (maxPerTick * 20 * secondsLoop)];
@@ -69,7 +69,7 @@ public class StreamSpawnModule implements IEntityModule {
             TimedTrait firetime = entity.getTrait(Constants.FIRE_TIME, TimedTrait.class);
             DirectionTrait direction = entity.getTrait(Constants.KNOCKBACK_DIRECTION, DirectionTrait.class);
 
-            Vec3 origin = owner.getBoundingBox().getBottomCenter().add(0, (owner.getBoundingBox().maxY - owner.getBoundingBox().minY) / 2, 0);
+            Vec3 origin = owner.getBoundingBox().getBottomCenter().add(0, (owner.getBoundingBox().maxY - owner.getBoundingBox().minY) / 4, 0);
             Vec3 pos;
             if (owner.getMainArm() == HumanoidArm.RIGHT) {
                 pos = getRightPivot(owner, origin, 0.5f, 1.0f);
@@ -95,7 +95,7 @@ public class StreamSpawnModule implements IEntityModule {
                 collider.setMaxLifetime(lifetime.getTime());
 
                 // RigidBody
-                collider.getRigidBody().setMass(0f);
+                collider.getRigidBody().setMass(5.0f);
                 // We don't want this actually colliding with anything physical yet
                 collider.getRigidBody().setKinematic(true);
                 collider.getRigidBody().setGravity(Vector3f.ZERO);
@@ -136,6 +136,10 @@ public class StreamSpawnModule implements IEntityModule {
                 if (!entity.level().isClientSide)
                     entity.level().addFreshEntity(collider);
 
+                collider.setRigidBodyDirty(true);
+                collider.getRigidBody().setGravity(Vector3f.ZERO);
+                collider.getRigidBody().setProtectGravity(true);
+
                 // Add to collider list
                 objs[i] = collider.getRigidBody();
 
@@ -160,7 +164,6 @@ public class StreamSpawnModule implements IEntityModule {
         if (!(entity instanceof AvatarPhysicsController controller && entity.getOwner() instanceof LivingEntity owner))
             return;
 
-        controller.control(0f);
         Vec3 origin = owner.getBoundingBox().getBottomCenter().add(0, (owner.getBoundingBox().maxY - owner.getBoundingBox().minY) / 2, 0);
         Vec3 pos;
         if (owner.getMainArm() == HumanoidArm.RIGHT) {
@@ -170,20 +173,29 @@ public class StreamSpawnModule implements IEntityModule {
             pos = getLeftPivot(owner, origin, 0.5f, 1.0f);
         }
 
+        controller.control(pos, 0.25f);
 
         // Otherwise we want a fade out basically
         if (!controller.dying()) {
-            // Shoot first
+
+            // Move flamethrower towards position
             List<AvatarElementCollider> toShoot = controller.entityGrid().allEntities();
+            for (AvatarElementCollider collider : toShoot) {
+                if (collider.isControlled()) {
+                    collider.control(pos, 0.25f);
+                }
+            }
+
+
+            // Shoot first
             toShoot = toShoot.stream().filter(collider -> !collider.reset() && collider.getRigidBody().isKinematic()).toList();
 
-            if (!toShoot.isEmpty()) {
-                AvatarElementCollider next = toShoot.get(0);
+            if (!toShoot.isEmpty() && controller.tickCount % 2 == 0) {
+                AvatarElementCollider next = toShoot.get(entity.getRandom().nextIntBetweenInclusive(0, toShoot.size() - 1));
                 // Set physics
-                next.getRigidBody().setKinematic(false);
+                next.setKinematic(false);
                 next.setControlled(false);
-                next.getRigidBody().clearForces();
-                next.getRigidBody().setMass(0.0f);
+                next.getRigidBody().setGravity(Vector3f.ZERO);
 
                 // Add randomised lifetime?
 
@@ -196,19 +208,28 @@ public class StreamSpawnModule implements IEntityModule {
 
                 // Other shoot behaviours
                 // Speed and randomness should sit on the controller rather then per entity being spawned
-                next.shoot(pos, owner.getLookAngle(), controller.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed() * 0.00005f,
+                next.shoot(pos, owner.getLookAngle(), controller.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed() * 60f,
                         controller.getTrait(Constants.RANDOMNESS, FloatTrait.class).getValue());
-//                next.getRigidBody().applyCentralForce(Convert.toBullet(owner.getLookAngle().scale(0.5f)));
+
+//                next.getRigidBody().applyCentralForce(Convert.toBullet(owner.getLookAngle().scale(300f)));
+//                Vector3f test = Vector3f.ZERO;
+//                test = next.getRigidBody().totalAppliedForce(test);
+//                System.out.println(test);
             }
             // Then reset
             List<AvatarElementCollider> colliders = controller.entityGrid().allEntities();
             for (AvatarElementCollider collider : colliders) {
                 // Reset
                 if (collider.reset()) {
-                    collider.resetPhysics();
-                    collider.resetPos(pos);
+//                    collider.resetPhysics();
+////                    collider.resetPos(pos);
+                    collider.getRigidBody().setPhysicsLocation(Convert.toBullet(pos));
+                    collider.setPos(pos);
                     collider.reset(false);
+                    collider.setKinematic(true);
                     collider.setControlled(true);
+                    collider.setNoGravity(true);
+                    collider.getRigidBody().setGravity(Vector3f.ZERO);
                     collider.tickCount = 0;
                 }
             }

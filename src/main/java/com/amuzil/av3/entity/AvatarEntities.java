@@ -47,7 +47,7 @@ public class AvatarEntities {
             registerPhysicsBody("avatar_physics_controller", AvatarPhysicsController::new, 0.5f, 0.5f, 10, 4);
 
     public static final Supplier<EntityType<AvatarElementCollider>> AVATAR_ELEMENT_COLLIDER_ENTITY_TYPE =
-            registerPhysicsBody("avatar_element_collider", AvatarElementCollider::new, 0.5f, 0.5f, 20, 3);
+            registerPhysicsBody("avatar_element_collider", AvatarElementCollider::new, 0.5f, 0.5f, 20, 2);
 
     public static final Supplier<EntityType<SkyBisonEntity>> AVATAR_SKYBISON_ENTITY_TYPE =
             ENTITY_TYPES.register("avatar_skybison_entity", () -> EntityType.Builder.of(SkyBisonEntity::new, MobCategory.CREATURE)

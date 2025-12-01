@@ -452,6 +452,11 @@ public class AvatarConstruct extends AvatarEntity implements IAvatarConstruct {
         this.setPos(newPos);
     }
 
+    public void control(Vec3 pos, float motion) {
+        Vec3 dir = pos.subtract(position()).scale(motion);
+        this.setDeltaMovement(dir);
+    }
+
     @Override
     public boolean isControlled() {
         return controlled;

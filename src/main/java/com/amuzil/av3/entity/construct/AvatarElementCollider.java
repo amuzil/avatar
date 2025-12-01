@@ -74,11 +74,11 @@ public class AvatarElementCollider extends AvatarRigidBlock {
     }
 
     public void resetPhysics() {
-        this.getRigidBody().setKinematic(true);
-        this.getRigidBody().setGravity(Vector3f.ZERO);
-        this.getRigidBody().clearForces();
-        this.getRigidBody().setLinearVelocity(Vector3f.ZERO);
-        this.getRigidBody().setAngularVelocity(Vector3f.ZERO);
+//        this.getRigidBody().setKinematic(true);
+//        this.getRigidBody().setGravity(Vector3f.ZERO);
+//        this.getRigidBody().clearForces();
+//        this.getRigidBody().setLinearVelocity(Vector3f.ZERO);
+//        this.getRigidBody().setAngularVelocity(Vector3f.ZERO);
     }
 
     public void resetPos(Vec3 pos) {
@@ -90,9 +90,12 @@ public class AvatarElementCollider extends AvatarRigidBlock {
     @Override
     public void tick() {
         super.tick();
-        this.getRigidBody().setCollisionShape(MinecraftShape.box(getBoundingBox()));
+//        this.getRigidBody().setCollisionShape(MinecraftShape.box(getBoundingBox()));
+//        this.getRigidBody().setGravity(Vector3f.ZERO);
         if (isControlled())
-            control(0.5f);
+            tickCount = 0;
+//        if (isControlled())
+//            control(0.5f);
     }
 
     @Override
