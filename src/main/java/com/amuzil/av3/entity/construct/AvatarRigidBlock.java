@@ -7,15 +7,12 @@ import com.amuzil.av3.entity.api.modules.force.ControlModule;
 import com.amuzil.caliber.api.EntityPhysicsElement;
 import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
 import com.amuzil.caliber.physics.bullet.math.Convert;
-import com.jme3.math.Matrix3f;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -64,20 +61,8 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
         Entity owner = this.getOwner();
         if (owner == null) return;
 
-        // Calculate right pivot position
-        Vec3 look = owner.getLookAngle().normalize();
-        Vec3 up = new Vec3(0, 1, 0);
-        Vec3 right = look.cross(up).normalize(); // cross product gives right vector
-        Vec3 newPos = getRightPivot(owner, scale);
-
-        // Calculate rotation to match owner's look direction
-        Matrix3f mat = new Matrix3f();
-        mat.fromAxes(Convert.toBullet(right), Convert.toBullet(up), Convert.toBullet(look));
-        Quaternion q = new Quaternion();
-        q.fromRotationMatrix(mat);
-
-        rigidBody.setPhysicsLocation(Convert.toBullet(newPos));
-        rigidBody.setPhysicsRotation(q);
+        rigidBody.setPhysicsLocation(Convert.toBullet(getRightPivot(owner, scale)));
+        rigidBody.setPhysicsRotation(Convert.toBullet(owner.getXRot(), owner.getYRot()));
     }
 
     public boolean isRigidBodyDirty() {

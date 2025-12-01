@@ -5,6 +5,7 @@ import com.amuzil.av3.bending.skill.EarthSkill;
 import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.entity.construct.AvatarRigidBlock;
 import com.amuzil.av3.utils.Constants;
+import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.amuzil.magus.skill.data.SkillData;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
@@ -52,6 +53,7 @@ public class EarthBlockSkill extends EarthSkill {
         rigidBlock.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
         rigidBlock.setBlockState(blockState);
         rigidBlock.setPos(getRightPivot(entity, 1.0f));
+        rigidBlock.getRigidBody().setPhysicsRotation(Convert.toBullet(entity.getXRot(), entity.getYRot()));
         rigidBlock.getRigidBody().setMass(0f);
         rigidBlock.getRigidBody().setKinematic(true);
         rigidBlock.setOwner(entity);
