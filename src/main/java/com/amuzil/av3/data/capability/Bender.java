@@ -221,7 +221,7 @@ public class Bender implements IBender {
 
     @Override
     public SkillData getSkillData(Skill skill) {
-        return benderData.skillDataMap.get(skill.name());
+        return getSkillData(skill.name());
     }
 
     @Override

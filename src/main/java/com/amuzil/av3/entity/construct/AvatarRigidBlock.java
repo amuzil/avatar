@@ -1,5 +1,7 @@
 package com.amuzil.av3.entity.construct;
 
+import com.amuzil.av3.data.capability.AvatarCapabilities;
+import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.api.IForceModule;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
@@ -11,12 +13,15 @@ import com.jme3.math.Vector3f;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 import static com.amuzil.av3.utils.bending.SkillHelper.getRightPivot;
 
@@ -61,7 +66,18 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
         Entity owner = this.getOwner();
         if (owner == null) return;
 
-        rigidBody.setPhysicsLocation(Convert.toBullet(getRightPivot(owner, scale)));
+        double offset = -1.0;
+        if (owner instanceof ServerPlayer player) {
+            // TODO: Perhaps start multi-blocks at the center or dominant hand
+            Bender bender = AvatarCapabilities.getBender(player);
+            int i = 0;
+            for (UUID entityId: bender.getSelection().entityIds()) {
+                if (entityId.equals(uuid))
+                    offset = i + offset;
+                i++;
+            }
+        }
+        rigidBody.setPhysicsLocation(Convert.toBullet(getRightPivot(owner, scale, offset)));
         rigidBody.setPhysicsRotation(Convert.toBullet(owner.getXRot(), owner.getYRot()));
     }
 
