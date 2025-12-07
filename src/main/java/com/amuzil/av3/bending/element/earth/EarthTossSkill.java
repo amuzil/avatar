@@ -3,8 +3,9 @@ package com.amuzil.av3.bending.element.earth;
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.skill.EarthSkill;
 import com.amuzil.av3.data.capability.Bender;
+import com.amuzil.av3.entity.api.ICollisionModule;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
-import com.amuzil.av3.entity.api.modules.collision.SimpleDamageModule;
+import com.amuzil.av3.entity.api.modules.collision.EarthCollisionModule;
 import com.amuzil.av3.entity.api.modules.collision.SimpleKnockbackModule;
 import com.amuzil.av3.entity.construct.AvatarRigidBlock;
 import com.amuzil.av3.network.AvatarNetwork;
@@ -19,7 +20,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -75,7 +75,9 @@ public class EarthTossSkill extends EarthSkill {
                 rigidBlock.addTraits(new DirectionTrait(Constants.KNOCKBACK_DIRECTION, new Vec3(0, 0.45, 0)));
                 rigidBlock.addModule(ModuleRegistry.create(SimpleKnockbackModule.id));
                 rigidBlock.addTraits(data.getTrait(Constants.DAMAGE, DamageTrait.class));
-                rigidBlock.addModule(ModuleRegistry.create(SimpleDamageModule.id));
+                rigidBlock.addTraits(new SizeTrait(Constants.SIZE, (float) rigidBlock.getSize().getSize()));
+                rigidBlock.addTraits(new CollisionTrait(Constants.COLLISION_TYPE, "Blaze", "Fireball", "AbstractArrow", "FireProjectile"));
+                rigidBlock.addCollisionModule((ICollisionModule) ModuleRegistry.create(EarthCollisionModule.id));
 
                 rigidBlock.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
 
