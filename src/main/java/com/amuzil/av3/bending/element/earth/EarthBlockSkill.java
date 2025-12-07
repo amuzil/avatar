@@ -56,7 +56,7 @@ public class EarthBlockSkill extends EarthSkill {
         rigidBlock.setElement(element());
         rigidBlock.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
         rigidBlock.setBlockState(blockState);
-        rigidBlock.setPos(getRightPivot(entity, 1.0f, blockCount * 0.8));
+        rigidBlock.setPos(getRightPivot(entity, 1.0f, blockCount * -0.8));
         rigidBlock.getRigidBody().setPhysicsRotation(Convert.toBullet(entity.getXRot(), entity.getYRot()));
         rigidBlock.getRigidBody().setMass(0f);
         rigidBlock.getRigidBody().setKinematic(true);
