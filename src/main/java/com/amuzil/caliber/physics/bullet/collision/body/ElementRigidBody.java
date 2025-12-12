@@ -1,9 +1,11 @@
 package com.amuzil.caliber.physics.bullet.collision.body;
 
+import com.amuzil.av3.Avatar;
 import com.amuzil.caliber.api.PhysicsElement;
 import com.amuzil.caliber.physics.bullet.collision.body.shape.MinecraftShape;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.caliber.physics.bullet.math.Convert;
+import com.amuzil.caliber.physics.bullet.math.Validator;
 import com.amuzil.caliber.physics.bullet.thread.util.Clock;
 import com.amuzil.caliber.physics.utils.maths.Frame;
 import com.amuzil.caliber.physics.utils.maths.VectorSerializer;
@@ -103,6 +105,59 @@ public abstract class ElementRigidBody extends MinecraftRigidBody {
 
     }
 
+
+    /**
+     * Directly relocate this body's center of mass.
+     *
+     * @param location the desired location (in physics-space coordinates, not
+     *                 null, finite, unaffected)
+     */
+    @Override
+    public void setPhysicsLocation(Vector3f location) {
+        if (location == null || !Vector3f.isValidVector(location))
+            throw new IllegalArgumentException("Location must be non-null and finite.");
+        super.setPhysicsLocation(location);
+    }
+
+    /**
+     * Directly reorient this body.
+     *
+     * @param orientation the desired orientation (relative to physics-space
+     *                    coordinates, not null, not zero, unaffected)
+     */
+    @Override
+    public void setPhysicsRotation(Quaternion orientation) {
+        if (orientation == null || !Validator.finite(orientation))
+            throw new IllegalArgumentException("Orientation must be non-null and finite.");
+        super.setPhysicsRotation(orientation);
+    }
+
+    /**
+     * Alter the linear velocity of this body's center of mass.
+     *
+     * @param velocity the desired velocity (physics-space units per second in
+     *                 physics-space coordinates, not null, finite, unaffected)
+     */
+    @Override
+    public void setLinearVelocity(Vector3f velocity) {
+        if (velocity == null || !Vector3f.isValidVector(velocity))
+            throw new IllegalArgumentException("Velocity must be non-null and finite.");
+        super.setLinearVelocity(velocity);
+    }
+
+    /**
+     * Alter this body's angular velocity.
+     *
+     * @param omega the desired angular velocity (in physics-space coordinates,
+     *              not null, unaffected)
+     */
+    @Override
+    public void setAngularVelocity(Vector3f omega) {
+        if (omega == null || !Vector3f.isValidVector(omega))
+            throw new IllegalArgumentException("Angular velocity must be non-null and finite.");
+        super.setAngularVelocity(omega);
+    }
+
     private static <T> void readOptionalAndCatchInvalid(CompoundTag tag, String name, int tagId, BiFunction<CompoundTag, String, T> valueGetter, Consumer<T> consumer) {
         try {
             if (tag.contains(name, tagId))
@@ -188,8 +243,21 @@ public abstract class ElementRigidBody extends MinecraftRigidBody {
     }
 
     public void updateBoundingBox() {
-        this.currentBoundingBox = this.boundingBox(this.currentBoundingBox);
-        this.currentMinecraftBoundingBox = Convert.toMinecraft(this.currentBoundingBox);
+        try {
+            this.currentBoundingBox = this.boundingBox(this.currentBoundingBox);
+            this.currentMinecraftBoundingBox = Convert.toMinecraft(this.currentBoundingBox);
+        } catch (IllegalArgumentException e) {
+            Vector3f loc = new Vector3f();
+            getPhysicsLocation(loc);
+            Quaternion rot = new Quaternion();
+            getPhysicsRotation(rot);
+            Avatar.LOGGER.error(
+                    "Non-finite transform in updateBoundingBox for body {}: loc={}, rot={}",
+                    this.spaceId(), loc, rot, e
+            );
+            // Optional: deactivate this body so it stops crashing the sim
+
+        }
     }
 
     public AABB getMinecraftBoundingBox() {

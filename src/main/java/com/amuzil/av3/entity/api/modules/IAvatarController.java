@@ -3,6 +3,7 @@ package com.amuzil.av3.entity.api.modules;
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.magus.physics.core.ForceCloud;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 
 public interface IAvatarController {
 
@@ -20,4 +21,10 @@ public interface IAvatarController {
 
     String skillId();
     void setSkillId(String skillId);
+
+    boolean controlled();
+
+    void control(Vec3 pos, float motion);
+
+    void controlled(boolean controlled);
 }

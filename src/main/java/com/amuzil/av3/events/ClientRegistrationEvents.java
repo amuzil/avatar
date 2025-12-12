@@ -5,6 +5,7 @@ import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.renderer.construct.PhysicsBlockRenderer;
 import com.amuzil.av3.renderer.mc.MarchingCubesEntityRenderer;
 import com.amuzil.av3.renderer.mobs.SkyBisonRenderer;
+import net.minecraft.client.renderer.entity.NoopRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -21,7 +22,7 @@ public class ClientRegistrationEvents {
         event.registerEntityRenderer(AvatarEntities.AVATAR_CURVE_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(AvatarEntities.AVATAR_BOUND_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(AvatarEntities.AVATAR_ORBIT_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
-        event.registerEntityRenderer(AvatarEntities.AVATAR_PHYSICS_CONTROLLER_ENTITY_TYPE.get(), ThrownItemRenderer::new);
+        event.registerEntityRenderer(AvatarEntities.AVATAR_PHYSICS_CONTROLLER_ENTITY_TYPE.get(), NoopRenderer::new);
         //  Placeholder for now
         event.registerEntityRenderer(AvatarEntities.AVATAR_ELEMENT_COLLIDER_ENTITY_TYPE.get(), ThrownItemRenderer::new);
 

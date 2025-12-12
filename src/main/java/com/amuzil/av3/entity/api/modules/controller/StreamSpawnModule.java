@@ -43,11 +43,12 @@ public class StreamSpawnModule implements IEntityModule {
 
         // Only tick if physics is enabled
         if (entity.physics() && entity.owner() instanceof LivingEntity owner && entity instanceof AvatarPhysicsController controller) {
+            controller.initGrid();
             Bender bender = Bender.getBender(owner);
             Level level = entity.level();
             // max should be a skill trait
-            float maxPerTick = 0.6f;
-            float secondsLoop = 2f;
+            float maxPerTick = 0.4f;
+            float secondsLoop = 3f;
             // And then we have to batch spawn them....
             // So we do this in the init phase, and then tick controls their movement
             PhysicsCollisionObject[] objs = new PhysicsCollisionObject[(int) (maxPerTick * 20 * secondsLoop)];
@@ -148,10 +149,10 @@ public class StreamSpawnModule implements IEntityModule {
             }
 
 
-            for (PhysicsCollisionObject obj : objs) {
-                // Innate != this check contained within the function so this is fine
-                obj.setIgnoreList(objs);
-            }
+//            for (PhysicsCollisionObject obj : objs) {
+//                // Innate != this check contained within the function so this is fine
+//                obj.setIgnoreList(objs);
+//            }
         }
     }
 
@@ -190,7 +191,7 @@ public class StreamSpawnModule implements IEntityModule {
             // Shoot first
             toShoot = toShoot.stream().filter(collider -> !collider.reset() && collider.getRigidBody().isKinematic()).toList();
 
-            if (!toShoot.isEmpty() && controller.tickCount % 2 == 0) {
+            if (!toShoot.isEmpty() && controller.tickCount % 3 == 0) {
                 AvatarElementCollider next = toShoot.get(entity.getRandom().nextIntBetweenInclusive(0, toShoot.size() - 1));
                 // Set physics
                 next.setKinematic(false);
@@ -208,7 +209,7 @@ public class StreamSpawnModule implements IEntityModule {
 
                 // Other shoot behaviours
                 // Speed and randomness should sit on the controller rather then per entity being spawned
-                next.shoot(pos, owner.getLookAngle(), controller.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed() * 60f,
+                next.shoot(pos, owner.getLookAngle(), controller.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed() * 20f,
                         controller.getTrait(Constants.RANDOMNESS, FloatTrait.class).getValue());
 
 //                next.getRigidBody().applyCentralForce(Convert.toBullet(owner.getLookAngle().scale(300f)));
@@ -218,21 +219,22 @@ public class StreamSpawnModule implements IEntityModule {
             }
             // Then reset
             List<AvatarElementCollider> colliders = controller.entityGrid().allEntities();
-            for (AvatarElementCollider collider : colliders) {
-                // Reset
-                if (collider.reset()) {
-//                    collider.resetPhysics();
-////                    collider.resetPos(pos);
-                    collider.getRigidBody().setPhysicsLocation(Convert.toBullet(pos));
-                    collider.setPos(pos);
-                    collider.reset(false);
-                    collider.setKinematic(true);
-                    collider.setControlled(true);
-                    collider.setNoGravity(true);
-                    collider.getRigidBody().setGravity(Vector3f.ZERO);
-                    collider.tickCount = 0;
-                }
-            }
+//            for (AvatarElementCollider collider : colliders) {
+//                // Reset
+//                if (collider.reset()) {
+////                    collider.resetPhysics();
+//////                    collider.resetPos(pos);
+//                    collider.setPos(pos);
+//                    collider.getRigidBody().setPhysicsLocation(Convert.toBullet(pos));
+//
+//                    collider.reset(false);
+//                    collider.setKinematic(true);
+//                    collider.setControlled(true);
+//                    collider.setNoGravity(true);
+//                    collider.getRigidBody().setGravity(Vector3f.ZERO);
+//                    collider.tickCount = 0;
+//                }
+//            }
         }
 
     }

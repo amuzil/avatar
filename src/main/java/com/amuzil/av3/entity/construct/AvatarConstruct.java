@@ -202,7 +202,8 @@ public class AvatarConstruct extends AvatarEntity implements IAvatarConstruct {
         } else {
             Block block = this.blockState.getBlock();
             ++this.time;
-            this.applyGravity();
+            if (!isNoGravity())
+                this.applyGravity();
             this.move(MoverType.SELF, this.getDeltaMovement());
             this.handlePortal();
             if (!this.level().isClientSide && (this.isAlive() || this.forceTickAfterTeleportToDuplicate)) {

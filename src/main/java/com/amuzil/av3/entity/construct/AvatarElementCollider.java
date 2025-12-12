@@ -2,9 +2,7 @@ package com.amuzil.av3.entity.construct;
 
 import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
-import com.amuzil.caliber.physics.bullet.collision.body.shape.MinecraftShape;
 import com.amuzil.caliber.physics.bullet.math.Convert;
-import com.jme3.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -26,6 +24,8 @@ public class AvatarElementCollider extends AvatarRigidBlock {
 
     private static final EntityDataAccessor<Optional<UUID>> SPAWNER_ID = SynchedEntityData.defineId(AvatarElementCollider.class, EntityDataSerializers.OPTIONAL_UUID);
     private static final EntityDataAccessor<Boolean> RESET = SynchedEntityData.defineId(AvatarElementCollider.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> PUSH_ENTITIES = SynchedEntityData.defineId(AvatarElementCollider.class, EntityDataSerializers.BOOLEAN);
+
     private Entity spawner;
 
     public AvatarElementCollider(EntityType<? extends AvatarRigidBlock> type, Level level) {
@@ -47,6 +47,15 @@ public class AvatarElementCollider extends AvatarRigidBlock {
         super.defineSynchedData(builder);
         builder.define(SPAWNER_ID, Optional.empty());
         builder.define(RESET, false);
+        builder.define(PUSH_ENTITIES, false);
+    }
+
+    public boolean pushEntities() {
+        return this.entityData.get(PUSH_ENTITIES);
+    }
+
+    public void pushEntities(boolean push) {
+        this.entityData.set(PUSH_ENTITIES, push);
     }
 
     public void spawner(@NotNull Entity spawner) {
@@ -89,13 +98,14 @@ public class AvatarElementCollider extends AvatarRigidBlock {
 
     @Override
     public void tick() {
-        super.tick();
+
 //        this.getRigidBody().setCollisionShape(MinecraftShape.box(getBoundingBox()));
 //        this.getRigidBody().setGravity(Vector3f.ZERO);
         if (isControlled())
             tickCount = 0;
 //        if (isControlled())
 //            control(0.5f);
+        super.tick();
     }
 
     @Override
