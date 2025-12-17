@@ -3,35 +3,34 @@
 #moj_import <fog.glsl>
 #moj_import <photon:particle.glsl>
 
-uniform sampler2D Sampler2;
+uniform sampler2D Sampler2; // lightmap
 uniform mat4 ModelViewMat;
 uniform mat4 ProjMat;
 uniform int FogShape;
 
 out float vertexDistance;
-out vec2 texCoord0;
-out vec4 vertexColor;
+out vec2  texCoord0;
+out vec4  vertexColor;
 
-// View-space position & normal for banding
 out vec3 vPosVS;
 out vec3 vNormalVS;
 
 void main() {
     ParticleData data = getParticleData();
 
-    // World -> view
     vec4 viewPos = ModelViewMat * vec4(data.Position, 1.0);
     gl_Position = ProjMat * viewPos;
 
     vertexDistance = fog_distance(data.Position, FogShape);
     texCoord0 = data.UV;
 
-    // Standard Photon lightmap fetch (same as example)
+    // Lightmap modulation like vanilla/Photon expects
     vertexColor = data.Color * texelFetch(Sampler2, data.LightUV / 16, 0);
 
     vPosVS = viewPos.xyz;
 
-    // Ignore non-uniform scale, good enough for VFX
+    // Try to use particle normal if Photon supplies it; if it’s zero the frag has a fallback.
+    // If your ParticleData doesn't have Normal, replace with a constant vec3(0,0,1).
     mat3 normalMat = mat3(ModelViewMat);
-    vNormalVS = normalize(normalMat * data.Normal);
+    vNormalVS = normalMat * data.Normal;
 }
