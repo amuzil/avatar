@@ -3,7 +3,6 @@
 #moj_import <fog.glsl>
 #moj_import <photon:particle.glsl>
 
-uniform sampler2D Sampler0;   // particle/albedo
 uniform sampler2D Sampler2;   // lightmap (already applied in vertexColor in your vsh)
 uniform sampler2D GradientTex;
 uniform sampler2D NoiseTex;
@@ -40,7 +39,7 @@ float safe01(float x) { return clamp(x, 0.0, 1.0); }
 
 void main() {
     // Base texture * vertexColor * ColorModulator
-    vec4 base = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+    vec4 base = texture(Sampler2, texCoord0) * vertexColor * ColorModulator;
     if (base.a <= 0.01) discard;
 
     // --- Flow distortion (tiny) ---

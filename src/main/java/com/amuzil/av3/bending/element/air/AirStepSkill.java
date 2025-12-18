@@ -10,6 +10,7 @@ import com.amuzil.av3.entity.projectile.AvatarBoundProjectile;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.traits.skilltraits.*;
+import com.lowdragmc.photon.client.fx.FX;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
