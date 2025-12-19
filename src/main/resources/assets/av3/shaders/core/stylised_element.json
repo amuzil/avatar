@@ -4,6 +4,7 @@
   "samplers": [
     { "name": "Sampler2" },
     { "name": "SamplerGradient" },
+    { "name": "WaveTex"},
     { "name": "NoiseTex" }
   ],
   "uniforms": [
