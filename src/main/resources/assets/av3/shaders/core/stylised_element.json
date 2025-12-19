@@ -3,7 +3,7 @@
   "fragment": "av3:stylised_element",
   "samplers": [
     { "name": "Sampler2" },
-    { "name": "Texture" },
+    { "name": "SamplerGradient" },
     { "name": "NoiseTex" }
   ],
   "uniforms": [
