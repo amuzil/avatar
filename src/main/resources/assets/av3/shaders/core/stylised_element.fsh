@@ -56,7 +56,7 @@ out vec4 fragColor;
 
 void main() {
     float time = GameTime * NoiseSpeed * -100;
-    float normal_facing = dot(ViewNormal, viewDirection);
+    float normal_facing = dot(ViewNormal, ViewDir);
     float noise_value = texture(NoiseTex, vec2(texCoord0.x * horizontal_frequency + spin * (time /2.0),
     (texCoord0.y * vertical_frequency) + time)).r;
 

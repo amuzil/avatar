@@ -11,11 +11,12 @@ uniform float FogStart;
 uniform float FogEnd;
 uniform vec4 FogColor;
 uniform float FresnelIntensity;
+uniform float FresnelDistance;
 // HDR
 uniform vec4 HDRFresnelColor;
 
 uniform mat4 U_InverseProjectionMatrix;
-uniform float Dist;
+
 
 in float vertexDistance;
 in vec2 texCoord0;
@@ -48,7 +49,7 @@ void main() {
 
     float sceneViewDepth = length(viewSpacePos.xyz);
     float viewDepth = length(ViewPos);
-    float subDist = sceneViewDepth - viewDepth - Dist;
+    float subDist = sceneViewDepth - viewDepth - FresnelDistance;
     float a = clamp(fresnel + smoothstep(0, 1, 1 - subDist), 0, 1);
 
 
