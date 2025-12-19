@@ -14,6 +14,7 @@ out vec2 texCoord0;
 out vec4 vertexColor;
 out vec3 ViewDir;
 out vec3 ViewNormal;
+out vec3 ViewPos;
 
 out vec4 fragColor;
 
@@ -22,16 +23,16 @@ void main() {
 
     // Compute view-space position
     vec4 viewPos4 = ModelViewMat * vec4(data.Position, 1.0);
-    vec3 viewPos  = viewPos4.xyz;
+    vec3 ViewPos  = viewPos4.xyz;
 
     // Normal into view space
     ViewNormal = normalize(mat3(ModelViewMat) * data.Normal);
 
     // View direction = from fragment toward camera (camera at 0,0,0 in view space)
-    ViewDir = normalize(-viewPos);
+    ViewDir = -normalize(ViewPos);
 
     // Provided fog distance from view space
-    vertexDistance = fog_distance(viewPos, FogShape);
+    vertexDistance = fog_distance(ViewPos4.yz, FogShape);
 
     texCoord0 = data.UV;
     vertexColor = data.Color * texelFetch(Sampler2, data.LightUV / 16, 0);

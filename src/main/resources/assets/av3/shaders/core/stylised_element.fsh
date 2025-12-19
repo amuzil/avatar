@@ -29,7 +29,7 @@ uniform vec3 U_CameraPosition;
 uniform float time_speed = 1.0;
 //time specifically for the wave noise texture
 uniform float surface_speed = 1.0;
-uniform float spin = 0.0; //Twisting motion of the water
+uniform float spin = 0.5; //Twisting motion of the water
 uniform float brightness = 0.6;
 uniform float color_intensity = 0.0;
 //Tiling frequency of the noise accross the mesh

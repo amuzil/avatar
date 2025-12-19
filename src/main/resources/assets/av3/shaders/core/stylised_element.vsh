@@ -42,21 +42,22 @@ void main() {
 
     // Sample textures in vertex stage.
     // Prefer textureLod to avoid implicit mip LOD issues in vertex shaders. :contentReference[oaicite:3]{index=3}
-    float wave = textureLod(WaveTex,
-    vec2(uv.x + time * surface_speed, uv.y + time * surface_speed),
-    0.0).r;
+    float wave = texture(WaveTex,
+    vec2(uv.x + time * surface_speed, uv.y + time * surface_speed)).r;
 
-    float n = textureLod(NoiseTex,
+    float n = texture(NoiseTex,
     vec2(uv.x * horizontal_frequency + spin * (time * 0.5),
-    uv.y * vertical_frequency + time),
-    0.0).r;
+    uv.y * vertical_frequency + time)).r;
 
     // Displace in world space along particle normal
-    vec3 posWS = data.Position + data.Normal * (wave_height * wave + texture_height * n);
+    vec3 posWS = data.Normal * (wave_height * wave);
+    vec3 posN = data.Normal * (texture_height * n);
 
     // Now use posWS for transforms
     vec4 viewPos = ModelViewMat * vec4(posWS, 1.0);
     gl_Position = ProjMat * viewPos;
+    gl_Position += posWS;
+    gl_Position += posN;
 
     // Use displaced position for fog so it matches what you see
     vertexDistance = fog_distance(posWS, FogShape);
