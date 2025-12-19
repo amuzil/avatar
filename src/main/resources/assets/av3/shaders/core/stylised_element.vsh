@@ -8,6 +8,15 @@ uniform sampler2D Sampler2;
 uniform mat4 ModelViewMat;
 uniform mat4 ProjMat;
 uniform int FogShape;
+uniform float GameTime;
+
+uniform float WaveScale;
+uniform float WaveSpeed;
+uniform float WaveStrength;
+
+uniform float NoiseScale;
+uniform float NoiseSpeed;
+uniform float NoiseStrength;
 
 out float vertexDistance;
 out vec2 texCoord0;
@@ -20,9 +29,22 @@ out vec4 fragColor;
 
 void main() {
     ParticleData data = getParticleData();
+    texCoord0 = data.UV;
+
+    float time = GameTime * -500;
+
+    vec2 waveUV  = uv0 * WaveScale  + vec2(t * WaveSpeed);
+    vec2 noiseUV = uv0 * NoiseScale + vec2(t * NoiseSpeed);
+
+    // Vertex-stage sampling: lock to mip 0 to keep it stable
+    float wave  = textureLod(WaveTex,  waveUV,  0.0).r * 2.0 - 1.0;
+    float noise = textureLod(NoiseTex, noiseUV, 0.0).r * 2.0 - 1.0;
+
+    float disp = wave * WaveStrength + noise * NoiseStrength;
+    vec3 posWS = data.Position + data.Normal * disp;
 
     // Compute view-space position
-    vec4 ViewPos4 = ModelViewMat * vec4(data.Position, 1.0);
+    vec4 ViewPos4 = ModelViewMat * vec4(posWS, 1.0);
     ViewPos  = ViewPos4.xyz;
 
     // Normal into view space
@@ -34,7 +56,7 @@ void main() {
     // Provided fog distance from view space
     vertexDistance = fog_distance(ViewPos4.xyz, FogShape);
 
-    texCoord0 = data.UV;
+
     vertexColor = data.Color * texelFetch(Sampler2, data.LightUV / 16, 0);
 
     gl_Position = ProjMat * ViewPos4;

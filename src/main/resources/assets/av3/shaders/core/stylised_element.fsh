@@ -24,7 +24,6 @@ uniform float EdgeDarken;
 uniform float NoiseScale;
 uniform float NoiseStrength;
 uniform float NoiseSpeed;
-uniform vec3 U_CameraPosition;
 
 uniform float time_speed = 1.0;
 //time specifically for the wave noise texture
