@@ -22,8 +22,8 @@ void main() {
     ParticleData data = getParticleData();
 
     // Compute view-space position
-    vec4 viewPos4 = ModelViewMat * vec4(data.Position, 1.0);
-    vec3 ViewPos  = viewPos4.xyz;
+    vec4 ViewPos4 = ModelViewMat * vec4(data.Position, 1.0);
+    ViewPos  = ViewPos4.xyz;
 
     // Normal into view space
     ViewNormal = normalize(mat3(ModelViewMat) * data.Normal);
@@ -32,11 +32,11 @@ void main() {
     ViewDir = -normalize(ViewPos);
 
     // Provided fog distance from view space
-    vertexDistance = fog_distance(ViewPos4.yz, FogShape);
+    vertexDistance = fog_distance(ViewPos4.xyz, FogShape);
 
     texCoord0 = data.UV;
     vertexColor = data.Color * texelFetch(Sampler2, data.LightUV / 16, 0);
 
-    gl_Position = ProjMat * viewPos4;
+    gl_Position = ProjMat * ViewPos4;
 
 }

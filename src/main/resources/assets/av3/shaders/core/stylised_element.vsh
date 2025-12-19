@@ -2,66 +2,41 @@
 
 #moj_import <fog.glsl>
 #moj_import <photon:particle.glsl>
-#moj_import <photon:particle_utils.glsl>
 
 uniform sampler2D Sampler2;
-uniform sampler2D NoiseTex;
-uniform sampler2D WaveTex;
+
 uniform mat4 ModelViewMat;
 uniform mat4 ProjMat;
 uniform int FogShape;
-//wave height, use for ocean waves
-uniform float wave_height = 0.5;
-uniform float surface_speed = 1.0;
-//Tiling frequency of the noise accross the mesh
-uniform float horizontal_frequency = 2.0;
-uniform float vertical_frequency = 2.0;
-uniform float spin = 0.5; //Twisting motion of the water
-//water surface height variation based on the noise texture
-uniform float texture_height = 0.5;
-uniform int worldTime;
-uniform int timeLoop = 300;
-uniform float time_speed = 1.0;
 
 out float vertexDistance;
 out vec2 texCoord0;
 out vec4 vertexColor;
+out vec3 ViewDir;
+out vec3 ViewNormal;
+out vec3 ViewPos;
 
-out vec3 viewDirection;
-out vec3 normal;
-out vec2 uv;
+out vec4 fragColor;
 
 void main() {
     ParticleData data = getParticleData();
 
-    // Use Photon UV (this is your "UV" replacement)
-    vec2 uv = data.UV;
+    // Compute view-space position
+    vec4 ViewPos4 = ModelViewMat * vec4(data.Position, 1.0);
+    ViewPos  = ViewPos4.xyz;
 
-    // Time: GameTime is 0..1 over a Minecraft day. Scale to taste.
-    float time = -(worldTime % timeLoop) * time_speed;
+    // Normal into view space
+    ViewNormal = normalize(mat3(ModelViewMat) * data.Normal);
 
-    // Sample textures in vertex stage.
-    // Prefer textureLod to avoid implicit mip LOD issues in vertex shaders. :contentReference[oaicite:3]{index=3}
-    float wave = texture(WaveTex,
-    vec2(uv.x + time * surface_speed, uv.y + time * surface_speed)).r;
+    // View direction = from fragment toward camera (camera at 0,0,0 in view space)
+    ViewDir = -normalize(ViewPos);
 
-    float n = texture(NoiseTex,
-    vec2(uv.x * horizontal_frequency + spin * (time * 0.5),
-    uv.y * vertical_frequency + time)).r;
+    // Provided fog distance from view space
+    vertexDistance = fog_distance(ViewPos4.xyz, FogShape);
 
-    // Displace in world space along particle normal
-    vec3 posWS = data.Normal * (wave_height * wave);
-    vec3 posN = data.Normal * (texture_height * n);
+    texCoord0 = data.UV;
+    vertexColor = data.Color * texelFetch(Sampler2, data.LightUV / 16, 0);
 
-    // Now use posWS for transforms
-    vec4 viewPos = ModelViewMat * vec4(posWS, 1.0);
-    gl_Position = ProjMat * viewPos;
-    gl_Position += posWS;
-    gl_Position += posN;
+    gl_Position = ProjMat * ViewPos4;
 
-    // Use displaced position for fog so it matches what you see
-    vertexDistance = fog_distance(posWS, FogShape);
-
-    // Pass UV down to fragment normally
-    texCoord0 = uv;
 }
