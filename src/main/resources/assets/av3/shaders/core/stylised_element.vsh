@@ -13,10 +13,12 @@ uniform float GameTime;
 uniform float WaveScale;
 uniform float WaveSpeed;
 uniform float WaveStrength;
+uniform sampler2D WaveTex;
 
 uniform float NoiseScale;
 uniform float NoiseSpeed;
 uniform float NoiseStrength;
+uniform sampler2D NoiseTex;
 
 out float vertexDistance;
 out vec2 texCoord0;
@@ -33,8 +35,8 @@ void main() {
 
     float time = GameTime * -500;
 
-    vec2 waveUV  = uv0 * WaveScale  + vec2(t * WaveSpeed);
-    vec2 noiseUV = uv0 * NoiseScale + vec2(t * NoiseSpeed);
+    vec2 waveUV  = texCoord0 * WaveScale  + vec2(time * WaveSpeed);
+    vec2 noiseUV = texCoord0 * NoiseScale + vec2(time * NoiseSpeed);
 
     // Vertex-stage sampling: lock to mip 0 to keep it stable
     float wave  = textureLod(WaveTex,  waveUV,  0.0).r * 2.0 - 1.0;
