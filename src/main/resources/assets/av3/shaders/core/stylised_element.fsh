@@ -45,19 +45,20 @@ uniform vec4 color2  = vec4(0.274, 0.474, 0.98, 1.0);
 uniform vec4 color3 = vec4(0.059, 0.389, 0.85, 1.0);
 uniform vec4 color4  = vec4(0.0, 0.267, 1.0, 1.0);
 
-in vec3 viewDirection;
-in vec3 normal;
-in float vDepth;
 in float vertexDistance;
-in vec2 uv;
+in vec2 texCoord0;
+in vec4 vertexColor;
+in vec3 ViewDir;
+in vec3 ViewNormal;
+in vec3 ViewPos;
 
 out vec4 fragColor;
 
 void main() {
     float time = GameTime * NoiseSpeed * -100;
-    float normal_facing = dot(normal, viewDirection);
-    float noise_value = texture(NoiseTex,vec2(uv.x * horizontal_frequency + spin * (time /2.0),
-    (uv.y * vertical_frequency) + time)).r;
+    float normal_facing = dot(ViewNormal, viewDirection);
+    float noise_value = texture(NoiseTex, vec2(texCoord0.x * horizontal_frequency + spin * (time /2.0),
+    (texCoord0.y * vertical_frequency) + time)).r;
 
     normal_facing += (noise_value -0.5 + size) * 0.3;
 
