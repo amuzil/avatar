@@ -1,26 +1,30 @@
-#version 330 core
+version 330 core
 
 #moj_import <fog.glsl>
 #moj_import <photon:particle.glsl>
 
+uniform sampler2D Sampler2;
 uniform mat4 ModelViewMat;
 uniform mat4 ProjMat;
 uniform int FogShape;
 
-out vec3 vNormal;
-out vec3 vViewDir;
-out float vDepth;
 out float vertexDistance;
+out vec2 texCoord0;
+out vec4 vertexColor;
+
+out vec3 vNormalVS;
+out vec3 vViewDirVS;
 
 void main() {
     ParticleData data = getParticleData();
 
-    vec3 worldPos = (ModelViewMat * vec4(data.Position,1.0)).xyz;
-    vNormal = normalize((ModelViewMat * vec4(data.Normal,0.0)).xyz);
-    vViewDir = normalize(-worldPos);
+    vec4 viewPos = ModelViewMat * vec4(data.Position, 1.0);
+    gl_Position = ProjMat * viewPos;
 
-    vDepth = length(worldPos);
     vertexDistance = fog_distance(data.Position, FogShape);
+    texCoord0 = data.UV;
+    vertexColor = data.Color * texelFetch(Sampler2, data.LightUV / 16, 0);
 
-    gl_Position = ProjMat * vec4(worldPos,1.0);
+    vNormalVS = normalize((ModelViewMat * vec4(data.Normal, 0.0)).xyz);
+    vViewDirVS = normalize(-viewPos.xyz);
 }

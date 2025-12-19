@@ -3,7 +3,7 @@
   "fragment": "av3:stylised_element",
   "samplers": [
     { "name": "Sampler2" },
-    { "name": "Gradient" },
+    { "name": "Texture" },
     { "name": "NoiseTex" }
   ],
   "uniforms": [
@@ -15,7 +15,6 @@
     { "name": "FogColor",       "type": "float",     "count": 4,  "values": [0,0,0,0] },
     { "name": "FogShape",       "type": "int",       "count": 1,  "values": [0] },
 
-    { "name": "GameTime",      "type": "float", "count": 1, "values": [0.0] },
     { "name": "Bands",         "type": "float", "count": 1, "values": [4.0] },
     { "name": "HDR",           "type": "float", "count": 1, "values": [1.5] },
 

@@ -2,7 +2,7 @@
 
 #moj_import <fog.glsl>
 
-uniform sampler2D Gradient;
+uniform sampler2D Texture;
 uniform sampler2D NoiseTex;
 
 uniform float GameTime;
@@ -21,6 +21,10 @@ uniform float EdgeDarken;
 uniform float NoiseScale;
 uniform float NoiseStrength;
 uniform float NoiseSpeed;
+uniform vec4 color1 = vec4(0.59, 0.761, 1.0, 1.0);
+uniform vec4 color2  = vec4(0.274, 0.474, 0.98, 1.0);
+uniform vec4 color3 = vec4(0.059, 0.389, 0.85, 1.0);
+uniform vec4 color4 = vec4(0.0, 0.267, 1.0, 1.0);
 
 in vec3 vNormal;
 in vec3 vViewDir;
@@ -31,7 +35,7 @@ out vec4 fragColor;
 
 // fetch 1D gradient
 vec3 sampleGradient(float idx) {
-    return texture(Gradient, vec2(idx, 0.5)).rgb;
+    return texture(Texture, vec2(idx, 0.5)).rgb;
 }
 
 void main() {
