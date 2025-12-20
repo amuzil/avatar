@@ -42,11 +42,10 @@ void main() {
     vec2 flowUV = p.xz * WaveScale + vec2(time * WaveSpeed);
 
     // sample displacement from flowUV (not texCoord0)
-    float wave  = textureLod(WaveTex,  flowUV,  0.0).r * 2.0 - 1.0;
-    float noise = textureLod(NoiseTex, flowUV * NoiseScale, 0.0).r * 2.0 - 1.0;
+    float wave  = texture(WaveTex,  flowUV).r * 2.0 - 1.0;
+    float noise = texture(NoiseTex, flowUV * NoiseScale).r * 2.0 - 1.0;
     float disp = wave * WaveStrength + noise * NoiseStrength;
 
-    float disp = wave * WaveStrength + noise * NoiseStrength;
     vec3 posWS = data.Position + data.Normal * disp;
 
     // Compute view-space position

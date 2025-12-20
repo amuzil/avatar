@@ -1,6 +1,6 @@
 {
-  "vertex": "photon:fresnel",
-  "fragment": "photon:fresnel",
+  "vertex": "av3:air_fresnel",
+  "fragment": "av3:air_fresnel",
   "samplers": [
   { "name": "Sampler2" },
     { "name": "SamplerSceneDepth" }

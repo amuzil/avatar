@@ -9,7 +9,6 @@ uniform sampler2D NoiseTex;
 
 uniform float GameTime;
 uniform float Bands;
-uniform float HDR;
 
 uniform float FogStart;
 uniform float FogEnd;
@@ -17,6 +16,8 @@ uniform vec4  FogColor;
 uniform int FogShape;
 
 uniform vec4 ColorModulator;
+uniform vec4 HDRColor;
+uniform float Alpha;
 uniform float RimPower;
 uniform float EdgeWidth;
 uniform float EdgeDarken;
@@ -25,21 +26,21 @@ uniform float NoiseScale;
 uniform float NoiseStrength;
 uniform float NoiseSpeed;
 
-uniform float time_speed = 1.0;
+uniform float TimeSpeed;
 //time specifically for the wave noise texture
 uniform float surface_speed = 1.0;
-uniform float spin = 0.5; //Twisting motion of the water
+uniform float Spin; //Twisting motion of the water
 uniform float brightness = 0.6;
-uniform float color_intensity = 0.0;
+uniform float ColorIntensity;
 //Tiling frequency of the noise accross the mesh
-uniform float horizontal_frequency = 2.0;
-uniform float vertical_frequency = 2.0;
+uniform float HorizontalFrequency;
+uniform float VerticalFrequency;
 //overall size muliplier
-uniform float size = 3.0;
+uniform float Size;
 //affects total size
-uniform float banding_bias = 0.6;
+uniform float BandingBias;
 
-uniform vec4 color1  = vec4(0.59, 0.761, 1.0, 0.5);
+uniform vec4 color1  = vec4(1.0, 1.0, 1.0, 0.5);
 uniform vec4 color2  = vec4(0.274, 0.474, 0.98, 0.5);
 uniform vec4 color3 = vec4(0.059, 0.389, 0.85, 0.5);
 uniform vec4 color4  = vec4(0.0, 0.267, 1.0, 0.5);
@@ -54,14 +55,14 @@ in vec3 ViewPos;
 out vec4 fragColor;
 
 void main() {
-    float time = GameTime * NoiseSpeed * -5000;
+    float time = GameTime * NoiseSpeed * TimeSpeed;
     float normal_facing = dot(ViewNormal, ViewDir);
-    float noise_value = texture(NoiseTex, vec2(texCoord0.x * horizontal_frequency + spin * (time /2.0),
-    (texCoord0.y * vertical_frequency) + time)).r;
+    float noise_value = texture(NoiseTex, vec2(texCoord0.x * HorizontalFrequency + Spin * (time / 2.0),
+    (texCoord0.y * VerticalFrequency) + time)).r;
 
-    normal_facing += (noise_value -0.5 + size) * 0.3;
+    normal_facing += (noise_value - 0.5 + Size) * 0.3;
 
-    float band = normal_facing * 3.0 * banding_bias;
+    float band = normal_facing * 3.0 * BandingBias;
     vec4 band_color = vec4(0,0,0,0);
     if (band <= 1.5) {
         discard;
@@ -79,6 +80,17 @@ void main() {
         band_color = color4;
     }
 
-    vec3 color = clamp(brightness * (vec3(1.0, 1.0, 1.0) - (band_color.xyz * -color_intensity)) * band_color.xyz, vec3(0.0, 0.0, 0.0), vec3(brightness, brightness, brightness));
-    fragColor = linear_fog(vec4(color, 1.0) * ColorModulator, vertexDistance, FogStart, FogEnd, FogColor);
+    // base color (no clamping to brightness)
+    vec3 color = brightness * (vec3(1.0) - (band_color.xyz * -ColorIntensity)) * band_color.xyz;
+
+    // include photon particle color pipeline (recommended)
+    color *= vertexColor.rgb;
+
+    // HDR like Photon’s example (pick one)
+    color *= HDRColor.a * HDRColor.rgb;   // additive HDR push (bloomier)
+    // color *= HDRColor.a * HDRColor.rgb; // multiply HDR
+
+    // alpha should come from something real
+    float a = Alpha * band_color.a * vertexColor.a;
+    fragColor = linear_fog(vec4(color, a) * ColorModulator, vertexDistance, FogStart, FogEnd, FogColor);
 }
