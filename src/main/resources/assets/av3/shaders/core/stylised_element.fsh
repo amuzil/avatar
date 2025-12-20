@@ -39,10 +39,10 @@ uniform float size = 3.0;
 //affects total size
 uniform float banding_bias = 0.6;
 
-uniform vec4 color1  = vec4(0.59, 0.761, 1.0, 1.0);
-uniform vec4 color2  = vec4(0.274, 0.474, 0.98, 1.0);
-uniform vec4 color3 = vec4(0.059, 0.389, 0.85, 1.0);
-uniform vec4 color4  = vec4(0.0, 0.267, 1.0, 1.0);
+uniform vec4 color1  = vec4(0.59, 0.761, 1.0, 0.5);
+uniform vec4 color2  = vec4(0.274, 0.474, 0.98, 0.5);
+uniform vec4 color3 = vec4(0.059, 0.389, 0.85, 0.5);
+uniform vec4 color4  = vec4(0.0, 0.267, 1.0, 0.5);
 
 in float vertexDistance;
 in vec2 texCoord0;

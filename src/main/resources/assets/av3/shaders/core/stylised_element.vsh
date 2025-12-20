@@ -35,12 +35,16 @@ void main() {
 
     float time = GameTime * -500;
 
-    vec2 waveUV  = texCoord0 * WaveScale  + vec2(time * WaveSpeed);
-    vec2 noiseUV = texCoord0 * NoiseScale + vec2(time * NoiseSpeed);
+    // in vertex shader
+    vec3 p = data.Position;
 
-    // Vertex-stage sampling: lock to mip 0 to keep it stable
-    float wave  = textureLod(WaveTex,  waveUV,  0.0).r * 2.0 - 1.0;
-    float noise = textureLod(NoiseTex, noiseUV, 0.0).r * 2.0 - 1.0;
+    // world-space planar mapping (continuous)
+    vec2 flowUV = p.xz * WaveScale + vec2(time * WaveSpeed);
+
+    // sample displacement from flowUV (not texCoord0)
+    float wave  = textureLod(WaveTex,  flowUV,  0.0).r * 2.0 - 1.0;
+    float noise = textureLod(NoiseTex, flowUV * NoiseScale, 0.0).r * 2.0 - 1.0;
+    float disp = wave * WaveStrength + noise * NoiseStrength;
 
     float disp = wave * WaveStrength + noise * NoiseStrength;
     vec3 posWS = data.Position + data.Normal * disp;
