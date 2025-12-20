@@ -33,6 +33,7 @@
     { "name":  "Alpha", "type":  "float", "count": 1, "values": [1.0] },
     { "name": "BandingBias",  "type": "float", "count": 1, "values": [0.6] },
     { "name": "ColorIntensity","type": "float", "count": 1, "values": [1.0] },
+    { "name":  "BandFactor", "type":  "float", "count": 1, "values": [0.3] },
 
     { "name": "RimPower",      "type": "float", "count": 1, "values": [2.0] },
     { "name": "EdgeWidth",     "type": "float", "count": 1, "values": [0.25] },

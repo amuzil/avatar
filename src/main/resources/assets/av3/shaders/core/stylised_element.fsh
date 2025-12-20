@@ -8,7 +8,6 @@ uniform sampler2D NoiseTex;
 
 
 uniform float GameTime;
-uniform float Bands;
 
 uniform float FogStart;
 uniform float FogEnd;
@@ -18,6 +17,9 @@ uniform int FogShape;
 uniform vec4 ColorModulator;
 uniform vec4 HDRColor;
 uniform float Alpha;
+uniform float Bands;
+uniform float BandFactor;
+
 uniform float RimPower;
 uniform float EdgeWidth;
 uniform float EdgeDarken;
@@ -60,25 +62,52 @@ void main() {
     float noise_value = texture(NoiseTex, vec2(texCoord0.x * HorizontalFrequency + Spin * (time / 2.0),
     (texCoord0.y * VerticalFrequency) + time)).r;
 
-    normal_facing += (noise_value - 0.5 + Size) * 0.3;
+    normal_facing += (noise_value - 0.5 + Size) * BandFactor;
 
-    float band = normal_facing * 3.0 * BandingBias;
-    vec4 band_color = vec4(0,0,0,0);
-    if (band <= 1.5) {
+    float bands = max(Bands, 1.0);
+
+    float band = normal_facing * bands * BandingBias;
+
+    if (band <= bands / 2) {
         discard;
     }
-    else if(band <= 2.0){
-        band_color = mix(color1, color2, -0.01 / (band-2.01)); //Mixes the color bands to make a slight gradient
+
+    float t = (band - bands / 2) / max(bands - bands / 2, 1e-6);
+    t = clamp(t, 0.0, 1.0);
+
+    float steps = max(bands, 1.0);
+
+    vec4 band_color = vec4(0,0,0,0);
+    if (steps <= 1.0) {
+        band_color = getGradientValue(SamplerGradient, 0, 0.5);
+    } else {
+        // 4) quantize + blend between adjacent steps
+        float q  = t * (steps - 1.0);
+        float i0 = floor(q);
+        float f  = fract(q);
+
+        // gentle blending (less harsh than straight mix)
+        f = smoothstep(0.0, 1.0, f);
+
+        float x0 = i0 / (steps - 1.0);
+        float x1 = min(i0 + 1.0, steps - 1.0) / (steps - 1.0);
+
+        vec4 c0 = getGradientValue(SamplerGradient, 0, x0);
+        vec4 c1 = getGradientValue(SamplerGradient, 0, x1);
+        band_color = mix(c0, c1, f);
     }
-    else if (band <= 2.5) {
-        band_color = mix(color2, color3, -0.01 / (band-2.51));
-    }
-    else if (band <= 2.9) {
-        band_color = mix(color3, color4, -0.01 / (band-2.91));
-    }
-    else if (band >= 0.0) {
-        band_color = color4;
-    }
+//    if(band <= bands * 2 / 3){
+//        band_color = mix(color1, color2, -0.01 / (band-2.01)); //Mixes the color bands to make a slight gradient
+//    }
+//    else if (band <= bands * 5 / 6) {
+//        band_color = mix(color2, color3, -0.01 / (band-2.51));
+//    }
+//    else if (band <= bands * 0.95) {
+//        band_color = mix(color3, color4, -0.01 / (band-2.91));
+//    }
+//    else if (band >= 0.0) {
+//        band_color = color4;
+//    }
 
     // base color (no clamping to brightness)
     vec3 color = brightness * (vec3(1.0) - (band_color.xyz * -ColorIntensity)) * band_color.xyz;
