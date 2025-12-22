@@ -22,9 +22,11 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.EventHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -39,6 +41,7 @@ public abstract class AvatarEntity extends Entity {
     private static final EntityDataAccessor<String> ELEMENT = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<String> SKILL_ID = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<String> FX = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<Vector3f> LOOK_DIRECTION = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.VECTOR3);
     private static final EntityDataAccessor<Boolean> ONE_SHOT_FX = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> COLLIDABLE = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DAMAGEABLE = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
@@ -250,6 +253,14 @@ public abstract class AvatarEntity extends Entity {
         return Avatar.id(fxName);
     }
 
+    public Vector3f lookDirection() {
+        return this.entityData.get(LOOK_DIRECTION);
+    }
+
+    public void lookDirection(Vector3f lookDirection) {
+        this.entityData.set(LOOK_DIRECTION, lookDirection);
+    }
+
     public void setFXOneShot(boolean fxOneShot) {
         this.entityData.set(ONE_SHOT_FX, fxOneShot);
     }
@@ -279,6 +290,7 @@ public abstract class AvatarEntity extends Entity {
         builder.define(TIER, 0);
         builder.define(MAX_LIFETIME, 10000);
         builder.define(SURFACE, false);
+        builder.define(LOOK_DIRECTION, new Vector3f(0, 1, 0));
 
     }
 

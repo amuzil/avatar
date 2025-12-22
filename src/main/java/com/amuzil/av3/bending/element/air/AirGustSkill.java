@@ -12,6 +12,8 @@ import com.amuzil.av3.entity.api.modules.force.ChangeSpeedModule;
 import com.amuzil.av3.entity.projectile.AvatarCurveProjectile;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.av3.utils.maths.Point;
+import com.amuzil.av3.utils.maths.VectorUtils;
+import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.amuzil.magus.skill.data.SkillData;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.traits.entitytraits.PointsTrait;
@@ -56,6 +58,8 @@ public class AirGustSkill extends AirSkill {
         projectile.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
         projectile.setOwner(entity);
         projectile.setMaxLifetime(lifetime);
+        projectile.setXRot(entity.getXRot());
+        projectile.setYRot(entity.getYRot());
         projectile.setWidth((float) size);
         projectile.setHeight((float) size);
         projectile.setNoGravity(true);
@@ -98,7 +102,7 @@ public class AirGustSkill extends AirSkill {
 
         // Particle FX module
         projectile.addTraits(data.getTrait(Constants.FX, StringTrait.class));
-
+        projectile.lookDirection(entity.getLookAngle().toVector3f());
         projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
         projectile.init();
 

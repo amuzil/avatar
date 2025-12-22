@@ -8,20 +8,19 @@ import com.lowdragmc.photon.client.fx.FX;
 import com.lowdragmc.photon.client.fx.FXHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
 
 
 public class PhotonModule implements IFXModule {
 
     public static String id = PhotonModule.class.getSimpleName();
-    private Vec3 lookDir = new Vec3(0, 1, 0);
-    public static void startEntityEffect(FX fx, Entity entity, Vec3 lookDir) {
+    
+    public static void startEntityEffect(FX fx, Entity entity) {
         if (fx != null) {
             EntityEffectExecutor entityEffect = new EntityEffectExecutor(fx, entity.level(), entity, EntityEffectExecutor.AutoRotate.NONE);
-            Vec3 look = entity.getLookAngle().normalize();
-            Vec3 pos = entity.position();
-            pos = VectorUtils.rotateAroundAxisX(pos, entity.getXRot() + 90);
-            pos = VectorUtils.rotateAroundAxisY(pos, entity.getYRot());
+            Vector3f look = entity.getLookAngle().toVector3f();
+            if (entity instanceof AvatarEntity avatar)
+                look = avatar.lookDirection();
 // Effect faces +Y by default
 //            Vec3 from = new Vec3(0, 1, 0);
 //            Vec3 to   = look;
@@ -45,7 +44,8 @@ public class PhotonModule implements IFXModule {
 //                q = new Quaternionf().rotateAxis(angle, (float)axis.x, (float)axis.y, (float)axis.z);
 //            }
 //
-            entityEffect.setRotation(VectorUtils.faceDirectionFromLocalY(lookDir));
+
+            entityEffect.setRotation(VectorUtils.faceDirectionFromLocalY(look));
             entityEffect.start();
         }
     }
@@ -57,7 +57,6 @@ public class PhotonModule implements IFXModule {
 
     @Override
     public void init(AvatarEntity entity) {
-        lookDir = entity.getOwner().getLookAngle();
     }
 
     @Override
@@ -66,10 +65,10 @@ public class PhotonModule implements IFXModule {
         if (entity.fxLocation() != null) {
             if (entity.oneShotFX()) {
                 if (entity.tickCount <= 1) {
-                    startEntityEffect(FXHelper.getFX(entity.fxLocation()), entity, lookDir);
+                    startEntityEffect(FXHelper.getFX(entity.fxLocation()), entity);
                 }
             } else {
-                startEntityEffect(FXHelper.getFX(entity.fxLocation()), entity, lookDir);
+                startEntityEffect(FXHelper.getFX(entity.fxLocation()), entity);
             }
         }
     }

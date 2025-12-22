@@ -120,8 +120,8 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
         this.setYRot(owner().getYRot());
 
         int count = 64;
-        ForceCloud cloud = new ForceCloud(0, count, "projectile_cloud", location, vec3, Vec3.ZERO, getUUID(), null);
-        cloud.setLifetimeSeconds(12.0f);
+//        ForceCloud cloud = new ForceCloud(0, count, "projectile_cloud", location, vec3, Vec3.ZERO, getUUID(), null);
+//        cloud.setLifetimeSeconds(12.0f);
 //
         for (int i = 0; i < count; i++) {
             // scatter a bit around origin
@@ -138,13 +138,13 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
 
             Vec3 force = Vec3.ZERO; // start with no force, just velocity
 
-            ForcePoint p = new ForcePoint(0, pos, Vec3.ZERO, force);
-            p.mass(1.0);    // if you have mass setters
-            p.damping(0.1); // mild drag
-//                if (level instanceof ServerLevel server && entity instanceof ServerPlayer)
-//                   server.sendParticles((ServerPlayer) entity, ParticleTypes.SMOKE, false, pos.x, pos.y, pos.z, 1, 0, 0, 0, 0.1f);
-
-            cloud.addPoints(p);
+//            ForcePoint p = new ForcePoint(0, pos, Vec3.ZERO, force);
+//            p.mass(1.0);    // if you have mass setters
+//            p.damping(0.1); // mild drag
+////                if (level instanceof ServerLevel server && entity instanceof ServerPlayer)
+////                   server.sendParticles((ServerPlayer) entity, ParticleTypes.SMOKE, false, pos.x, pos.y, pos.z, 1, 0, 0, 0, 0.1f);
+//
+//            cloud.addPoints(p);
         }
 
     }

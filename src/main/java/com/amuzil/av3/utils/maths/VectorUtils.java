@@ -98,6 +98,16 @@ public class VectorUtils {
         return new Quaternionf().rotationTo(from, to); // normalized + robust
     }
 
+    public static Quaternionf faceDirectionFromLocalY(Vector3f dir) {
+        Vector3f d = dir.lengthSquared() < 1e-12 ? new Vector3f(0, 1, 0) : dir;//.normalize();
+
+        Vector3f from = new Vector3f(0, 1, 0); // your effect’s forward axis in local space
+        Vector3f to   = new Vector3f((float)d.x, (float)d.y, (float)d.z);
+
+        return new Quaternionf().rotationTo(from, to); // normalized + robust
+    }
+
+
     public static Vec3 rotateAroundAxisX(Vec3 v, double angle) {
         angle = Math.toRadians(angle);
         double y, z, cos, sin;
