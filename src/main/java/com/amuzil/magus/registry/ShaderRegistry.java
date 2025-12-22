@@ -26,7 +26,7 @@ public class ShaderRegistry {
         event.registerShader(
                 new ShaderInstance(
                         event.getResourceProvider(),
-                        ResourceLocation.fromNamespaceAndPath("av3", "triplanar"), // matches your .json name
+                        ResourceLocation.fromNamespaceAndPath("av3", "dynamic_mesh/triplanar"), // matches your .json name
                         DefaultVertexFormat.NEW_ENTITY
                 ),
                 shader -> TRIPLANAR_SHADER = shader

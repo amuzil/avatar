@@ -4,6 +4,7 @@ import com.amuzil.av3.Avatar;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.renderer.sdf.IHasSDF;
 import com.amuzil.av3.renderer.sdf.SignedDistanceFunction;
+import com.amuzil.magus.registry.ShaderRegistry;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -47,6 +48,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
 
         VertexConsumer vc = buffer.getBuffer(RenderType.entityTranslucent(WHITE_TEX, true));
 //        VertexConsumer vc = buffer.getBuffer(ShaderRegistry.getTriplanarRenderType(getTextureLocation(entity)));
+//        VertexConsumer vC = buffer.getBuffer(ShaderRegistry.g, false));
         var last = pose.last();
 
         for (int i = 0; i < mesh.triangles.size(); i++) {
