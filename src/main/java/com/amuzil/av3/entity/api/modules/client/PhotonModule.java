@@ -14,7 +14,7 @@ import org.joml.Vector3f;
 public class PhotonModule implements IFXModule {
 
     public static String id = PhotonModule.class.getSimpleName();
-    
+
     public static void startEntityEffect(FX fx, Entity entity) {
         if (fx != null) {
             EntityEffectExecutor entityEffect = new EntityEffectExecutor(fx, entity.level(), entity, EntityEffectExecutor.AutoRotate.NONE);

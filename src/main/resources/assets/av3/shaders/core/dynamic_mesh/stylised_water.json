@@ -1,6 +1,6 @@
 {
-  "vertex": "av3:stylised_element",
-  "fragment": "av3:stylised_element",
+  "vertex": "av3:dynamic_mesh/stylised_water",
+  "fragment": "av3:dynamic_mesh/stylised_water",
   "samplers": [
     { "name": "Sampler2" },
     { "name": "SamplerGradient" },
