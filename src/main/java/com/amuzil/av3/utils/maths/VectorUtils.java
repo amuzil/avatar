@@ -1,6 +1,9 @@
-package com.amuzil.omegasource.utils.maths;
+package com.amuzil.av3.utils.maths;
 
+import com.simsilica.mathd.Vec3d;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 public class VectorUtils {
     /**
@@ -13,7 +16,7 @@ public class VectorUtils {
      * @param sizeZ    field[0][0].length
      * @param cellDim  the cell edge length you passed into buildVectorField
      * @param worldPos the position you want to sample at
-     * @return         interpolated Vec3 value
+     * @return interpolated Vec3 value
      */
     public static Vec3 sampleField(Vec3[][][] field,
                                    Vec3 center,
@@ -24,9 +27,9 @@ public class VectorUtils {
         double halfGridX = (sizeX * cellDim) * 0.5;
         double halfGridY = (sizeY * cellDim) * 0.5;
         double halfGridZ = (sizeZ * cellDim) * 0.5;
-        double originX   = center.x - halfGridX;
-        double originY   = center.y - halfGridY;
-        double originZ   = center.z - halfGridZ;
+        double originX = center.x - halfGridX;
+        double originY = center.y - halfGridY;
+        double originZ = center.z - halfGridZ;
 
         // 2) Compute local (floating‐point) coordinates in grid space
         double fx = (worldPos.x - originX) / cellDim - 0.5;
@@ -34,9 +37,9 @@ public class VectorUtils {
         double fz = (worldPos.z - originZ) / cellDim - 0.5;
 
         // 3) Clamp to valid index range
-        int ix0 = Math.max(0, Math.min(sizeX - 1, (int)Math.floor(fx)));
-        int iy0 = Math.max(0, Math.min(sizeY - 1, (int)Math.floor(fy)));
-        int iz0 = Math.max(0, Math.min(sizeZ - 1, (int)Math.floor(fz)));
+        int ix0 = Math.max(0, Math.min(sizeX - 1, (int) Math.floor(fx)));
+        int iy0 = Math.max(0, Math.min(sizeY - 1, (int) Math.floor(fy)));
+        int iz0 = Math.max(0, Math.min(sizeZ - 1, (int) Math.floor(fz)));
         int ix1 = Math.min(sizeX - 1, ix0 + 1);
         int iy1 = Math.min(sizeY - 1, iy0 + 1);
         int iz1 = Math.min(sizeZ - 1, iz0 + 1);
@@ -69,12 +72,60 @@ public class VectorUtils {
         return lerp(c0, c1, dz);
     }
 
-    /** Simple linear interpolation between two Vec3s. */
+    /**
+     * Simple linear interpolation between two Vec3s.
+     */
     public static Vec3 lerp(Vec3 a, Vec3 b, double t) {
         return new Vec3(
                 a.x + (b.x - a.x) * t,
                 a.y + (b.y - a.y) * t,
                 a.z + (b.z - a.z) * t
         );
+    }
+
+    public static Vec3 rotate(Vec3 v, Quaternionf q) {
+        Vector3f tmp = new Vector3f((float) v.x, (float) v.y, (float) v.z);
+        q.transform(tmp); // rotates in-place
+        return new Vec3(tmp.x, tmp.y, tmp.z);
+    }
+
+    public static Quaternionf faceDirectionFromLocalY(Vec3 dir) {
+        Vec3 d = dir.lengthSqr() < 1e-12 ? new Vec3(0, 1, 0) : dir;//.normalize();
+
+        Vector3f from = new Vector3f(0, 1, 0); // your effect’s forward axis in local space
+        Vector3f to   = new Vector3f((float)d.x, (float)d.y, (float)d.z);
+
+        return new Quaternionf().rotationTo(from, to); // normalized + robust
+    }
+
+    public static Vec3 rotateAroundAxisX(Vec3 v, double angle) {
+        angle = Math.toRadians(angle);
+        double y, z, cos, sin;
+        cos = Math.cos(angle);
+        sin = Math.sin(angle);
+        y = v.y * cos - v.z * sin;
+        z = v.y * sin + v.z * cos;
+        return new Vec3(v.x, y, z);
+    }
+
+    public static Vec3 rotateAroundAxisY(Vec3 v, double angle) {
+        angle = -angle;
+        angle = Math.toRadians(angle);
+        double x, z, cos, sin;
+        cos = Math.cos(angle);
+        sin = Math.sin(angle);
+        x = v.x * cos + v.z * sin;
+        z = v.x * -sin + v.z * cos;
+        return new Vec3(x, v.y, z);
+    }
+
+    public static Vec3 rotateAroundAxisZ(Vec3 v, double angle) {
+        angle = Math.toRadians(angle);
+        double x, y, cos, sin;
+        cos = Math.cos(angle);
+        sin = Math.sin(angle);
+        x = v.x * cos - v.y * sin;
+        y = v.x * sin + v.y * cos;
+        return new Vec3(x, y, v.z);
     }
 }
