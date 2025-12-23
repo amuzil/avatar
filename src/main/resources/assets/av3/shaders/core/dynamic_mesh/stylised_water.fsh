@@ -78,7 +78,7 @@ void main() {
 
     vec4 band_color = vec4(0,0,0,0);
     if (steps <= 1.0) {
-        band_color = getGradientValue(SamplerGradient, 0, 0.5);
+        band_color = texture(SamplerGradient, vec2(0, 0.5));
     } else {
         // 4) quantize + blend between adjacent steps
         float q  = t * (steps - 1.0);
@@ -91,8 +91,8 @@ void main() {
         float x0 = i0 / (steps - 1.0);
         float x1 = min(i0 + 1.0, steps - 1.0) / (steps - 1.0);
 
-        vec4 c0 = getGradientValue(SamplerGradient, 0, x0);
-        vec4 c1 = getGradientValue(SamplerGradient, 0, x1);
+        vec4 c0 = texture(SamplerGradient, vec2(0, x0));
+        vec4 c1 = texture(SamplerGradient, vec2(0, x1));
         band_color = mix(c0, c1, f);
     }
 //    if(band <= bands * 2 / 3){
