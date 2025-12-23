@@ -1,4 +1,4 @@
-#version 150
+#version 330 core
 
 #moj_import <fog.glsl>
 
@@ -17,8 +17,6 @@ uniform mat4 ProjMat;
 uniform int FogShape;
 uniform float GameTime;
 
-uniform vec3 Centre;
-
 uniform float WaveScale;
 uniform float WaveSpeed;
 uniform float WaveStrength;
@@ -35,8 +33,6 @@ out vec4 vertexColor;
 out vec3 ViewDir;
 out vec3 ViewNormal;
 out vec3 ViewPos;
-
-out vec4 fragColor;
 
 void main() {
 

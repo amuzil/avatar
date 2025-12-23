@@ -1,4 +1,4 @@
-#version 150
+#version 330 core
 
 #moj_import <fog.glsl>
 
@@ -18,10 +18,6 @@ uniform vec4 HDRColor;
 uniform float Alpha;
 uniform float Bands;
 uniform float BandFactor;
-
-uniform float RimPower;
-uniform float EdgeWidth;
-uniform float EdgeDarken;
 
 uniform float NoiseScale;
 uniform float NoiseStrength;

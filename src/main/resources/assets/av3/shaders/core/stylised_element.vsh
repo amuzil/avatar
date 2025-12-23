@@ -29,7 +29,6 @@ out vec3 ViewDir;
 out vec3 ViewNormal;
 out vec3 ViewPos;
 
-out vec4 fragColor;
 
 void main() {
     ParticleData data = getParticleData();

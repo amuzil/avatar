@@ -33,10 +33,14 @@ public final class AvatarCapabilities {
     }
 
     public static Bender getBender(ServerPlayer player) {
+        if (player == null || Avatar.BENDER_CACHE == null)
+            return null;
         return Avatar.BENDER_CACHE.get(player);
     }
 
     public static Bender removeBender(ServerPlayer player) {
+        if (player == null || Avatar.BENDER_CACHE == null)
+            return  null;
         return Avatar.BENDER_CACHE.remove(player);
     }
 

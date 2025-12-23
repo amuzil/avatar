@@ -33,8 +33,14 @@ public class ShaderRegistry {
             .add("UV0", VertexFormatElement.UV0).add("UV2", VertexFormatElement.UV2)
             .add("Color", VertexFormatElement.COLOR).add("Normal", VertexFormatElement.NORMAL).padding(1).build();
 
+    private static final ResourceLocation
+            WHITE_TEX = Avatar.id("textures/water.png"),
+            WATER_GRADIENT = Avatar.id("textures/vfx/water_gradient.png"),
+            WATER_WAVE_NOISE = Avatar.id("textures/vfx/wave_noise.png");
+
     @SubscribeEvent
     public static void onRegisterShaders(RegisterShadersEvent event) throws IOException {
+
         event.registerShader(
                 new ShaderInstance(
                         event.getResourceProvider(),
@@ -44,7 +50,8 @@ public class ShaderRegistry {
                 shader -> TRIPLANAR_SHADER = shader);
 
         event.registerShader(
-                new ShaderInstance(event.getResourceProvider(),
+                new ShaderInstance(
+                        event.getResourceProvider(),
                         ResourceLocation.fromNamespaceAndPath("av3", "dynamic_mesh/stylised_water"),
                         STYLISED_ELEMENT
                 ),
@@ -87,6 +94,55 @@ public class ShaderRegistry {
                     }
             );
 
+    public static final RenderStateShard.TexturingStateShard WATER_SETUP =
+            new RenderStateShard.TexturingStateShard(
+                    "water_setup",
+                    () -> {
+                        // These run RIGHT before the RenderType draws.
+                        RenderSystem.setShaderTexture(1, WATER_GRADIENT);
+                        RenderSystem.setShaderTexture(2, WATER_WAVE_NOISE);
+                        RenderSystem.setShaderTexture(3, WATER_WAVE_NOISE);
+
+                        ShaderInstance s = ShaderRegistry.STYLISED_WATER;
+                        if (s != null) {
+                            s.setSampler("Texture", 0);
+                            s.setSampler("SamplerGradient", 1);
+                            s.setSampler("WaveTex", 2);
+                            s.setSampler("NoiseTex", 3);
+
+                            ShaderUniforms.StylisedWaterUniforms uniform = new ShaderUniforms.StylisedWaterUniforms(s);
+                            // Values copied from the test effect in Photon
+                            uniform.TimeSpeed.set(-500f); // or whatever
+
+                            uniform.WaveScale.set(0.2f);
+                            uniform.WaveSpeed.set(1.0f);
+                            uniform.WaveStrength.set(1.0f);
+
+                            uniform.NoiseScale.set(2f);
+                            uniform.NoiseSpeed.set(1.45f);
+                            uniform.NoiseStrength.set(0.08f);
+
+                            uniform.Bands.set(4.0f);
+                            uniform.BandFactor.set(0.6f);
+                            uniform.BandingBias.set(0.4f);
+
+                            uniform.Alpha.set(1.6f);
+                            uniform.HDRColor.set(1.0f, 1.0f, 1.0f, 1.1f);
+                            uniform.ColorIntensity.set(0.5f);
+
+                            uniform.HorizontalFrequency.set(6.0f);
+                            uniform.VerticalFrequency.set(1.0f);
+                            uniform.Spin.set(3.0f);
+                            uniform.Size.set(2.1f);
+
+                            s.apply();
+                        }
+                    },
+                    () -> {
+                        // Optional cleanup
+                    }
+            );
+
     public static RenderType waterRenderType(ResourceLocation tex) {
         return RenderType.create(
                 "stylised_water",
@@ -100,6 +156,7 @@ public class ShaderRegistry {
                         .setTransparencyState(WATER_TRANSPARENCY)
                         .setTextureState(new RenderStateShard.TextureStateShard(tex, false, false))
                         .setLightmapState(RenderStateShard.LIGHTMAP)
+                        .setTexturingState(WATER_SETUP)
                         .setCullState(new RenderStateShard.CullStateShard(false))
                         .createCompositeState(true)
         );

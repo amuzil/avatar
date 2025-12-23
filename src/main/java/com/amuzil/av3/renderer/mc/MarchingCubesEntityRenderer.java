@@ -14,7 +14,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Vector3f;
 
@@ -41,54 +40,18 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
     @Override
     public void render(T entity, float entityYaw, float partialTick,
                        PoseStack pose, MultiBufferSource buffer, int packedLight) {
-        pose.pushPose();
+
 
         ShaderInstance water = ShaderRegistry.STYLISED_WATER;
         if (water == null)
             return;
 
-        RenderSystem.setShader(() -> water);
+//        RenderSystem.setShader(() -> water);
 
-        // Base Entity Texture (just in case; might be ignored)
-        RenderSystem.setShaderTexture(0, WHITE_TEX);
-        // Gradient Texture
-        RenderSystem.setShaderTexture(1, GRADIENT);
-        // Noise texture
-        RenderSystem.setShaderTexture(2, WAVE_NOISE);
-        // Wave texture
-        RenderSystem.setShaderTexture(3, WAVE_NOISE);
 
-        // Now we match the samplers to the set textures
-        water.setSampler("SamplerGradient", 1);
-        water.setSampler("WaveTex", 2);
-        water.setSampler("NoiseTex", 3);
 
-        // Uniform time
-        ShaderUniforms.StylisedWaterUniforms uniform = (ShaderUniforms.StylisedWaterUniforms) ShaderRegistry.STYLISED_WATER_UNIFORMS;
-        // Values copied from the test effect in Photon
-        uniform.TimeSpeed.set(-500f); // or whatever
-        uniform.Centre.set(entity.position().toVector3f());
 
-        uniform.WaveScale.set(0.2f);
-        uniform.WaveSpeed.set(1.0f);
-        uniform.WaveStrength.set(1.0f);
 
-        uniform.NoiseScale.set(2f);
-        uniform.NoiseSpeed.set(1.45f);
-        uniform.NoiseStrength.set(0.08f);
-
-        uniform.Bands.set(4.0f);
-        uniform.BandFactor.set(0.6f);
-        uniform.BandingBias.set(0.4f);
-
-        uniform.Alpha.set(1.6f);
-        uniform.HDRColor.set(1.0f, 1.0f, 1.0f,1.1f);
-        uniform.ColorIntensity.set(0.5f);
-
-        uniform.HorizontalFrequency.set(6.0f);
-        uniform.VerticalFrequency.set(1.0f);
-        uniform.Spin.set(3.0f);
-        uniform.Size.set(2.1f);
         // Center the generated volume around the entity origin
 //        float volumeSize = (GRID_SIZE - 1) * CELL_SIZE;
 //        float half = volumeSize * 0.5f;
@@ -98,7 +61,42 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
 
 //        VertexConsumer vc = buffer.getBuffer(RenderType.entityTranslucent(WHITE_TEX, true));
 //        VertexConsumer vc = buffer.getBuffer(ShaderRegistry.getTriplanarRenderType(getTextureLocation(entity)));
-        VertexConsumer vc = buffer.getBuffer(ShaderRegistry.waterRenderType(WHITE_TEX));
+        RenderType waterType = ShaderRegistry.waterRenderType(WHITE_TEX);
+//        if (RenderSystem.getShader().getName().equals(ShaderRegistry.STYLISED_WATER.getName())) {
+            ShaderUniforms.StylisedWaterUniforms uniform = new ShaderUniforms.StylisedWaterUniforms(ShaderRegistry.STYLISED_WATER);
+            // Values copied from the test effect in Photon
+            uniform.TimeSpeed.set(-500f); // or whatever
+
+            uniform.WaveScale.set(0.2f);
+            uniform.WaveSpeed.set(1.0f);
+            uniform.WaveStrength.set(1.0f);
+
+            uniform.NoiseScale.set(2f);
+            uniform.NoiseSpeed.set(1.45f);
+            uniform.NoiseStrength.set(0.08f);
+
+            uniform.Bands.set(4.0f);
+            uniform.BandFactor.set(0.6f);
+            uniform.BandingBias.set(0.4f);
+
+            uniform.Alpha.set(1.6f);
+            uniform.HDRColor.set(1.0f, 1.0f, 1.0f, 1.1f);
+            uniform.ColorIntensity.set(0.5f);
+
+            uniform.HorizontalFrequency.set(6.0f);
+            uniform.VerticalFrequency.set(1.0f);
+            uniform.Spin.set(3.0f);
+            uniform.Size.set(2.1f);
+//        }
+
+        RenderSystem.setShader(() -> water);
+        VertexConsumer vc = buffer.getBuffer(waterType);
+        // Uniform time
+
+//        if (!RenderSystem.getShader().getName().equals(ShaderRegistry.STYLISED_WATER.getName()))
+//            return;
+
+        pose.pushPose();
         var last = pose.last();
 
 
@@ -116,25 +114,25 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
 //            vc.vertex( p0.x, p0.y, p0.z)
             vc.addVertex(last.pose(), p0.x, p0.y, p0.z)
                     .setColor(1.0f,1.0f,1.0f,1.0f).setUv(uv0[0], uv0[1])
-                    .setOverlay(OverlayTexture.NO_OVERLAY)
+//                    .setOverlay(OverlayTexture.NO_OVERLAY)
                     .setLight(packedLight)
                     .setNormal(last, n.x, n.y, n.z);
 
 //            vc.vertex(p1.x, p1.y, p1.z)
             vc.addVertex(last.pose(), p1.x, p1.y, p1.z)
                     .setColor(1.0f,1.0f,1.0f,1.0f).setUv(uv1[0], uv1[1])
-                    .setOverlay(OverlayTexture.NO_OVERLAY)
+//                    .setOverlay(OverlayTexture.NO_OVERLAY)
                     .setLight(packedLight)
                     .setNormal(last, n.x, n.y, n.z);
 
 //            vc.vertex(p2.x, p2.y, p2.z)
             vc.addVertex(last.pose(), p2.x, p2.y, p2.z)
                     .setColor(1.0f,1.0f,1.0f,1.0f).setUv(uv2[0], uv2[1])
-                    .setOverlay(OverlayTexture.NO_OVERLAY)
+//                    .setOverlay(OverlayTexture.NO_OVERLAY)
                     .setLight(packedLight)
                     .setNormal(last, n.x, n.y, n.z);
 
-//             C again (degenerate 4th vertex so the QUADS mode groups correctly)
+////             C again (degenerate 4th vertex so the QUADS mode groups correctly)
 //            vc.addVertex(last.pose(), p2.x, p2.y, p2.z)
 //                    .setColor(255,255,255,255).setUv(uv2[0], uv2[1])
 //                    .setOverlay(OverlayTexture.NO_OVERLAY)
