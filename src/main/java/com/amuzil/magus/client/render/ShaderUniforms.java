@@ -6,10 +6,11 @@ import com.mojang.blaze3d.shaders.Uniform;
 import net.minecraft.client.renderer.ShaderInstance;
 
 public class ShaderUniforms {
-    public static final class StylisedWaterUniforms {
+    public static final class StylisedWaterUniforms extends ShaderUniforms {
         // matrices are set by vanilla; you generally don’t touch ModelViewMat/ProjMat manually.
 
-        public final AbstractUniform GameTime;
+        // GameTime is inbuilt, but you can never be too careful...
+        public final AbstractUniform TimeSpeed;
         public final AbstractUniform Centre;
 
         public final AbstractUniform WaveScale, WaveSpeed, WaveStrength;
@@ -21,11 +22,9 @@ public class ShaderUniforms {
         public final AbstractUniform HorizontalFrequency, VerticalFrequency;
         public final AbstractUniform Spin, Size;
 
-        public final AbstractUniform FogStart, FogEnd, FogColor; // if you want to override
-        // FogShape is set by engine; usually don’t set it.
 
-        StylisedWaterUniforms(ShaderInstance s) {
-            GameTime = s.safeGetUniform("GameTime");
+        public StylisedWaterUniforms(ShaderInstance s) {
+            TimeSpeed = s.safeGetUniform("TimeSpeed");
             Centre = s.safeGetUniform("Centre");
 
             WaveScale = s.safeGetUniform("WaveScale");
@@ -49,10 +48,6 @@ public class ShaderUniforms {
 
             Spin = s.safeGetUniform("Spin");
             Size = s.safeGetUniform("Size");
-
-            FogStart = s.safeGetUniform("FogStart");
-            FogEnd = s.safeGetUniform("FogEnd");
-            FogColor = s.safeGetUniform("FogColor");
         }
     }
 }

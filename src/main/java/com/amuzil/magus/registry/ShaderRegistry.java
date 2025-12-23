@@ -1,6 +1,7 @@
 package com.amuzil.magus.registry;
 
 import com.amuzil.av3.Avatar;
+import com.amuzil.magus.client.render.ShaderUniforms;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -23,6 +24,9 @@ public class ShaderRegistry {
             TRIPLANAR_SHADER,
             STYLISED_WATER;
 
+    public static ShaderUniforms
+            STYLISED_WATER_UNIFORMS;
+
     @SubscribeEvent
     public static void onRegisterShaders(RegisterShadersEvent event) throws IOException {
         event.registerShader(
@@ -38,7 +42,10 @@ public class ShaderRegistry {
                         ResourceLocation.fromNamespaceAndPath("av3", "dynamic_mesh/stylised_water"),
                         DefaultVertexFormat.NEW_ENTITY
                 ),
-                shader -> STYLISED_WATER = shader);
+                shader -> {
+                    STYLISED_WATER = shader;
+                    STYLISED_WATER_UNIFORMS = new ShaderUniforms.StylisedWaterUniforms(shader);
+                });
 
     }
 
