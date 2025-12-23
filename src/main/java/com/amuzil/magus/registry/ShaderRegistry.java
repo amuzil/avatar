@@ -92,6 +92,7 @@ public class ShaderRegistry {
                 RenderType.CompositeState.builder()
                         .setShaderState(new RenderStateShard.ShaderStateShard(() -> ShaderRegistry.STYLISED_WATER))
                         .setTransparencyState(WATER_TRANSPARENCY)
+                        .setLightmapState(RenderStateShard.LIGHTMAP)
                         .setTextureState(new RenderStateShard.TextureStateShard(tex, false, false))
                         .setCullState(new RenderStateShard.CullStateShard(false))
                         .createCompositeState(true)

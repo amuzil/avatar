@@ -4,6 +4,7 @@ import com.amuzil.av3.Avatar;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.renderer.sdf.IHasSDF;
 import com.amuzil.av3.renderer.sdf.SignedDistanceFunction;
+import com.amuzil.magus.client.render.ShaderUniforms;
 import com.amuzil.magus.registry.ShaderRegistry;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -53,6 +54,11 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
         RenderSystem.setShaderTexture(1, WAVE_NOISE);
         // Wave texture
         RenderSystem.setShaderTexture(2, WAVE_NOISE);
+
+        // Uniform time
+        ShaderUniforms.StylisedWaterUniforms uniform = (ShaderUniforms.StylisedWaterUniforms) ShaderRegistry.STYLISED_WATER_UNIFORMS;
+        uniform.Alpha.set();
+
         // Center the generated volume around the entity origin
 //        float volumeSize = (GRID_SIZE - 1) * CELL_SIZE;
 //        float half = volumeSize * 0.5f;
