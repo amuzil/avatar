@@ -12,6 +12,7 @@ import com.amuzil.av3.renderer.sdf.shapes.SDFSphere;
 import com.amuzil.av3.renderer.sdf.shapes.SDFTorus;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 public class AvatarWaterProjectile extends AvatarProjectile implements IHasSDF {
@@ -46,6 +47,17 @@ public class AvatarWaterProjectile extends AvatarProjectile implements IHasSDF {
 
     public AvatarWaterProjectile(Level pLevel) {
         this(AvatarEntities.AVATAR_WATER_PROJECTILE_ENTITY_TYPE.get(), pLevel);
+    }
+
+    @Override
+    public void setDeltaMovement(Vec3 deltaMovement) {
+        super.setDeltaMovement(deltaMovement);
+    }
+
+    @Override
+    public Vec3 getDeltaMovement() {
+        return Vec3.ZERO;
+//        return super.getDeltaMovement();
     }
 
     public SignedDistanceFunction rootSDF(){ return root; }

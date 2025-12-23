@@ -81,7 +81,7 @@ public class WaterBallSkill extends WaterSkill {
         // Particle FX module
         projectile.addTraits(data.getTrait(Constants.FX, StringTrait.class));
 
-        projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
+        projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), -1, 0);
         projectile.init();
 
         bender.formPath.clear();

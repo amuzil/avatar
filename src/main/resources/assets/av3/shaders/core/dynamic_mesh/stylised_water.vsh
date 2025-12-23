@@ -16,6 +16,7 @@ uniform mat4 ModelViewMat;
 uniform mat4 ProjMat;
 uniform int FogShape;
 uniform float GameTime;
+uniform float TimeSpeed;
 
 uniform float WaveScale;
 uniform float WaveSpeed;
@@ -38,7 +39,7 @@ void main() {
 
     texCoord0 = UV0;
 
-    float time = GameTime * -500;
+    float time = GameTime * TimeSpeed;
 
     // in vertex shader
     vec3 p = Position;

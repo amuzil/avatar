@@ -25,9 +25,8 @@ uniform float NoiseSpeed;
 
 uniform float TimeSpeed;
 //time specifically for the wave noise texture
-uniform float surface_speed = 1.0;
 uniform float Spin; //Twisting motion of the water
-uniform float brightness = 0.6;
+uniform float brightness = 1.0;
 uniform float ColorIntensity;
 //Tiling frequency of the noise accross the mesh
 uniform float HorizontalFrequency;
@@ -53,7 +52,7 @@ out vec4 fragColor;
 
 void main() {
     float time = GameTime * NoiseSpeed * TimeSpeed;
-    float normal_facing = dot(ViewNormal, ViewDir);
+    float normal_facing = abs(dot(ViewNormal, ViewDir));
     float noise_value = texture(NoiseTex, vec2(texCoord0.x * HorizontalFrequency + Spin * (time / 2.0),
     (texCoord0.y * VerticalFrequency) + time)).r;
 
@@ -63,7 +62,7 @@ void main() {
 
     float band = normal_facing * bands * BandingBias;
 
-    if (band <= bands / 2) {
+    if (band <= 0.05) {
         discard;
     }
 
@@ -74,7 +73,7 @@ void main() {
 
     vec4 band_color = vec4(0,0,0,0);
     if (steps <= 1.0) {
-        band_color = texture(SamplerGradient, vec2(0.5, 0.5));
+        band_color = texture(SamplerGradient, vec2(1, 1));
     } else {
         // 4) quantize + blend between adjacent steps
         float q  = t * (steps - 1.0);
@@ -87,8 +86,8 @@ void main() {
         float x0 = i0 / (steps - 1.0);
         float x1 = min(i0 + 1.0, steps - 1.0) / (steps - 1.0);
 
-        vec4 c0 = texture(SamplerGradient, vec2(x0, 0.5));
-        vec4 c1 = texture(SamplerGradient, vec2(x1, 0.5));
+        vec4 c0 = texture(SamplerGradient, vec2(1, 1));
+        vec4 c1 = texture(SamplerGradient, vec2(1, 1));
         band_color = mix(c0, c1, f);
     }
 //    if(band <= bands * 2 / 3){
@@ -108,10 +107,10 @@ void main() {
     vec3 color = brightness * (vec3(1.0) - (band_color.xyz * -ColorIntensity)) * band_color.xyz;
 
     // include photon particle color pipeline (recommended)
-    color *= vertexColor.rgb;
+//    color *= vertexColor.rgb;
 
     // HDR like Photon’s example (pick one)
-    color *= HDRColor.a * HDRColor.rgb;   // additive HDR push (bloomier)
+//    color *= HDRColor.a * HDRColor.rgb;   // additive HDR push (bloomier)
     // color *= HDRColor.a * HDRColor.rgb; // multiply HDR
 
     // alpha should come from something real

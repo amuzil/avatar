@@ -58,6 +58,31 @@ public class ShaderRegistry {
                 shader -> {
                     STYLISED_WATER = shader;
                     STYLISED_WATER_UNIFORMS = new ShaderUniforms.StylisedWaterUniforms(shader);
+                    // Values copied from the test effect in Photon
+                    ShaderUniforms.StylisedWaterUniforms shaderUniforms = (ShaderUniforms.StylisedWaterUniforms) STYLISED_WATER_UNIFORMS;
+                    shaderUniforms.TimeSpeed.set(-150f); // or whatever
+
+                    shaderUniforms.WaveScale.set(0.2f);
+                    shaderUniforms.WaveSpeed.set(0.5f);
+                    shaderUniforms.WaveStrength.set(0.4f);
+
+                    shaderUniforms.NoiseScale.set(2f);
+                    shaderUniforms.NoiseSpeed.set(1.45f);
+                    shaderUniforms.NoiseStrength.set(0.08f);
+
+                    shaderUniforms.Bands.set(4.0f);
+                    shaderUniforms.BandFactor.set(0.6f);
+                    shaderUniforms.BandingBias.set(0.4f);
+
+                    shaderUniforms.Alpha.set(0.6f);
+                    shaderUniforms.HDRColor.set(1.0f, 1.0f, 1.0f, 1.0f);
+                    shaderUniforms.ColorIntensity.set(1f);
+
+                    shaderUniforms.HorizontalFrequency.set(6.0f);
+                    shaderUniforms.VerticalFrequency.set(1.0f);
+                    shaderUniforms.Spin.set(3.0f);
+                    shaderUniforms.Size.set(2.1f);
+
                 });
 
     }
@@ -99,43 +124,18 @@ public class ShaderRegistry {
                     "water_setup",
                     () -> {
                         // These run RIGHT before the RenderType draws.
-                        RenderSystem.setShaderTexture(1, WATER_GRADIENT);
-                        RenderSystem.setShaderTexture(2, WATER_WAVE_NOISE);
-                        RenderSystem.setShaderTexture(3, WATER_WAVE_NOISE);
+                        RenderSystem.setShaderTexture(7, WATER_GRADIENT);
+                        RenderSystem.setShaderTexture(8, WATER_WAVE_NOISE);
+                        RenderSystem.setShaderTexture(9, WATER_WAVE_NOISE);
 
-                        ShaderInstance s = ShaderRegistry.STYLISED_WATER;
-                        if (s != null) {
-                            s.setSampler("Texture", 0);
-                            s.setSampler("SamplerGradient", 1);
-                            s.setSampler("WaveTex", 2);
-                            s.setSampler("NoiseTex", 3);
+                        ShaderInstance s = RenderSystem.getShader();
+                        if (s != null && s.getName().equals(STYLISED_WATER.getName())) {
+                            s.setSampler("SamplerGradient", 7);
+                            s.setSampler("WaveTex", 8);
+                            s.setSampler("NoiseTex", 9);
 
-                            ShaderUniforms.StylisedWaterUniforms uniform = new ShaderUniforms.StylisedWaterUniforms(s);
-                            // Values copied from the test effect in Photon
-                            uniform.TimeSpeed.set(-500f); // or whatever
+//                            ((ShaderUniforms.StylisedWaterUniforms) STYLISED_WATER_UNIFORMS).Size.set(8.1f); // could be dynamic
 
-                            uniform.WaveScale.set(0.2f);
-                            uniform.WaveSpeed.set(1.0f);
-                            uniform.WaveStrength.set(1.0f);
-
-                            uniform.NoiseScale.set(2f);
-                            uniform.NoiseSpeed.set(1.45f);
-                            uniform.NoiseStrength.set(0.08f);
-
-                            uniform.Bands.set(4.0f);
-                            uniform.BandFactor.set(0.6f);
-                            uniform.BandingBias.set(0.4f);
-
-                            uniform.Alpha.set(1.6f);
-                            uniform.HDRColor.set(1.0f, 1.0f, 1.0f, 1.1f);
-                            uniform.ColorIntensity.set(0.5f);
-
-                            uniform.HorizontalFrequency.set(6.0f);
-                            uniform.VerticalFrequency.set(1.0f);
-                            uniform.Spin.set(3.0f);
-                            uniform.Size.set(2.1f);
-
-                            s.apply();
                         }
                     },
                     () -> {

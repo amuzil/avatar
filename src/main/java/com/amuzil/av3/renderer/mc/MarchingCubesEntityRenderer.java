@@ -4,11 +4,11 @@ import com.amuzil.av3.Avatar;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.renderer.sdf.IHasSDF;
 import com.amuzil.av3.renderer.sdf.SignedDistanceFunction;
-import com.amuzil.magus.client.render.ShaderUniforms;
 import com.amuzil.magus.registry.ShaderRegistry;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
@@ -24,12 +24,11 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
     private final Map<UUID, CachedMesh> meshCache = new HashMap<>();
 //    private static final ResourceLocation WHITE_TEX = Avatar.id("textures/misc/white.png");
     private static final ResourceLocation WHITE_TEX = Avatar.id("textures/water.png");
-    private static final ResourceLocation GRADIENT = Avatar.id("textures/vfx/water_gradient.png");
-    private static final ResourceLocation WAVE_NOISE = Avatar.id("textures/vfx/wave_noise.png");
     private static final int GRID_SIZE = 32;
     private static final float CELL_SIZE = 0.25f;
     private static final float ISOLEVEL = 0.0f;
     private static final long MESH_TTL_MS = 100L;
+    private static final RenderType WATER = ShaderRegistry.waterRenderType(WHITE_TEX);
     final float TEX_SCALE = 2.0f; // e.g. 2 repeats per block
 
     PointData[][][] voxels = new PointData[GRID_SIZE][GRID_SIZE][GRID_SIZE];
@@ -61,36 +60,11 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
 
 //        VertexConsumer vc = buffer.getBuffer(RenderType.entityTranslucent(WHITE_TEX, true));
 //        VertexConsumer vc = buffer.getBuffer(ShaderRegistry.getTriplanarRenderType(getTextureLocation(entity)));
-        RenderType waterType = ShaderRegistry.waterRenderType(WHITE_TEX);
-//        if (RenderSystem.getShader().getName().equals(ShaderRegistry.STYLISED_WATER.getName())) {
-            ShaderUniforms.StylisedWaterUniforms uniform = new ShaderUniforms.StylisedWaterUniforms(ShaderRegistry.STYLISED_WATER);
-            // Values copied from the test effect in Photon
-            uniform.TimeSpeed.set(-500f); // or whatever
 
-            uniform.WaveScale.set(0.2f);
-            uniform.WaveSpeed.set(1.0f);
-            uniform.WaveStrength.set(1.0f);
+//        RenderSystem.setShader(() -> water);
 
-            uniform.NoiseScale.set(2f);
-            uniform.NoiseSpeed.set(1.45f);
-            uniform.NoiseStrength.set(0.08f);
+        VertexConsumer vc = buffer.getBuffer(WATER);
 
-            uniform.Bands.set(4.0f);
-            uniform.BandFactor.set(0.6f);
-            uniform.BandingBias.set(0.4f);
-
-            uniform.Alpha.set(1.6f);
-            uniform.HDRColor.set(1.0f, 1.0f, 1.0f, 1.1f);
-            uniform.ColorIntensity.set(0.5f);
-
-            uniform.HorizontalFrequency.set(6.0f);
-            uniform.VerticalFrequency.set(1.0f);
-            uniform.Spin.set(3.0f);
-            uniform.Size.set(2.1f);
-//        }
-
-        RenderSystem.setShader(() -> water);
-        VertexConsumer vc = buffer.getBuffer(waterType);
         // Uniform time
 
 //        if (!RenderSystem.getShader().getName().equals(ShaderRegistry.STYLISED_WATER.getName()))
@@ -106,6 +80,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
             Vector3f p1 = tri.vertexB.position;
             Vector3f p2 = tri.vertexC.position;
             Vector3f n  = tri.vertexA.normal;
+            n = n.normalize();
 
             float[] uv0 = uvPlanar(p0, n, TEX_SCALE);
             float[] uv1 = uvPlanar(p1, n, TEX_SCALE);
@@ -116,21 +91,22 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
                     .setColor(1.0f,1.0f,1.0f,1.0f).setUv(uv0[0], uv0[1])
 //                    .setOverlay(OverlayTexture.NO_OVERLAY)
                     .setLight(packedLight)
-                    .setNormal(last, n.x, n.y, n.z);
+                    .setNormal(last, 0, 1, 0);//n.x, n.y, n.z);
+
 
 //            vc.vertex(p1.x, p1.y, p1.z)
             vc.addVertex(last.pose(), p1.x, p1.y, p1.z)
                     .setColor(1.0f,1.0f,1.0f,1.0f).setUv(uv1[0], uv1[1])
 //                    .setOverlay(OverlayTexture.NO_OVERLAY)
                     .setLight(packedLight)
-                    .setNormal(last, n.x, n.y, n.z);
+                    .setNormal(last, 0, 1, 0);//n.x, n.y, n.z);
 
 //            vc.vertex(p2.x, p2.y, p2.z)
             vc.addVertex(last.pose(), p2.x, p2.y, p2.z)
                     .setColor(1.0f,1.0f,1.0f,1.0f).setUv(uv2[0], uv2[1])
 //                    .setOverlay(OverlayTexture.NO_OVERLAY)
                     .setLight(packedLight)
-                    .setNormal(last, n.x, n.y, n.z);
+                    .setNormal(last, 0, 1, 0);//n.x, n.y, n.z);
 
 ////             C again (degenerate 4th vertex so the QUADS mode groups correctly)
 //            vc.addVertex(last.pose(), p2.x, p2.y, p2.z)
@@ -139,6 +115,8 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
 //                    .setLight(packedLight)
 //                    .setNormal(last, n.x, n.y, n.z);
         }
+
+        Minecraft.getInstance().renderBuffers().bufferSource().endLastBatch();
 
         pose.popPose();
     }
