@@ -67,6 +67,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
         ShaderUniforms.StylisedWaterUniforms uniform = (ShaderUniforms.StylisedWaterUniforms) ShaderRegistry.STYLISED_WATER_UNIFORMS;
         // Values copied from the test effect in Photon
         uniform.TimeSpeed.set(-500f); // or whatever
+        uniform.Centre.set(entity.position().toVector3f());
 
         uniform.WaveScale.set(0.2f);
         uniform.WaveSpeed.set(1.0f);
@@ -76,12 +77,12 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
         uniform.NoiseSpeed.set(1.45f);
         uniform.NoiseStrength.set(0.08f);
 
-        uniform.Bands.set(4);
+        uniform.Bands.set(4.0f);
         uniform.BandFactor.set(0.6f);
         uniform.BandingBias.set(0.4f);
 
         uniform.Alpha.set(1.6f);
-        uniform.HDRColor.set(255,255,255,1.1f);
+        uniform.HDRColor.set(1.0f, 1.0f, 1.0f,1.1f);
         uniform.ColorIntensity.set(0.5f);
 
         uniform.HorizontalFrequency.set(6.0f);
@@ -114,21 +115,21 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
 
 //            vc.vertex( p0.x, p0.y, p0.z)
             vc.addVertex(last.pose(), p0.x, p0.y, p0.z)
-                    .setColor(255,255,255,255).setUv(uv0[0], uv0[1])
+                    .setColor(1.0f,1.0f,1.0f,1.0f).setUv(uv0[0], uv0[1])
                     .setOverlay(OverlayTexture.NO_OVERLAY)
                     .setLight(packedLight)
                     .setNormal(last, n.x, n.y, n.z);
 
 //            vc.vertex(p1.x, p1.y, p1.z)
             vc.addVertex(last.pose(), p1.x, p1.y, p1.z)
-                    .setColor(255,255,255,255).setUv(uv1[0], uv1[1])
+                    .setColor(1.0f,1.0f,1.0f,1.0f).setUv(uv1[0], uv1[1])
                     .setOverlay(OverlayTexture.NO_OVERLAY)
                     .setLight(packedLight)
                     .setNormal(last, n.x, n.y, n.z);
 
 //            vc.vertex(p2.x, p2.y, p2.z)
             vc.addVertex(last.pose(), p2.x, p2.y, p2.z)
-                    .setColor(255,255,255,255).setUv(uv2[0], uv2[1])
+                    .setColor(1.0f,1.0f,1.0f,1.0f).setUv(uv2[0], uv2[1])
                     .setOverlay(OverlayTexture.NO_OVERLAY)
                     .setLight(packedLight)
                     .setNormal(last, n.x, n.y, n.z);
