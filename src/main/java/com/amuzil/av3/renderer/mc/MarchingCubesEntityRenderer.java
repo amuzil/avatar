@@ -25,7 +25,8 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
     private final Map<UUID, CachedMesh> meshCache = new HashMap<>();
 //    private static final ResourceLocation WHITE_TEX = Avatar.id("textures/misc/white.png");
     private static final ResourceLocation WHITE_TEX = Avatar.id("textures/water.png");
-    private static final ResourceLocation WAVE_NOISE = Avatar.id("textures/wave_noise.png");
+    private static final ResourceLocation GRADIENT = Avatar.id("textures/vfx/water_gradient.png");
+    private static final ResourceLocation WAVE_NOISE = Avatar.id("textures/vfx/wave_noise.png");
     private static final int GRID_SIZE = 32;
     private static final float CELL_SIZE = 0.25f;
     private static final float ISOLEVEL = 0.0f;
@@ -51,7 +52,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
         // Base Entity Texture (just in case; might be ignored)
         RenderSystem.setShaderTexture(0, WHITE_TEX);
         // Gradient Texture
-        RenderSystem.setShaderTexture(1, WHITE_TEX);
+        RenderSystem.setShaderTexture(1, GRADIENT);
         // Noise texture
         RenderSystem.setShaderTexture(2, WAVE_NOISE);
         // Wave texture
@@ -61,7 +62,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
         water.setSampler("SamplerGradient", 1);
         water.setSampler("WaveTex", 2);
         water.setSampler("NoiseTex", 3);
-   
+
         // Uniform time
         ShaderUniforms.StylisedWaterUniforms uniform = (ShaderUniforms.StylisedWaterUniforms) ShaderRegistry.STYLISED_WATER_UNIFORMS;
         // Values copied from the test effect in Photon
