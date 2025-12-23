@@ -6,6 +6,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
@@ -27,6 +28,11 @@ public class ShaderRegistry {
     public static ShaderUniforms
             STYLISED_WATER_UNIFORMS;
 
+    public static VertexFormat
+            STYLISED_ELEMENT = VertexFormat.builder().add("Position", VertexFormatElement.POSITION)
+            .add("UV0", VertexFormatElement.UV0).add("UV2", VertexFormatElement.UV2)
+            .add("Color", VertexFormatElement.COLOR).add("Normal", VertexFormatElement.NORMAL).padding(1).build();
+
     @SubscribeEvent
     public static void onRegisterShaders(RegisterShadersEvent event) throws IOException {
         event.registerShader(
@@ -40,7 +46,7 @@ public class ShaderRegistry {
         event.registerShader(
                 new ShaderInstance(event.getResourceProvider(),
                         ResourceLocation.fromNamespaceAndPath("av3", "dynamic_mesh/stylised_water"),
-                        DefaultVertexFormat.NEW_ENTITY
+                        STYLISED_ELEMENT
                 ),
                 shader -> {
                     STYLISED_WATER = shader;
@@ -84,7 +90,7 @@ public class ShaderRegistry {
     public static RenderType waterRenderType(ResourceLocation tex) {
         return RenderType.create(
                 "stylised_water",
-                DefaultVertexFormat.NEW_ENTITY,
+                STYLISED_ELEMENT,
                 VertexFormat.Mode.TRIANGLES,
                 512,
                 true,
@@ -92,6 +98,7 @@ public class ShaderRegistry {
                 RenderType.CompositeState.builder()
                         .setShaderState(new RenderStateShard.ShaderStateShard(() -> ShaderRegistry.STYLISED_WATER))
                         .setTransparencyState(WATER_TRANSPARENCY)
+                        .setTextureState(new RenderStateShard.TextureStateShard(tex, false, false))
                         .setLightmapState(RenderStateShard.LIGHTMAP)
                         .setCullState(new RenderStateShard.CullStateShard(false))
                         .createCompositeState(true)

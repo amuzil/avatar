@@ -135,11 +135,11 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
                     .setNormal(last, n.x, n.y, n.z);
 
 //             C again (degenerate 4th vertex so the QUADS mode groups correctly)
-            vc.addVertex(last.pose(), p2.x, p2.y, p2.z)
-                    .setColor(255,255,255,255).setUv(uv2[0], uv2[1])
-                    .setOverlay(OverlayTexture.NO_OVERLAY)
-                    .setLight(packedLight)
-                    .setNormal(last, n.x, n.y, n.z);
+//            vc.addVertex(last.pose(), p2.x, p2.y, p2.z)
+//                    .setColor(255,255,255,255).setUv(uv2[0], uv2[1])
+//                    .setOverlay(OverlayTexture.NO_OVERLAY)
+//                    .setLight(packedLight)
+//                    .setNormal(last, n.x, n.y, n.z);
         }
 
         pose.popPose();
