@@ -19,7 +19,9 @@ import java.io.IOException;
 @EventBusSubscriber(value = Dist.CLIENT, modid = Avatar.MOD_ID)
 public class ShaderRegistry {
 
-    public static ShaderInstance TRIPLANAR_SHADER;
+    public static ShaderInstance
+            TRIPLANAR_SHADER,
+            STYLISED_WATER;
 
     @SubscribeEvent
     public static void onRegisterShaders(RegisterShadersEvent event) throws IOException {
@@ -29,8 +31,15 @@ public class ShaderRegistry {
                         ResourceLocation.fromNamespaceAndPath("av3", "dynamic_mesh/triplanar"), // matches your .json name
                         DefaultVertexFormat.NEW_ENTITY
                 ),
-                shader -> TRIPLANAR_SHADER = shader
-        );
+                shader -> TRIPLANAR_SHADER = shader);
+
+        event.registerShader(
+                new ShaderInstance(event.getResourceProvider(),
+                        ResourceLocation.fromNamespaceAndPath("av3", "dynamic_mesh/stylised_water"),
+                        DefaultVertexFormat.NEW_ENTITY
+                ),
+                shader -> STYLISED_WATER = shader);
+
     }
 
     public static RenderType getTriplanarRenderType(ResourceLocation tex) {
@@ -58,6 +67,41 @@ public class ShaderRegistry {
                     () -> {
                         RenderSystem.enableBlend();
                         RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+                    },
+                    () -> {
+                        RenderSystem.disableBlend();
+                        RenderSystem.defaultBlendFunc();
+                    }
+            );
+
+    public static RenderType waterRenderType(ResourceLocation tex) {
+        return RenderType.create(
+                "stylised_water",
+                DefaultVertexFormat.NEW_ENTITY,
+                VertexFormat.Mode.TRIANGLES,
+                512,
+                true,
+                true,
+                RenderType.CompositeState.builder()
+                        .setShaderState(new RenderStateShard.ShaderStateShard(() -> ShaderRegistry.STYLISED_WATER))
+                        .setTransparencyState(WATER_TRANSPARENCY)
+                        .setTextureState(new RenderStateShard.TextureStateShard(tex, false, false))
+                        .setCullState(new RenderStateShard.CullStateShard(false))
+                        .createCompositeState(true)
+        );
+    }
+
+    private static final RenderStateShard.TransparencyStateShard WATER_TRANSPARENCY =
+            new RenderStateShard.TransparencyStateShard(
+                    "water_transparency",
+                    () -> {
+                        RenderSystem.enableBlend();
+                        RenderSystem.blendFuncSeparate(
+                                GlStateManager.SourceFactor.SRC_ALPHA,
+                                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+                                GlStateManager.SourceFactor.ONE,
+                                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA
+                        );
                     },
                     () -> {
                         RenderSystem.disableBlend();

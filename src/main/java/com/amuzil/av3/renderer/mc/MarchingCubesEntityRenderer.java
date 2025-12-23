@@ -5,10 +5,12 @@ import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.renderer.sdf.IHasSDF;
 import com.amuzil.av3.renderer.sdf.SignedDistanceFunction;
 import com.amuzil.magus.registry.ShaderRegistry;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -22,7 +24,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
     private final Map<UUID, CachedMesh> meshCache = new HashMap<>();
 //    private static final ResourceLocation WHITE_TEX = Avatar.id("textures/misc/white.png");
     private static final ResourceLocation WHITE_TEX = Avatar.id("textures/water.png");
-
+    private static final ResourceLocation WAVE_NOISE = Avatar.id("textures/wave_noise.png");
     private static final int GRID_SIZE = 32;
     private static final float CELL_SIZE = 0.25f;
     private static final float ISOLEVEL = 0.0f;
@@ -39,6 +41,18 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
                        PoseStack pose, MultiBufferSource buffer, int packedLight) {
         pose.pushPose();
 
+        ShaderInstance water = ShaderRegistry.STYLISED_WATER;
+        if (water == null)
+            return;
+
+        RenderSystem.setShader(() -> water);
+
+        // gradient sampler
+        RenderSystem._setShaderTexture(0, WHITE_TEX);
+        // Noise texture
+        RenderSystem.setShaderTexture(1, WAVE_NOISE);
+        // Wave texture
+        RenderSystem.setShaderTexture(2, WAVE_NOISE);
         // Center the generated volume around the entity origin
 //        float volumeSize = (GRID_SIZE - 1) * CELL_SIZE;
 //        float half = volumeSize * 0.5f;
@@ -48,8 +62,9 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
 
         VertexConsumer vc = buffer.getBuffer(RenderType.entityTranslucent(WHITE_TEX, true));
 //        VertexConsumer vc = buffer.getBuffer(ShaderRegistry.getTriplanarRenderType(getTextureLocation(entity)));
-//        VertexConsumer vC = buffer.getBuffer(ShaderRegistry.g, false));
+//        VertexConsumer vc = bufferSource.getBuffer(ShaderRegistry.stylisedWater(baseTex));
         var last = pose.last();
+
 
         for (int i = 0; i < mesh.triangles.size(); i++) {
             Triangle tri = mesh.triangles.get(i);
