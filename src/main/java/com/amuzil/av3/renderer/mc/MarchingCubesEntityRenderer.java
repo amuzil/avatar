@@ -95,9 +95,9 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
 
         CachedMesh mesh = getOrBuildMesh(partialTick, entity);
 
-        VertexConsumer vc = buffer.getBuffer(RenderType.entityTranslucent(WHITE_TEX, true));
+//        VertexConsumer vc = buffer.getBuffer(RenderType.entityTranslucent(WHITE_TEX, true));
 //        VertexConsumer vc = buffer.getBuffer(ShaderRegistry.getTriplanarRenderType(getTextureLocation(entity)));
-//        VertexConsumer vc = bufferSource.getBuffer(ShaderRegistry.stylisedWater(baseTex));
+        VertexConsumer vc = buffer.getBuffer(ShaderRegistry.waterRenderType(WHITE_TEX));
         var last = pose.last();
 
 
