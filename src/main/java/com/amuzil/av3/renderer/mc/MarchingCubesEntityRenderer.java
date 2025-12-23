@@ -48,13 +48,20 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
 
         RenderSystem.setShader(() -> water);
 
-        // gradient sampler
+        // Base Entity Texture (just in case; might be ignored)
         RenderSystem.setShaderTexture(0, WHITE_TEX);
+        // Gradient Texture
+        RenderSystem.setShaderTexture(1, WHITE_TEX);
         // Noise texture
-        RenderSystem.setShaderTexture(1, WAVE_NOISE);
-        // Wave texture
         RenderSystem.setShaderTexture(2, WAVE_NOISE);
+        // Wave texture
+        RenderSystem.setShaderTexture(3, WAVE_NOISE);
 
+        // Now we match the samplers to the set textures
+        water.setSampler("SamplerGradient", 1);
+        water.setSampler("WaveTex", 2);
+        water.setSampler("NoiseTex", 3);
+   
         // Uniform time
         ShaderUniforms.StylisedWaterUniforms uniform = (ShaderUniforms.StylisedWaterUniforms) ShaderRegistry.STYLISED_WATER_UNIFORMS;
         // Values copied from the test effect in Photon
