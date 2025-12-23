@@ -48,7 +48,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
         RenderSystem.setShader(() -> water);
 
         // gradient sampler
-        RenderSystem._setShaderTexture(0, WHITE_TEX);
+        RenderSystem.setShaderTexture(0, WHITE_TEX);
         // Noise texture
         RenderSystem.setShaderTexture(1, WAVE_NOISE);
         // Wave texture
