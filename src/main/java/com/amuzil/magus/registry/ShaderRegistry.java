@@ -7,6 +7,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
@@ -134,8 +135,9 @@ public class ShaderRegistry {
                             s.setSampler("WaveTex", 8);
                             s.setSampler("NoiseTex", 9);
 
-//                            ((ShaderUniforms.StylisedWaterUniforms) STYLISED_WATER_UNIFORMS).Size.set(8.1f); // could be dynamic
-
+//                            ((ShaderUniforms.StylisedWaterUniforms) STYLISED_WATER_UNIFORMS).ColorIntensity.set(1f); // could be dynamic
+                            float t = (float)(Minecraft.getInstance().level.getGameTime());
+                            s.safeGetUniform("GameTime").set(t);
                         }
                     },
                     () -> {

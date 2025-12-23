@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Vector3f;
 
@@ -111,12 +112,12 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
 ////             C again (degenerate 4th vertex so the QUADS mode groups correctly)
 //            vc.addVertex(last.pose(), p2.x, p2.y, p2.z)
 //                    .setColor(255,255,255,255).setUv(uv2[0], uv2[1])
-//                    .setOverlay(OverlayTexture.NO_OVERLAY)
+////                    .setOverlay(OverlayTexture.NO_OVERLAY)
 //                    .setLight(packedLight)
-//                    .setNormal(last, n.x, n.y, n.z);
+//                    .setNormal(last, 0, 1, 0);//n.x, n.y, n.z);
         }
 
-        Minecraft.getInstance().renderBuffers().bufferSource().endLastBatch();
+//        Minecraft.getInstance().renderBuffers().bufferSource().endLastBatch();
 
         pose.popPose();
     }

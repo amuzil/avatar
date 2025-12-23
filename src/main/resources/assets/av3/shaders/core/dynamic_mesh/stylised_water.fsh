@@ -52,7 +52,7 @@ out vec4 fragColor;
 
 void main() {
     float time = GameTime * NoiseSpeed * TimeSpeed;
-    float normal_facing = abs(dot(ViewNormal, ViewDir));
+    float normal_facing = 0.5 * (dot(ViewNormal, ViewDir)) + 0.5;
     float noise_value = texture(NoiseTex, vec2(texCoord0.x * HorizontalFrequency + Spin * (time / 2.0),
     (texCoord0.y * VerticalFrequency) + time)).r;
 
@@ -73,7 +73,7 @@ void main() {
 
     vec4 band_color = vec4(0,0,0,0);
     if (steps <= 1.0) {
-        band_color = texture(SamplerGradient, vec2(1, 1));
+        band_color = texture(SamplerGradient, vec2(0.5, 0.85));
     } else {
         // 4) quantize + blend between adjacent steps
         float q  = t * (steps - 1.0);
@@ -86,8 +86,8 @@ void main() {
         float x0 = i0 / (steps - 1.0);
         float x1 = min(i0 + 1.0, steps - 1.0) / (steps - 1.0);
 
-        vec4 c0 = texture(SamplerGradient, vec2(1, 1));
-        vec4 c1 = texture(SamplerGradient, vec2(1, 1));
+        vec4 c0 = texture(SamplerGradient, vec2(0.5, x0));
+        vec4 c1 = texture(SamplerGradient, vec2(0.5, x1));
         band_color = mix(c0, c1, f);
     }
 //    if(band <= bands * 2 / 3){
@@ -104,7 +104,7 @@ void main() {
 //    }
 
     // base color (no clamping to brightness)
-    vec3 color = brightness * (vec3(1.0) - (band_color.xyz * -ColorIntensity)) * band_color.xyz;
+    vec3 color = band_color.xyz * ColorIntensity;//brightness * (vec3(1.0) - (band_color.xyz * -ColorIntensity)) * band_color.xyz;
 
     // include photon particle color pipeline (recommended)
 //    color *= vertexColor.rgb;
@@ -115,5 +115,5 @@ void main() {
 
     // alpha should come from something real
     float a = Alpha * band_color.a * vertexColor.a;
-    fragColor = linear_fog(vec4(color, a) * ColorModulator, vertexDistance, FogStart, FogEnd, FogColor);
+    fragColor = linear_fog(vec4(color, ColorIntensity) * ColorModulator, vertexDistance, FogStart, FogEnd, FogColor);
 }
