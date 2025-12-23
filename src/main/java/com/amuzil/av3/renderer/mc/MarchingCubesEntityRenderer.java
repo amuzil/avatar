@@ -57,8 +57,29 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
 
         // Uniform time
         ShaderUniforms.StylisedWaterUniforms uniform = (ShaderUniforms.StylisedWaterUniforms) ShaderRegistry.STYLISED_WATER_UNIFORMS;
-        uniform.Alpha.set();
+        // Values copied from the test effect in Photon
+        uniform.TimeSpeed.set(-500f); // or whatever
 
+        uniform.WaveScale.set(0.2f);
+        uniform.WaveSpeed.set(1.0f);
+        uniform.WaveStrength.set(1.0f);
+
+        uniform.NoiseScale.set(2f);
+        uniform.NoiseSpeed.set(1.45f);
+        uniform.NoiseStrength.set(0.08f);
+
+        uniform.Bands.set(4);
+        uniform.BandFactor.set(0.6f);
+        uniform.BandingBias.set(0.4f);
+
+        uniform.Alpha.set(1.6f);
+        uniform.HDRColor.set(255,255,255,1.1f);
+        uniform.ColorIntensity.set(0.5f);
+
+        uniform.HorizontalFrequency.set(6.0f);
+        uniform.VerticalFrequency.set(1.0f);
+        uniform.Spin.set(3.0f);
+        uniform.Size.set(2.1f);
         // Center the generated volume around the entity origin
 //        float volumeSize = (GRID_SIZE - 1) * CELL_SIZE;
 //        float half = volumeSize * 0.5f;
