@@ -1,7 +1,14 @@
 #version 330 core
 
 #moj_import <fog.glsl>
-#moj_import <photon:particle.glsl>
+
+in vec3 Position;
+in vec4 Color;
+// Texture UVs
+in vec2 UV0;
+// Light Map
+in ivec2 UV2;
+in vec3 Normal;
 
 uniform sampler2D Sampler2;
 
@@ -32,13 +39,13 @@ out vec3 ViewPos;
 out vec4 fragColor;
 
 void main() {
-    ParticleData data = getParticleData();
-    texCoord0 = data.UV;
+
+    texCoord0 = UV0;
 
     float time = GameTime * -500;
 
     // in vertex shader
-    vec3 p = data.Position;
+    vec3 p = Position;
 
     // world-space planar mapping (continuous)
     vec2 flowUV = p.xz * WaveScale + vec2(time * WaveSpeed);
@@ -48,14 +55,14 @@ void main() {
     float noise = texture(NoiseTex, flowUV * NoiseScale).r * 2.0 - 1.0;
     float disp = wave * WaveStrength + noise * NoiseStrength;
 
-    vec3 posWS = data.Position + data.Normal * disp;
+    vec3 posWS = p + Normal * disp;
 
     // Compute view-space position
     vec4 ViewPos4 = ModelViewMat * vec4(posWS, 1.0);
     ViewPos  = ViewPos4.xyz;
 
     // Normal into view space
-    ViewNormal = normalize(mat3(ModelViewMat) * data.Normal);
+    ViewNormal = normalize(mat3(ModelViewMat) * Normal);
 
     // View direction = from fragment toward camera (camera at 0,0,0 in view space)
     ViewDir = -normalize(ViewPos);
@@ -64,7 +71,7 @@ void main() {
     vertexDistance = fog_distance(ViewPos4.xyz, FogShape);
 
 
-    vertexColor = data.Color * texelFetch(Sampler2, data.LightUV / 16, 0);
+    vertexColor = Color * texelFetch(Sampler2, UV2 / 16, 0);
 
     gl_Position = ProjMat * ViewPos4;
 

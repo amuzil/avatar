@@ -1,7 +1,6 @@
 #version 330 core
 
 #moj_import <fog.glsl>
-#moj_import <photon:particle_utils.glsl>
 
 uniform sampler2D SamplerGradient;
 uniform sampler2D NoiseTex;
