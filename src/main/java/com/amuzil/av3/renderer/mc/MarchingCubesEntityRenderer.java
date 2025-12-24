@@ -80,8 +80,19 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
             Vector3f p0 = tri.vertexA.position;
             Vector3f p1 = tri.vertexB.position;
             Vector3f p2 = tri.vertexC.position;
-            Vector3f n  = tri.vertexA.normal;
-            n = n.normalize();
+
+
+            Vector3f nA = tri.vertexA.normal;
+            Vector3f nB = tri.vertexB.normal;
+            Vector3f nC = tri.vertexC.normal;
+
+//            Vector3f posNormalA = p0.sub(entity.position().toVector3f()).normalize();
+//            Vector3f posNormalB = p1.sub(entity.position().toVector3f()).normalize();
+//            Vector3f posNormalC = p2.sub(entity.position().toVector3f()).normalize();
+//
+//            Vector3f e1 = p1.sub(p0);
+//            Vector3f e2 = p2.sub(p0);
+            Vector3f n = (nA.add(nB).add(nC).mul(1 / 3f)).normalize();//e1.cross(e2).normalize();
 
             float[] uv0 = uvPlanar(p0, n, TEX_SCALE);
             float[] uv1 = uvPlanar(p1, n, TEX_SCALE);
@@ -92,7 +103,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
                     .setColor(1.0f,1.0f,1.0f,1.0f).setUv(uv0[0], uv0[1])
 //                    .setOverlay(OverlayTexture.NO_OVERLAY)
                     .setLight(packedLight)
-                    .setNormal(last, 0, 1, 0);//n.x, n.y, n.z);
+                    .setNormal(last, n.x, n.y, n.z);
 
 
 //            vc.vertex(p1.x, p1.y, p1.z)
@@ -100,14 +111,14 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
                     .setColor(1.0f,1.0f,1.0f,1.0f).setUv(uv1[0], uv1[1])
 //                    .setOverlay(OverlayTexture.NO_OVERLAY)
                     .setLight(packedLight)
-                    .setNormal(last, 0, 1, 0);//n.x, n.y, n.z);
+                    .setNormal(last, n.x, n.y, n.z);
 
 //            vc.vertex(p2.x, p2.y, p2.z)
             vc.addVertex(last.pose(), p2.x, p2.y, p2.z)
                     .setColor(1.0f,1.0f,1.0f,1.0f).setUv(uv2[0], uv2[1])
 //                    .setOverlay(OverlayTexture.NO_OVERLAY)
                     .setLight(packedLight)
-                    .setNormal(last, 0, 1, 0);//n.x, n.y, n.z);
+                    .setNormal(last, n.x, n.y, n.z);
 
 ////             C again (degenerate 4th vertex so the QUADS mode groups correctly)
 //            vc.addVertex(last.pose(), p2.x, p2.y, p2.z)

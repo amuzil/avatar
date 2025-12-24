@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -124,6 +125,7 @@ public class ShaderRegistry {
             new RenderStateShard.TexturingStateShard(
                     "water_setup",
                     () -> {
+                        TextureManager manager = Minecraft.getInstance().getTextureManager();
                         // These run RIGHT before the RenderType draws.
                         RenderSystem.setShaderTexture(7, WATER_GRADIENT);
                         RenderSystem.setShaderTexture(8, WATER_WAVE_NOISE);
@@ -131,13 +133,20 @@ public class ShaderRegistry {
 
                         ShaderInstance s = RenderSystem.getShader();
                         if (s != null && s.getName().equals(STYLISED_WATER.getName())) {
-                            s.setSampler("SamplerGradient", 7);
-                            s.setSampler("WaveTex", 8);
-                            s.setSampler("NoiseTex", 9);
+                            s.setSampler("SamplerGradient", manager.getTexture(WATER_GRADIENT).getId());
+                            s.setSampler("WaveTex", manager.getTexture(WATER_WAVE_NOISE).getId());
+                            s.setSampler("NoiseTex", manager.getTexture(WATER_WAVE_NOISE).getId());
 
 //                            ((ShaderUniforms.StylisedWaterUniforms) STYLISED_WATER_UNIFORMS).ColorIntensity.set(1f); // could be dynamic
                             float t = (float)(Minecraft.getInstance().level.getGameTime());
                             s.safeGetUniform("GameTime").set(t);
+//                            s.safeGetUniform("HDRColor").set(0.0f, 89 / 255f, 1f, 0.5f);
+                            s.safeGetUniform("WaveStrength").set(0.0f);
+                            s.safeGetUniform("WaveScale").set(0.1f);
+                            s.safeGetUniform("NoiseStrength").set(0.0f);
+                            s.safeGetUniform("HorizontalFrequency").set(4f);
+                            s.safeGetUniform("Spin").set(6f);
+                            s.safeGetUniform("VerticalFrequency").set(4f);
                         }
                     },
                     () -> {

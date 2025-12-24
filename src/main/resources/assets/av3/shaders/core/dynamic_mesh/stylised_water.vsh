@@ -41,6 +41,7 @@ void main() {
 
     float time = GameTime * TimeSpeed;
 
+    vec3 n = normalize(Normal);
     // in vertex shader
     vec3 p = Position;
 
@@ -52,14 +53,14 @@ void main() {
     float noise = texture(NoiseTex, flowUV * NoiseScale).r * 2.0 - 1.0;
     float disp = wave * WaveStrength + noise * NoiseStrength;
 
-    vec3 posWS = p + Normal * disp;
+    vec3 posWS = p + n * disp;
 
     // Compute view-space position
     vec4 ViewPos4 = ModelViewMat * vec4(posWS, 1.0);
     ViewPos  = ViewPos4.xyz;
 
     // Normal into view space
-    ViewNormal = normalize(mat3(ModelViewMat) * Normal);
+    ViewNormal = normalize(mat3(ModelViewMat) * n);
 
     // View direction = from fragment toward camera (camera at 0,0,0 in view space)
     ViewDir = -normalize(ViewPos);
