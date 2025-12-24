@@ -1,0 +1,9 @@
+{
+  "loader": "neoforge:obj",
+  "model": "av3:models/obj/torus.obj",
+  "mtl_override": "av3:models/obj/torus.mtl",
+  "textures": {},
+  "automatic_culling": false,
+  "shade_quads": false,
+  "flip_v": true
+}
