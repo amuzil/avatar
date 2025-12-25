@@ -65,6 +65,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
 
 //        RenderSystem.setShader(() -> water);
 
+        // Need to eventually do 2 render passes...
         VertexConsumer vc = buffer.getBuffer(WATER);
 
         // Uniform time
@@ -95,6 +96,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
             normalSums.computeIfAbsent(new Vertex.VKey(p2), k -> new Vector3f()).add(n);
         }
 
+        // Render pass
         for (int i = 0; i < mesh.triangles.size(); i++) {
             Triangle tri = mesh.triangles.get(i);
             Vector3f p0 = tri.vertexA.position;
@@ -109,10 +111,6 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
             Vector3f n0 = new Vector3f(normalSums.get(new Vertex.VKey(p0))).normalize();
             Vector3f n1 = new Vector3f(normalSums.get(new Vertex.VKey(p1))).normalize();
             Vector3f n2 = new Vector3f(normalSums.get(new Vertex.VKey(p2))).normalize();
-//
-//            Vector3f e1 = new Vector3f(p1).sub(p0).normalize();
-//            Vector3f e2 = new Vector3f(p2).sub(p0).normalize();
-//            Vector3f n = e1.cross(e2).normalize();
 
             float[] uv0 = uvPlanar(p0, n0, TEX_SCALE);
             float[] uv1 = uvPlanar(p1, n1, TEX_SCALE);
