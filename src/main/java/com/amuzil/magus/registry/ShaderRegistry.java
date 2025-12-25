@@ -70,18 +70,18 @@ public class ShaderRegistry {
 
                     shaderUniforms.NoiseScale.set(2f);
                     shaderUniforms.NoiseSpeed.set(1.45f);
-                    shaderUniforms.NoiseStrength.set(0.08f);
+                    shaderUniforms.NoiseStrength.set(0.01f);
 
                     shaderUniforms.Bands.set(4.0f);
                     shaderUniforms.BandFactor.set(0.6f);
-                    shaderUniforms.BandingBias.set(0.4f);
+                    shaderUniforms.BandingBias.set(0.37f);
 
                     shaderUniforms.Alpha.set(0.6f);
                     shaderUniforms.HDRColor.set(1.0f, 1.0f, 1.0f, 1.0f);
                     shaderUniforms.ColorIntensity.set(1f);
 
-                    shaderUniforms.HorizontalFrequency.set(6.0f);
-                    shaderUniforms.VerticalFrequency.set(1.0f);
+                    shaderUniforms.HorizontalFrequency.set(0.75f);
+                    shaderUniforms.VerticalFrequency.set(0.75f);
                     shaderUniforms.Spin.set(3.0f);
                     shaderUniforms.Size.set(2.1f);
 
@@ -141,12 +141,16 @@ public class ShaderRegistry {
                             float t = (float)(Minecraft.getInstance().level.getGameTime());
                             s.safeGetUniform("GameTime").set(t);
 //                            s.safeGetUniform("HDRColor").set(0.0f, 89 / 255f, 1f, 0.5f);
-                            s.safeGetUniform("WaveStrength").set(0.0f);
+                            s.safeGetUniform("WaveStrength").set(0.15f);
                             s.safeGetUniform("WaveScale").set(0.1f);
-                            s.safeGetUniform("NoiseStrength").set(0.0f);
-                            s.safeGetUniform("HorizontalFrequency").set(4f);
-                            s.safeGetUniform("Spin").set(6f);
-                            s.safeGetUniform("VerticalFrequency").set(4f);
+                            s.safeGetUniform("NoiseStrength").set(0.02f);
+//                            s.safeGetUniform("HorizontalFrequency").set(0.5f);
+//                            s.safeGetUniform("Spin").set(6f);
+//                            s.safeGetUniform("VerticalFrequency").set(0.5f);
+//                            s.safeGetUniform("Bands").set(4.0f);
+//                            s.safeGetUniform("BandingBias").set(0.37f);
+//                            s.safeGetUniform("BandFactor").set(100000f);
+                            s.safeGetUniform("Alpha").set(0.65f);
                         }
                     },
                     () -> {
@@ -168,7 +172,7 @@ public class ShaderRegistry {
                         .setTextureState(new RenderStateShard.TextureStateShard(tex, false, false))
                         .setLightmapState(RenderStateShard.LIGHTMAP)
                         .setTexturingState(WATER_SETUP)
-                        .setCullState(new RenderStateShard.CullStateShard(false))
+                        .setCullState(RenderStateShard.CULL)
                         .createCompositeState(true)
         );
     }

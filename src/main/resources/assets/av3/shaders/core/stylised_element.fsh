@@ -68,10 +68,8 @@ void main() {
     float bands = max(Bands, 1.0);
     float band = normal_facing * bands * BandingBias;
 
-    float mask = smoothstep(0.05, 0.12, band);
-
     float t = (band - bands / 2) / max(bands - bands / 2, 1e-6);
-    t = clamp(t, 0.0, 1.0);
+//    t = clamp(t, 0.0, 1.0);
 
     float steps = max(bands, 1.0);
 

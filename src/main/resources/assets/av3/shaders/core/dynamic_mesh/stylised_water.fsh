@@ -26,7 +26,7 @@ uniform float NoiseSpeed;
 uniform float TimeSpeed;
 //time specifically for the wave noise texture
 uniform float Spin; //Twisting motion of the water
-uniform float brightness = 1.0;
+uniform float brightness = 0.8;
 uniform float ColorIntensity;
 //Tiling frequency of the noise accross the mesh
 uniform float HorizontalFrequency;
@@ -36,10 +36,10 @@ uniform float Size;
 //affects total size
 uniform float BandingBias;
 
-uniform vec4 color1  = vec4(1.0, 1.0, 1.0, 0.5);
-uniform vec4 color2  = vec4(0.274, 0.474, 0.98, 0.5);
-uniform vec4 color3 = vec4(0.059, 0.389, 0.85, 0.5);
-uniform vec4 color4  = vec4(0.0, 0.267, 1.0, 0.5);
+uniform vec4 color1  = vec4(1.0, 1.0, 1.0, 1.0);
+uniform vec4 color2  = vec4(0.274, 0.474, 0.98, 0.75);
+uniform vec4 color3 = vec4(0.059, 0.389, 0.85, 0.85);
+uniform vec4 color4  = vec4(0.0, 0.267, 1.0, 1.0);
 
 in float vertexDistance;
 in vec2 texCoord0;
@@ -53,7 +53,7 @@ out vec4 fragColor;
 void main() {
     float time = GameTime * NoiseSpeed * TimeSpeed;
     vec3 LightDir = normalize(ViewPos - vec3(3, 8, -1));
-    float normal_facing = 0.5 * (dot(normalize(ViewNormal), ViewDir)) + 0.5;
+    float normal_facing = 0.5 * (dot(abs(normalize(ViewNormal)), abs(normalize(ViewDir)))) + 0.5;
     float noise_value = texture(NoiseTex, vec2(texCoord0.x * HorizontalFrequency + Spin * (time / 2.0),
     (texCoord0.y * VerticalFrequency) + time)).r;
 
@@ -74,7 +74,7 @@ void main() {
 
     vec4 band_color = vec4(0,0,0,0);
     if (steps <= 1.0) {
-        band_color = texture(SamplerGradient, vec2(0.85, 0.5));
+        band_color = texture(SamplerGradient, vec2(0.9, 0));
     } else {
         // 4) quantize + blend between adjacent steps
         float q  = t * (steps - 1.0);
@@ -85,28 +85,26 @@ void main() {
         f = smoothstep(0.0, 1.0, f);
 
         float x0 = i0 / (steps - 1.0);
-        float x1 = min(i0 + 1.0, steps - 1.0) / (steps - 1.0);
+        float x1 = min(i0 + (steps / bands), steps - 1.0) / (steps - 1.0);
 
         vec4 c0 = texture(SamplerGradient, vec2(x0, 0.5));
         vec4 c1 = texture(SamplerGradient, vec2(x1, 0.5));
         band_color = mix(c0, c1, f);
     }
-//    if(band <= bands * 2 / 3){
+//    if(band <= 2.0){
 //        band_color = mix(color1, color2, -0.01 / (band-2.01)); //Mixes the color bands to make a slight gradient
 //    }
-//    else if (band <= bands * 5 / 6) {
+//    else if (band <= 2.5) {
 //        band_color = mix(color2, color3, -0.01 / (band-2.51));
 //    }
-//    else if (band <= bands * 0.95) {
+//    else if (band <= 2.9) {
 //        band_color = mix(color3, color4, -0.01 / (band-2.91));
 //    }
 //    else if (band >= 0.0) {
 //        band_color = color4;
 //    }
-
     // base color (no clamping to brightness)
-    vec3 color = clamp(brightness * (vec3(1.0, 1.0, 1.0) - (band_color.xyz * -ColorIntensity)) * band_color.xyz,
-    vec3(0.0, 0.0, 0.0), vec3(brightness, brightness, brightness));
+    vec3 color = brightness * (vec3(1.0) - (band_color.xyz * -ColorIntensity)) * band_color.xyz;
 
     // include photon particle color pipeline (recommended)
     color *= vertexColor.rgb;
@@ -117,6 +115,5 @@ void main() {
 
     // alpha should come from something real
     float a = Alpha * band_color.a * vertexColor.a;
-    a = clamp(a, 0, 1.0);
     fragColor = linear_fog(vec4(color, a) * ColorModulator, vertexDistance, FogStart, FogEnd, FogColor);
 }

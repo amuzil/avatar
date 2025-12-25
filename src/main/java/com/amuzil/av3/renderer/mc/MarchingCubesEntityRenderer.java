@@ -32,6 +32,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
     private static final RenderType WATER = ShaderRegistry.waterRenderType(WHITE_TEX);
     final float TEX_SCALE = 2.0f; // e.g. 2 repeats per block
 
+    HashMap<Vertex.VKey, Vector3f> normalSums = new HashMap<>();
     PointData[][][] voxels = new PointData[GRID_SIZE][GRID_SIZE][GRID_SIZE];
     Random random = new Random();
 
@@ -74,6 +75,25 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
         pose.pushPose();
         var last = pose.last();
 
+        // TODO: Add a back face pass so you can see inside the water mesh.
+        // Just front face for now.
+
+        // First pass
+        for (int i = 0; i < mesh.triangles.size(); i++) {
+            Triangle tri = mesh.triangles.get(i);
+            Vector3f p0 = tri.vertexA.position;
+            Vector3f p1 = tri.vertexB.position;
+            Vector3f p2 = tri.vertexC.position;
+            Vector3f e1 = new Vector3f(p1).sub(p0).normalize();
+            Vector3f e2 = new Vector3f(p2).sub(p0).normalize();
+            Vector3f n = e1.cross(e2); // area-weighted
+            if (n.lengthSquared() < 1e-12f) continue;
+            n.normalize();
+
+            normalSums.computeIfAbsent(new Vertex.VKey(p0), k -> new Vector3f()).add(n);
+            normalSums.computeIfAbsent(new Vertex.VKey(p1), k -> new Vector3f()).add(n);
+            normalSums.computeIfAbsent(new Vertex.VKey(p2), k -> new Vector3f()).add(n);
+        }
 
         for (int i = 0; i < mesh.triangles.size(); i++) {
             Triangle tri = mesh.triangles.get(i);
@@ -86,24 +106,24 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
             Vector3f nB = tri.vertexB.normal;
             Vector3f nC = tri.vertexC.normal;
 
-//            Vector3f posNormalA = p0.sub(entity.position().toVector3f()).normalize();
-//            Vector3f posNormalB = p1.sub(entity.position().toVector3f()).normalize();
-//            Vector3f posNormalC = p2.sub(entity.position().toVector3f()).normalize();
+            Vector3f n0 = new Vector3f(normalSums.get(new Vertex.VKey(p0))).normalize();
+            Vector3f n1 = new Vector3f(normalSums.get(new Vertex.VKey(p1))).normalize();
+            Vector3f n2 = new Vector3f(normalSums.get(new Vertex.VKey(p2))).normalize();
 //
-//            Vector3f e1 = p1.sub(p0);
-//            Vector3f e2 = p2.sub(p0);
-            Vector3f n = (nA.add(nB).add(nC).mul(1 / 3f)).normalize();//e1.cross(e2).normalize();
+//            Vector3f e1 = new Vector3f(p1).sub(p0).normalize();
+//            Vector3f e2 = new Vector3f(p2).sub(p0).normalize();
+//            Vector3f n = e1.cross(e2).normalize();
 
-            float[] uv0 = uvPlanar(p0, n, TEX_SCALE);
-            float[] uv1 = uvPlanar(p1, n, TEX_SCALE);
-            float[] uv2 = uvPlanar(p2, n, TEX_SCALE);
+            float[] uv0 = uvPlanar(p0, n0, TEX_SCALE);
+            float[] uv1 = uvPlanar(p1, n1, TEX_SCALE);
+            float[] uv2 = uvPlanar(p2, n2, TEX_SCALE);
 
 //            vc.vertex( p0.x, p0.y, p0.z)
             vc.addVertex(last.pose(), p0.x, p0.y, p0.z)
                     .setColor(1.0f,1.0f,1.0f,1.0f).setUv(uv0[0], uv0[1])
 //                    .setOverlay(OverlayTexture.NO_OVERLAY)
                     .setLight(packedLight)
-                    .setNormal(last, n.x, n.y, n.z);
+                    .setNormal(last, n0.x, n0.y, n0.z);
 
 
 //            vc.vertex(p1.x, p1.y, p1.z)
@@ -111,14 +131,14 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
                     .setColor(1.0f,1.0f,1.0f,1.0f).setUv(uv1[0], uv1[1])
 //                    .setOverlay(OverlayTexture.NO_OVERLAY)
                     .setLight(packedLight)
-                    .setNormal(last, n.x, n.y, n.z);
+                    .setNormal(last, n1.x, n1.y, n1.z);
 
 //            vc.vertex(p2.x, p2.y, p2.z)
             vc.addVertex(last.pose(), p2.x, p2.y, p2.z)
                     .setColor(1.0f,1.0f,1.0f,1.0f).setUv(uv2[0], uv2[1])
 //                    .setOverlay(OverlayTexture.NO_OVERLAY)
                     .setLight(packedLight)
-                    .setNormal(last, n.x, n.y, n.z);
+                    .setNormal(last, n2.x, n2.y, n2.z);
 
 ////             C again (degenerate 4th vertex so the QUADS mode groups correctly)
 //            vc.addVertex(last.pose(), p2.x, p2.y, p2.z)
