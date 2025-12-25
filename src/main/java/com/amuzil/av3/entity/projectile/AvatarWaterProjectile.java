@@ -4,6 +4,7 @@ import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.api.IForceModule;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
 import com.amuzil.av3.entity.api.modules.force.CurveModule;
+import com.amuzil.av3.entity.api.modules.force.MoveModule;
 import com.amuzil.av3.renderer.sdf.IHasSDF;
 import com.amuzil.av3.renderer.sdf.SDFScene;
 import com.amuzil.av3.renderer.sdf.SignedDistanceFunction;
@@ -23,8 +24,8 @@ public class AvatarWaterProjectile extends AvatarProjectile implements IHasSDF {
 
     public AvatarWaterProjectile(EntityType<AvatarWaterProjectile> entityType, Level pLevel) {
         super(entityType, pLevel);
-        addForceModule((IForceModule) ModuleRegistry.create(CurveModule.id)); // Can hotswap to OrbitModule.id
-
+//        addForceModule((IForceModule) ModuleRegistry.create(CurveModule.id)); // Can hotswap to OrbitModule.id
+        addForceModule((IForceModule) ModuleRegistry.create(MoveModule.id));
         SDFCylinder core = new SDFCylinder();
         core.radius = Channels.constant(0.5f);
 //        core.radius = Channels.pulse(2f, 0.15f, 0.35f, 0f); // gentle breathing
@@ -60,8 +61,8 @@ public class AvatarWaterProjectile extends AvatarProjectile implements IHasSDF {
 
     @Override
     public Vec3 getDeltaMovement() {
-        return Vec3.ZERO;
-//        return super.getDeltaMovement();
+//        return Vec3.ZERO;
+        return super.getDeltaMovement();
     }
 
     public SignedDistanceFunction rootSDF(){ return root; }

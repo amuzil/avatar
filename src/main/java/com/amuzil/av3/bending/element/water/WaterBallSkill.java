@@ -4,9 +4,11 @@ import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.skill.WaterSkill;
 import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.entity.api.ICollisionModule;
+import com.amuzil.av3.entity.api.IForceModule;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
 import com.amuzil.av3.entity.api.modules.collision.SimpleKnockbackModule;
 import com.amuzil.av3.entity.api.modules.collision.WaterCollisionModule;
+import com.amuzil.av3.entity.api.modules.force.MoveModule;
 import com.amuzil.av3.entity.projectile.AvatarWaterProjectile;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.magus.skill.data.SkillData;
@@ -66,6 +68,7 @@ public class WaterBallSkill extends WaterSkill {
         projectile.addTraits(data.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
         projectile.addTraits(new DirectionTrait(Constants.KNOCKBACK_DIRECTION, new Vec3(0, 0.45, 0)));
         projectile.addModule(ModuleRegistry.create(SimpleKnockbackModule.id));
+        projectile.addForceModule((IForceModule) ModuleRegistry.create(MoveModule.id));
 
         // Damage module
         projectile.addTraits(data.getTrait(Constants.DAMAGE, DamageTrait.class));
@@ -81,7 +84,7 @@ public class WaterBallSkill extends WaterSkill {
         // Particle FX module
         projectile.addTraits(data.getTrait(Constants.FX, StringTrait.class));
 
-        projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), -1, 0);
+        projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), 1, 0);
         projectile.init();
 
         bender.formPath.clear();

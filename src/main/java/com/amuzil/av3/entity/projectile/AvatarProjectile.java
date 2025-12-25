@@ -287,13 +287,13 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
 //            }
         }
 
-        if (cloud != null) {
-            cloud.tick(1 / 20f);
-            cloud.rebuildSpatialGrid();
-
-            if (cloud.isDead())
-                cloud = null;
-        }
+//        if (cloud != null) {
+//            cloud.tick(1 / 20f);
+//            cloud.rebuildSpatialGrid();
+//
+//            if (cloud.isDead())
+//                cloud = null;
+//        }
 
         if (!this.leftOwner) {
             this.leftOwner = this.checkLeftOwner();
