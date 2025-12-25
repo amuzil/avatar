@@ -140,10 +140,11 @@ public class ShaderRegistry {
 //                            ((ShaderUniforms.StylisedWaterUniforms) STYLISED_WATER_UNIFORMS).ColorIntensity.set(1f); // could be dynamic
                             float t = (float)(Minecraft.getInstance().level.getGameTime());
                             s.safeGetUniform("GameTime").set(t);
+                            s.safeGetUniform("TimeSpeed").set(-500f);
 //                            s.safeGetUniform("HDRColor").set(0.0f, 89 / 255f, 1f, 0.5f);
-                            s.safeGetUniform("WaveStrength").set(0.15f);
-                            s.safeGetUniform("WaveScale").set(0.1f);
-                            s.safeGetUniform("NoiseStrength").set(0.02f);
+                            s.safeGetUniform("WaveStrength").set(0.2f);
+                            s.safeGetUniform("WaveScale").set(1.2f);
+                            s.safeGetUniform("NoiseStrength").set(0.08f);
 //                            s.safeGetUniform("HorizontalFrequency").set(0.5f);
 //                            s.safeGetUniform("Spin").set(6f);
 //                            s.safeGetUniform("VerticalFrequency").set(0.5f);

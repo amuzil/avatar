@@ -29,7 +29,7 @@ public class AvatarWaterProjectile extends AvatarProjectile implements IHasSDF {
         core.radius = Channels.constant(0.5f);
 //        core.radius = Channels.pulse(2f, 0.15f, 0.35f, 0f); // gentle breathing
 //        core.a.pos = (t,out)->out.set(0,0,0);
-        core.a.rot = (t,out)->out.set(90f, 0f, 90f, 1f); // optional slow spin visual
+        core.a.rot = (t,out)->out.identity(); // optional slow spin visual
 //        core.a.scl = (t,out)->out.set(1,1,1);
 
         SDFTorus ring = new SDFTorus();
