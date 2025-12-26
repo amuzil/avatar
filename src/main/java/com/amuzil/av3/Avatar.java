@@ -69,6 +69,7 @@ public class Avatar {
         ModuleRegistry.register(ControlModule::new);
         ModuleRegistry.register(BindModule::new);
         ModuleRegistry.register(OrbitModule::new);
+        ModuleRegistry.register(LookModule::new);
 
         // Time
         ModuleRegistry.register(TimeoutModule::new);

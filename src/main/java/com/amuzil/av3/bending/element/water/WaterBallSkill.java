@@ -8,6 +8,7 @@ import com.amuzil.av3.entity.api.IForceModule;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
 import com.amuzil.av3.entity.api.modules.collision.SimpleKnockbackModule;
 import com.amuzil.av3.entity.api.modules.collision.WaterCollisionModule;
+import com.amuzil.av3.entity.api.modules.force.LookModule;
 import com.amuzil.av3.entity.api.modules.force.MoveModule;
 import com.amuzil.av3.entity.projectile.AvatarWaterProjectile;
 import com.amuzil.av3.utils.Constants;
@@ -85,6 +86,8 @@ public class WaterBallSkill extends WaterSkill {
         projectile.addTraits(data.getTrait(Constants.FX, StringTrait.class));
 
         projectile.lookDirection(entity.getLookAngle().toVector3f());
+        projectile.addForceModule((IForceModule) ModuleRegistry.create(LookModule.id));
+
         projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), 0, 0);
         projectile.init();
 

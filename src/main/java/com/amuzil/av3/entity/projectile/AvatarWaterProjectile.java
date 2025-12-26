@@ -98,10 +98,10 @@ public class AvatarWaterProjectile extends AvatarProjectile implements IHasSDF {
     @Override
     public void tick() {
         super.tick();
-        if (!getLookAngle().toVector3f().equals(lookDirection())) {
-            Vec2 rots = VectorUtils.dirToRotations(lookDirection());
-            setXRot(rots.x);
-            setYRot(rots.y);
-        }
+//        if (!getLookAngle().toVector3f().equals(lookDirection())) {
+//            Vec2 rots = VectorUtils.dirToRotations(lookDirection());
+//            setXRot(rots.x);
+//            setYRot(rots.y);
+//        }
     }
 }
