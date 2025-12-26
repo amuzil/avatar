@@ -1,6 +1,8 @@
 package com.amuzil.av3.utils.maths;
 
 import com.simsilica.mathd.Vec3d;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -137,5 +139,40 @@ public class VectorUtils {
         x = v.x * cos - v.y * sin;
         y = v.x * sin + v.y * cos;
         return new Vec3(x, y, v.z);
+    }
+
+    /**
+     * Inverse of calculateViewVector(xRot, yRot).
+     *
+     * @param dir normalized direction vector (world-space)
+     * @param fallbackYRot used when dir is (almost) straight up/down (yaw undefined)
+     * @return Vec2(xRot, yRot) in degrees
+     */
+    public static Vec2 dirToRotations(Vector3f dir, float fallbackYRot) {
+        // Pitch (xRot)
+        double y = Mth.clamp(dir.y, -1.0, 1.0);
+        float xRot = (float) (-Math.toDegrees(Math.asin(y))); // xRot = asin(-y) = -asin(y)
+
+        // Yaw (yRot)
+        double cosPitch = Math.sqrt(Math.max(0.0, 1.0 - y * y)); // = cos(xRot) for normalized dir
+        float yRot;
+        if (cosPitch < 1.0e-6) {
+            yRot = fallbackYRot;
+        } else {
+            // f1 = atan2(vx, vz), and yRot = -deg(f1)
+            float f1 = (float) Math.atan2(dir.x, dir.z);
+            yRot = (float) -Math.toDegrees(f1);
+        }
+
+        // Optional: wrap like MC often does
+        xRot = Mth.wrapDegrees(xRot);
+        yRot = Mth.wrapDegrees(yRot);
+
+        return new Vec2(xRot, yRot);
+    }
+
+    /** Convenience overload: fallback yaw = 0. */
+    public static Vec2 dirToRotations(Vector3f dir) {
+        return dirToRotations(dir, 0.0f);
     }
 }

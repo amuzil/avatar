@@ -224,6 +224,7 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
     /**
      * Called to update the entity's position/logic.
      */
+    @Override
     public void tick() {
         if (!this.hasBeenShot) {
             this.gameEvent(GameEvent.PROJECTILE_SHOOT, this.getOwner());

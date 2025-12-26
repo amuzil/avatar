@@ -42,114 +42,115 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
     public void render(T entity, float entityYaw, float partialTick,
                        PoseStack pose, MultiBufferSource buffer, int packedLight) {
 
-        return;
+//        return;
 
-//        ShaderInstance water = ShaderRegistry.STYLISED_WATER;
-//        if (water == null)
+
+        ShaderInstance water = ShaderRegistry.STYLISED_WATER;
+        if (water == null)
+            return;
+
+//        RenderSystem.setShader(() -> water);
+
+
+
+
+
+        // Center the generated volume around the entity origin
+//        float volumeSize = (GRID_SIZE - 1) * CELL_SIZE;
+//        float half = volumeSize * 0.5f;
+//        pose.translate(-half, -half, -half);
+
+        CachedMesh mesh = getOrBuildMesh(partialTick, entity);
+
+//        VertexConsumer vc = buffer.getBuffer(RenderType.entityTranslucent(WHITE_TEX, true));
+//        VertexConsumer vc = buffer.getBuffer(ShaderRegistry.getTriplanarRenderType(getTextureLocation(entity)));
+
+//        RenderSystem.setShader(() -> water);
+
+        // Need to eventually do 2 render passes...
+        VertexConsumer vc = buffer.getBuffer(WATER);
+
+        // Uniform time
+
+//        if (!RenderSystem.getShader().getName().equals(ShaderRegistry.STYLISED_WATER.getName()))
 //            return;
-//
-////        RenderSystem.setShader(() -> water);
-//
-//
-//
-//
-//
-//        // Center the generated volume around the entity origin
-////        float volumeSize = (GRID_SIZE - 1) * CELL_SIZE;
-////        float half = volumeSize * 0.5f;
-////        pose.translate(-half, -half, -half);
-//
-//        CachedMesh mesh = getOrBuildMesh(partialTick, entity);
-//
-////        VertexConsumer vc = buffer.getBuffer(RenderType.entityTranslucent(WHITE_TEX, true));
-////        VertexConsumer vc = buffer.getBuffer(ShaderRegistry.getTriplanarRenderType(getTextureLocation(entity)));
-//
-////        RenderSystem.setShader(() -> water);
-//
-//        // Need to eventually do 2 render passes...
-//        VertexConsumer vc = buffer.getBuffer(WATER);
-//
-//        // Uniform time
-//
-////        if (!RenderSystem.getShader().getName().equals(ShaderRegistry.STYLISED_WATER.getName()))
-////            return;
-//
-//        pose.pushPose();
-//        var last = pose.last();
-//
-//        // TODO: Add a back face pass so you can see inside the water mesh.
-//        // Just front face for now.
-//
-//        // First pass
-//        for (int i = 0; i < mesh.triangles.size(); i++) {
-//            Triangle tri = mesh.triangles.get(i);
-//            Vector3f p0 = tri.vertexA.position;
-//            Vector3f p1 = tri.vertexB.position;
-//            Vector3f p2 = tri.vertexC.position;
-//            Vector3f e1 = new Vector3f(p1).sub(p0).normalize();
-//            Vector3f e2 = new Vector3f(p2).sub(p0).normalize();
-//            Vector3f n = e1.cross(e2); // area-weighted
-//            if (n.lengthSquared() < 1e-12f) continue;
-//            n.normalize();
-//
-//            normalSums.computeIfAbsent(new Vertex.VKey(p0), k -> new Vector3f()).add(n);
-//            normalSums.computeIfAbsent(new Vertex.VKey(p1), k -> new Vector3f()).add(n);
-//            normalSums.computeIfAbsent(new Vertex.VKey(p2), k -> new Vector3f()).add(n);
-//        }
-//
-//        // Render pass
-//        for (int i = 0; i < mesh.triangles.size(); i++) {
-//            Triangle tri = mesh.triangles.get(i);
-//            Vector3f p0 = tri.vertexA.position;
-//            Vector3f p1 = tri.vertexB.position;
-//            Vector3f p2 = tri.vertexC.position;
-//
-//
-//            Vector3f nA = tri.vertexA.normal;
-//            Vector3f nB = tri.vertexB.normal;
-//            Vector3f nC = tri.vertexC.normal;
-//
-//            Vector3f n0 = new Vector3f(normalSums.get(new Vertex.VKey(p0))).normalize();
-//            Vector3f n1 = new Vector3f(normalSums.get(new Vertex.VKey(p1))).normalize();
-//            Vector3f n2 = new Vector3f(normalSums.get(new Vertex.VKey(p2))).normalize();
-//
-//            float[] uv0 = uvPlanar(p0, n0, TEX_SCALE);
-//            float[] uv1 = uvPlanar(p1, n1, TEX_SCALE);
-//            float[] uv2 = uvPlanar(p2, n2, TEX_SCALE);
-//
-////            vc.vertex( p0.x, p0.y, p0.z)
-//            vc.addVertex(last.pose(), p0.x, p0.y, p0.z)
-//                    .setColor(1.0f,1.0f,1.0f,1.0f).setUv(uv0[0], uv0[1])
-////                    .setOverlay(OverlayTexture.NO_OVERLAY)
-//                    .setLight(packedLight)
-//                    .setNormal(last, n0.x, n0.y, n0.z);
-//
-//
-////            vc.vertex(p1.x, p1.y, p1.z)
-//            vc.addVertex(last.pose(), p1.x, p1.y, p1.z)
-//                    .setColor(1.0f,1.0f,1.0f,1.0f).setUv(uv1[0], uv1[1])
-////                    .setOverlay(OverlayTexture.NO_OVERLAY)
-//                    .setLight(packedLight)
-//                    .setNormal(last, n1.x, n1.y, n1.z);
-//
-////            vc.vertex(p2.x, p2.y, p2.z)
+
+        pose.pushPose();
+        var last = pose.last();
+
+        // TODO: Add a back face pass so you can see inside the water mesh.
+        // Just front face for now.
+
+        // First pass
+        for (int i = 0; i < mesh.triangles.size(); i++) {
+            Triangle tri = mesh.triangles.get(i);
+            Vector3f p0 = tri.vertexA.position;
+            Vector3f p1 = tri.vertexB.position;
+            Vector3f p2 = tri.vertexC.position;
+            Vector3f e1 = new Vector3f(p1).sub(p0).normalize();
+            Vector3f e2 = new Vector3f(p2).sub(p0).normalize();
+            Vector3f n = e1.cross(e2); // area-weighted
+            if (n.lengthSquared() < 1e-12f) continue;
+            n.normalize();
+
+            normalSums.computeIfAbsent(new Vertex.VKey(p0), k -> new Vector3f()).add(n);
+            normalSums.computeIfAbsent(new Vertex.VKey(p1), k -> new Vector3f()).add(n);
+            normalSums.computeIfAbsent(new Vertex.VKey(p2), k -> new Vector3f()).add(n);
+        }
+
+        // Render pass
+        for (int i = 0; i < mesh.triangles.size(); i++) {
+            Triangle tri = mesh.triangles.get(i);
+            Vector3f p0 = tri.vertexA.position;
+            Vector3f p1 = tri.vertexB.position;
+            Vector3f p2 = tri.vertexC.position;
+
+
+            Vector3f nA = tri.vertexA.normal;
+            Vector3f nB = tri.vertexB.normal;
+            Vector3f nC = tri.vertexC.normal;
+
+            Vector3f n0 = new Vector3f(normalSums.get(new Vertex.VKey(p0))).normalize();
+            Vector3f n1 = new Vector3f(normalSums.get(new Vertex.VKey(p1))).normalize();
+            Vector3f n2 = new Vector3f(normalSums.get(new Vertex.VKey(p2))).normalize();
+
+            float[] uv0 = uvPlanar(p0, n0, TEX_SCALE);
+            float[] uv1 = uvPlanar(p1, n1, TEX_SCALE);
+            float[] uv2 = uvPlanar(p2, n2, TEX_SCALE);
+
+//            vc.vertex( p0.x, p0.y, p0.z)
+            vc.addVertex(last.pose(), p0.x, p0.y, p0.z)
+                    .setColor(1.0f,1.0f,1.0f,1.0f).setUv(uv0[0], uv0[1])
+//                    .setOverlay(OverlayTexture.NO_OVERLAY)
+                    .setLight(packedLight)
+                    .setNormal(last, n0.x, n0.y, n0.z);
+
+
+//            vc.vertex(p1.x, p1.y, p1.z)
+            vc.addVertex(last.pose(), p1.x, p1.y, p1.z)
+                    .setColor(1.0f,1.0f,1.0f,1.0f).setUv(uv1[0], uv1[1])
+//                    .setOverlay(OverlayTexture.NO_OVERLAY)
+                    .setLight(packedLight)
+                    .setNormal(last, n1.x, n1.y, n1.z);
+
+//            vc.vertex(p2.x, p2.y, p2.z)
+            vc.addVertex(last.pose(), p2.x, p2.y, p2.z)
+                    .setColor(1.0f,1.0f,1.0f,1.0f).setUv(uv2[0], uv2[1])
+//                    .setOverlay(OverlayTexture.NO_OVERLAY)
+                    .setLight(packedLight)
+                    .setNormal(last, n2.x, n2.y, n2.z);
+
+////             C again (degenerate 4th vertex so the QUADS mode groups correctly)
 //            vc.addVertex(last.pose(), p2.x, p2.y, p2.z)
-//                    .setColor(1.0f,1.0f,1.0f,1.0f).setUv(uv2[0], uv2[1])
+//                    .setColor(255,255,255,255).setUv(uv2[0], uv2[1])
 ////                    .setOverlay(OverlayTexture.NO_OVERLAY)
 //                    .setLight(packedLight)
-//                    .setNormal(last, n2.x, n2.y, n2.z);
-//
-//////             C again (degenerate 4th vertex so the QUADS mode groups correctly)
-////            vc.addVertex(last.pose(), p2.x, p2.y, p2.z)
-////                    .setColor(255,255,255,255).setUv(uv2[0], uv2[1])
-//////                    .setOverlay(OverlayTexture.NO_OVERLAY)
-////                    .setLight(packedLight)
-////                    .setNormal(last, 0, 1, 0);//n.x, n.y, n.z);
-//        }
-//
-////        Minecraft.getInstance().renderBuffers().bufferSource().endLastBatch();
-//
-//        pose.popPose();
+//                    .setNormal(last, 0, 1, 0);//n.x, n.y, n.z);
+        }
+
+//        Minecraft.getInstance().renderBuffers().bufferSource().endLastBatch();
+
+        pose.popPose();
     }
 
     @Override
