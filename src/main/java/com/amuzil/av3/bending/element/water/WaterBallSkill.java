@@ -3,6 +3,7 @@ package com.amuzil.av3.bending.element.water;
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.skill.WaterSkill;
 import com.amuzil.av3.data.capability.Bender;
+import com.amuzil.av3.entity.api.IClientModule;
 import com.amuzil.av3.entity.api.ICollisionModule;
 import com.amuzil.av3.entity.api.IForceModule;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
@@ -86,7 +87,10 @@ public class WaterBallSkill extends WaterSkill {
         projectile.addTraits(data.getTrait(Constants.FX, StringTrait.class));
 
         projectile.lookDirection(entity.getLookAngle().toVector3f());
+
+        // This needs to happen client and server side...
         projectile.addForceModule((IForceModule) ModuleRegistry.create(LookModule.id));
+        projectile.addClientModule((IClientModule) ModuleRegistry.create(LookModule.id));
 
         projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), 0, 0);
         projectile.init();
