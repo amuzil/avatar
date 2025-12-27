@@ -11,6 +11,7 @@ import com.amuzil.av3.renderer.sdf.channels.Channels;
 import com.amuzil.av3.renderer.sdf.channels.IVec3Channel;
 import com.amuzil.av3.renderer.sdf.shapes.SDFCapsule;
 import com.amuzil.av3.renderer.sdf.shapes.SDFSphere;
+import com.amuzil.av3.renderer.sdf.shapes.SDFWaterBolt;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -19,7 +20,7 @@ import org.joml.Vector3f;
 
 public class AvatarWaterProjectile extends AvatarProjectile implements IHasSDF {
     private SDFScene root;
-    private SDFCapsule capsule;
+    private SDFWaterBolt capsule;
     private SDFSphere sphere;
 
     public AvatarWaterProjectile(EntityType<AvatarWaterProjectile> entityType, Level pLevel) {
@@ -74,13 +75,20 @@ public class AvatarWaterProjectile extends AvatarProjectile implements IHasSDF {
     }
 
     public SignedDistanceFunction rootSDF() {
-        IVec3Channel look = Channels.constantVec3(lookDirection().x, lookDirection().y, lookDirection().z);
-        IVec3Channel scale = Channels.constantVec3(lookDirection().x * 1.2f, lookDirection().y * 1.2f, lookDirection().z * 1.2f);
+        float size = 4;
+        IVec3Channel look = Channels.constantVec3((float) getDeltaMovement().x,
+                (float) getDeltaMovement().y, (float) getDeltaMovement().z);
+        IVec3Channel scale = Channels.constantVec3(lookDirection().x * size / 4, lookDirection().y * size / 4, lookDirection().z * size / 4);
         if (capsule == null) {
-            capsule = new SDFCapsule();
-            capsule.halfHeight = Channels.constant(1.5f);
+            capsule = new SDFWaterBolt();
         }
-        capsule.radius = Channels.constant(0.35f);
+        capsule.headRadius = Channels.constant(0.5f);
+        capsule.tailRadius = Channels.constant(0.012f);
+        capsule.length = Channels.constant(size);;
+        capsule.taperExponent = Channels.constant(2.2f);
+        capsule.headTipBlend = Channels.constant(0.3f);
+        capsule.headTipLength = Channels.constant(0.4f);
+
         capsule.a.rot = Channels.alignAxisToDir(
                 new Vector3f(0, 1, 0),                  // capsule axis in *local* space
                 look  // world-space direction
@@ -90,7 +98,7 @@ public class AvatarWaterProjectile extends AvatarProjectile implements IHasSDF {
         }
         sphere.radius = Channels.constant(0.5f);
         sphere.a.pos = scale;
-        root = new SDFScene().add(capsule).add(sphere);
+        root = new SDFScene().add(capsule);//.add(sphere);
         root.unionK = 0.9f;
         return root;
     }

@@ -9,6 +9,7 @@ import com.amuzil.av3.entity.api.IForceModule;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
 import com.amuzil.av3.entity.api.modules.collision.SimpleKnockbackModule;
 import com.amuzil.av3.entity.api.modules.collision.WaterCollisionModule;
+import com.amuzil.av3.entity.api.modules.force.GravityModule;
 import com.amuzil.av3.entity.api.modules.force.LookModule;
 import com.amuzil.av3.entity.api.modules.force.MoveModule;
 import com.amuzil.av3.entity.projectile.AvatarWaterProjectile;
@@ -92,7 +93,8 @@ public class WaterBallSkill extends WaterSkill {
         projectile.addForceModule((IForceModule) ModuleRegistry.create(LookModule.id));
         projectile.addClientModule((IClientModule) ModuleRegistry.create(LookModule.id));
 
-        projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), 0.1, 0);
+        projectile.addForceModule((IForceModule) ModuleRegistry.create(GravityModule.id));
+        projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), 0.25, 0);
         projectile.init();
 
         projectile.setXRot(entity.getXRot());

@@ -63,6 +63,7 @@ public class Avatar {
         // Movement
         ModuleRegistry.register(MoveModule::new);
         ModuleRegistry.register(ChangeSpeedModule::new);
+        ModuleRegistry.register(GravityModule::new);
 
         // Control
         ModuleRegistry.register(CurveModule::new);
