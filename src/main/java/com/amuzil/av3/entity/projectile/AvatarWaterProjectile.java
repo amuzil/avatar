@@ -11,16 +11,15 @@ import com.amuzil.av3.renderer.sdf.channels.Channels;
 import com.amuzil.av3.renderer.sdf.channels.IVec3Channel;
 import com.amuzil.av3.renderer.sdf.shapes.SDFCapsule;
 import com.amuzil.av3.renderer.sdf.shapes.SDFSphere;
-import com.amuzil.av3.renderer.sdf.shapes.SDFWaterBolt;
+import com.amuzil.av3.renderer.sdf.shapes.SDFElementBolt;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import org.checkerframework.checker.units.qual.C;
 import org.joml.Vector3f;
 
 public class AvatarWaterProjectile extends AvatarProjectile implements IHasSDF {
     private SDFScene root;
-    private SDFWaterBolt capsule;
+    private SDFElementBolt capsule;
     private SDFSphere sphere;
 
     public AvatarWaterProjectile(EntityType<AvatarWaterProjectile> entityType, Level pLevel) {
@@ -80,7 +79,7 @@ public class AvatarWaterProjectile extends AvatarProjectile implements IHasSDF {
                 (float) getDeltaMovement().y, (float) getDeltaMovement().z);
         IVec3Channel scale = Channels.constantVec3(lookDirection().x * size / 4, lookDirection().y * size / 4, lookDirection().z * size / 4);
         if (capsule == null) {
-            capsule = new SDFWaterBolt();
+            capsule = new SDFElementBolt();
         }
         capsule.headRadius = Channels.constant(0.5f);
         capsule.tailRadius = Channels.constant(0.012f);

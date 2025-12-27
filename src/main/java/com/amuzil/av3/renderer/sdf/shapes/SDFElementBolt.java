@@ -6,7 +6,7 @@ import com.amuzil.av3.renderer.sdf.channels.IFloatChannel;
 import com.amuzil.av3.renderer.sdf.transforms.AnimatedTransform;
 import org.joml.Vector3f;
 
-public class SDFWaterBolt implements SignedDistanceFunction {
+public class SDFElementBolt implements SignedDistanceFunction {
     public final AnimatedTransform a = new AnimatedTransform();
     private final Vector3f local = new Vector3f();
     // Tail length from head base (y=0) to tail end (y=-Length)
