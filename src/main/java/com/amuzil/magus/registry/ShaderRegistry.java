@@ -17,6 +17,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterShadersEvent;
+import org.joml.Vector3f;
 
 import java.io.IOException;
 
@@ -140,11 +141,12 @@ public class ShaderRegistry {
 //                            ((ShaderUniforms.StylisedWaterUniforms) STYLISED_WATER_UNIFORMS).ColorIntensity.set(1f); // could be dynamic
                             float t = (float)(Minecraft.getInstance().level.getGameTime());
                             s.safeGetUniform("GameTime").set(t);
-                            s.safeGetUniform("CameraPosition").set(Minecraft.getInstance().getCameraEntity().position().toVector3f());
                             s.safeGetUniform("TimeSpeed").set(-500f);
 //                            s.safeGetUniform("HDRColor").set(0.0f, 89 / 255f, 1f, 0.5f);
                             s.safeGetUniform("WaveStrength").set(0.2f);
                             s.safeGetUniform("WaveScale").set(0.3f);
+                            s.safeGetUniform("WaveSpeed").set(0.4f);
+
                             s.safeGetUniform("NoiseStrength").set(0.08f);
 //                            s.safeGetUniform("HorizontalFrequency").set(0.5f);
 //                            s.safeGetUniform("Spin").set(6f);

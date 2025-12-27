@@ -226,6 +226,7 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
      */
     @Override
     public void tick() {
+        super.tick();
         if (!this.hasBeenShot) {
             this.gameEvent(GameEvent.PROJECTILE_SHOOT, this.getOwner());
             this.hasBeenShot = true;
@@ -300,7 +301,7 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
             this.leftOwner = this.checkLeftOwner();
         }
 
-        super.tick();
+
     }
 
     private boolean checkLeftOwner() {

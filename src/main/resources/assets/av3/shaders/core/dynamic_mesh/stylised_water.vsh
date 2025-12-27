@@ -9,7 +9,7 @@ in vec2 UV0;
 // Light Map
 in ivec2 UV2;
 in vec3 Normal;
-in vec3 CameraPosition;
+
 
 uniform sampler2D Sampler2;
 
@@ -46,8 +46,7 @@ void main() {
     // in vertex shader
     vec3 p = Position;
 
-    // world-space planar mapping (continuous)
-    vec2 flowUV = (CameraPosition.xz) * WaveScale + vec2(time * WaveSpeed);
+    vec2 flowUV = Position.xz * WaveScale + vec2(time * WaveSpeed);
 
     // sample displacement from flowUV (not texCoord0)
     float wave  = texture(WaveTex,  flowUV).r * 2.0 - 1.0;

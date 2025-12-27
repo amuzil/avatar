@@ -40,14 +40,14 @@ public class AvatarEntities {
             registerProjectile("avatar_water_projectile", AvatarWaterProjectile::new, 0.5f, 0.5f);
 
     public static final Supplier<EntityType<AvatarRigidBlock>> AVATAR_RIGID_BLOCK_ENTITY_TYPE =
-            registerPhysicsBody("avatar_rigid_block", AvatarRigidBlock::new, 1.0f, 1.0f, 10, 4);
+            registerPhysicsBody("avatar_rigid_block", AvatarRigidBlock::new, 1.0f, 1.0f, 10, 1);
 
     // Probably want to change the registration method later
     public static final Supplier<EntityType<AvatarPhysicsController>> AVATAR_PHYSICS_CONTROLLER_ENTITY_TYPE =
-            registerPhysicsBody("avatar_physics_controller", AvatarPhysicsController::new, 0.5f, 0.5f, 10, 4);
+            registerPhysicsBody("avatar_physics_controller", AvatarPhysicsController::new, 0.5f, 0.5f, 10, 1);
 
     public static final Supplier<EntityType<AvatarElementCollider>> AVATAR_ELEMENT_COLLIDER_ENTITY_TYPE =
-            registerPhysicsBody("avatar_element_collider", AvatarElementCollider::new, 0.5f, 0.5f, 20, 2);
+            registerPhysicsBody("avatar_element_collider", AvatarElementCollider::new, 0.5f, 0.5f, 20, 1);
 
     public static final Supplier<EntityType<SkyBisonEntity>> AVATAR_SKYBISON_ENTITY_TYPE =
             ENTITY_TYPES.register("avatar_skybison_entity", () -> EntityType.Builder.of(SkyBisonEntity::new, MobCategory.CREATURE)
@@ -66,7 +66,7 @@ public class AvatarEntities {
             String id, EntityType.EntityFactory<T> factory, float width, float height) {
         return ENTITY_TYPES.register(id, () ->
                 EntityType.Builder.of(factory, MobCategory.MISC)
-                        .sized(width, height).clientTrackingRange(64).updateInterval(3)
+                        .sized(width, height).clientTrackingRange(64).updateInterval(1)
                         .build(id)
         );
     }

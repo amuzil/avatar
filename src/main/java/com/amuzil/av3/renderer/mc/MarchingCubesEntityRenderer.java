@@ -8,14 +8,13 @@ import com.amuzil.magus.registry.ShaderRegistry;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import org.joml.Vector3f;
 
 import java.util.*;
@@ -32,7 +31,7 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
     private static final RenderType WATER = ShaderRegistry.waterRenderType(WHITE_TEX);
     final float TEX_SCALE = 2.0f; // e.g. 2 repeats per block
 
-    HashMap<Vertex.VKey, Vector3f> normalSums = new HashMap<>();
+    Map<Vertex.VKey, Vector3f> normalSums = new HashMap<>();
     PointData[][][] voxels = new PointData[GRID_SIZE][GRID_SIZE][GRID_SIZE];
     Random random = new Random();
 
@@ -42,18 +41,9 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
     public void render(T entity, float entityYaw, float partialTick,
                        PoseStack pose, MultiBufferSource buffer, int packedLight) {
 
-//        return;
-
-
         ShaderInstance water = ShaderRegistry.STYLISED_WATER;
         if (water == null)
             return;
-
-//        RenderSystem.setShader(() -> water);
-
-
-
-
 
         // Center the generated volume around the entity origin
 //        float volumeSize = (GRID_SIZE - 1) * CELL_SIZE;
@@ -147,8 +137,13 @@ public class MarchingCubesEntityRenderer<T extends AvatarEntity> extends EntityR
 //                    .setLight(packedLight)
 //                    .setNormal(last, 0, 1, 0);//n.x, n.y, n.z);
         }
+        if (buffer instanceof MultiBufferSource.BufferSource bs) {
+            normalSums.clear();
+            bs.endBatch(WATER); // forces draw now with current uniform state
+        }
 
 //        Minecraft.getInstance().renderBuffers().bufferSource().endLastBatch();
+
 
         pose.popPose();
     }

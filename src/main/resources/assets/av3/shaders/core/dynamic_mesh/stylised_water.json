@@ -19,7 +19,8 @@
     {"name": "GameTime", "type":  "float", "count":  1,
       "values": [0.0]},
     { "name": "TimeSpeed", "type":  "float", "count": 1, "values": [-5000.0] },
-    { "name": "CameraPosition", "type": "float", "count": 3, "values": [0, 0, 0]},
+
+
     { "name": "WaveScale",     "type": "float", "count": 1, "values": [1.0] },
     { "name": "WaveSpeed",     "type": "float", "count": 1, "values": [1.0] },
     { "name": "WaveStrength",  "type": "float", "count": 1, "values": [0.1] },

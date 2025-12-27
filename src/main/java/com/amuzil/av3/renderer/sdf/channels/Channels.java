@@ -1,6 +1,7 @@
 package com.amuzil.av3.renderer.sdf.channels;
 
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -8,6 +9,15 @@ import java.util.function.Supplier;
 
 public class Channels {
 
+    public static IVec3Channel add(IVec3Channel pos, IVec3Channel pos2) {
+        Vector3f a = new Vector3f();
+        Vector3f b = new Vector3f();
+        return (t, out) -> {
+            pos.eval(t, a);
+            pos2.eval(t, b);
+            return out.set(a).add(b); // out = a + b
+        };
+    }
     public static IFloatChannel constant(float v) {
         return t -> v;
     }

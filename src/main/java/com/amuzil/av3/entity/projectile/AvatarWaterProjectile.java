@@ -10,19 +10,17 @@ import com.amuzil.av3.renderer.sdf.SignedDistanceFunction;
 import com.amuzil.av3.renderer.sdf.channels.Channels;
 import com.amuzil.av3.renderer.sdf.channels.IVec3Channel;
 import com.amuzil.av3.renderer.sdf.shapes.SDFCapsule;
-import com.amuzil.av3.renderer.sdf.shapes.SDFTorus;
-import com.amuzil.av3.utils.maths.VectorUtils;
+import com.amuzil.av3.renderer.sdf.shapes.SDFSphere;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
+import org.checkerframework.checker.units.qual.C;
 import org.joml.Vector3f;
-
-import java.util.Vector;
 
 public class AvatarWaterProjectile extends AvatarProjectile implements IHasSDF {
     private SDFScene root;
     private SDFCapsule capsule;
+    private SDFSphere sphere;
 
     public AvatarWaterProjectile(EntityType<AvatarWaterProjectile> entityType, Level pLevel) {
         super(entityType, pLevel);
@@ -37,7 +35,7 @@ public class AvatarWaterProjectile extends AvatarProjectile implements IHasSDF {
 //        core.radius = Channels.pulse(2f, 0.15f, 0.35f, 0f); // gentle breathing
 //        core.a.pos = (t,out)->out.set(0,0,0);
         core.a.rot = Channels.mul(
-                Channels.alignAxisToDir(new Vector3f(0,1,0), look),   // aim
+                Channels.alignAxisToDir(new Vector3f(0, 1, 0), look),   // aim
                 Channels.rollAroundLook(look, 0f)                   // twist
         ); // optional slow spin visual
 //        core.a.scl = (t,out)->out.set(1,1,1);
@@ -65,31 +63,37 @@ public class AvatarWaterProjectile extends AvatarProjectile implements IHasSDF {
     }
 
     @Override
-    public void setDeltaMovement(Vec3 deltaMovement) {
-        super.setDeltaMovement(deltaMovement);
-    }
-
-    @Override
     public Vec3 getDeltaMovement() {
 //        return Vec3.ZERO;
         return super.getDeltaMovement();
     }
 
+    @Override
+    public void setDeltaMovement(Vec3 deltaMovement) {
+        super.setDeltaMovement(deltaMovement);
+    }
+
     public SignedDistanceFunction rootSDF() {
         IVec3Channel look = Channels.constantVec3(lookDirection().x, lookDirection().y, lookDirection().z);
-
+        IVec3Channel scale = Channels.constantVec3(lookDirection().x * 1.2f, lookDirection().y * 1.2f, lookDirection().z * 1.2f);
         if (capsule == null) {
             capsule = new SDFCapsule();
-            capsule.halfHeight = Channels.constant(2.0f);
-            capsule.radius = Channels.constant(0.5f);
+            capsule.halfHeight = Channels.constant(1.5f);
         }
+        capsule.radius = Channels.constant(0.35f);
         capsule.a.rot = Channels.alignAxisToDir(
                 new Vector3f(0, 1, 0),                  // capsule axis in *local* space
                 look  // world-space direction
         );
-//        if (root == null)
-            root = new SDFScene().add(capsule);
-        return root; }
+        if (sphere == null) {
+            sphere = new SDFSphere();
+        }
+        sphere.radius = Channels.constant(0.5f);
+        sphere.a.pos = scale;
+        root = new SDFScene().add(capsule).add(sphere);
+        root.unionK = 0.9f;
+        return root;
+    }
 
 
     /**

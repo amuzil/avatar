@@ -10,6 +10,7 @@ import net.minecraft.world.phys.Vec2;
 public class LookModule implements IForceModule, IClientModule {
 
     public static final String id = LookModule.class.getSimpleName();
+
     @Override
     public String id() {
         return id;
@@ -22,11 +23,12 @@ public class LookModule implements IForceModule, IClientModule {
 
     @Override
     public void tick(AvatarEntity entity) {
-        if (!(entity.lookDirection().equals(entity.getLookAngle().toVector3f()))) {
-            Vec2 rot = VectorUtils.dirToRotations(entity.lookDirection());
-            entity.setXRot(rot.x);
-            entity.setYRot(rot.y);
-        }
+
+        Vec2 rot = VectorUtils.dirToRotations(entity.lookDirection());
+        entity.setXRot(rot.x);
+        entity.setYRot(rot.y);
+//        System.out.println("Debug");
+
     }
 
     @Override

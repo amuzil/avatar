@@ -92,9 +92,11 @@ public class WaterBallSkill extends WaterSkill {
         projectile.addForceModule((IForceModule) ModuleRegistry.create(LookModule.id));
         projectile.addClientModule((IClientModule) ModuleRegistry.create(LookModule.id));
 
-        projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), 0, 0);
+        projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), 0.1, 0);
         projectile.init();
 
+        projectile.setXRot(entity.getXRot());
+        projectile.setYRot(entity.getYRot());
         bender.formPath.clear();
         data.setSkillState(SkillState.IDLE);
 
