@@ -74,7 +74,7 @@ public class AvatarWaterProjectile extends AvatarProjectile implements IHasSDF {
     }
 
     public SignedDistanceFunction rootSDF() {
-        float size = 4;
+        float size = 4.5f;
         IVec3Channel look = Channels.constantVec3((float) getDeltaMovement().x,
                 (float) getDeltaMovement().y, (float) getDeltaMovement().z);
         IVec3Channel scale = Channels.constantVec3(lookDirection().x * size / 4, lookDirection().y * size / 4, lookDirection().z * size / 4);
