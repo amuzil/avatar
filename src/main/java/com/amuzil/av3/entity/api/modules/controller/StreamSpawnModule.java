@@ -2,8 +2,11 @@ package com.amuzil.av3.entity.api.modules.controller;
 
 import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.entity.AvatarEntity;
+import com.amuzil.av3.entity.api.IClientModule;
 import com.amuzil.av3.entity.api.IEntityModule;
+import com.amuzil.av3.entity.api.IFXModule;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
+import com.amuzil.av3.entity.api.modules.client.PhotonModule;
 import com.amuzil.av3.entity.api.modules.collision.FireModule;
 import com.amuzil.av3.entity.api.modules.collision.SimpleDamageModule;
 import com.amuzil.av3.entity.api.modules.collision.SimpleKnockbackModule;
@@ -116,6 +119,11 @@ public class StreamSpawnModule implements IEntityModule {
                 collider.addTraits(firetime);
                 collider.addTraits(knockback);
                 collider.addTraits(direction);
+                collider.addTraits(new StringTrait(Constants.FX, "flamethrower"));
+                collider.setFX("flamethrower");
+                collider.lookDirection(entity.getLookAngle().toVector3f());
+
+                collider.addClientModule((IFXModule) ModuleRegistry.create(PhotonModule.id));
 
                 // Motion Modules Properties
 

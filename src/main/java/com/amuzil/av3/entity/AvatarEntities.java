@@ -66,7 +66,7 @@ public class AvatarEntities {
             String id, EntityType.EntityFactory<T> factory, float width, float height) {
         return ENTITY_TYPES.register(id, () ->
                 EntityType.Builder.of(factory, MobCategory.MISC)
-                        .sized(width, height).clientTrackingRange(64).updateInterval(1)
+                        .sized(width, height).clientTrackingRange(64)
                         .build(id)
         );
     }

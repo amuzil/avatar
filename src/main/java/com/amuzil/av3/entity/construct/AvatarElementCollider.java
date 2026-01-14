@@ -3,6 +3,9 @@ package com.amuzil.av3.entity.construct;
 import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
 import com.amuzil.caliber.physics.bullet.math.Convert;
+import com.lowdragmc.photon.client.fx.EntityEffectExecutor;
+import com.lowdragmc.photon.client.fx.FX;
+import com.lowdragmc.photon.client.fx.FXHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -105,6 +108,13 @@ public class AvatarElementCollider extends AvatarRigidBlock {
             tickCount = 0;
 //        if (isControlled())
 //            control(0.5f);
+        if (fxLocation() != null && level().isClientSide) {
+            EntityEffectExecutor entityEffect = new EntityEffectExecutor(FXHelper.getFX(fxLocation()), level(),
+                    this, EntityEffectExecutor.AutoRotate.NONE);
+
+
+            entityEffect.start();
+        }
         super.tick();
     }
 
