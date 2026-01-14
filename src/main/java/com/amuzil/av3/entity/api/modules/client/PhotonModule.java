@@ -2,6 +2,8 @@ package com.amuzil.av3.entity.api.modules.client;
 
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.IFXModule;
+import com.amuzil.av3.entity.construct.AvatarConstruct;
+import com.amuzil.av3.entity.projectile.AvatarProjectile;
 import com.amuzil.av3.utils.maths.VectorUtils;
 import com.lowdragmc.photon.client.fx.EntityEffectExecutor;
 import com.lowdragmc.photon.client.fx.FX;
@@ -19,8 +21,9 @@ public class PhotonModule implements IFXModule {
         if (fx != null) {
             EntityEffectExecutor entityEffect = new EntityEffectExecutor(fx, entity.level(), entity, EntityEffectExecutor.AutoRotate.NONE);
             Vector3f look = entity.getLookAngle().toVector3f();
-            if (entity instanceof AvatarEntity avatar)
+            if (entity instanceof AvatarEntity avatar) {
                 look = avatar.lookDirection();
+            }
 // Effect faces +Y by default
 //            Vec3 from = new Vec3(0, 1, 0);
 //            Vec3 to   = look;
@@ -44,6 +47,14 @@ public class PhotonModule implements IFXModule {
 //                q = new Quaternionf().rotateAxis(angle, (float)axis.x, (float)axis.y, (float)axis.z);
 //            }
 //
+
+            if (entity instanceof AvatarProjectile proj) {
+                entityEffect.setScale(proj.width() * 10, proj.height() * 10, proj.width() * 10);
+            }
+            if (entity instanceof AvatarConstruct construct) {
+                entityEffect.setScale(construct.width() * 10, construct.height() * 10,
+                        construct.depth() * 10);
+            }
 
             entityEffect.setRotation(VectorUtils.faceDirectionFromLocalY(look));
             entityEffect.start();
