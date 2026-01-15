@@ -57,6 +57,7 @@ public class PhotonModule implements IFXModule {
             }
 
             entityEffect.setRotation(VectorUtils.faceDirectionFromLocalY(look));
+            entityEffect.setOffset(0, -entity.getBbHeight() / 2, 0);
             entityEffect.start();
         }
     }
