@@ -1,6 +1,8 @@
 {
   "vertex": "av3:air_fresnel",
   "fragment": "av3:air_fresnel",
+  "depthtest": true,
+  "depthwrite": true,
   "samplers": [
   { "name": "Sampler2" },
     { "name": "SamplerSceneDepth" }

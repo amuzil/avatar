@@ -31,13 +31,13 @@ public class FlameStreamSkill extends FireSkill {
     public FlameStreamSkill() {
         super(Avatar.MOD_ID, "flame_stream");
         addTrait(new DamageTrait(Constants.DAMAGE, 1.5f));
-        addTrait(new SizeTrait(Constants.SIZE, 0.25F));
+        addTrait(new SizeTrait(Constants.SIZE, 0.125F));
         addTrait(new SizeTrait(Constants.MAX_SIZE, 1.0f));
         addTrait(new KnockbackTrait(Constants.KNOCKBACK, 0.012f));
         addTrait(new ColourTrait(0, 0, 0, Constants.FIRE_COLOUR));
         addTrait(new SpeedTrait(Constants.SPEED, 0.875d));
-        addTrait(new TimedTrait(Constants.LIFETIME, 60));
-        addTrait(new TimedTrait(Constants.COMPONENT_LIFE, 60));
+        addTrait(new TimedTrait(Constants.LIFETIME, 40));
+        addTrait(new TimedTrait(Constants.COMPONENT_LIFE, 40));
         addTrait(new TimedTrait(Constants.FIRE_TIME, 2));
         addTrait(new SpeedTrait(Constants.SPEED_FACTOR, 0.85d));
         addTrait(new StringTrait(Constants.FX, "flamethrower"));
@@ -203,8 +203,9 @@ public class FlameStreamSkill extends FireSkill {
         projectile.addModule(ModuleRegistry.create(ChangeSpeedModule.id));
 
         // Particle FX
-        projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 5.0);
+        projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0).add(entity.getLookAngle().scale(-1)), entity.getLookAngle(), speed, 0.5);
         projectile.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
+        projectile.setFXOneShot(false);
         projectile.lookDirection(entity.getLookAngle().toVector3f());
         projectile.init();
 

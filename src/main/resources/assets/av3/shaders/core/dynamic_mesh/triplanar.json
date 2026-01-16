@@ -4,6 +4,8 @@
     "srcrgb": "srcalpha",
     "dstrgb": "1-srcalpha"
   },
+  "depthtest": true,
+  "depthwrite": true,
   "vertex": "av3:dynamic_mesh/triplanar",
   "fragment": "av3:dynamic_mesh/triplanar",
   "attributes": [

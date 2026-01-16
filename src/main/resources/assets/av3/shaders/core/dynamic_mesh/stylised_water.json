@@ -1,6 +1,8 @@
 {
   "vertex": "av3:dynamic_mesh/stylised_water",
   "fragment": "av3:dynamic_mesh/stylised_water",
+  "depthtest": true,
+  "depthwrite": true,
   "samplers": [
     { "name": "Sampler2" },
     { "name": "SamplerGradient" },
