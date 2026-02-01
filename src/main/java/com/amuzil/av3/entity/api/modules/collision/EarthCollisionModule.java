@@ -40,7 +40,7 @@ public class EarthCollisionModule implements ICollisionModule {
             if (owner != null) {
                 construct.setOwner(entity);
                 Vec3 dir = entity.getViewVector(1);
-                entity.hurt(entity.damageSources().cramming(), damage);
+                entity.hurt(owner.damageSources().cramming(), damage / 2);
             }
         });
 

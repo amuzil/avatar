@@ -38,6 +38,8 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
         this.rigidBody = new EntityRigidBody(this);
         addForceModule((IForceModule) ModuleRegistry.create(ControlModule.id));
         defaultMass = rigidBody.getMass();
+//        rigidBody.setGravity(Vector3f.ZERO);
+//        rigidBody.setProtectGravity(true);
     }
 
     public AvatarRigidBlock(Level level) {
@@ -66,7 +68,7 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
         Entity owner = this.getOwner();
         if (owner == null) return;
 
-        double offset = -1.0;
+        double offset = 1.0;
         if (owner instanceof ServerPlayer player) {
             // TODO: Perhaps start multi-blocks at the center or dominant hand
             Bender bender = AvatarCapabilities.getBender(player);
@@ -74,7 +76,7 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
             for (UUID entityId: bender.getSelection().entityIds()) {
                 if (entityId.equals(uuid))
                     offset = i + offset;
-                i++;
+                i--;
             }
         }
         rigidBody.setPhysicsLocation(Convert.toBullet(getRightPivot(owner, scale, offset)));

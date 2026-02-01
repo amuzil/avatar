@@ -60,7 +60,7 @@ public class FireCollisionModule implements ICollisionModule {
                 Element element = ((AvatarProjectile) entity).element();
                 switch (element.type()) {
                     case AIR, EARTH, FIRE, WATER -> proj.discard();
-                    default -> entity.hurt(proj.damageSources().magic(), damage);
+                    default -> entity.hurt(proj.damageSources().dragonBreath(), damage);
                 }
             }
         });

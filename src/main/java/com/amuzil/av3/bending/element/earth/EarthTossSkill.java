@@ -30,7 +30,7 @@ public class EarthTossSkill extends EarthSkill {
 
     public EarthTossSkill() {
         super(Avatar.MOD_ID, "earth_toss");
-        addTrait(new StringTrait(Constants.FX, "earth_toss"));
+        addTrait(new StringTrait(Constants.FX, name()));
         addTrait(new TimedTrait(Constants.LIFETIME, 100));
         addTrait(new DamageTrait(Constants.DAMAGE, 4.5f));
         addTrait(new SpeedTrait(Constants.SPEED, 2.5d));
