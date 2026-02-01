@@ -84,7 +84,7 @@ public class AirCollisionModule implements ICollisionModule {
                     return;
                 }
             }
-            target.hurt(entity.damageSources().dragonBreath(), damage);
+            target.hurt(entity.damageSources().flyIntoWall(), damage);
         }
     }
 
