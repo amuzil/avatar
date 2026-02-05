@@ -52,7 +52,8 @@ public class AvatarNetwork {
                 ChooseElementPacket.CODEC,
                 ChooseElementPacket::handle
         );
-        registrar.playToServer(
+
+        registrar.playBidirectional(
                 ToggleBendingPacket.TYPE,
                 ToggleBendingPacket.STREAM_CODEC,
                 ToggleBendingPacket::handle

@@ -17,7 +17,7 @@ public class ClientEvents {
         Avatar.INPUT_MODULE = new InputModule();
         boolean isBending = event.getPlayer().getData(IS_BENDING);
         if (isBending)
-            Avatar.INPUT_MODULE.registerListeners();
+            Avatar.INPUT_MODULE.initiate();
     }
 
     @SubscribeEvent
