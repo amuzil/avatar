@@ -266,27 +266,33 @@ public class InputModule {
     }
 
     public void terminate() {
+        Player player = Minecraft.getInstance().player;
+        assert player != null;
         isHoldingShift = false;
         isHoldingCtrl = false;
         isHoldingAlt = false;
         unRegisterListeners();
         glfwKeysDown.clear();
         lastPressedForm.clear();
+        AvatarNetwork.sendToServer(new ToggleBendingPacket(player.getUUID(), false));
+    }
+
+    public void initiate() {
+        Player player = Minecraft.getInstance().player;
+        assert player != null;
+        registerListeners();
+        AvatarNetwork.sendToServer(new ToggleBendingPacket(player.getUUID(), true));
+        BenderData benderData = player.getData(BENDER_DATA);
+        benderData.printBenderData();
     }
 
     public void toggleListeners() {
         boolean isBending = bender.isBending();
-        Player player = Minecraft.getInstance().player;
-        assert player != null;
         if (!isBending) {
-            registerListeners();
-            AvatarNetwork.sendToServer(new ToggleBendingPacket(player.getUUID(), true));
+            initiate();
             System.out.println("Enabled!");
-            BenderData benderData = player.getData(BENDER_DATA);
-            benderData.printBenderData();
         } else {
             terminate();
-            AvatarNetwork.sendToServer(new ToggleBendingPacket(player.getUUID(), false));
             System.out.println("Disabled!");
         }
     }
