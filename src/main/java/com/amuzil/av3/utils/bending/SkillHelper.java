@@ -68,4 +68,12 @@ public class SkillHelper {
         return getRightPivot(entity, origin, leftScale * -1, scale);
     }
 
+    public static Vec3 getRightPivot(Entity entity, float scale, double offset) {
+        Vec3 eyePos = entity.getEyePosition();
+        Vec3 look = entity.getLookAngle().normalize();
+        Vec3 up = new Vec3(0, 1, 0);
+        Vec3 right = look.cross(up).normalize(); // cross product gives right vector
+        return eyePos.add(right.scale(offset)).add(look.scale(scale));
+    }
+
 }

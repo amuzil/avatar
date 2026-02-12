@@ -14,10 +14,7 @@ import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import static com.amuzil.av3.data.attachment.AvatarAttachments.ACTIVE_ELEMENT;
 import static com.amuzil.av3.data.attachment.AvatarAttachments.IS_BENDING;
 
-@EventBusSubscriber(
-        modid = Avatar.MOD_ID,
-        value = Dist.CLIENT
-)
+@EventBusSubscriber(modid = Avatar.MOD_ID, value = Dist.CLIENT)
 public class BendingHudOverlay {
     private static final ResourceLocation WATER_ICON =
             ResourceLocation.fromNamespaceAndPath(Avatar.MOD_ID, "textures/gui/sprites/elements/water_active.png");

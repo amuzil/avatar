@@ -54,10 +54,15 @@ public class SoundModule implements IFXModule {
     public static void startSoundEffect(String sfxName, AvatarEntity entity) {
         if (sfxName != null) {
             ResourceLocation id = Avatar.id(sfxName);
-            SoundEvent soundEvent = BuiltInRegistries.SOUND_EVENT.get(id);
-            if (soundEvent != null)
-                Minecraft.getInstance().getSoundManager()
-                        .play(new AvatarEntitySound(entity, soundEvent, entity.maxLifetime(), false));
+            startSoundEffect(id, entity);
         }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static void startSoundEffect(ResourceLocation id, AvatarEntity entity) {
+        SoundEvent soundEvent = BuiltInRegistries.SOUND_EVENT.get(id);
+        if (soundEvent != null)
+            Minecraft.getInstance().getSoundManager()
+                    .play(new AvatarEntitySound(entity, soundEvent, entity.maxLifetime(), false));
     }
 }

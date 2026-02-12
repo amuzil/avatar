@@ -20,9 +20,8 @@ public class ClientEvents {
         Avatar.LOGGER.info("Setting up Avatar Mod client-side...");
         Avatar.INPUT_MODULE = new InputModule();
         boolean isBending = event.getPlayer().getData(IS_BENDING);
-        System.out.println("ClientEvents: " + isBending);
         if (isBending)
-            Avatar.INPUT_MODULE.registerListeners();
+            Avatar.INPUT_MODULE.initiate();
     }
 
     @SubscribeEvent

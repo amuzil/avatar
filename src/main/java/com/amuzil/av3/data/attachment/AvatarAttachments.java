@@ -1,6 +1,7 @@
 package com.amuzil.av3.data.attachment;
 
 import com.amuzil.av3.Avatar;
+import com.amuzil.av3.bending.BendingSelection;
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.bending.element.Elements;
 import com.mojang.serialization.Codec;
@@ -23,6 +24,11 @@ public class AvatarAttachments {
                     .copyOnDeath()
                     .build());
 
+    public static final Supplier<AttachmentType<BendingSelection>> BENDING_SELECTION = ATTACHMENT_TYPES.register(
+            "bending_selection", () -> AttachmentType.serializable(BendingSelection::new)
+                    .sync(BendingSelection.STREAM_CODEC)
+                    .build());
+
     public static final Supplier<AttachmentType<Element>> ACTIVE_ELEMENT = ATTACHMENT_TYPES.register(
             "active_element", () -> AttachmentType.builder(() -> (Element) null)
                     .serialize(Element.CODEC)
@@ -30,14 +36,12 @@ public class AvatarAttachments {
                     .copyOnDeath()
                     .build());
 
-    public static final Supplier<AttachmentType<Boolean>> IS_BENDING =
-            ATTACHMENT_TYPES.register(
-                    "is_bending",
-                    () -> AttachmentType.builder(() -> false)
-                            .serialize(Codec.BOOL.fieldOf("is_bending").codec())
-                            .sync(ByteBufCodecs.BOOL)
-                            .copyOnDeath()
-                            .build());
+    public static final Supplier<AttachmentType<Boolean>> IS_BENDING = ATTACHMENT_TYPES.register(
+            "is_bending", () -> AttachmentType.builder(() -> false)
+                    .serialize(Codec.BOOL)
+                    .sync(ByteBufCodecs.BOOL)
+                    .copyOnDeath()
+                    .build());
 
     public static void register(IEventBus eventBus) {
         ATTACHMENT_TYPES.register(eventBus);

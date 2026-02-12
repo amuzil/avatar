@@ -5,6 +5,7 @@ import com.amuzil.av3.bending.skill.EarthSkill;
 import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.entity.construct.AvatarRigidBlock;
 import com.amuzil.av3.utils.Constants;
+import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.amuzil.magus.skill.data.SkillData;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
@@ -12,6 +13,7 @@ import com.amuzil.magus.skill.traits.skilltraits.StringTrait;
 import com.amuzil.magus.skill.traits.skilltraits.TimedTrait;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -27,6 +29,7 @@ public class EarthBlockSkill extends EarthSkill {
         addTrait(new StringTrait(Constants.FX, "earth_block"));
         addTrait(new TimedTrait(Constants.LIFETIME, 500));
         addTrait(new SizeTrait(Constants.SIZE, 1.0f));
+        addTrait(new TimedTrait(Constants.MAX_RUNTIME, 3));
 
         this.startPaths = SkillPathBuilder.getInstance()
                 .add(BLOCK)
@@ -37,7 +40,10 @@ public class EarthBlockSkill extends EarthSkill {
     public void start(Bender bender) {
         super.start(bender);
         LivingEntity entity = bender.getEntity();
+        int blockCount = bender.getSelection().entityIds().size();
+        int maxBlockCount = skillData.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime();
         if (!canEarthBend(entity)) return; // Can't earth bend if too far from ground
+        if (blockCount >= maxBlockCount) return; // Don't go past maxBlockCount
         Level level = bender.getEntity().level();
         SkillData data = bender.getSkillData(this);
         BlockPos blockPos = bender.getEntity().blockPosition().below();
@@ -50,22 +56,23 @@ public class EarthBlockSkill extends EarthSkill {
         rigidBlock.setElement(element());
         rigidBlock.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
         rigidBlock.setBlockState(blockState);
-        rigidBlock.setPos(getRightPivot(entity, 1.0f));
+        rigidBlock.setPos(getRightPivot(entity, 1.0f, blockCount * -0.8));
+        rigidBlock.getRigidBody().setPhysicsRotation(Convert.toBullet(entity.getXRot(), entity.getYRot()));
         rigidBlock.getRigidBody().setMass(0f);
         rigidBlock.getRigidBody().setKinematic(true);
         rigidBlock.setOwner(entity);
+        rigidBlock.getRigidBody().prioritize((Player) entity);
         rigidBlock.setMaxLifetime(lifetime);
         rigidBlock.setWidth((float) size);
         rigidBlock.setHeight((float) size);
         rigidBlock.setDamageable(false);
         rigidBlock.setControlled(true);
-
         rigidBlock.init();
 
         bender.formPath.clear();
         data.setSkillState(SkillState.IDLE);
-
         bender.getSelection().addEntityId(rigidBlock.getUUID());
+
         entity.level().addFreshEntity(rigidBlock);
     }
 }

@@ -4,6 +4,7 @@ import com.amuzil.av3.Avatar;
 import com.amuzil.av3.network.packets.api.AvatarPacket;
 import com.amuzil.av3.network.packets.bending.ChooseElementPacket;
 import com.amuzil.av3.network.packets.bending.ToggleBendingPacket;
+import com.amuzil.av3.network.packets.client.TriggerFXPacket;
 import com.amuzil.av3.network.packets.form.ExecuteFormPacket;
 import com.amuzil.av3.network.packets.form.ReleaseFormPacket;
 import com.amuzil.av3.network.packets.sync.SyncMovementPacket;
@@ -71,10 +72,16 @@ public class AvatarNetwork {
         );
 
 
-        registrar.playToServer(
+        registrar.playBidirectional(
                 ToggleBendingPacket.TYPE,
-                ToggleBendingPacket.CODEC,
+                ToggleBendingPacket.STREAM_CODEC,
                 ToggleBendingPacket::handle
+        );
+
+        registrar.playToClient(
+                TriggerFXPacket.TYPE,
+                TriggerFXPacket.STREAM_CODEC,
+                TriggerFXPacket::handle
         );
     }
 

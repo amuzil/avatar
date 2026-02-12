@@ -89,6 +89,7 @@ public class Avatar {
         ModuleRegistry.register(SimpleKnockbackModule::new);
         ModuleRegistry.register(AirCollisionModule::new);
         ModuleRegistry.register(WaterCollisionModule::new);
+        ModuleRegistry.register(EarthCollisionModule::new);
         ModuleRegistry.register(FireCollisionModule::new);
 
         // FX

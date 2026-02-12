@@ -42,6 +42,7 @@ public class Bender implements IBender {
 
     LivingEntity entity;
     private BenderData benderData;
+    private BendingSelection selection;
     private final Consumer<FormActivatedEvent> formListener;
 
     private boolean isDirty = true; // Indicates if data was changed
@@ -50,7 +51,6 @@ public class Bender implements IBender {
     private int tick = timeout;
     private Vec3 lastDeltaMovement = Vec3.ZERO; // in-sync
     private BendingForm.Type.Motion stepDirection; // in-sync
-    private BendingSelection selection = new BendingSelection(); // in-sync
     public final List<Form> formPath = new ArrayList<>();
     public final HashMap<String, Skill> activeSkills = new HashMap<>();
     private Skill skillToActivate = null;
@@ -60,6 +60,7 @@ public class Bender implements IBender {
     public Bender(LivingEntity entity) {
         this.entity = entity;
         this.benderData = entity.getData(BENDER_DATA);
+        this.selection = entity.getData(BENDING_SELECTION);
         this.formListener = this::onFormActivatedEvent;
 
         // Allow use of all Elements & Skills for testing!
@@ -220,7 +221,7 @@ public class Bender implements IBender {
 
     @Override
     public SkillData getSkillData(Skill skill) {
-        return benderData.skillDataMap.get(skill.name());
+        return getSkillData(skill.name());
     }
 
     @Override
@@ -320,14 +321,19 @@ public class Bender implements IBender {
     }
 
     @Override
-    public void setSelection(BendingSelection selection) {
-        this.selection = selection;
-        markDirty();
+    public BendingSelection getSelection() {
+        return entity.getData(BENDING_SELECTION);
     }
 
     @Override
-    public BendingSelection getSelection() {
-        return this.selection;
+    public void setSelection(BendingSelection selection) {
+        this.selection = selection;
+        entity.setData(BENDING_SELECTION, selection);
+        markDirty();
+    }
+
+    public void resetSelection() {
+        entity.setData(BENDING_SELECTION, new BendingSelection());
     }
 
     public boolean isBending() { return entity.getData(IS_BENDING); }

@@ -2,6 +2,7 @@ package com.amuzil.av3.entity.api;
 
 import com.amuzil.av3.bending.form.BendingForm;
 import com.amuzil.av3.entity.AvatarEntity;
+import com.amuzil.av3.entity.construct.AvatarConstruct;
 import com.amuzil.av3.entity.projectile.AvatarProjectile;
 import net.minecraft.world.entity.Entity;
 
@@ -32,7 +33,7 @@ public interface ICollisionModule extends IEntityModule {
 
     @FunctionalInterface
     interface ConstructHandler {
-        void handle(AvatarProjectile entity, Entity hitEntity);
+        void handle(AvatarConstruct entity, Entity hitEntity, float damage, float size);
     }
 
     static void registerCollisionHandler(Class<?> clazz, CollisionHandler handler) {

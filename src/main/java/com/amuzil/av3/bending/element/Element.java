@@ -15,7 +15,6 @@ public abstract class Element extends SkillCategory {
     public static final StreamCodec<RegistryFriendlyByteBuf, Element> STREAM_CODEC =
             ByteBufCodecs.fromCodecWithRegistries(Element.CODEC);
 
-
     private final String nickName;
     private final Type type;
 

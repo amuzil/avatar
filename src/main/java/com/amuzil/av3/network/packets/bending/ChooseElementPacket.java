@@ -47,7 +47,7 @@ public class ChooseElementPacket implements AvatarPacket {
 
     public static void handle(ChooseElementPacket msg, IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
-            if (!ctx.flow().getReceptionSide().isClient()) {
+            if (ctx.flow().getReceptionSide().isServer()) {
                 ServerPlayer player = Objects.requireNonNull(ctx.player().getServer()).getPlayerList().getPlayer(msg.playerUUID);
                 assert player != null;
                 Bender bender = getBender(player);

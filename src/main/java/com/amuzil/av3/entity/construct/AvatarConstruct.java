@@ -139,14 +139,6 @@ public class AvatarConstruct extends AvatarEntity implements IAvatarConstruct {
         );
     }
 
-//    @Override
-//    public EntityDimensions getDimensions(Pose pose) {
-//        return EntityDimensions.scalable(
-//                entityData.get(WIDTH),
-//                entityData.get(HEIGHT)
-//        );
-//    }
-
     @Override
     protected  AABB makeBoundingBox() {
         return getSize();

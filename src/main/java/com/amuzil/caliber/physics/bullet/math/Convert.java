@@ -23,6 +23,14 @@ public class Convert {
         return new com.jme3.math.Quaternion(quat.x(), quat.y(), quat.z(), quat.w());
     }
 
+    public static com.jme3.math.Quaternion toBullet(float xRot, float yRot) {
+        float yaw = -yRot * ((float) Math.PI / 180f);
+        float pitch = xRot * ((float) Math.PI / 180f);
+        Quaternion rotation = new Quaternion();
+        rotation.fromAngles(pitch, yaw, 0f);
+        return rotation;
+    }
+
     public static Vector3f toBullet(BlockPos blockPos) {
         return new Vector3f(blockPos.getX(), blockPos.getY(), blockPos.getZ());
     }

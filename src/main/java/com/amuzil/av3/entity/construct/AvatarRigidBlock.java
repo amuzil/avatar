@@ -1,5 +1,7 @@
 package com.amuzil.av3.entity.construct;
 
+import com.amuzil.av3.data.capability.AvatarCapabilities;
+import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.api.IForceModule;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
@@ -7,19 +9,19 @@ import com.amuzil.av3.entity.api.modules.force.ControlModule;
 import com.amuzil.caliber.api.EntityPhysicsElement;
 import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
 import com.amuzil.caliber.physics.bullet.math.Convert;
-import com.jme3.math.Matrix3f;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 import static com.amuzil.av3.utils.bending.SkillHelper.getRightPivot;
 
@@ -36,6 +38,8 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
         this.rigidBody = new EntityRigidBody(this);
         addForceModule((IForceModule) ModuleRegistry.create(ControlModule.id));
         defaultMass = rigidBody.getMass();
+//        rigidBody.setGravity(Vector3f.ZERO);
+//        rigidBody.setProtectGravity(true);
     }
 
     public AvatarRigidBlock(Level level) {
@@ -50,14 +54,12 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
     @Override
     public void setOwner(@NotNull Entity owner) {
         super.setOwner(owner);
-        if (owner instanceof Player)
-            this.rigidBody.prioritize((Player) owner);
     }
 
     @Override
     public void shoot(Vec3 location, Vec3 direction, double speed, double inAccuracy) {
         setPos(location);
-        Vec3 vec3 = direction.normalize().scale(speed);
+        Vec3 vec3 = direction.normalize().scale(10 * speed * rigidBody.getMass());
         rigidBody.applyCentralImpulse(Convert.toBullet(vec3));
     }
 
@@ -66,20 +68,19 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
         Entity owner = this.getOwner();
         if (owner == null) return;
 
-        // Calculate right pivot position
-        Vec3 look = owner.getLookAngle().normalize();
-        Vec3 up = new Vec3(0, 1, 0);
-        Vec3 right = look.cross(up).normalize(); // cross product gives right vector
-        Vec3 newPos = getRightPivot(owner, scale);
-
-        // Calculate rotation to match owner's look direction
-        Matrix3f mat = new Matrix3f();
-        mat.fromAxes(Convert.toBullet(right), Convert.toBullet(up), Convert.toBullet(look));
-        Quaternion q = new Quaternion();
-        q.fromRotationMatrix(mat);
-
-        rigidBody.setPhysicsLocation(Convert.toBullet(newPos));
-        rigidBody.setPhysicsRotation(q);
+        double offset = 1.0;
+        if (owner instanceof ServerPlayer player) {
+            // TODO: Perhaps start multi-blocks at the center or dominant hand
+            Bender bender = AvatarCapabilities.getBender(player);
+            int i = 0;
+            for (UUID entityId: bender.getSelection().entityIds()) {
+                if (entityId.equals(uuid))
+                    offset = i + offset;
+                i--;
+            }
+        }
+        rigidBody.setPhysicsLocation(Convert.toBullet(getRightPivot(owner, scale, offset)));
+        rigidBody.setPhysicsRotation(Convert.toBullet(owner.getXRot(), owner.getYRot()));
     }
 
     public boolean isRigidBodyDirty() {

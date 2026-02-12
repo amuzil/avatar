@@ -2,9 +2,10 @@ package com.amuzil.av3.events;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.BendingSkill;
-import com.amuzil.av3.data.BenderCache;
 import com.amuzil.av3.data.capability.AvatarCapabilities;
 import com.amuzil.av3.data.capability.Bender;
+import com.amuzil.av3.network.AvatarNetwork;
+import com.amuzil.av3.network.packets.bending.ToggleBendingPacket;
 import com.amuzil.av3.utils.commands.AvatarCommands;
 import com.amuzil.magus.registry.Registries;
 import com.amuzil.magus.skill.event.SkillTickEvent;
@@ -72,6 +73,7 @@ public class ServerEvents {
             Bender bender = AvatarCapabilities.syncBender(player);
             if (bender == null) return;
             bender.register();
+            AvatarNetwork.sendToClient(new ToggleBendingPacket(player.getUUID(), bender.isBending()), player);
         }
     }
 
@@ -105,8 +107,11 @@ public class ServerEvents {
 
     @SubscribeEvent
     private static void onPlayerChangedDimensionEvent(PlayerEvent.PlayerChangedDimensionEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player)
-            AvatarCapabilities.syncBender(player);
+        if (event.getEntity() instanceof ServerPlayer player) {
+            Bender bender = AvatarCapabilities.syncBender(player);
+            if (bender == null) return;
+            AvatarNetwork.sendToClient(new ToggleBendingPacket(player.getUUID(), bender.isBending()), player);
+        }
     }
 
     @SubscribeEvent
