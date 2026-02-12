@@ -17,6 +17,11 @@ public class PhotonModule implements IFXModule {
 
     public static String id = PhotonModule.class.getSimpleName();
 
+    public static void endEntityEffect(FX fx, Entity entity) {
+        EntityEffectExecutor entityEffect = new EntityEffectExecutor(fx, entity.level(), entity, EntityEffectExecutor.AutoRotate.NONE);
+        entityEffect.setForcedDeath(true);
+    }
+
     public static void startEntityEffect(FX fx, Entity entity) {
         if (fx != null) {
             EntityEffectExecutor entityEffect = new EntityEffectExecutor(fx, entity.level(), entity, EntityEffectExecutor.AutoRotate.NONE);
@@ -60,6 +65,7 @@ public class PhotonModule implements IFXModule {
 
             entityEffect.setRotation(VectorUtils.faceDirectionFromLocalY(look));
             entityEffect.setOffset(0, -entity.getBbHeight() / 2, 0);
+            entityEffect.setForcedDeath(true);
             entityEffect.start();
         }
     }

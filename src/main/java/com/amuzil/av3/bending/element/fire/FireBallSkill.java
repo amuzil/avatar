@@ -39,7 +39,7 @@ public class FireBallSkill extends FireSkill {
         addTrait(new SpeedTrait(Constants.SPEED_FACTOR, 0.95d));
         addTrait(new StringTrait(Constants.FX, "fireball"));
 
-        startPaths = SkillPathBuilder.getInstance().add(BendingForms.SHAPE).add(BendingForms.PUSH).build();
+        startPaths = SkillPathBuilder.getInstance().add(BendingForms.COMPRESS).build();
     }
 
     @Override

@@ -19,6 +19,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.Random;
+
 import static com.amuzil.av3.bending.form.BendingForms.COMPRESS;
 
 
@@ -34,6 +36,7 @@ public class AirSwipeSkill extends AirSkill {
         addTrait(new TimedTrait(Constants.LIFETIME, 30));
         addTrait(new StringTrait(Constants.FX, "airs_perma12"));
 
+        
         startPaths = SkillPathBuilder.getInstance()
 //                .simple(new ActiveForm(SHAPE, true))
                 .add(COMPRESS)
