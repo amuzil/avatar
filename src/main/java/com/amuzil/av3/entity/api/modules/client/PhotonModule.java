@@ -21,7 +21,9 @@ public class PhotonModule implements IFXModule {
         if (fx != null) {
             EntityEffectExecutor entityEffect = new EntityEffectExecutor(fx, entity.level(), entity, EntityEffectExecutor.AutoRotate.NONE);
             Vector3f look = entity.getLookAngle().toVector3f();
+            Vector3f scale = new Vector3f(1, 1, 1);
             if (entity instanceof AvatarEntity avatar) {
+                scale = avatar.vfxScale();
                 look = avatar.lookDirection();
             }
 // Effect faces +Y by default
@@ -49,11 +51,11 @@ public class PhotonModule implements IFXModule {
 //
 
             if (entity instanceof AvatarProjectile proj) {
-                entityEffect.setScale(proj.width() * 10, proj.height() * 10, proj.width() * 10);
+                entityEffect.setScale(proj.width() * scale.x, proj.height() * scale.y, proj.width() * scale.z);
             }
             if (entity instanceof AvatarConstruct construct) {
-                entityEffect.setScale(construct.width() * 10, construct.height() * 10,
-                        construct.depth() * 10);
+                entityEffect.setScale(construct.width() * scale.x, construct.height() * scale.y,
+                        construct.depth() * scale.z);
             }
 
             entityEffect.setRotation(VectorUtils.faceDirectionFromLocalY(look));

@@ -43,6 +43,7 @@ public abstract class AvatarEntity extends Entity {
     private static final EntityDataAccessor<String> FX = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Vector3f> LOOK_DIRECTION = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.VECTOR3);
     private static final EntityDataAccessor<Boolean> ONE_SHOT_FX = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Vector3f> VFX_SCALE = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.VECTOR3);
     private static final EntityDataAccessor<Boolean> COLLIDABLE = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DAMAGEABLE = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> PHYSICS = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
@@ -277,6 +278,14 @@ public abstract class AvatarEntity extends Entity {
         return this.entityData.get(PHYSICS);
     }
 
+    public void vfxScale(Vector3f scale) {
+        this.entityData.set(VFX_SCALE, scale);
+    }
+
+    public Vector3f vfxScale() {
+        return this.entityData.get(VFX_SCALE);
+    }
+
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(OWNER_ID, Optional.empty());
@@ -284,6 +293,7 @@ public abstract class AvatarEntity extends Entity {
         builder.define(SKILL_ID, "");
         builder.define(FX, "");
         builder.define(ONE_SHOT_FX, true);
+        builder.define(VFX_SCALE, new Vector3f(1, 1, 1));
         builder.define(COLLIDABLE, false);
         builder.define(DAMAGEABLE, false);
         builder.define(PHYSICS, false);
@@ -291,7 +301,6 @@ public abstract class AvatarEntity extends Entity {
         builder.define(MAX_LIFETIME, 10000);
         builder.define(SURFACE, false);
         builder.define(LOOK_DIRECTION, new Vector3f(0, 1, 0));
-
     }
 
     public void surface(boolean surface) {
