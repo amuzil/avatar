@@ -5,6 +5,7 @@ import com.amuzil.av3.bending.skill.EarthSkill;
 import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.entity.construct.AvatarRigidBlock;
 import com.amuzil.av3.utils.Constants;
+import com.amuzil.av3.utils.bending.BendingMaterial;
 import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.amuzil.magus.skill.data.SkillData;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
@@ -48,6 +49,7 @@ public class EarthBlockSkill extends EarthSkill {
         SkillData data = bender.getSkillData(this);
         BlockPos blockPos = bender.getEntity().blockPosition().below();
         BlockState blockState = level.getBlockState(blockPos);
+        if (!BendingMaterial.isBendable(blockState, element())) return;
 
         int lifetime = data.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
         double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();

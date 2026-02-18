@@ -1,4 +1,5 @@
 {
+  "replace": false,
   "values": [
     "minecraft:stone",
     "minecraft:cobblestone",
@@ -21,18 +22,6 @@
     "minecraft:lodestone",
     "minecraft:blackstone",
     "minecraft:calcite",
-    "minecraft:cobbled_deepslate",
-    "#forge:sand",
-    "#forge:stone",
-    "#forge:sandstone",
-    "#forge:cobblestone",
-    "#forge:gravel",
-    "#forge:obsidian",
-    "#forge:end_stones",
-    "#forge:glass",
-    "#forge:glass_panes",
-    "#forge:stained_glass",
-    "#forge:stained_glass_panes",
-    "#forge:netherrack"
+    "minecraft:cobbled_deepslate"
   ]
 }
