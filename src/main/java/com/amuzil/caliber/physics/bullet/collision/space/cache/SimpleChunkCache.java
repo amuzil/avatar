@@ -108,8 +108,7 @@ public class SimpleChunkCache implements ChunkCache {
                 if (blockData != null) {
                     if (blockData.blockState() != blockState)
                         this.loadBlockData(pos, level, blockState);
-                }
-                else {
+                } else {
                     this.loadBlockData(pos, level, blockState);
                 }
 
