@@ -149,7 +149,6 @@ public class InputModule {
         if (selectTargetKey.isDown() && !isSelecting) {
             isSelecting = true;
             handleSelectRaycast();
-            bender.syncSelectionToServer();
 //            sendDebugMsg("Selection: " + bender.getSelection().target);
         }
     }
@@ -175,7 +174,7 @@ public class InputModule {
             bender.getSelection().setSelf();
         } else {
             Minecraft mc = Minecraft.getInstance();
-            double distance = 15; // TODO - Create Bender DataTrait
+            double distance = 15; // TODO - Use BenderData
             assert mc.player != null;
             HitResult result = ProjectileUtil.getHitResultOnViewVector(mc.player, entity -> true, distance);
             switch (result.getType()) {
@@ -185,6 +184,7 @@ public class InputModule {
             }
         }
         isSelecting = false;
+        bender.syncSelectionToServer();
         bender.resetSelection();
     }
 
