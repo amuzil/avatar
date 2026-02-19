@@ -175,7 +175,7 @@ public abstract class AvatarEntity extends Entity {
 
     @Nullable
     public DataTrait getTrait(String name) {
-        for (DataTrait trait : traits)
+        for (DataTrait trait: traits)
             if (trait.name().equals(name)) return trait;
 
         return null;
