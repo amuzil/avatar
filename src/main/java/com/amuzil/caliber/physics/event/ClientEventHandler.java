@@ -2,7 +2,7 @@ package com.amuzil.caliber.physics.event;
 
 import com.amuzil.caliber.api.EntityPhysicsElement;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
-import com.amuzil.caliber.physics.bullet.collision.space.generator.EntityCollisionGenerator;
+import com.amuzil.av3.utils.physics.generator.EntityCollisionGenerator;
 import com.amuzil.caliber.physics.bullet.collision.space.supplier.entity.ClientEntitySupplier;
 import com.amuzil.caliber.physics.bullet.collision.space.supplier.level.ClientLevelSupplier;
 import com.amuzil.caliber.physics.bullet.thread.PhysicsThreadStore;
@@ -13,7 +13,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
@@ -26,7 +25,7 @@ public final class ClientEventHandler {
         if (event.getLevel().isClientSide) {
             MinecraftSpace space = MinecraftSpace.get(event.getLevel());
             space.step();
-            EntityCollisionGenerator.step(space);
+            EntityCollisionGenerator.step(space); // TODO: Move this into av3 package
         }
     }
 
