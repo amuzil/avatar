@@ -1,7 +1,6 @@
-package com.amuzil.caliber.physics.bullet.collision.space.generator;
+package com.amuzil.av3.utils.physics.generator;
 
 import com.amuzil.av3.entity.construct.AvatarRigidBlock;
-import com.amuzil.caliber.physics.bullet.collision.body.ElementRigidBody;
 import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.jme3.math.Vector3f;

@@ -4,7 +4,7 @@ import com.amuzil.caliber.api.EntityPhysicsElement;
 import com.amuzil.caliber.api.event.space.PhysicsSpaceEvent;
 import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
-import com.amuzil.caliber.physics.bullet.collision.space.generator.EntityCollisionGenerator;
+import com.amuzil.av3.utils.physics.generator.EntityCollisionGenerator;
 import com.amuzil.caliber.physics.bullet.collision.space.storage.SpaceStorage;
 import com.amuzil.caliber.physics.bullet.collision.space.supplier.entity.ServerEntitySupplier;
 import com.amuzil.caliber.physics.bullet.collision.space.supplier.level.ServerLevelSupplier;
@@ -65,7 +65,7 @@ public final class ServerEventHandler {
         if (!level.isClientSide) {
             MinecraftSpace space = MinecraftSpace.get(level);
             space.step();
-            EntityCollisionGenerator.step(space);
+            EntityCollisionGenerator.step(space); // TODO: Move this into av3 package
 
             for (var rigidBody : space.getRigidBodiesByClass(EntityRigidBody.class)) {
                 if (rigidBody.isActive()) {
