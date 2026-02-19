@@ -23,7 +23,7 @@ public class TerrainGenerator {
         final var chunkCache = space.getChunkCache();
         final var keep = new HashSet<TerrainRigidBody>();
 
-        for (var rigidBody : space.getRigidBodiesByClass(ElementRigidBody.class)) {
+        for (var rigidBody: space.getRigidBodiesByClass(ElementRigidBody.class)) {
             if (!rigidBody.terrainLoadingEnabled() || !rigidBody.isActive())
                 continue;
 
