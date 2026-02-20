@@ -2,6 +2,7 @@ package com.amuzil.av3.entity;
 
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.entity.construct.AvatarRigidBlock;
+import com.amuzil.av3.entity.construct.CompoundRigidBlock;
 import com.amuzil.av3.entity.mobs.SkyBisonEntity;
 import com.amuzil.av3.entity.projectile.*;
 import net.minecraft.core.registries.Registries;
@@ -39,6 +40,9 @@ public class AvatarEntities {
 
     public static final Supplier<EntityType<AvatarRigidBlock>> AVATAR_RIGID_BLOCK_ENTITY_TYPE =
             registerPhysicsBody("avatar_rigid_block", AvatarRigidBlock::new, 1.0f, 1.0f, 10, 4);
+
+    public static final Supplier<EntityType<CompoundRigidBlock>> COMPOUND_RIGID_BLOCK_ENTITY_TYPE =
+            registerPhysicsBody("avatar_compound_rigid_block", CompoundRigidBlock::new, 1.0f, 1.0f, 10, 4);
 
     public static final Supplier<EntityType<SkyBisonEntity>> AVATAR_SKYBISON_ENTITY_TYPE =
             ENTITY_TYPES.register("avatar_skybison_entity", () -> EntityType.Builder.of(SkyBisonEntity::new, MobCategory.CREATURE)
