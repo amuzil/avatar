@@ -23,7 +23,7 @@ public abstract class EntityRenderDispatcherMixin {
 
         return e;
     }
-//
+
 //    @Inject(method = "renderHitbox", at = @At("HEAD"), cancellable = true)
 //    private static void caliber$overrideHitBox_renderHitbox(PoseStack matrices, VertexConsumer vertices, Entity entity, float tickDelta, CallbackInfo info)
 //    {
