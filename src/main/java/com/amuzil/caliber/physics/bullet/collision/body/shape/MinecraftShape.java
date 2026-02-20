@@ -2,9 +2,7 @@ package com.amuzil.caliber.physics.bullet.collision.body.shape;
 
 import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.jme3.bounding.BoundingBox;
-import com.jme3.bullet.collision.shapes.BoxCollisionShape;
-import com.jme3.bullet.collision.shapes.HullCollisionShape;
-import com.jme3.bullet.collision.shapes.MeshCollisionShape;
+import com.jme3.bullet.collision.shapes.*;
 import com.jme3.bullet.collision.shapes.infos.IndexedMesh;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
@@ -17,6 +15,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public interface MinecraftShape {
+
     List<Triangle> getTriangles(Quaternion quaternion);
 
     float getVolume();
@@ -47,6 +46,10 @@ public interface MinecraftShape {
 
     static Concave concave(BoundingBox box) {
         return new Concave(Triangle.getMeshOf(box));
+    }
+
+    static Compound compound(List<CollisionShape> shapes) {
+        return new Compound(shapes);
     }
 
     /* Mostly stable */
@@ -116,6 +119,26 @@ public interface MinecraftShape {
         public float getVolume() {
             final var box = boundingBox(new Vector3f(), new Quaternion(), new BoundingBox());
             return box.getXExtent() * box.getYExtent() * box.getZExtent();
+        }
+    }
+
+    final class Compound extends CompoundCollisionShape implements MinecraftShape {
+
+        public Compound(List<CollisionShape> shapes) {
+            super();
+            for (CollisionShape shape: shapes) {
+                this.addChildShape(shape);
+            }
+        }
+
+        @Override
+        public List<Triangle> getTriangles(Quaternion quaternion) {
+            return List.of();
+        }
+
+        @Override
+        public float getVolume() {
+            return this.countChildren();
         }
     }
 }

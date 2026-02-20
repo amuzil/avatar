@@ -28,8 +28,8 @@ import static com.amuzil.av3.utils.bending.SkillHelper.getRightPivot;
 
 public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsElement {
 
-    private final EntityRigidBody rigidBody;
-    private float defaultMass;
+    protected final EntityRigidBody rigidBody;
+    protected float defaultMass;
 
     protected static final EntityDataAccessor<Boolean> RIGID_BODY_DIRTY = SynchedEntityData.defineId(AvatarRigidBlock.class, EntityDataSerializers.BOOLEAN);
 
