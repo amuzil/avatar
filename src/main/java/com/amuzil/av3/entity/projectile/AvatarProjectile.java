@@ -373,6 +373,9 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
         cloud = null;
     }
 
+
+
+
     /**
      * Called when the arrow hits an entity
      */
@@ -408,6 +411,8 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
             return entity == null || this.leftOwner || !entity.isPassengerOfSameVehicle(pTarget);
         }
     }
+
+
 
     protected void updateRotation() {
         Vec3 vec3 = this.getDeltaMovement();

@@ -92,7 +92,7 @@ public class FireCollisionModule implements ICollisionModule {
 
         if (targets.isEmpty()) {
             Vec3 pos = entity.position();
-            Vec3 delta = pos.add(entity.getDeltaMovement());
+            Vec3 delta = pos.add(entity.getDeltaMovement().scale(1 / 20f));
             BlockHitResult hitResult = entity.level().clip(new ClipContext(pos, delta, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, entity));
             if (hitResult.getType() == HitResult.Type.BLOCK) {
                 entity.discard();

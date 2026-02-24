@@ -7,6 +7,8 @@ import com.amuzil.av3.entity.api.IClientModule;
 import com.amuzil.av3.entity.api.ICollisionModule;
 import com.amuzil.av3.entity.api.IEntityModule;
 import com.amuzil.av3.entity.api.IForceModule;
+import com.amuzil.av3.entity.api.modules.client.DeathFXModule;
+import com.amuzil.av3.entity.api.modules.entity.DeathModule;
 import com.amuzil.magus.skill.traits.DataTrait;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.Packet;
@@ -192,6 +194,17 @@ public abstract class AvatarEntity extends Entity {
         entityData.set(SKILL_ID, skillId);
     }
 
+
+    @Override
+    public void kill() {
+        List<DeathModule> serverDeathModules = modules.stream().filter(m -> m instanceof DeathModule).map(m -> (DeathModule) m).toList();
+        List<DeathFXModule> clientDeathModules = clientModules.stream().filter(m -> m instanceof DeathFXModule).map(m -> (DeathFXModule) m).toList();
+        for (DeathModule mod : serverDeathModules)
+            mod.die(this);
+        for (DeathFXModule mod : clientDeathModules)
+            mod.die(this);
+        super.kill();
+    }
 
     @Nullable
     public DataTrait getTrait(String name) {

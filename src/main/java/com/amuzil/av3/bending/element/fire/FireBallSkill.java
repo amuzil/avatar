@@ -107,7 +107,7 @@ public class FireBallSkill extends FireSkill {
 
         // Particle FX
         projectile.lookDirection(entity.getLookAngle().toVector3f());
-        projectile.setFXOneShot(false);
+        projectile.setFXOneShot(true);
         projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
         projectile.init();
 
