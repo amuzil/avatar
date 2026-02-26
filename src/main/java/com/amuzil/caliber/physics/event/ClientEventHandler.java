@@ -12,7 +12,6 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
@@ -37,9 +36,9 @@ public final class ClientEventHandler {
         PhysicsThreadStore.INSTANCE.destroyClientThread();
     }
 
-    @SubscribeEvent
-    public static void onClientTick(ClientTickEvent.Post event) {
-    }
+//    @SubscribeEvent
+//    public static void onClientTick(ClientTickEvent.Post event) {
+//    }
 
     @SubscribeEvent
     public static void onDebugRender(RenderLevelStageEvent event) {
