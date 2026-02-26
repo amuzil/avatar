@@ -1,6 +1,7 @@
 package com.amuzil.caliber.physics.network;
 
 import com.amuzil.caliber.CaliberPhysics;
+import com.amuzil.caliber.physics.network.impl.SyncCollisionShapePacket;
 import com.amuzil.caliber.physics.network.impl.SendRigidBodyMovementPacket;
 import com.amuzil.caliber.physics.network.impl.SendRigidBodyPropertiesPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,13 +21,19 @@ public class CaliberNetwork {
         PayloadRegistrar registrar = event.registrar(CaliberPhysics.MOD_ID).versioned(VERSION);
         registrar.playToClient(
                 SendRigidBodyMovementPacket.TYPE,
-                SendRigidBodyMovementPacket.CODEC,
+                SendRigidBodyMovementPacket.STREAM_CODEC,
                 PacketUtil::receiveClientMessage
         );
 
         registrar.playToClient(
                 SendRigidBodyPropertiesPacket.TYPE,
-                SendRigidBodyPropertiesPacket.CODEC,
+                SendRigidBodyPropertiesPacket.STREAM_CODEC,
+                PacketUtil::receiveClientMessage
+        );
+
+        registrar.playToClient(
+                SyncCollisionShapePacket.TYPE,
+                SyncCollisionShapePacket.STREAM_CODEC,
                 PacketUtil::receiveClientMessage
         );
     }

@@ -15,7 +15,7 @@ import org.joml.Vector3f;
 
 public class SendRigidBodyMovementPacket extends CaliberPacket {
     public static final Type<SendRigidBodyMovementPacket> TYPE = new Type<>(CaliberPhysics.id(SendRigidBodyMovementPacket.class));
-    public static final StreamCodec<FriendlyByteBuf, SendRigidBodyMovementPacket> CODEC =
+    public static final StreamCodec<FriendlyByteBuf, SendRigidBodyMovementPacket> STREAM_CODEC =
             StreamCodec.ofMember(SendRigidBodyMovementPacket::toBytes, SendRigidBodyMovementPacket::new);
 
     private final int id;
@@ -73,7 +73,7 @@ public class SendRigidBodyMovementPacket extends CaliberPacket {
 
     @Override
     public Runnable getProcessor(IPayloadContext context) {
-        return client(context, () -> CaliberClientPacketHandler.handleSendRigidBodyMovementPacket(this));
+        return client(context, () -> CaliberClientPacketHandler.handleRigidBodyMovementPacket(this));
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.collision.shapes.*;
 import com.jme3.bullet.collision.shapes.infos.IndexedMesh;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -48,7 +49,13 @@ public interface MinecraftShape {
         return new Concave(Triangle.getMeshOf(box));
     }
 
-    static Compound compound(List<CollisionShape> shapes) {
+    static Compound compound(List<MinecraftShape> shapes, List<Vector3f> positions) {
+        return new Compound(shapes, positions);
+    }
+
+    static Compound compound(List<MinecraftShape> shapes) {
+        if (shapes == null)
+            return new Compound();
         return new Compound(shapes);
     }
 
@@ -124,11 +131,33 @@ public interface MinecraftShape {
 
     final class Compound extends CompoundCollisionShape implements MinecraftShape {
 
-        public Compound(List<CollisionShape> shapes) {
+        public Compound() {
             super();
-            for (CollisionShape shape: shapes) {
-                this.addChildShape(shape);
+            this.recalculateAabb();
+        }
+
+        public Compound(List<MinecraftShape> shapes) {
+            super();
+
+            for (MinecraftShape shape: shapes) {
+                this.addChildShape((CollisionShape) shape);
             }
+
+            this.recalculateAabb();
+        }
+
+        public Compound(List<MinecraftShape> shapes, List<Vector3f> positions) {
+            super();
+            if (shapes.size() != positions.size())
+                throw new IllegalArgumentException("Shapes and positions must have same size");
+
+            for (int i = 0; i < shapes.size(); i++) {
+                Transform childTransform = new Transform();
+                childTransform.setTranslation(positions.get(i));
+                this.addChildShape((CollisionShape) shapes.get(i), childTransform);
+            }
+
+            this.recalculateAabb();
         }
 
         @Override
