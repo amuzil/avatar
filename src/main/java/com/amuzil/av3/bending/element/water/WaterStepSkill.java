@@ -27,7 +27,7 @@ public class WaterStepSkill extends WaterSkill {
         addTrait(new ColourTrait(0, 0, 255, "water_colour"));
         addTrait(new TimedTrait(Constants.MAX_RUNTIME, 60));
         addTrait(new TimedTrait(Constants.RUNTIME, 0));
-        addTrait(new StringTrait(Constants.FX, "water1"));
+        addTrait(new StringTrait(Constants.FX, "water_step"));
         this.startPaths = SkillPathBuilder.getInstance()
                 .add(STEP)
                 .build();
