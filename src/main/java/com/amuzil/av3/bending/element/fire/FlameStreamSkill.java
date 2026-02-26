@@ -36,7 +36,7 @@ public class FlameStreamSkill extends FireSkill {
         addTrait(new TimedTrait(Constants.LIFETIME, 15));
         addTrait(new TimedTrait(Constants.FIRE_TIME, 40));
         addTrait(new SpeedTrait(Constants.SPEED_FACTOR, 0.85d));
-        addTrait(new StringTrait(Constants.FX, "fires_bloom_perma5"));
+        addTrait(new StringTrait(Constants.FX, "fires_bloom"));
 
         startPaths = SkillPathBuilder.getInstance()
 //                .simple(new ActiveForm(BendingForms.ARC, true))

@@ -33,7 +33,7 @@ public class BlazingRingsSkill extends FireSkill {
         addTrait(new SpeedTrait(Constants.SPEED, 0.4d));
         addTrait(new TimedTrait(Constants.LIFETIME, 40));
         addTrait(new TimedTrait(Constants.FIRE_TIME, 40));
-        addTrait(new StringTrait(Constants.FX, "fires_bloom_perma6"));
+        addTrait(new StringTrait(Constants.FX, "fires_bloom"));
         addTrait(new AngleTrait(Constants.ANGLE, 0));
         addTrait(new RangeTrait(Constants.RANGE, 2.0d));
 

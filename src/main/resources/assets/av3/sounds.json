@@ -8,11 +8,11 @@
       }
     ]
   },
-  "fires_bloom_perma5": {
+  "fires_bloom": {
     "sounds": [
       {
         "attenuation_distance": 4,
-        "name": "av3:fires_bloom_perma5",
+        "name": "av3:fires_bloom",
         "stream": false
       }
     ]
