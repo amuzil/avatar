@@ -62,6 +62,7 @@ public class BlazingRingsSkill extends FireSkill {
         projectile.setHeight((float) size);
         projectile.setNoGravity(true);
         projectile.setDamageable(false);
+        projectile.setPos(entity.position().add(0, entity.getEyeHeight(), 0));
 
         projectile.addTraits(skillData.getTrait(Constants.MAX_SIZE, SizeTrait.class));
         projectile.addTraits(skillData.getTrait(Constants.ANGLE, AngleTrait.class));
