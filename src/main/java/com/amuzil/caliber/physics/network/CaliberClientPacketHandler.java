@@ -2,16 +2,24 @@ package com.amuzil.caliber.physics.network;
 
 import com.amuzil.caliber.api.EntityPhysicsElement;
 import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
+import com.amuzil.caliber.physics.bullet.collision.body.shape.MinecraftShape;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.caliber.physics.bullet.math.Convert;
+import com.amuzil.caliber.physics.network.impl.SyncCollisionShapePacket;
 import com.amuzil.caliber.physics.network.impl.SendRigidBodyMovementPacket;
 import com.amuzil.caliber.physics.network.impl.SendRigidBodyPropertiesPacket;
+import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.AABB;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class CaliberClientPacketHandler {
-    public static void handleSendRigidBodyMovementPacket(SendRigidBodyMovementPacket packet) {
+    public static void handleRigidBodyMovementPacket(SendRigidBodyMovementPacket packet) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level != null) {
             Entity entity = mc.level.getEntity(packet.getId());
@@ -29,7 +37,7 @@ public class CaliberClientPacketHandler {
         }
     }
 
-    public static void handleSendRigidBodyPropertiesPacket(SendRigidBodyPropertiesPacket packet) {
+    public static void handleRigidBodyPropertiesPacket(SendRigidBodyPropertiesPacket packet) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level != null) {
             Entity entity = mc.level.getEntity(packet.getId());
@@ -53,4 +61,48 @@ public class CaliberClientPacketHandler {
             }
         }
     }
+
+    public static void handleSyncCollisionShapePacket(SyncCollisionShapePacket packet) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.level != null) {
+            Entity entity = mc.level.getEntity(packet.getId());
+            if (EntityPhysicsElement.is(entity)) {
+                EntityRigidBody rigidBody = EntityPhysicsElement.get(entity).getRigidBody();
+
+                MinecraftSpace.get(mc.level).getWorkerThread().execute(() -> {
+                    List<MinecraftShape> shapes = new ArrayList<>();
+                    packet.getBoxes().forEach(box -> shapes.add(MinecraftShape.convex(box)));
+                    rigidBody.setCollisionShape(MinecraftShape.compound(shapes));
+                    rigidBody.activate();
+                });
+            }
+        }
+    }
+
+//    public void applyCollisionShapeSync(SyncCollisionShapePacket.ShapeType shapeType, List<AABB> boxes) {
+//        System.out.println("Client received collision shape sync: " + shapeType + " with " + boxes.size() + " boxes");
+//
+//        switch (shapeType) {
+//            case BOX -> {
+//            }
+//            case CONVEX -> {
+//                // Single convex shape
+//                if (!boxes.isEmpty()) {
+////                    rigidBody.setCollisionShape(MinecraftShape.convex(boxes.get(0)));
+//                }
+//            }
+//            case CONCAVE -> {
+//            }
+//            case COMPOUND -> {
+//                // Create compound from AABBs
+//                List<MinecraftShape> shapes = boxes.stream()
+//                        .map(MinecraftShape::convex)
+//                        .map(shape -> (MinecraftShape) shape)
+//                        .toList();
+////                rigidBody.setCollisionShape(MinecraftShape.compound(shapes));
+//            }
+//        }
+//
+////        setRigidBodyDirty(false);
+//    }
 }

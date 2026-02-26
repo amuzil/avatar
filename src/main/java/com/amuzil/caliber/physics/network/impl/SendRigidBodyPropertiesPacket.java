@@ -15,7 +15,7 @@ import java.util.UUID;
 
 public class SendRigidBodyPropertiesPacket extends CaliberPacket {
     public static final Type<SendRigidBodyPropertiesPacket> TYPE = new Type<>(CaliberPhysics.id(SendRigidBodyPropertiesPacket.class));
-    public static final StreamCodec<FriendlyByteBuf, SendRigidBodyPropertiesPacket> CODEC =
+    public static final StreamCodec<FriendlyByteBuf, SendRigidBodyPropertiesPacket> STREAM_CODEC =
             StreamCodec.ofMember(SendRigidBodyPropertiesPacket::toBytes, SendRigidBodyPropertiesPacket::new);
 
     private final int id;
@@ -105,7 +105,7 @@ public class SendRigidBodyPropertiesPacket extends CaliberPacket {
 
     @Override
     public Runnable getProcessor(IPayloadContext context) {
-        return client(context, () -> CaliberClientPacketHandler.handleSendRigidBodyPropertiesPacket(this));
+        return client(context, () -> CaliberClientPacketHandler.handleRigidBodyPropertiesPacket(this));
     }
 
     @Override
