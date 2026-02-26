@@ -27,7 +27,7 @@ public class FlameStepSkill extends FireSkill {
         addTrait(new ColourTrait(0, 0, 0, Constants.FIRE_COLOUR));
         addTrait(new TimedTrait(Constants.MAX_RUNTIME, 60));
         addTrait(new TimedTrait(Constants.RUNTIME, 0));
-        addTrait(new StringTrait(Constants.FX, "fire_bloom_perma5"));
+        addTrait(new StringTrait(Constants.FX, "fires_bloom"));
 
         this.startPaths = SkillPathBuilder.getInstance()
                 .add(STEP)
