@@ -14,6 +14,19 @@ import static com.amuzil.av3.utils.bending.SkillHelper.getRightPivot;
 
 public class RigidBlockFactory {
 
+    public static @NotNull AvatarRigidBlock createBlock(Level level, BlockState blockState, LivingEntity owner, int blockCount, int lifetime, float size) {
+        AvatarRigidBlock rigidBlock = new AvatarRigidBlock(level);
+        rigidBlock.setBlockState(blockState);
+        rigidBlock.setOwner(owner);
+        rigidBlock.setPos(getRightPivot(owner, 1.0f, blockCount * -0.8));
+        rigidBlock.setMaxLifetime(lifetime);
+        rigidBlock.setWidth(size);
+        rigidBlock.setHeight(size);
+        rigidBlock.getRigidBody().setPhysicsRotation(Convert.toBullet(owner.getXRot(), owner.getYRot()));
+        rigidBlock.setDamageable(false);
+        return rigidBlock;
+    }
+
     public static @NotNull AvatarRigidBlock createKinematicBlock(Level level, BlockState blockState, LivingEntity owner, int blockCount, int lifetime, float size) {
         AvatarRigidBlock rigidBlock = new AvatarRigidBlock(level);
         rigidBlock.setBlockState(blockState);

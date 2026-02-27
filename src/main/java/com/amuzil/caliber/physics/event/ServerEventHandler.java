@@ -11,8 +11,8 @@ import com.amuzil.caliber.physics.bullet.collision.space.supplier.level.ServerLe
 import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.amuzil.caliber.physics.bullet.thread.PhysicsThreadStore;
 import com.amuzil.caliber.physics.network.CaliberNetwork;
-import com.amuzil.caliber.physics.network.impl.SendRigidBodyMovementPacket;
-import com.amuzil.caliber.physics.network.impl.SendRigidBodyPropertiesPacket;
+import com.amuzil.caliber.physics.network.impl.SyncMovementPacket;
+import com.amuzil.caliber.physics.network.impl.SyncPropertiesPacket;
 import com.amuzil.caliber.physics.utils.maths.Utilities;
 import com.jme3.math.Vector3f;
 import net.minecraft.core.BlockPos;
@@ -74,7 +74,7 @@ public final class ServerEventHandler {
                     if (rigidBody.isPositionDirty()) {
                         CaliberNetwork.sendToPlayersTrackingEntity(
                                 rigidBody.getElement().cast(),
-                                new SendRigidBodyMovementPacket(rigidBody)
+                                new SyncMovementPacket(rigidBody)
                         );
                     }
 
@@ -82,7 +82,7 @@ public final class ServerEventHandler {
                     if (rigidBody.arePropertiesDirty()) {
                         CaliberNetwork.sendToPlayersTrackingEntity(
                                 rigidBody.getElement().cast(),
-                                new SendRigidBodyPropertiesPacket(rigidBody)
+                                new SyncPropertiesPacket(rigidBody)
                         );
                     }
                 }

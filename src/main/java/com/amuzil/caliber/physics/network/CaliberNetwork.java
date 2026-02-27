@@ -1,8 +1,8 @@
 package com.amuzil.caliber.physics.network;
 
 import com.amuzil.caliber.CaliberPhysics;
-import com.amuzil.caliber.physics.network.impl.SendRigidBodyMovementPacket;
-import com.amuzil.caliber.physics.network.impl.SendRigidBodyPropertiesPacket;
+import com.amuzil.caliber.physics.network.impl.SyncMovementPacket;
+import com.amuzil.caliber.physics.network.impl.SyncPropertiesPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.api.distmarker.Dist;
@@ -19,14 +19,14 @@ public class CaliberNetwork {
     public static void register(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar(CaliberPhysics.MOD_ID).versioned(VERSION);
         registrar.playToClient(
-                SendRigidBodyMovementPacket.TYPE,
-                SendRigidBodyMovementPacket.STREAM_CODEC,
+                SyncMovementPacket.TYPE,
+                SyncMovementPacket.STREAM_CODEC,
                 PacketUtil::receiveClientMessage
         );
 
         registrar.playToClient(
-                SendRigidBodyPropertiesPacket.TYPE,
-                SendRigidBodyPropertiesPacket.STREAM_CODEC,
+                SyncPropertiesPacket.TYPE,
+                SyncPropertiesPacket.STREAM_CODEC,
                 PacketUtil::receiveClientMessage
         );
     }
