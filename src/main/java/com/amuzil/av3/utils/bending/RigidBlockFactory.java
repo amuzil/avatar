@@ -4,6 +4,7 @@ import com.amuzil.av3.entity.construct.AvatarRigidBlock;
 import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.jme3.math.Vector3f;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;

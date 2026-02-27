@@ -2,20 +2,12 @@ package com.amuzil.caliber.physics.network;
 
 import com.amuzil.caliber.api.EntityPhysicsElement;
 import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
-import com.amuzil.caliber.physics.bullet.collision.body.shape.MinecraftShape;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.caliber.physics.bullet.math.Convert;
-import com.amuzil.caliber.physics.network.impl.SyncCollisionShapePacket;
 import com.amuzil.caliber.physics.network.impl.SendRigidBodyMovementPacket;
 import com.amuzil.caliber.physics.network.impl.SendRigidBodyPropertiesPacket;
-import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.phys.AABB;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class CaliberClientPacketHandler {
@@ -27,6 +19,13 @@ public class CaliberClientPacketHandler {
                 EntityRigidBody rigidBody = EntityPhysicsElement.get(entity).getRigidBody();
 
                 MinecraftSpace.get(mc.level).getWorkerThread().execute(() -> {
+//                    AABB box = new AABB(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
+//                    MinecraftShape.Compound compoundShape = MinecraftShape.compound(null);
+//                    MinecraftShape.Convex shape = MinecraftShape.convex(box);
+//                    compoundShape.addChildShape(shape, 0, -1, 0);
+//                    compoundShape.addChildShape(shape, 0,  0, 0);
+//                    compoundShape.addChildShape(shape, 0,  1, 0);
+//                    rigidBody.setCollisionShape(compoundShape);
                     rigidBody.setPhysicsRotation(Convert.toBullet(packet.getRotation()));
                     rigidBody.setPhysicsLocation(Convert.toBullet(packet.getPos()));
                     rigidBody.setLinearVelocity(Convert.toBullet(packet.getLinearVel()));
@@ -62,20 +61,16 @@ public class CaliberClientPacketHandler {
         }
     }
 
-    public static void handleSyncCollisionShapePacket(SyncCollisionShapePacket packet) {
-        // TODO: Fix so that it can set any genric CollisionShape
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.level != null) {
-            Entity entity = mc.level.getEntity(packet.getId());
-            if (EntityPhysicsElement.is(entity)) {
-                EntityRigidBody rigidBody = EntityPhysicsElement.get(entity).getRigidBody();
+//    public static void handleSyncCollisionShapePacket(SyncCollisionShapePacket packet) {
+//        // TODO: Fix so that it can set any generic CollisionShape
+//        Minecraft mc = Minecraft.getInstance();
+//        if (mc.level != null) {
+//            Entity entity = mc.level.getEntity(packet.getId());
+//            if (EntityPhysicsElement.is(entity)) {
+//                EntityRigidBody rigidBody = EntityPhysicsElement.get(entity).getRigidBody();
 //                MinecraftSpace.get(mc.level).getWorkerThread().execute(() -> {
-//                    List<MinecraftShape> shapes = new ArrayList<>();
-//                    packet.getBoxes().forEach(box -> shapes.add(MinecraftShape.convex(box)));
-//                    rigidBody.setCollisionShape(MinecraftShape.compound(shapes));
-//                    rigidBody.activate();
 //                });
-            }
-        }
-    }
+//            }
+//        }
+//    }
 }
