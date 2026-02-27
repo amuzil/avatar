@@ -13,10 +13,10 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-public class SendRigidBodyMovementPacket extends CaliberPacket {
-    public static final Type<SendRigidBodyMovementPacket> TYPE = new Type<>(CaliberPhysics.id(SendRigidBodyMovementPacket.class));
-    public static final StreamCodec<FriendlyByteBuf, SendRigidBodyMovementPacket> STREAM_CODEC =
-            StreamCodec.ofMember(SendRigidBodyMovementPacket::toBytes, SendRigidBodyMovementPacket::new);
+public class SyncMovementPacket extends CaliberPacket {
+    public static final Type<SyncMovementPacket> TYPE = new Type<>(CaliberPhysics.id(SyncMovementPacket.class));
+    public static final StreamCodec<FriendlyByteBuf, SyncMovementPacket> STREAM_CODEC =
+            StreamCodec.ofMember(SyncMovementPacket::toBytes, SyncMovementPacket::new);
 
     private final int id;
     private final Quaternionf rotation;
@@ -24,7 +24,7 @@ public class SendRigidBodyMovementPacket extends CaliberPacket {
     private final Vector3f linearVel;
     private final Vector3f angularVel;
 
-    public SendRigidBodyMovementPacket(EntityRigidBody body) {
+    public SyncMovementPacket(EntityRigidBody body) {
         super(true);
         this.id = body.getElement().cast().getId();
         this.rotation = Convert.toMinecraft(body.getPhysicsRotation(new Quaternion()));
@@ -33,7 +33,7 @@ public class SendRigidBodyMovementPacket extends CaliberPacket {
         this.angularVel = Convert.toMinecraft(body.getAngularVelocity(new com.jme3.math.Vector3f()));
     }
 
-    public SendRigidBodyMovementPacket(FriendlyByteBuf buf) {
+    public SyncMovementPacket(FriendlyByteBuf buf) {
         super(true);
         this.id = buf.readVarInt();
         this.rotation = buf.readQuaternion();

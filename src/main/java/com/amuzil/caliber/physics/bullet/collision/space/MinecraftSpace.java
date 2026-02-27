@@ -10,8 +10,8 @@ import com.amuzil.caliber.physics.bullet.collision.space.generator.TerrainGenera
 import com.amuzil.caliber.physics.bullet.collision.space.storage.SpaceStorage;
 import com.amuzil.caliber.physics.bullet.thread.PhysicsThread;
 import com.amuzil.caliber.physics.network.CaliberNetwork;
-import com.amuzil.caliber.physics.network.impl.SendRigidBodyMovementPacket;
-import com.amuzil.caliber.physics.network.impl.SendRigidBodyPropertiesPacket;
+import com.amuzil.caliber.physics.network.impl.SyncMovementPacket;
+import com.amuzil.caliber.physics.network.impl.SyncPropertiesPacket;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
@@ -148,8 +148,8 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
                 }
 
                 if (this.isServer() && rigidBody instanceof EntityRigidBody entityRigidBody) {
-                    CaliberNetwork.sendToPlayersTrackingEntity(entityRigidBody.getElement().cast(), new SendRigidBodyMovementPacket(entityRigidBody));
-                    CaliberNetwork.sendToPlayersTrackingEntity(entityRigidBody.getElement().cast(), new SendRigidBodyPropertiesPacket(entityRigidBody));
+                    CaliberNetwork.sendToPlayersTrackingEntity(entityRigidBody.getElement().cast(), new SyncMovementPacket(entityRigidBody));
+                    CaliberNetwork.sendToPlayersTrackingEntity(entityRigidBody.getElement().cast(), new SyncPropertiesPacket(entityRigidBody));
                 }
             }
             else if (collisionObject instanceof TerrainRigidBody terrain) {

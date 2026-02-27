@@ -13,10 +13,10 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class SendRigidBodyPropertiesPacket extends CaliberPacket {
-    public static final Type<SendRigidBodyPropertiesPacket> TYPE = new Type<>(CaliberPhysics.id(SendRigidBodyPropertiesPacket.class));
-    public static final StreamCodec<FriendlyByteBuf, SendRigidBodyPropertiesPacket> STREAM_CODEC =
-            StreamCodec.ofMember(SendRigidBodyPropertiesPacket::toBytes, SendRigidBodyPropertiesPacket::new);
+public class SyncPropertiesPacket extends CaliberPacket {
+    public static final Type<SyncPropertiesPacket> TYPE = new Type<>(CaliberPhysics.id(SyncPropertiesPacket.class));
+    public static final StreamCodec<FriendlyByteBuf, SyncPropertiesPacket> STREAM_CODEC =
+            StreamCodec.ofMember(SyncPropertiesPacket::toBytes, SyncPropertiesPacket::new);
 
     private final int id;
     private final float mass;
@@ -28,7 +28,7 @@ public class SendRigidBodyPropertiesPacket extends CaliberPacket {
     private final ElementRigidBody.DragType dragType;
     private final @Nullable UUID priorityPlayer;
 
-    public SendRigidBodyPropertiesPacket(EntityRigidBody body) {
+    public SyncPropertiesPacket(EntityRigidBody body) {
         super(true);
         this.id = body.getElement().cast().getId();
         this.mass = body.getMass();
@@ -41,7 +41,7 @@ public class SendRigidBodyPropertiesPacket extends CaliberPacket {
         this.priorityPlayer = body.getPriorityPlayer() != null ? body.getPriorityPlayer().getUUID() : null;
     }
 
-    public SendRigidBodyPropertiesPacket(FriendlyByteBuf buf) {
+    public SyncPropertiesPacket(FriendlyByteBuf buf) {
         super(true);
         this.id = buf.readVarInt();
         this.mass = buf.readFloat();

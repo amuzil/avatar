@@ -4,14 +4,14 @@ import com.amuzil.caliber.api.EntityPhysicsElement;
 import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.caliber.physics.bullet.math.Convert;
-import com.amuzil.caliber.physics.network.impl.SendRigidBodyMovementPacket;
-import com.amuzil.caliber.physics.network.impl.SendRigidBodyPropertiesPacket;
+import com.amuzil.caliber.physics.network.impl.SyncMovementPacket;
+import com.amuzil.caliber.physics.network.impl.SyncPropertiesPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 
 
 public class CaliberClientPacketHandler {
-    public static void handleRigidBodyMovementPacket(SendRigidBodyMovementPacket packet) {
+    public static void handleRigidBodyMovementPacket(SyncMovementPacket packet) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level != null) {
             Entity entity = mc.level.getEntity(packet.getId());
@@ -36,7 +36,7 @@ public class CaliberClientPacketHandler {
         }
     }
 
-    public static void handleRigidBodyPropertiesPacket(SendRigidBodyPropertiesPacket packet) {
+    public static void handleRigidBodyPropertiesPacket(SyncPropertiesPacket packet) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level != null) {
             Entity entity = mc.level.getEntity(packet.getId());
