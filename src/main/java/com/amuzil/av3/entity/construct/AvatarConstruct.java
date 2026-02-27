@@ -106,6 +106,12 @@ public class AvatarConstruct extends AvatarEntity implements IAvatarConstruct {
         this.blockState = state;
     }
 
+    public void setSize(float width, float height, float depth) {
+        setWidth(width);
+        setHeight(height);
+        setDepth(depth);
+    }
+
     public void setWidth(float width) {
         entityData.set(WIDTH, width);
     }

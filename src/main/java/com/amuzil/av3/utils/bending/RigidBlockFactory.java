@@ -1,11 +1,9 @@
 package com.amuzil.av3.utils.bending;
 
 import com.amuzil.av3.entity.construct.AvatarRigidBlock;
-import com.amuzil.av3.entity.construct.CompoundRigidBlock;
 import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.jme3.math.Vector3f;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -15,22 +13,7 @@ import static com.amuzil.av3.utils.bending.SkillHelper.getRightPivot;
 
 public class RigidBlockFactory {
 
-    public static @NotNull CompoundRigidBlock createCompound(Level level, BlockState blockState, LivingEntity owner, int lifetime, float size) {
-        CompoundRigidBlock rigidBlock = new CompoundRigidBlock(level);
-        rigidBlock.setBlockState(blockState);
-        rigidBlock.setOwner(owner);
-        rigidBlock.getRigidBody().setPhysicsRotation(Convert.toBullet(0, owner.getYRot()));
-        rigidBlock.setPos(getPivot(owner, 3f));
-//        rigidBlock.setMaxLifetime(lifetime);
-        rigidBlock.setWidth(size);
-        rigidBlock.setHeight(size);
-        rigidBlock.setDepth(size);
-        rigidBlock.setDamageable(false);
-        rigidBlock.setRigidBodyDirty(true);
-        return rigidBlock;
-    }
-
-    public static @NotNull AvatarRigidBlock createBlock(Level level, BlockState blockState, LivingEntity owner, int blockCount, int lifetime, float size) {
+    public static @NotNull AvatarRigidBlock createKinematicBlock(Level level, BlockState blockState, LivingEntity owner, int blockCount, int lifetime, float size) {
         AvatarRigidBlock rigidBlock = new AvatarRigidBlock(level);
         rigidBlock.setBlockState(blockState);
         rigidBlock.setOwner(owner);
@@ -56,7 +39,6 @@ public class RigidBlockFactory {
 //        rigidBlock.setMaxLifetime(lifetime);
         rigidBlock.setWidth(size);
         rigidBlock.setHeight(size);
-//        rigidBlock.getRigidBody().setMass(90f);
         rigidBlock.getRigidBody().setFriction(0.1f);
         rigidBlock.getRigidBody().setAngularFactor(0f);
         rigidBlock.getRigidBody().setAngularVelocity(new Vector3f(0f, 0f, 0f));
