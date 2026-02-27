@@ -6,21 +6,26 @@ import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.entity.construct.AvatarRigidBlock;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.av3.utils.bending.BendingMaterial;
+import com.amuzil.av3.utils.bending.RigidBlockFactory;
+import com.amuzil.caliber.physics.bullet.collision.body.shape.MinecraftShape;
 import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.amuzil.magus.skill.data.SkillData;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
 import com.amuzil.magus.skill.traits.skilltraits.StringTrait;
 import com.amuzil.magus.skill.traits.skilltraits.TimedTrait;
+import com.jme3.bounding.BoundingBox;
+import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 
 import static com.amuzil.av3.bending.form.BendingForms.BLOCK;
 import static com.amuzil.av3.utils.bending.SkillHelper.canEarthBend;
-import static com.amuzil.av3.utils.bending.SkillHelper.getRightPivot;
 
 
 public class EarthBlockSkill extends EarthSkill {
@@ -54,22 +59,21 @@ public class EarthBlockSkill extends EarthSkill {
         int lifetime = data.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
         double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
-        AvatarRigidBlock rigidBlock = new AvatarRigidBlock(level);
+        AvatarRigidBlock rigidBlock = RigidBlockFactory.createKinematicBlock(level, blockState, entity, blockCount, lifetime, (float) size);
         rigidBlock.setElement(element());
         rigidBlock.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
-        rigidBlock.setBlockState(blockState);
-        rigidBlock.setPos(getRightPivot(entity, 1.0f, blockCount * -0.8));
-        rigidBlock.getRigidBody().setPhysicsRotation(Convert.toBullet(entity.getXRot(), entity.getYRot()));
-        rigidBlock.getRigidBody().setMass(0f);
-        rigidBlock.getRigidBody().setKinematic(true);
-        rigidBlock.setOwner(entity);
-        rigidBlock.getRigidBody().prioritize((Player) entity);
-        rigidBlock.setMaxLifetime(lifetime);
-        rigidBlock.setWidth((float) size);
-        rigidBlock.setHeight((float) size);
-        rigidBlock.setDamageable(false);
-        rigidBlock.setControlled(true);
         rigidBlock.init();
+        // Earth Pillar (long boi)
+//        MinecraftShape.Compound compoundShape = MinecraftShape.compound(null);
+//        CollisionShape shape = rigidBlock.getRigidBody().getCollisionShape();
+//        compoundShape.addChildShape(shape, 0, -1, 0);
+//        compoundShape.addChildShape(shape, 0,  0, 0);
+//        compoundShape.addChildShape(shape, 0,  1, 0);
+//        AABB box = Convert.toMinecraft(compoundShape.boundingBox(new Vector3f(), new Quaternion(), new BoundingBox()));
+//        rigidBlock.setWidth((float) box.getXsize());
+//        rigidBlock.setHeight((float) box.getYsize());
+//        rigidBlock.setDepth((float) box.getZsize());
+//        rigidBlock.getRigidBody().setCollisionShape(compoundShape);
 
         bender.formPath.clear();
         data.setSkillState(SkillState.IDLE);
