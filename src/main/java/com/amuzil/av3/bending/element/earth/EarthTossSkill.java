@@ -11,15 +11,23 @@ import com.amuzil.av3.entity.construct.AvatarRigidBlock;
 import com.amuzil.av3.network.AvatarNetwork;
 import com.amuzil.av3.network.packets.client.TriggerFXPacket;
 import com.amuzil.av3.utils.Constants;
+import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
+import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.magus.skill.data.SkillData;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.traits.skilltraits.*;
+import com.jme3.bullet.RotationOrder;
+import com.jme3.bullet.joints.New6Dof;
+import com.jme3.bullet.joints.motors.MotorParam;
+import com.jme3.math.Matrix3f;
+import com.jme3.math.Vector3f;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
 
@@ -60,6 +68,42 @@ public class EarthTossSkill extends EarthSkill {
         }
 
         ResourceLocation id = Avatar.id(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
+
+        // Add Physics Joint for 2 AvatarRigidBlock's
+        if (entityIds.size() > 1) {
+            ArrayList<AvatarRigidBlock> rigidBlocks = new ArrayList<>();
+            for (UUID entityId: entityIds) {
+                if (level.getEntity(entityId) instanceof AvatarRigidBlock rigidBlock) {
+                    rigidBlocks.add(rigidBlock);
+                }
+            }
+            EntityRigidBody rigidBodyA = rigidBlocks.get(0).getRigidBody();
+            EntityRigidBody rigidBodyB = rigidBlocks.get(1).getRigidBody();
+
+            // Get world positions of each body
+            Vector3f posA = rigidBodyA.getPhysicsLocation(null);
+            Vector3f posB = rigidBodyB.getPhysicsLocation(null);
+            // Calculate pivot in each body's local space
+            // For body A: the pivot is at the midpoint, expressed relative to A's center
+            Vector3f midpoint = posA.add(posB).mult(0.5f);
+            Vector3f pivotInA = midpoint.subtract(posA);
+            Vector3f pivotInB = midpoint.subtract(posB);
+
+            New6Dof glue = new New6Dof(
+                    rigidBodyA, rigidBodyB,
+                    pivotInA, pivotInB,
+                    Matrix3f.IDENTITY, Matrix3f.IDENTITY,
+                    RotationOrder.XYZ
+            );
+            for (int dof = 0; dof < 6; dof++) {
+                glue.set(MotorParam.LowerLimit, dof, 0f);
+                glue.set(MotorParam.UpperLimit, dof, 0f);
+            }
+            glue.setBreakingImpulseThreshold(500f);
+            glue.setCollisionBetweenLinkedBodies(false);
+            MinecraftSpace.get(level).getSolverInfo().setJointErp(0.9f);
+            MinecraftSpace.get(level).addJoint(glue);
+        }
 
         for (UUID entityId: entityIds) {
             if (level.getEntity(entityId) instanceof AvatarRigidBlock rigidBlock) {
