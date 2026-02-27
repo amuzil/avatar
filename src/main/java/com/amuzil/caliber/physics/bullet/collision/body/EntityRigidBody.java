@@ -3,12 +3,14 @@ package com.amuzil.caliber.physics.bullet.collision.body;
 import com.amuzil.caliber.api.EntityPhysicsElement;
 import com.amuzil.caliber.physics.bullet.collision.body.shape.MinecraftShape;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
+import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.math.Vector3f;
 import net.minecraft.world.entity.player.Player;
 
 public class EntityRigidBody extends ElementRigidBody {
     private Player priorityPlayer;
     private boolean dirtyProperties = true;
+    private boolean dirtyShape = true;
 
     public EntityRigidBody(EntityPhysicsElement element, MinecraftSpace space, MinecraftShape shape, float mass, float dragCoefficient, float friction, float restitution) {
         super(element, space, shape, mass, dragCoefficient, friction, restitution);
@@ -42,6 +44,10 @@ public class EntityRigidBody extends ElementRigidBody {
 
     public boolean arePropertiesDirty() {
         return this.dirtyProperties;
+    }
+
+    public boolean isShapeDirty() {
+        return this.dirtyShape;
     }
 
     public void setPropertiesDirty(boolean dirtyProperties) {
@@ -81,5 +87,12 @@ public class EntityRigidBody extends ElementRigidBody {
     public void setTerrainLoadingEnabled(boolean doTerrainLoading) {
         super.setTerrainLoadingEnabled(doTerrainLoading);
         this.dirtyProperties = true;
+    }
+
+    @Override
+    public void setCollisionShape(CollisionShape shape) {
+        // TODO: Need to make proper way to sync dynamically when this is called
+        super.setCollisionShape(shape);
+        this.dirtyShape = true;
     }
 }
