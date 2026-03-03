@@ -2,6 +2,7 @@ package com.amuzil.av3.entity.projectile;
 
 import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.api.IForceModule;
+import com.amuzil.av3.entity.api.IHasHealth;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
 import com.amuzil.av3.entity.api.modules.force.MoveModule;
 import com.amuzil.av3.renderer.sdf.IHasSDF;
@@ -9,9 +10,10 @@ import com.amuzil.av3.renderer.sdf.SDFScene;
 import com.amuzil.av3.renderer.sdf.SignedDistanceFunction;
 import com.amuzil.av3.renderer.sdf.channels.Channels;
 import com.amuzil.av3.renderer.sdf.channels.IVec3Channel;
-import com.amuzil.av3.renderer.sdf.shapes.SDFCapsule;
-import com.amuzil.av3.renderer.sdf.shapes.SDFSphere;
-import com.amuzil.av3.renderer.sdf.shapes.SDFElementBolt;
+import com.amuzil.av3.renderer.sdf.shapes.*;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -115,4 +117,5 @@ public class AvatarWaterProjectile extends AvatarProjectile implements IHasSDF {
 //            setYRot(rots.y);
 //        }
     }
+
 }
