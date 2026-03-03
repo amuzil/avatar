@@ -3,6 +3,7 @@ package com.amuzil.av3.bending.element.water;
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.skill.WaterSkill;
 import com.amuzil.av3.data.capability.Bender;
+import com.amuzil.av3.entity.projectile.AvatarWaterBoundProjectile;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.traits.skilltraits.FloatTrait;
@@ -31,7 +32,7 @@ public class WaterShieldSkill extends WaterSkill {
     @Override
     public void start(Bender bender) {
         super.start(bender);
-
+        AvatarWaterBoundProjectile shield = new AvatarWaterBoundProjectile();
 
     }
 

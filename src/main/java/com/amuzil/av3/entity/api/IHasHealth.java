@@ -28,4 +28,6 @@ public interface IHasHealth {
         void heal(float amount);
 
         boolean noHealth();
+
+        boolean hurtable();
 }

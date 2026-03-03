@@ -24,6 +24,9 @@ public class AvatarEntities {
     public static final Supplier<EntityType<AvatarProjectile>> AVATAR_PROJECTILE_ENTITY_TYPE =
             registerProjectile("avatar_projectile", AvatarProjectile::new, 0.5f, 0.5f);
 
+    public static final Supplier<EntityType<AvatarWaterBoundProjectile>> AVATAR_WATER_BOUND_PROJECTILE_ENTITY_TYPE =
+            registerProjectile("avatar_water_bound_projectile", AvatarWaterBoundProjectile::new, 0.5f, 0.5f);
+
     public static final Supplier<EntityType<AvatarDirectProjectile>> AVATAR_DIRECT_PROJECTILE_ENTITY_TYPE =
             registerProjectile("avatar_direct_projectile", AvatarDirectProjectile::new, 0.5f, 0.5f);
 

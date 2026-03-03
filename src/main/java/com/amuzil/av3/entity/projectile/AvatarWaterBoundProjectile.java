@@ -1,5 +1,6 @@
 package com.amuzil.av3.entity.projectile;
 
+import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.api.IHasHealth;
 import com.amuzil.av3.renderer.sdf.IHasSDF;
 import com.amuzil.av3.renderer.sdf.SignedDistanceFunction;
@@ -14,8 +15,12 @@ public class AvatarWaterBoundProjectile extends AvatarBoundProjectile implements
     private static final EntityDataAccessor<Float> HEALTH = SynchedEntityData.defineId(AvatarWaterBoundProjectile.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> MAX_HEALTH = SynchedEntityData.defineId(AvatarWaterBoundProjectile.class, EntityDataSerializers.FLOAT);
 
-    public AvatarWaterBoundProjectile(EntityType<AvatarBoundProjectile> entityType, Level pLevel) {
+    public AvatarWaterBoundProjectile(EntityType<AvatarWaterBoundProjectile> entityType, Level pLevel) {
         super(entityType, pLevel);
+    }
+
+    public AvatarWaterBoundProjectile(Level pLevel) {
+        this(AvatarEntities.AVATAR_WATER_BOUND_PROJECTILE_ENTITY_TYPE.get(), pLevel);
     }
 
     /**
@@ -24,6 +29,13 @@ public class AvatarWaterBoundProjectile extends AvatarBoundProjectile implements
     @Override
     public SignedDistanceFunction rootSDF() {
         return null;
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(HEALTH, 0f);
+        builder.define(MAX_HEALTH, -1f);
     }
 
     /**
@@ -75,5 +87,15 @@ public class AvatarWaterBoundProjectile extends AvatarBoundProjectile implements
     @Override
     public boolean noHealth() {
         return health() <= 0;
+    }
+
+    /**
+     * If max health is -1, then we don't want things to affect this.
+     *
+     * @return
+     */
+    @Override
+    public boolean hurtable() {
+        return maxHealth() > -1;
     }
 }
