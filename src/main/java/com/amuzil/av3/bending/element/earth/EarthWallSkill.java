@@ -15,8 +15,11 @@ import com.amuzil.magus.skill.traits.skilltraits.StringTrait;
 import com.amuzil.magus.skill.traits.skilltraits.TimedTrait;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import static com.amuzil.av3.bending.form.BendingForms.RAISE;
@@ -55,7 +58,37 @@ public class EarthWallSkill extends EarthSkill {
         AvatarRigidBlock[][] grid = new AvatarRigidBlock[rows][cols];
         MinecraftSpace space = MinecraftSpace.get(level);
 
-        Vec3 center = entity.getEyePosition().add(entity.getLookAngle().scale(3.0));
+        // Find ground position in front of player
+        Vec3 lookFlat = new Vec3(entity.getLookAngle().x, 0, entity.getLookAngle().z).normalize();
+        Vec3 spawnPos = entity.position().add(lookFlat.scale(3.0)); // 3 blocks in front, at player's feet level
+
+        // Raycast downward to find ground
+        Vec3 rayStart = spawnPos.add(0, 5, 0);  // start above
+        Vec3 rayEnd = spawnPos.add(0, -5, 0);   // end below
+
+        BlockHitResult hit = level.clip(new ClipContext(
+                rayStart,
+                rayEnd,
+                ClipContext.Block.COLLIDER,
+                ClipContext.Fluid.NONE,
+                entity
+        ));
+
+        double groundY;
+        if (hit.getType() != HitResult.Type.MISS) {
+            groundY = hit.getLocation().y;
+        } else {
+            // Fallback: scan downward manually
+            BlockPos checkPos = BlockPos.containing(spawnPos);
+            while (checkPos.getY() > level.getMinBuildHeight() && level.getBlockState(checkPos).isAir()) {
+                checkPos = checkPos.below();
+            }
+            groundY = checkPos.getY() + 1;
+        }
+
+        // Center of wall should be half its height above ground
+        // rows * size = total wall height, half of that is the center offset
+        Vec3 center = new Vec3(spawnPos.x, groundY + (rows * size / 2.0), spawnPos.z);
         Vec3 look = entity.getLookAngle().normalize();
         Vec3 right = look.cross(new Vec3(0, 1, 0)).normalize();
         Vec3 up = new Vec3(0, 1, 0);
