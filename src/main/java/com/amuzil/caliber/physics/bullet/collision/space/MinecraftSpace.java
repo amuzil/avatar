@@ -75,7 +75,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
         this.chunkCache = ChunkCache.create(this);
         this.terrainMap = new ConcurrentHashMap<>();
         this.setGravity(new Vector3f(0, -9.807f, 0)); // Global physics space gravity
-//        this.getSolverInfo().setJointErp(0.9f);
+        this.getSolverInfo().setJointErp(0.9f);
         this.setAccuracy(1f / 60f);
     }
 
