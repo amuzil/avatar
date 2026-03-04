@@ -74,8 +74,8 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
         this.previousBlockUpdates = new HashSet<>();
         this.chunkCache = ChunkCache.create(this);
         this.terrainMap = new ConcurrentHashMap<>();
-        this.setGravity(new Vector3f(0, -9.807f, 0));
-//        this.addCollisionListener(this);
+        this.setGravity(new Vector3f(0, -9.807f, 0)); // Global physics space gravity
+//        this.getSolverInfo().setJointErp(0.9f);
         this.setAccuracy(1f / 60f);
     }
 
@@ -143,7 +143,12 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
 
                 if (!rigidBody.isInWorld()) {
                     rigidBody.activate();
-                    rigidBody.getFrame().set(rigidBody.getPhysicsLocation(new Vector3f()), rigidBody.getPhysicsLocation(new Vector3f()), rigidBody.getPhysicsRotation(new Quaternion()), rigidBody.getPhysicsRotation(new Quaternion()));
+                    rigidBody.getFrame().set(
+                            rigidBody.getPhysicsLocation(new Vector3f()),
+                            rigidBody.getPhysicsLocation(new Vector3f()),
+                            rigidBody.getPhysicsRotation(new Quaternion()),
+                            rigidBody.getPhysicsRotation(new Quaternion())
+                    );
                     rigidBody.updateBoundingBox();
                 }
 
