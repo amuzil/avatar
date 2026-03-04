@@ -105,7 +105,9 @@ public class RigidBlockFactory {
         }
 
         glue.setBreakingImpulseThreshold(50f);
-//        glue.setCollisionBetweenLinkedBodies(false);
+        glue.setCollisionBetweenLinkedBodies(false);
         space.addJoint(glue);
+        blockA.addGlueJoint(glue);
+        blockB.addGlueJoint(glue);
     }
 }
