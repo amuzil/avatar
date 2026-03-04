@@ -1,5 +1,6 @@
 package com.amuzil.caliber.physics.event;
 
+import com.amuzil.av3.entity.construct.AvatarRigidBlock;
 import com.amuzil.caliber.api.EntityPhysicsElement;
 import com.amuzil.caliber.api.event.space.PhysicsSpaceEvent;
 import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
@@ -14,9 +15,11 @@ import com.amuzil.caliber.physics.network.CaliberNetwork;
 import com.amuzil.caliber.physics.network.impl.SyncMovementPacket;
 import com.amuzil.caliber.physics.network.impl.SyncPropertiesPacket;
 import com.amuzil.caliber.physics.utils.maths.Utilities;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -110,6 +113,21 @@ public final class ServerEventHandler {
         if (event.getRigidBody() instanceof EntityRigidBody entityBody) {
             var pos = entityBody.getElement().cast().position();
             entityBody.setPhysicsLocation(Convert.toBullet(pos));
+//            if (entityBody.getElement().cast() instanceof AvatarRigidBlock block) {
+//                LivingEntity owner = (LivingEntity) block.owner();
+//                if (owner != null) {
+//                    Quaternion rot = Convert.toBullet(0, owner.getYRot());
+//                    // Re-apply AFTER frame is set
+//                    entityBody.setPhysicsRotation(rot);
+//                    // Also reset the frame with correct rotation
+//                    entityBody.getFrame().set(
+//                            entityBody.getPhysicsLocation(new Vector3f()),
+//                            entityBody.getPhysicsLocation(new Vector3f()),
+//                            rot,
+//                            rot
+//                    );
+//                }
+//            }
         }
     }
 

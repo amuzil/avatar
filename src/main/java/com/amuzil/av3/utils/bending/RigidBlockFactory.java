@@ -75,11 +75,22 @@ public class RigidBlockFactory {
         EntityRigidBody rigidBodyA = blockA.getRigidBody();
         EntityRigidBody rigidBodyB = blockB.getRigidBody();
 
-        Vector3f posA = rigidBodyA.getPhysicsLocation(null);
-        Vector3f posB = rigidBodyB.getPhysicsLocation(null);
+        Vector3f posA = rigidBodyA.getPhysicsLocation(new Vector3f());
+        Vector3f posB = rigidBodyB.getPhysicsLocation(new Vector3f());
         Vector3f midpoint = posA.add(posB).mult(0.5f);
-        Vector3f pivotInA = midpoint.subtract(posA);
-        Vector3f pivotInB = midpoint.subtract(posB);
+
+        Vector3f worldOffsetA = midpoint.subtract(posA);
+        Vector3f worldOffsetB = midpoint.subtract(posB);
+
+        Quaternion rotA = rigidBodyA.getPhysicsRotation(new Quaternion());
+        Quaternion rotB = rigidBodyB.getPhysicsRotation(new Quaternion());
+
+        // Convert to rotation matrix and invert to get local space
+        Matrix3f rotMatA = rotA.toRotationMatrix(new Matrix3f()).invert(new Matrix3f());
+        Matrix3f rotMatB = rotB.toRotationMatrix(new Matrix3f()).invert(new Matrix3f());
+
+        Vector3f pivotInA = rotMatA.mult(worldOffsetA, new Vector3f());
+        Vector3f pivotInB = rotMatB.mult(worldOffsetB, new Vector3f());
 
         New6Dof glue = new New6Dof(
                 rigidBodyA, rigidBodyB,
@@ -93,8 +104,8 @@ public class RigidBlockFactory {
             glue.set(MotorParam.UpperLimit, dof, 0f);
         }
 
-        glue.setBreakingImpulseThreshold(60f); // lower = easier to break
-        glue.setCollisionBetweenLinkedBodies(false);
+        glue.setBreakingImpulseThreshold(50f);
+//        glue.setCollisionBetweenLinkedBodies(false);
         space.addJoint(glue);
     }
 }

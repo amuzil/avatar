@@ -24,6 +24,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.ArrayList;
+import java.util.UUID;
+
 import static com.amuzil.av3.bending.form.BendingForms.BLOCK;
 import static com.amuzil.av3.utils.bending.SkillHelper.canEarthBend;
 
@@ -59,31 +62,14 @@ public class EarthBlockSkill extends EarthSkill {
         int lifetime = data.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
         double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
-        AvatarRigidBlock rigidBlock = RigidBlockFactory.createBlock(level, blockState, entity, blockCount, lifetime, (float) size);
-        AvatarRigidBlock rigidBlock2 = RigidBlockFactory.createBlock(level, blockState, entity, blockCount+1, lifetime, (float) size);
+        AvatarRigidBlock rigidBlock = RigidBlockFactory.createKinematicBlock(level, blockState, entity, blockCount, lifetime, (float) size);
         rigidBlock.setElement(element());
-        rigidBlock2.setElement(element());
         rigidBlock.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
-        rigidBlock2.init();
         rigidBlock.init();
-        // Earth Pillar (long boi)
-//        MinecraftShape.Compound compoundShape = MinecraftShape.compound(null);
-//        CollisionShape shape = rigidBlock.getRigidBody().getCollisionShape();
-//        compoundShape.addChildShape(shape, 0, -1, 0);
-//        compoundShape.addChildShape(shape, 0,  0, 0);
-//        compoundShape.addChildShape(shape, 0,  1, 0);
-//        AABB box = Convert.toMinecraft(compoundShape.boundingBox(new Vector3f(), new Quaternion(), new BoundingBox()));
-//        rigidBlock.setWidth((float) box.getXsize());
-//        rigidBlock.setHeight((float) box.getYsize());
-//        rigidBlock.setDepth((float) box.getZsize());
-//        rigidBlock.getRigidBody().setCollisionShape(compoundShape);
 
         bender.formPath.clear();
         data.setSkillState(SkillState.IDLE);
         bender.getSelection().addEntityId(rigidBlock.getUUID());
-        bender.getSelection().addEntityId(rigidBlock2.getUUID());
-
         entity.level().addFreshEntity(rigidBlock);
-        entity.level().addFreshEntity(rigidBlock2);
     }
 }
