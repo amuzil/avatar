@@ -52,11 +52,11 @@ public class EarthWallSkill extends EarthSkill {
         int lifetime = data.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
         double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
+        // --- Spawn 3x3 grid ---
         int rows = 3; int cols = 3;
         AvatarRigidBlock[][] grid = new AvatarRigidBlock[rows][cols];
         MinecraftSpace space = MinecraftSpace.get(level);
 
-        // --- Spawn 3x3 grid ---
         Vec3 center = entity.getEyePosition().add(entity.getLookAngle().scale(3.0));
         Vec3 look = entity.getLookAngle().normalize();
         Vec3 right = look.cross(new Vec3(0, 1, 0)).normalize();
