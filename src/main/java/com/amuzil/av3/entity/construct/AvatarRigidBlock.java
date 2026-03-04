@@ -8,7 +8,9 @@ import com.amuzil.av3.entity.api.modules.ModuleRegistry;
 import com.amuzil.av3.entity.api.modules.force.ControlModule;
 import com.amuzil.caliber.api.EntityPhysicsElement;
 import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
+import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.caliber.physics.bullet.math.Convert;
+import com.jme3.bullet.joints.New6Dof;
 import com.jme3.math.Vector3f;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -21,6 +23,8 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static com.amuzil.av3.utils.bending.SkillHelper.getRightPivot;
@@ -30,6 +34,7 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
 
     protected final EntityRigidBody rigidBody;
     protected float defaultMass;
+    private final List<New6Dof> glueJoints = new ArrayList<>();
 
     protected static final EntityDataAccessor<Boolean> RIGID_BODY_DIRTY = SynchedEntityData.defineId(AvatarRigidBlock.class, EntityDataSerializers.BOOLEAN);
 
@@ -101,6 +106,16 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
 
     @Override
     public void tick() {
+        if (!level().isClientSide()) {
+            glueJoints.removeIf(joint -> {
+                if (!joint.isEnabled()) {
+                    MinecraftSpace.get(level()).removeJoint(joint);
+                    return true;
+                }
+                return false;
+            });
+        }
+
         if (isRigidBodyDirty()) {
             rigidBody.setCollisionShape(this.createShape());
             float actualMass = 10 * (this.width() * this.height() * this.depth());
@@ -141,5 +156,13 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
         rigidBody.setKinematic(kinematic);
         rigidBody.clearForces();
         this.resetGravity();
+    }
+
+    public void addGlueJoint(New6Dof joint) {
+        glueJoints.add(joint);
+    }
+
+    public List<New6Dof> getGlueJoints() {
+        return glueJoints;
     }
 }

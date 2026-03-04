@@ -1,18 +1,14 @@
 package com.amuzil.av3.network.packets.client;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.modules.client.SoundModule;
 import com.amuzil.av3.network.packets.api.AvatarPacket;
-import com.amuzil.caliber.physics.mixin.common.LevelMixin;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;

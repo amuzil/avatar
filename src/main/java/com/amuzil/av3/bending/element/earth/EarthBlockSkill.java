@@ -56,6 +56,7 @@ public class EarthBlockSkill extends EarthSkill {
         rigidBlock.setElement(element());
         rigidBlock.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
         rigidBlock.init();
+
         // Earth Pillar (long boi)
 //        MinecraftShape.Compound compoundShape = MinecraftShape.compound(null);
 //        CollisionShape shape = rigidBlock.getRigidBody().getCollisionShape();
@@ -71,7 +72,6 @@ public class EarthBlockSkill extends EarthSkill {
         bender.formPath.clear();
         data.setSkillState(SkillState.IDLE);
         bender.getSelection().addEntityId(rigidBlock.getUUID());
-
         entity.level().addFreshEntity(rigidBlock);
     }
 }
