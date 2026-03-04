@@ -1,7 +1,6 @@
 package com.amuzil.av3.entity.api.modules.collision;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.ICollisionModule;
 import com.amuzil.av3.entity.construct.AvatarConstruct;
@@ -18,7 +17,6 @@ import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Fireball;
 import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;

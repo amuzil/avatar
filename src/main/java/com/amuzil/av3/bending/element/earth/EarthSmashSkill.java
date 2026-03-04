@@ -26,7 +26,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static com.amuzil.av3.bending.form.BendingForms.*;
+import static com.amuzil.av3.bending.form.BendingForms.EXPAND;
 
 
 public class EarthSmashSkill extends EarthSkill {

@@ -13,8 +13,6 @@ import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
 import com.amuzil.magus.skill.traits.skilltraits.StringTrait;
 import com.amuzil.magus.skill.traits.skilltraits.TimedTrait;
-import com.jme3.math.Quaternion;
-import com.jme3.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;

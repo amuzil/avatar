@@ -7,25 +7,15 @@ import com.amuzil.av3.entity.construct.AvatarRigidBlock;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.av3.utils.bending.BendingMaterial;
 import com.amuzil.av3.utils.bending.RigidBlockFactory;
-import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
-import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.magus.skill.data.SkillData;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
 import com.amuzil.magus.skill.traits.skilltraits.StringTrait;
 import com.amuzil.magus.skill.traits.skilltraits.TimedTrait;
-import com.jme3.bullet.RotationOrder;
-import com.jme3.bullet.joints.New6Dof;
-import com.jme3.bullet.joints.motors.MotorParam;
-import com.jme3.math.Matrix3f;
-import com.jme3.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-
-import java.util.ArrayList;
-import java.util.UUID;
 
 import static com.amuzil.av3.bending.form.BendingForms.BLOCK;
 import static com.amuzil.av3.utils.bending.SkillHelper.canEarthBend;
