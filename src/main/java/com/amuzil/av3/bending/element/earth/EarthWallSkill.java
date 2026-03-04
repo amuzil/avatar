@@ -58,6 +58,9 @@ public class EarthWallSkill extends EarthSkill {
         AvatarRigidBlock[][] grid = new AvatarRigidBlock[rows][cols];
         MinecraftSpace space = MinecraftSpace.get(level);
 
+        // TODO: Only spawn if ground is within certain distance of player, otherwise don't spawn
+        //  Also, if player is looking at a Minecraft Block Wall, don't spawn.
+        //  Maybe make way to only spawn the blocks of the wall that aren't clipped in an existing wall
         // Find ground position in front of player
         Vec3 lookFlat = new Vec3(entity.getLookAngle().x, 0, entity.getLookAngle().z).normalize();
         Vec3 spawnPos = entity.position().add(lookFlat.scale(3.0)); // 3 blocks in front, at player's feet level
