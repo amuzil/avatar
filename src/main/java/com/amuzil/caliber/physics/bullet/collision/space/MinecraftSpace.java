@@ -120,8 +120,6 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
             for (int i = 0; i < 3; ++i) {
                 // Hop threads...
                 this.futures[i] = CompletableFuture.runAsync(() -> {
-                    /* Call collision events */
-//                    this.distributeEvents();
 
                     /* World Step Event */
                     NeoForge.EVENT_BUS.post(new PhysicsSpaceEvent.Step(this));
