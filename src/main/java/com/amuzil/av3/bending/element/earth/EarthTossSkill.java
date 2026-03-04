@@ -11,23 +11,15 @@ import com.amuzil.av3.entity.construct.AvatarRigidBlock;
 import com.amuzil.av3.network.AvatarNetwork;
 import com.amuzil.av3.network.packets.client.TriggerFXPacket;
 import com.amuzil.av3.utils.Constants;
-import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
-import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.magus.skill.data.SkillData;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.traits.skilltraits.*;
-import com.jme3.bullet.RotationOrder;
-import com.jme3.bullet.joints.New6Dof;
-import com.jme3.bullet.joints.motors.MotorParam;
-import com.jme3.math.Matrix3f;
-import com.jme3.math.Vector3f;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
 
