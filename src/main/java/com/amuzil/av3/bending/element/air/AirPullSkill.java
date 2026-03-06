@@ -98,9 +98,6 @@ public class AirPullSkill extends AirSkill {
         projectile.addTraits(data.getTrait(Constants.SPEED_FACTOR, SpeedTrait.class));
         projectile.addModule(ModuleRegistry.create(ChangeSpeedModule.id));
 
-        // Particle FX module
-        projectile.addTraits(data.getTrait(Constants.FX, StringTrait.class));
-
         projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0).add(entity.getLookAngle().scale(8)), entity.getLookAngle().reverse(), speed, 0);
         projectile.init();
 

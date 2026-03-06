@@ -20,5 +20,13 @@
   "key.av3.form.shape": "Shape",
   "key.av3.form.target": "Target",
   "key.av3.form.focus": "Focus",
-  "screen.av3.element_select": "Select Your Bending Element!"
+  "screen.av3.element_select": "Select Your Bending Element!",
+  "death.attack.fireBending": "%1$s just got roasted!",
+  "death.attack.fireBending.player": "%1$s was incinerated by %2$s",
+  "death.attack.waterBending": "%1$s is washed up!",
+  "death.attack.waterBending.player": "%1$s was washed away by %2$s",
+  "death.attack.earthBending": "%1$s was destroyed by earth!",
+  "death.attack.earthBending.player": "%1$s was crushed by %2$s",
+  "death.attack.airBending": "%1$s got some dirt in their eye!",
+  "death.attack.airBending.player": "%1$s got AIR BENDING SLICED by %2$s"
 }

@@ -1,4 +1,4 @@
-package com.amuzil.av3.utils.modules;
+package com.amuzil.av3.utils.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
