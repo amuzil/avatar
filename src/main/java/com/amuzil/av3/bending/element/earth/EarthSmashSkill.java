@@ -8,7 +8,6 @@ import com.amuzil.av3.network.AvatarNetwork;
 import com.amuzil.av3.network.packets.client.TriggerFXPacket;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.av3.utils.bending.OriginalBlocks;
-import com.amuzil.magus.skill.data.SkillData;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.event.SkillTickEvent;
 import com.amuzil.magus.skill.traits.skilltraits.KnockbackTrait;
@@ -55,7 +54,6 @@ public class EarthSmashSkill extends EarthSkill {
         super.start(bender);
         LivingEntity entity = bender.getEntity();
         ServerLevel level = (ServerLevel) bender.getEntity().level();
-        SkillData data = bender.getSkillData(this);
         System.out.println("Earth Smash Skill started");
         // Only bend if close enough to selected Earth
 
@@ -63,11 +61,11 @@ public class EarthSmashSkill extends EarthSkill {
         if (entityIds.isEmpty()) {
             bender.formPath.clear();
             bender.resetSelection();
-            data.setSkillState(SkillState.IDLE);
+            skillData.setSkillState(SkillState.IDLE);
             return;
         }
 
-        ResourceLocation id = Avatar.id(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
+        ResourceLocation id = Avatar.id(this.skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
 
         for (UUID entityId: entityIds) {
             if (level.getEntity(entityId) instanceof AvatarRigidBlock rigidBlock) {
@@ -78,7 +76,7 @@ public class EarthSmashSkill extends EarthSkill {
 
         bender.formPath.clear();
         bender.resetSelection();
-        data.setSkillState(SkillState.IDLE);
+        skillData.setSkillState(SkillState.IDLE);
     }
 
 //    @Override

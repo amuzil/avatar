@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.amuzil.av3.utils.bending.SkillHelper.getPivot;
 import static com.amuzil.av3.utils.bending.SkillHelper.getRightPivot;
 
-public class RigidBlockFactory {
+public final class RigidBlockFactory {
 
     public static @NotNull AvatarRigidBlock createBlock(Level level, BlockState blockState, LivingEntity owner, int lifetime, float size) {
         AvatarRigidBlock rigidBlock = new AvatarRigidBlock(level);

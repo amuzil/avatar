@@ -59,6 +59,10 @@ public abstract class Skill {
         addTrait(new UseTrait("use_skill", false));
     }
 
+    /** This will force all Skills to use default values.
+     * If you want to use Bender values, use the following line:
+     * {@code SkillData data = bender.getSkillData(this);}
+     */
     public Skill create(Bender bender) {
         this.bender = bender;
         this.skillData = new SkillData(this);
@@ -74,8 +78,6 @@ public abstract class Skill {
         this.skillTraits.add(trait);
         return true;
     }
-
-//    public abstract BendingSelection.Target targetType();  // todo: part of selection type refactor
 
     public void addType(SkillType type) {
         this.skillTypes.add(type);

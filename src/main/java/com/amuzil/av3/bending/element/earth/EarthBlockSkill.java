@@ -44,17 +44,16 @@ public class EarthBlockSkill extends EarthSkill {
         if (!canEarthBend(entity)) return; // Can't earth bend if too far from ground
         if (blockCount >= maxBlockCount) return; // Don't go past maxBlockCount
         Level level = bender.getEntity().level();
-        SkillData data = bender.getSkillData(this);
         BlockPos blockPos = bender.getEntity().blockPosition().below();
         BlockState blockState = level.getBlockState(blockPos);
         if (!BendingMaterial.isBendable(blockState, element())) return;
 
-        int lifetime = data.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
-        double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
+        int lifetime = skillData.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
+        double size = skillData.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
         AvatarRigidBlock rigidBlock = RigidBlockFactory.createKinematicBlock(level, blockState, entity, blockCount, lifetime, (float) size);
         rigidBlock.setElement(element());
-        rigidBlock.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
+        rigidBlock.setFX(this.skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
         rigidBlock.init();
 
         // Earth Pillar (long boi)
@@ -70,7 +69,7 @@ public class EarthBlockSkill extends EarthSkill {
 //        rigidBlock.getRigidBody().setCollisionShape(compoundShape);
 
         bender.formPath.clear();
-        data.setSkillState(SkillState.IDLE);
+        skillData.setSkillState(SkillState.IDLE);
         bender.getSelection().addEntityId(rigidBlock.getUUID());
         entity.level().addFreshEntity(rigidBlock);
     }
