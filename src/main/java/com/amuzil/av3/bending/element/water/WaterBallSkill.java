@@ -9,7 +9,6 @@ import com.amuzil.av3.entity.api.modules.collision.SimpleKnockbackModule;
 import com.amuzil.av3.entity.api.modules.collision.WaterCollisionModule;
 import com.amuzil.av3.entity.projectile.AvatarWaterProjectile;
 import com.amuzil.av3.utils.Constants;
-import com.amuzil.magus.skill.data.SkillData;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.traits.skilltraits.*;
 import net.minecraft.world.entity.LivingEntity;
@@ -43,15 +42,14 @@ public class WaterBallSkill extends WaterSkill {
 
         LivingEntity entity = bender.getEntity();
         Level level = bender.getEntity().level();
-        SkillData data = bender.getSkillData(this);
 
-        int lifetime = data.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
-        double speed = data.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
-        double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
+        int lifetime = skillData.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
+        double speed = skillData.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
+        double size = skillData.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
         AvatarWaterProjectile projectile = new AvatarWaterProjectile(level);
         projectile.setElement(element());
-//        projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
+//        projectile.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
         projectile.setOwner(entity);
         projectile.setMaxLifetime(lifetime);
         projectile.setWidth((float) size);
@@ -59,30 +57,30 @@ public class WaterBallSkill extends WaterSkill {
         projectile.setNoGravity(true);
         projectile.setDamageable(false);
 
-        projectile.addTraits(skillData.getTrait(Constants.ANGLE, AngleTrait.class));
-        projectile.addTraits(skillData.getTrait(Constants.SPEED, SpeedTrait.class));
-        projectile.addTraits(skillData.getTrait(Constants.RANGE, RangeTrait.class));
+        projectile.addTraits(this.skillData.getTrait(Constants.ANGLE, AngleTrait.class));
+        projectile.addTraits(this.skillData.getTrait(Constants.SPEED, SpeedTrait.class));
+        projectile.addTraits(this.skillData.getTrait(Constants.RANGE, RangeTrait.class));
 
-        projectile.addTraits(data.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
         projectile.addTraits(new DirectionTrait(Constants.KNOCKBACK_DIRECTION, new Vec3(0, 0.45, 0)));
         projectile.addModule(ModuleRegistry.create(SimpleKnockbackModule.id));
 
         // Damage module
-        projectile.addTraits(data.getTrait(Constants.DAMAGE, DamageTrait.class));
-        projectile.addTraits(data.getTrait(Constants.SIZE, SizeTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.DAMAGE, DamageTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.SIZE, SizeTrait.class));
 //        projectile.addModule(ModuleRegistry.create(SimpleDamageModule.id));
         projectile.addTraits(new CollisionTrait(Constants.COLLISION_TYPE, "Blaze", "Fireball", "AbstractArrow", "FireProjectile"));
         projectile.addCollisionModule((ICollisionModule) ModuleRegistry.create(WaterCollisionModule.id));
 
         // Slow down over time
-        projectile.addTraits(data.getTrait(Constants.SPEED_FACTOR, SpeedTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.SPEED_FACTOR, SpeedTrait.class));
 //        projectile.addModule(ModuleRegistry.create(ChangeSpeedModule.id));
 
         projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
         projectile.init();
 
         bender.formPath.clear();
-        data.setSkillState(SkillState.IDLE);
+        skillData.setSkillState(SkillState.IDLE);
 
         bender.getEntity().level().addFreshEntity(projectile);
     }

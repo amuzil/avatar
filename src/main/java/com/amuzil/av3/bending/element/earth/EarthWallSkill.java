@@ -8,7 +8,6 @@ import com.amuzil.av3.utils.Constants;
 import com.amuzil.av3.utils.bending.BendingMaterial;
 import com.amuzil.av3.utils.bending.RigidBlockFactory;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
-import com.amuzil.magus.skill.data.SkillData;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
 import com.amuzil.magus.skill.traits.skilltraits.StringTrait;
@@ -45,13 +44,12 @@ public class EarthWallSkill extends EarthSkill {
         LivingEntity entity = bender.getEntity();
         if (!canEarthBend(entity)) return; // Can't earth bend if too far from ground
         Level level = bender.getEntity().level();
-        SkillData data = bender.getSkillData(this);
         BlockPos blockPos = bender.getEntity().blockPosition().below();
         BlockState blockState = level.getBlockState(blockPos);
         if (!BendingMaterial.isBendable(blockState, element())) return;
 
-        int lifetime = data.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
-        double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
+        int lifetime = skillData.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
+        double size = skillData.getTrait(Constants.SIZE, SizeTrait.class).getSize();
 
         // --- Spawn 3x3 grid ---
         int rows = 3; int cols = 3;
@@ -107,7 +105,7 @@ public class EarthWallSkill extends EarthSkill {
 
                 AvatarRigidBlock block = RigidBlockFactory.createBlock(level, blockState, entity, lifetime, (float) size);
                 block.setElement(element());
-                block.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
+                block.setFX(this.skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
                 block.setPos(pos);
                 block.init();
 
@@ -133,7 +131,7 @@ public class EarthWallSkill extends EarthSkill {
         }
 
         bender.formPath.clear();
-        data.setSkillState(SkillState.IDLE);
+        skillData.setSkillState(SkillState.IDLE);
 //        bender.getSelection().addEntityId(rigidBlock.getUUID());
 //        entity.level().addFreshEntity(rigidBlock);
     }

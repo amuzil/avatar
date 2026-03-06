@@ -9,10 +9,9 @@ import com.amuzil.av3.entity.api.modules.collision.AirCollisionModule;
 import com.amuzil.av3.entity.api.modules.collision.SimpleKnockbackModule;
 import com.amuzil.av3.entity.api.modules.entity.GrowModule;
 import com.amuzil.av3.entity.api.modules.force.ChangeSpeedModule;
-import com.amuzil.av3.entity.projectile.AvatarCurveProjectile;
+import com.amuzil.av3.entity.projectile.AvatarProjectile;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.av3.utils.maths.Point;
-import com.amuzil.magus.skill.data.SkillData;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.traits.entitytraits.PointsTrait;
 import com.amuzil.magus.skill.traits.skilltraits.*;
@@ -21,6 +20,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 import static com.amuzil.av3.bending.form.BendingForms.STRIKE;
+import static com.amuzil.av3.utils.bending.ProjectileFactory.createCurveProjectile;
 
 
 public class AirGustSkill extends AirSkill {
@@ -45,23 +45,15 @@ public class AirGustSkill extends AirSkill {
 
         LivingEntity entity = bender.getEntity();
         Level level = bender.getEntity().level();
-        SkillData data = bender.getSkillData(this);
 
-        int lifetime = data.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
-        double speed = data.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
-        double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
+        int lifetime = skillData.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
+        double speed = skillData.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
+        double size = skillData.getTrait(Constants.SIZE, SizeTrait.class).getSize();
+        String fxName = this.skillData.getTrait(Constants.FX, StringTrait.class).getInfo();
 
-        AvatarCurveProjectile projectile = new AvatarCurveProjectile(level);
-        projectile.setElement(element());
-        projectile.setFX(data.getTrait(Constants.FX, StringTrait.class).getInfo());
-        projectile.setOwner(entity);
-        projectile.setMaxLifetime(lifetime);
-        projectile.setWidth((float) size);
-        projectile.setHeight((float) size);
-        projectile.setNoGravity(true);
-        projectile.setDamageable(false);
+        AvatarProjectile projectile = createCurveProjectile(level, element(), entity, lifetime, (float) size, fxName);
 
-        projectile.addTraits(data.getTrait(Constants.MAX_SIZE, SizeTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.MAX_SIZE, SizeTrait.class));
 
         // Copied from the fire easing constant
         projectile.addTraits(new PointsTrait("height_curve", new Point(0.00, 0.5),  // t=0: zero width
@@ -81,26 +73,26 @@ public class AirGustSkill extends AirSkill {
 
         projectile.addModule(ModuleRegistry.create(GrowModule.id));
 
-        projectile.addTraits(data.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
         projectile.addTraits(new DirectionTrait(Constants.KNOCKBACK_DIRECTION, new Vec3(0, 0.45, 0)));
         projectile.addModule(ModuleRegistry.create(SimpleKnockbackModule.id));
 
         // Damage module
-        projectile.addTraits(data.getTrait(Constants.DAMAGE, DamageTrait.class));
-        projectile.addTraits(data.getTrait(Constants.SIZE, SizeTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.DAMAGE, DamageTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.SIZE, SizeTrait.class));
 //        projectile.addModule(ModuleRegistry.create(SimpleDamageModule.id));
         projectile.addTraits(new CollisionTrait(Constants.COLLISION_TYPE, "Blaze", "Fireball", "AbstractArrow", "FireProjectile"));
         projectile.addCollisionModule((ICollisionModule) ModuleRegistry.create(AirCollisionModule.id));
 
         // Slow down over time
-        projectile.addTraits(data.getTrait(Constants.SPEED_FACTOR, SpeedTrait.class));
+        projectile.addTraits(skillData.getTrait(Constants.SPEED_FACTOR, SpeedTrait.class));
         projectile.addModule(ModuleRegistry.create(ChangeSpeedModule.id));
 
         projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
         projectile.init();
 
         bender.formPath.clear();
-        data.setSkillState(SkillState.IDLE);
+        skillData.setSkillState(SkillState.IDLE);
 
         bender.getEntity().level().addFreshEntity(projectile);
 //        else {

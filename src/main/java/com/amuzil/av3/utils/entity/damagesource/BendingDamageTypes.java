@@ -3,7 +3,6 @@ package com.amuzil.av3.utils.entity.damagesource;
 import com.amuzil.av3.Avatar;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageType;
 
 /**

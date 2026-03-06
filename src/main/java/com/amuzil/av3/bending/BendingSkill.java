@@ -38,8 +38,7 @@ public abstract class BendingSkill extends SkillActive {
      * @return Whether the current cooldown for a skill is ready.
      */
     public boolean checkCooldown() {
-        SkillData data = bender.getSkillData(name());
-        TimedTrait time = data.getTrait("cooldown", TimedTrait.class);
+        TimedTrait time = skillData.getTrait("cooldown", TimedTrait.class);
         return time != null && time.getTime() <= 0;
     }
 
