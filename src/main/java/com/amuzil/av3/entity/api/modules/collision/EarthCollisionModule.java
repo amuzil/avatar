@@ -6,7 +6,8 @@ import com.amuzil.av3.entity.api.ICollisionModule;
 import com.amuzil.av3.entity.construct.AvatarConstruct;
 import com.amuzil.av3.entity.projectile.AvatarProjectile;
 import com.amuzil.av3.utils.Constants;
-import com.amuzil.av3.utils.modules.HitDetection;
+import com.amuzil.av3.utils.entity.HitDetection;
+import com.amuzil.av3.utils.entity.damagesource.BendingDamageSources;
 import com.amuzil.magus.skill.traits.skilltraits.CollisionTrait;
 import com.amuzil.magus.skill.traits.skilltraits.DamageTrait;
 import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
@@ -110,7 +111,8 @@ public class EarthCollisionModule implements ICollisionModule {
                     return;
                 }
             }
-            target.hurt(entity.damageSources().cramming(), damage);
+            target.hurt(BendingDamageSources.earthBending(entity.level(), entity.owner()), damage);
+
         }
     }
 

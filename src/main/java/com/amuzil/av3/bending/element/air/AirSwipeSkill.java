@@ -93,9 +93,6 @@ public class AirSwipeSkill extends AirSkill {
         projectile.addTraits(new CollisionTrait(Constants.COLLISION_TYPE, "Blaze", "Fireball", "AbstractArrow", "FireProjectile"));
         projectile.addCollisionModule((ICollisionModule) ModuleRegistry.create(AirCollisionModule.id));
 
-        // Particle FX module
-        projectile.addTraits(data.getTrait(Constants.FX, StringTrait.class));
-
         projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
         projectile.init();
 

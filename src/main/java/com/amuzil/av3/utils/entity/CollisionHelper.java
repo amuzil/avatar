@@ -1,4 +1,4 @@
-package com.amuzil.av3.utils.modules;
+package com.amuzil.av3.utils.entity;
 
 import com.amuzil.av3.bending.form.BendingForm;
 import net.minecraft.world.phys.Vec3;
