@@ -76,19 +76,19 @@ public class AvatarWaterProjectile extends AvatarProjectile implements IHasSDF {
     }
 
     public SignedDistanceFunction rootSDF() {
-        float size = 4.5f;
+        float size = 4f;
         IVec3Channel look = Channels.constantVec3((float) getDeltaMovement().x,
                 (float) getDeltaMovement().y, (float) getDeltaMovement().z);
         IVec3Channel scale = Channels.constantVec3(lookDirection().x * size / 4, lookDirection().y * size / 4, lookDirection().z * size / 4);
         if (capsule == null) {
             capsule = new SDFElementBolt();
         }
-        capsule.headRadius = Channels.constant(0.5f);
+        capsule.headRadius = Channels.constant(0.35f);
         capsule.tailRadius = Channels.constant(0.012f);
         capsule.length = Channels.constant(size);;
-        capsule.taperExponent = Channels.constant(2.2f);
-        capsule.headTipBlend = Channels.constant(0.3f);
-        capsule.headTipLength = Channels.constant(0.4f);
+        capsule.taperExponent = Channels.constant(1.5f);
+        capsule.headTipBlend = Channels.constant(0.2f);
+        capsule.headTipLength = Channels.constant(0.25f);
 
         capsule.a.rot = Channels.alignAxisToDir(
                 new Vector3f(0, 1, 0),                  // capsule axis in *local* space

@@ -1,6 +1,7 @@
 package com.amuzil.av3.utils;
 
 import com.amuzil.av3.Avatar;
+import com.lowdragmc.photon.client.fx.FX;
 
 
 public final class Constants {
@@ -25,6 +26,7 @@ public final class Constants {
 
             // Construct/shield properties/mobs
             HEALTH = "health",
+            MAX_HEALTH = "max_health",
 
             // VFX
             RUNTIME = "runtime",

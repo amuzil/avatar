@@ -31,7 +31,7 @@ public class FloatTrait extends SkillTrait {
         markDirty();
     }
 
-    public double getValue() {
+    public float getValue() {
         return val;
     }
 
