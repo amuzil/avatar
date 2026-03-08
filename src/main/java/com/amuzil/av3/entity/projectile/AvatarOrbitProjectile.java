@@ -16,6 +16,6 @@ public class AvatarOrbitProjectile extends AvatarProjectile {
     }
 
     public AvatarOrbitProjectile(Level pLevel) {
-        this(AvatarEntities.AVATAR_ORBIT_PROJECTILE_ENTITY_TYPE.get(), pLevel);
+        this(AvatarEntities.ORBIT_PROJECTILE_ENTITY_TYPE.get(), pLevel);
     }
 }
