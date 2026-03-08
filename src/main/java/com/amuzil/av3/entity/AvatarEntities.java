@@ -19,30 +19,30 @@ public class AvatarEntities {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
             DeferredRegister.create(Registries.ENTITY_TYPE, Avatar.MOD_ID);
 
-    public static final Supplier<EntityType<AvatarProjectile>> AVATAR_PROJECTILE_ENTITY_TYPE =
-            registerProjectile("avatar_projectile", AvatarProjectile::new, 0.5f, 0.5f);
+    public static final Supplier<EntityType<AvatarProjectile>> PROJECTILE_ENTITY_TYPE =
+            registerProjectile("projectile", AvatarProjectile::new, 0.5f, 0.5f);
 
-    public static final Supplier<EntityType<AvatarDirectProjectile>> AVATAR_DIRECT_PROJECTILE_ENTITY_TYPE =
-            registerProjectile("avatar_direct_projectile", AvatarDirectProjectile::new, 0.5f, 0.5f);
+    public static final Supplier<EntityType<AvatarDirectProjectile>> DIRECT_PROJECTILE_ENTITY_TYPE =
+            registerProjectile("direct_projectile", AvatarDirectProjectile::new, 0.5f, 0.5f);
 
-    public static final Supplier<EntityType<AvatarCurveProjectile>> AVATAR_CURVE_PROJECTILE_ENTITY_TYPE =
-            registerProjectile("avatar_curve_projectile", AvatarCurveProjectile::new, 0.5f, 0.5f);
+    public static final Supplier<EntityType<AvatarCurveProjectile>> CURVE_PROJECTILE_ENTITY_TYPE =
+            registerProjectile("curve_projectile", AvatarCurveProjectile::new, 0.5f, 0.5f);
 
-    public static final Supplier<EntityType<AvatarBoundProjectile>> AVATAR_BOUND_PROJECTILE_ENTITY_TYPE =
-            registerProjectile("avatar_bind_projectile", AvatarBoundProjectile::new, 0.5f, 0.5f);
+    public static final Supplier<EntityType<AvatarBoundProjectile>> BOUND_PROJECTILE_ENTITY_TYPE =
+            registerProjectile("bind_projectile", AvatarBoundProjectile::new, 0.5f, 0.5f);
 
-    public static final Supplier<EntityType<AvatarOrbitProjectile>> AVATAR_ORBIT_PROJECTILE_ENTITY_TYPE =
-            registerProjectile("avatar_orbit_projectile", AvatarOrbitProjectile::new, 0.5f, 0.5f);
+    public static final Supplier<EntityType<AvatarOrbitProjectile>> ORBIT_PROJECTILE_ENTITY_TYPE =
+            registerProjectile("orbit_projectile", AvatarOrbitProjectile::new, 0.5f, 0.5f);
 
-    public static final Supplier<EntityType<AvatarWaterProjectile>> AVATAR_WATER_PROJECTILE_ENTITY_TYPE =
-            registerProjectile("avatar_water_projectile", AvatarWaterProjectile::new, 0.5f, 0.5f);
+    public static final Supplier<EntityType<AvatarWaterProjectile>> WATER_PROJECTILE_ENTITY_TYPE =
+            registerProjectile("water_projectile", AvatarWaterProjectile::new, 0.5f, 0.5f);
 
-    public static final Supplier<EntityType<AvatarRigidBlock>> AVATAR_RIGID_BLOCK_ENTITY_TYPE =
-            registerPhysicsBody("avatar_rigid_block", AvatarRigidBlock::new, 1.0f, 1.0f, 10, 4);
+    public static final Supplier<EntityType<AvatarRigidBlock>> RIGID_BLOCK_ENTITY_TYPE =
+            registerPhysicsBody("rigid_block", AvatarRigidBlock::new, 1.0f, 1.0f, 10, 4);
 
-    public static final Supplier<EntityType<SkyBisonEntity>> AVATAR_SKYBISON_ENTITY_TYPE =
-            ENTITY_TYPES.register("avatar_skybison_entity", () -> EntityType.Builder.of(SkyBisonEntity::new, MobCategory.CREATURE)
-                    .sized(0.5f, 0.5f).build("avatar_skybison_entity"));
+    public static final Supplier<EntityType<SkyBisonEntity>> SKYBISON_ENTITY_TYPE =
+            ENTITY_TYPES.register("skybison_entity", () -> EntityType.Builder.of(SkyBisonEntity::new, MobCategory.CREATURE)
+                    .sized(0.5f, 0.5f).build("skybison_entity"));
 
     private static <T extends Entity> Supplier<EntityType<T>> registerPhysicsBody(
             String id, EntityType.EntityFactory<T> factory, float width, float height, int trackingRange, int updateInterval) {

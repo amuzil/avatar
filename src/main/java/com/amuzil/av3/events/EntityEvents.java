@@ -12,6 +12,6 @@ public class EntityEvents {
     @SubscribeEvent
     public static void onEntityAttributeCreation(EntityAttributeCreationEvent event) {
         // Register the attribute supplier for each LivingEntity type you own
-        event.put(AvatarEntities.AVATAR_SKYBISON_ENTITY_TYPE.get(), SkyBisonEntity.createAttributes().build());
+        event.put(AvatarEntities.SKYBISON_ENTITY_TYPE.get(), SkyBisonEntity.createAttributes().build());
     }
 }

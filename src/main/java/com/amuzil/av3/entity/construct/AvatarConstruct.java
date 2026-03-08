@@ -92,7 +92,7 @@ public class AvatarConstruct extends AvatarEntity implements IAvatarConstruct {
     }
 
     private AvatarConstruct(Level level, double x, double y, double z, BlockState state) {
-        this(AvatarEntities.AVATAR_RIGID_BLOCK_ENTITY_TYPE.get(), level);
+        this(AvatarEntities.RIGID_BLOCK_ENTITY_TYPE.get(), level);
         this.blockState = state;
         this.blocksBuilding = true;
         this.setPos(x, y, z);

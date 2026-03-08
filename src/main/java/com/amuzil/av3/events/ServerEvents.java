@@ -4,6 +4,7 @@ import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.BendingSkill;
 import com.amuzil.av3.data.capability.AvatarCapabilities;
 import com.amuzil.av3.data.capability.Bender;
+import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.network.AvatarNetwork;
 import com.amuzil.av3.network.packets.bending.ToggleBendingPacket;
 import com.amuzil.av3.utils.commands.AvatarCommands;
@@ -11,10 +12,13 @@ import com.amuzil.magus.registry.Registries;
 import com.amuzil.magus.skill.event.SkillTickEvent;
 import com.amuzil.magus.tree.SkillTree;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
@@ -47,6 +51,18 @@ public class ServerEvents {
 //            bender.unregister();
 //        }
 //    }
+
+    @SubscribeEvent
+    private static void RegisterSpawnPlacements(RegisterSpawnPlacementsEvent evt) {
+        evt.register(AvatarEntities.SKYBISON_ENTITY_TYPE.get(),
+                SpawnPlacementTypes.ON_GROUND, // Placement Type
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, // Heightmap
+                (entityType, levelAccessor, spawnType, blockPos, random) -> {
+                    // Additional custom check (e.g., only spawn at night, or specific block)
+                    return true; // Return true if it can spawn here
+                },
+                RegisterSpawnPlacementsEvent.Operation.REPLACE);
+    }
 
     @SubscribeEvent
     private static void onServerStarting(ServerStartingEvent event) {

@@ -51,7 +51,7 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
     }
 
     public AvatarProjectile(Level pLevel) {
-        this(AvatarEntities.AVATAR_PROJECTILE_ENTITY_TYPE.get(), pLevel);
+        this(AvatarEntities.PROJECTILE_ENTITY_TYPE.get(), pLevel);
     }
 
     public void setWidth(float width) {
