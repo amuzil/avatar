@@ -16,7 +16,7 @@ public class AvatarDirectProjectile extends AvatarProjectile {
     }
 
     public AvatarDirectProjectile(Level pLevel) {
-        this(AvatarEntities.AVATAR_DIRECT_PROJECTILE_ENTITY_TYPE.get(), pLevel);
+        this(AvatarEntities.DIRECT_PROJECTILE_ENTITY_TYPE.get(), pLevel);
     }
 
 }

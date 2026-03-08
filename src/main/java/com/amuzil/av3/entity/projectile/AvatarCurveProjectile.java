@@ -16,7 +16,7 @@ public class AvatarCurveProjectile extends AvatarProjectile {
     }
 
     public AvatarCurveProjectile(Level pLevel) {
-        this(AvatarEntities.AVATAR_CURVE_PROJECTILE_ENTITY_TYPE.get(), pLevel);
+        this(AvatarEntities.CURVE_PROJECTILE_ENTITY_TYPE.get(), pLevel);
     }
 
 }
