@@ -65,7 +65,7 @@ public class PhysicsEvents {
     public static void onCollision(CollisionEvent event) {
         if (event.getType() == CollisionEvent.Type.ELEMENT) {
             if (event.getMain() instanceof EntityRigidBody wall && wall.getCollisionShape() instanceof MinecraftShape.Compound) {
-                if (event.getImpulse() > 40f && wall.getElement().cast() instanceof AvatarRigidBlock rigidBlock) {
+                if (event.getImpulse() > 60f && wall.getElement().cast() instanceof AvatarRigidBlock rigidBlock) {
                     shatterWall(rigidBlock, event.getOther().getLinearVelocity(new Vector3f()));
 //                    System.out.printf("Collision detected with impulse: %.2f%n", event.getImpulse());
                 }
