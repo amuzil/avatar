@@ -20,6 +20,7 @@ import com.amuzil.magus.skill.traits.skilltraits.*;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
 
 import static com.amuzil.av3.bending.form.BendingForms.STRIKE;
 
@@ -88,6 +89,7 @@ public class WaterBallSkill extends WaterSkill {
         projectile.addTraits(data.getTrait(Constants.FX, StringTrait.class));
 
         projectile.lookDirection(entity.getLookAngle().toVector3f());
+        projectile.vfxScale(new Vector3f(2f, 2f, 2f));
 
         // This needs to happen client and server side...
         projectile.addForceModule((IForceModule) ModuleRegistry.create(LookModule.id));

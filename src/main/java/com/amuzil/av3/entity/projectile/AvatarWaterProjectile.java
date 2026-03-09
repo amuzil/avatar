@@ -1,9 +1,11 @@
 package com.amuzil.av3.entity.projectile;
 
+import com.amuzil.av3.Avatar;
 import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.api.IForceModule;
 import com.amuzil.av3.entity.api.IHasHealth;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
+import com.amuzil.av3.entity.api.modules.client.PhotonModule;
 import com.amuzil.av3.entity.api.modules.force.MoveModule;
 import com.amuzil.av3.renderer.sdf.IHasSDF;
 import com.amuzil.av3.renderer.sdf.SDFScene;
@@ -11,11 +13,15 @@ import com.amuzil.av3.renderer.sdf.SignedDistanceFunction;
 import com.amuzil.av3.renderer.sdf.channels.Channels;
 import com.amuzil.av3.renderer.sdf.channels.IVec3Channel;
 import com.amuzil.av3.renderer.sdf.shapes.*;
+import com.lowdragmc.lowdraglib2.utils.RayTraceHelper;
+import com.lowdragmc.photon.client.fx.FXHelper;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
@@ -23,7 +29,7 @@ public class AvatarWaterProjectile extends AvatarProjectile implements IHasSDF {
     private SDFScene root;
     private SDFElementBolt capsule;
     private SDFSphere sphere;
-
+    int ticks = 0;
     public AvatarWaterProjectile(EntityType<AvatarWaterProjectile> entityType, Level pLevel) {
         super(entityType, pLevel);
 //        addForceModule((IForceModule) ModuleRegistry.create(CurveModule.id)); // Can hotswap to OrbitModule.id
@@ -116,6 +122,31 @@ public class AvatarWaterProjectile extends AvatarProjectile implements IHasSDF {
 //            setXRot(rots.x);
 //            setYRot(rots.y);
 //        }
+
+
+        Vec3 res = null;
+        HitResult hitresult = this.level().clip(new ClipContext(position(), position().add(getDeltaMovement().scale(width() * 12)), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
+        if (hitresult.getType() != HitResult.Type.MISS) {
+            res = hitresult.getLocation();
+        }
+        if (res != null && level().isClientSide) {
+
+            setWidth(width() * 0.5f);
+            setHeight(height() * 0.5f);
+            vfxScale(vfxScale().mul(2f, 2.0f, 2f));
+            ticks++;
+            if (ticks > 1) {
+                PhotonModule.startDeathEffect(FXHelper.getFX(Avatar.id("water_explosion")), this, getDeltaMovement().scale(-4));
+            }
+            if (ticks > 3) {
+                kill();
+            }
+        }
     }
 
+    @Override
+    public void kill() {
+        super.kill();
+
+    }
 }
