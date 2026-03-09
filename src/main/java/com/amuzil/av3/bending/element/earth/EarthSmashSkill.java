@@ -37,7 +37,7 @@ public class EarthSmashSkill extends EarthSkill {
     private final int    ringCount       = 8;         // rigid blocks spawned per ring
     private final int    blockLifetime   = 800;       // ms each rigid block lives
     private final float  blockSize       = 1.0f;      // must match renderer's natural 1x1x1 block scale
-    private final float  impulseStrength = 10.0f;     // outward physics impulse magnitude
+    private final float  impulseStrength = 6.0f;     // outward physics impulse magnitude
     private final int    fxInterval      = 3;         // fire TriggerFXPacket once every N blocks spawned
     private final String fxKey           = "earth_block";
 
