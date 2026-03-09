@@ -16,6 +16,7 @@ import net.neoforged.neoforge.client.model.data.ModelData;
 import org.joml.Quaternionf;
 
 public class PhysicsBlockRenderer extends EntityRenderer<AvatarRigidBlock> {
+    // NOTE: This only renders block size 1.0
     private final BlockRenderDispatcher blockRenderer;
 
     public PhysicsBlockRenderer(EntityRendererProvider.Context context) {

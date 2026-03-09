@@ -43,8 +43,8 @@ public class EarthWallSkill extends EarthSkill {
         super.start(bender);
         LivingEntity entity = bender.getEntity();
         if (!canEarthBend(entity)) return; // Can't earth bend if too far from ground
-        Level level = bender.getEntity().level();
-        BlockPos blockPos = bender.getEntity().blockPosition().below();
+        Level level = entity.level();
+        BlockPos blockPos = entity.blockPosition().below();
         BlockState blockState = level.getBlockState(blockPos);
         if (!BendingMaterial.isBendable(blockState, element())) return;
 
@@ -53,86 +53,89 @@ public class EarthWallSkill extends EarthSkill {
 
         // --- Spawn 3x3 grid ---
         int rows = 3; int cols = 3;
-        AvatarRigidBlock[][] grid = new AvatarRigidBlock[rows][cols];
-        MinecraftSpace space = MinecraftSpace.get(level);
+        AvatarRigidBlock rigidBlock = RigidBlockFactory.createWall(level, blockState, entity, lifetime, (float) size, rows, cols);
 
+
+
+//        AvatarRigidBlock[][] grid = new AvatarRigidBlock[rows][cols];
+//        MinecraftSpace space = MinecraftSpace.get(level);
         // TODO: Only spawn if ground is within certain distance of player, otherwise don't spawn
         //  Also, if player is looking at a Minecraft Block Wall, don't spawn.
         //  Maybe make way to only spawn the blocks of the wall that aren't clipped in an existing wall
-        // Find ground position in front of player
-        Vec3 lookFlat = new Vec3(entity.getLookAngle().x, 0, entity.getLookAngle().z).normalize();
-        Vec3 spawnPos = entity.position().add(lookFlat.scale(3.0)); // 3 blocks in front, at player's feet level
+        //  Find ground position in front of player
+//        Vec3 lookFlat = new Vec3(entity.getLookAngle().x, 0, entity.getLookAngle().z).normalize();
+//        Vec3 spawnPos = entity.position().add(lookFlat.scale(3.0)); // 3 blocks in front, at player's feet level
+//
+//        // Raycast downward to find ground
+//        Vec3 rayStart = spawnPos.add(0, 5, 0);  // start above
+//        Vec3 rayEnd = spawnPos.add(0, -5, 0);   // end below
+//
+//        BlockHitResult hit = level.clip(new ClipContext(
+//                rayStart,
+//                rayEnd,
+//                ClipContext.Block.COLLIDER,
+//                ClipContext.Fluid.NONE,
+//                entity
+//        ));
+//
+//        double groundY;
+//        if (hit.getType() != HitResult.Type.MISS) {
+//            groundY = hit.getLocation().y;
+//        } else {
+//            // Fallback: scan downward manually
+//            BlockPos checkPos = BlockPos.containing(spawnPos);
+//            while (checkPos.getY() > level.getMinBuildHeight() && level.getBlockState(checkPos).isAir()) {
+//                checkPos = checkPos.below();
+//            }
+//            groundY = checkPos.getY() + 1;
+//        }
 
-        // Raycast downward to find ground
-        Vec3 rayStart = spawnPos.add(0, 5, 0);  // start above
-        Vec3 rayEnd = spawnPos.add(0, -5, 0);   // end below
-
-        BlockHitResult hit = level.clip(new ClipContext(
-                rayStart,
-                rayEnd,
-                ClipContext.Block.COLLIDER,
-                ClipContext.Fluid.NONE,
-                entity
-        ));
-
-        double groundY;
-        if (hit.getType() != HitResult.Type.MISS) {
-            groundY = hit.getLocation().y;
-        } else {
-            // Fallback: scan downward manually
-            BlockPos checkPos = BlockPos.containing(spawnPos);
-            while (checkPos.getY() > level.getMinBuildHeight() && level.getBlockState(checkPos).isAir()) {
-                checkPos = checkPos.below();
-            }
-            groundY = checkPos.getY() + 1;
-        }
-
-        // Center of wall should be half its height above ground
-        // rows * size = total wall height, half of that is the center offset
-        Vec3 center = new Vec3(spawnPos.x, groundY + (rows * size / 2.0), spawnPos.z);
-        Vec3 look = entity.getLookAngle().normalize();
-        Vec3 right = look.cross(new Vec3(0, 1, 0)).normalize();
-        Vec3 up = new Vec3(0, 1, 0);
-
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < cols; col++) {
-                double offsetX = (col - 1) * size;
-                double offsetY = (row - 1) * size;
-
-                Vec3 pos = center
-                        .add(right.scale(offsetX))
-                        .add(up.scale(offsetY));
-
-                AvatarRigidBlock block = RigidBlockFactory.createBlock(level, blockState, entity, lifetime, (float) size);
-                block.setElement(element());
-                block.setFX(this.skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
-                block.setPos(pos);
-                block.init();
-
-                space.addCollisionObject(block.getRigidBody());
-                bender.getSelection().addEntityId(block.getUUID());
-                level.addFreshEntity(block);
-                grid[row][col] = block;
-            }
-        }
-
-        // --- Glue neighbors together ---
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < cols; col++) {
-                // Glue to right neighbor
-                if (col + 1 < cols) {
-                    RigidBlockFactory.createGlueJoint(space, grid[row][col], grid[row][col + 1]);
-                }
-                // Glue to upper neighbor
-                if (row + 1 < rows) {
-                    RigidBlockFactory.createGlueJoint(space, grid[row][col], grid[row + 1][col]);
-                }
-            }
-        }
+//        // Center of wall should be half its height above ground
+//        // rows * size = total wall height, half of that is the center offset
+//        Vec3 center = new Vec3(spawnPos.x, groundY + (rows * size / 2.0), spawnPos.z);
+//        Vec3 look = entity.getLookAngle().normalize();
+//        Vec3 right = look.cross(new Vec3(0, 1, 0)).normalize();
+//        Vec3 up = new Vec3(0, 1, 0);
+//
+//        for (int row = 0; row < rows; row++) {
+//            for (int col = 0; col < cols; col++) {
+//                double offsetX = (col - 1) * size;
+//                double offsetY = (row - 1) * size;
+//
+//                Vec3 pos = center
+//                        .add(right.scale(offsetX))
+//                        .add(up.scale(offsetY));
+//
+//                AvatarRigidBlock block = RigidBlockFactory.createBlock(level, blockState, entity, lifetime, (float) size);
+//                block.setElement(element());
+//                block.setFX(this.skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
+//                block.setPos(pos);
+//                block.init();
+//
+//                space.addCollisionObject(block.getRigidBody());
+//                bender.getSelection().addEntityId(block.getUUID());
+//                level.addFreshEntity(block);
+//                grid[row][col] = block;
+//            }
+//        }
+//
+//        // --- Glue neighbors together ---
+//        for (int row = 0; row < rows; row++) {
+//            for (int col = 0; col < cols; col++) {
+//                // Glue to right neighbor
+//                if (col + 1 < cols) {
+//                    RigidBlockFactory.createGlueJoint(space, grid[row][col], grid[row][col + 1]);
+//                }
+//                // Glue to upper neighbor
+//                if (row + 1 < rows) {
+//                    RigidBlockFactory.createGlueJoint(space, grid[row][col], grid[row + 1][col]);
+//                }
+//            }
+//        }
 
         bender.formPath.clear();
         skillData.setSkillState(SkillState.IDLE);
-//        bender.getSelection().addEntityId(rigidBlock.getUUID());
-//        entity.level().addFreshEntity(rigidBlock);
+        bender.getSelection().addEntityId(rigidBlock.getUUID());
+        entity.level().addFreshEntity(rigidBlock);
     }
 }

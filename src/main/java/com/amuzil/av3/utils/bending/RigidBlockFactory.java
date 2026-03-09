@@ -2,8 +2,10 @@ package com.amuzil.av3.utils.bending;
 
 import com.amuzil.av3.entity.construct.AvatarRigidBlock;
 import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
+import com.amuzil.caliber.physics.bullet.collision.body.shape.MinecraftShape;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.caliber.physics.bullet.math.Convert;
+import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.RotationOrder;
 import com.jme3.bullet.joints.New6Dof;
 import com.jme3.bullet.joints.motors.MotorParam;
@@ -14,6 +16,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 
 import static com.amuzil.av3.utils.bending.SkillHelper.getPivot;
@@ -59,7 +62,7 @@ public final class RigidBlockFactory {
         rigidBlock.setBlockState(blockState);
         rigidBlock.setOwner(owner);
         rigidBlock.getRigidBody().setPhysicsRotation(Convert.toBullet(0, owner.getYRot()));
-        rigidBlock.setPos(getPivot(owner, 3f)); // TODO make it spawn at set y position
+        rigidBlock.setPos(getPivot(owner, 3f));
 //        rigidBlock.setMaxLifetime(lifetime);
         rigidBlock.setWidth(size);
         rigidBlock.setHeight(size);
@@ -69,6 +72,37 @@ public final class RigidBlockFactory {
         rigidBlock.setDamageable(false);
         rigidBlock.setRigidBodyDirty(true);
         return rigidBlock;
+    }
+
+    public static AvatarRigidBlock createWall(Level level, BlockState blockState, LivingEntity owner, int lifetime, float size, int rows, int cols) {
+        MinecraftShape.Compound compoundShape = MinecraftShape.compound(null);
+
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                float offsetX = (col - (cols - 1) / 2.0f) * size;
+                float offsetY = (row - (rows - 1) / 2.0f) * size;
+                compoundShape.addChildShape(
+                        MinecraftShape.convex(new AABB(-size/2, -size/2, -size/2, size/2, size/2, size/2)),
+                        offsetX, offsetY, 0
+                );
+            }
+        }
+
+        // Single entity with compound shape
+        AABB box = Convert.toMinecraft(compoundShape.boundingBox(new Vector3f(), new Quaternion(), new BoundingBox()));
+        AvatarRigidBlock wallBlock = new AvatarRigidBlock(level, compoundShape);
+        wallBlock.setBlockState(blockState);
+        wallBlock.setOwner(owner);
+        wallBlock.getRigidBody().setPhysicsRotation(Convert.toBullet(0, owner.getYRot()));
+        wallBlock.setPos(getPivot(owner, 3f));
+        wallBlock.setYRot(owner.getYRot());
+        wallBlock.yRotO = owner.getYRot();
+        wallBlock.setMaxLifetime(lifetime);
+        wallBlock.setWidth((float) box.getXsize());
+        wallBlock.setHeight((float) box.getYsize());
+        wallBlock.setDepth((float) box.getZsize());
+        wallBlock.setDamageable(false);
+        return wallBlock;
     }
 
     public static void createGlueJoint(MinecraftSpace space, AvatarRigidBlock blockA, AvatarRigidBlock blockB) {
@@ -102,9 +136,13 @@ public final class RigidBlockFactory {
         for (int dof = 0; dof < 6; dof++) {
             glue.set(MotorParam.LowerLimit, dof, 0f);
             glue.set(MotorParam.UpperLimit, dof, 0f);
+//            glue.set(MotorParam.Damping, dof, 0.8f);
+//            glue.set(MotorParam.Stiffness, dof, 10000f); // very stiff
+//            glue.set(MotorParam.Equilibrium, dof, 0f);   // rest at locked position
+//            glue.enableSpring(dof, true);
         }
 
-        glue.setBreakingImpulseThreshold(50f);
+        glue.setBreakingImpulseThreshold(60f);
         glue.setCollisionBetweenLinkedBodies(false);
         space.addJoint(glue);
         blockA.addGlueJoint(glue);

@@ -75,7 +75,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
         this.chunkCache = ChunkCache.create(this);
         this.terrainMap = new ConcurrentHashMap<>();
         this.setGravity(new Vector3f(0, -9.807f, 0)); // Global physics space gravity
-        this.getSolverInfo().setJointErp(0.9f);
+        this.getSolverInfo().setJointErp(0.4f);
         this.setAccuracy(1f / 60f);
     }
 
@@ -125,7 +125,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
                     NeoForge.EVENT_BUS.post(new PhysicsSpaceEvent.Step(this));
 
                     /* Step the Simulation */
-                    this.update(1 / 60f);
+                    this.update(1 / 60f, 4, false, false, true);
                 }, this.getWorkerThread());
             }
 
@@ -235,12 +235,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
         return this.chunkCache;
     }
 
-    /**
-     * Trigger all collision events (e.g. block/element or element/element).
-     * 
-     * @param event the event context
-     */
-    @Override
+    @Deprecated @Override
     public void collision(PhysicsCollisionEvent event) {
         float impulse = event.getAppliedImpulse();
 

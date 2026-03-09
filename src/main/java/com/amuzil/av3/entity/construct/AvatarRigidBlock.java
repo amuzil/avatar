@@ -8,6 +8,7 @@ import com.amuzil.av3.entity.api.modules.ModuleRegistry;
 import com.amuzil.av3.entity.api.modules.force.ControlModule;
 import com.amuzil.caliber.api.EntityPhysicsElement;
 import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
+import com.amuzil.caliber.physics.bullet.collision.body.shape.MinecraftShape;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.jme3.bullet.joints.New6Dof;
@@ -45,6 +46,13 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
         defaultMass = rigidBody.getMass();
 //        rigidBody.setGravity(Vector3f.ZERO);
 //        rigidBody.setProtectGravity(true);
+    }
+
+    public AvatarRigidBlock(Level level, MinecraftShape shape) {
+        super(AvatarEntities.RIGID_BLOCK_ENTITY_TYPE.get(), level);
+        this.rigidBody = new EntityRigidBody(this, shape);
+        addForceModule((IForceModule) ModuleRegistry.create(ControlModule.id));
+        defaultMass = rigidBody.getMass();
     }
 
     public AvatarRigidBlock(Level level) {
@@ -112,6 +120,7 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
                     MinecraftSpace.get(level()).removeJoint(joint);
                     return true;
                 }
+//                this.getRigidBody().activate();
                 return false;
             });
         }

@@ -43,6 +43,10 @@ public class Convert {
         return new org.joml.Vector3f(vector3f.x, vector3f.y, vector3f.z);
     }
 
+    public static Vec3 toMinecraftVec3(Vector3f vector3f) {
+        return new Vec3(vector3f.x, vector3f.y, vector3f.z);
+    }
+
     public static Vector3f toBullet(org.joml.Vector3f vector3f) {
         return new Vector3f(vector3f.x(), vector3f.y(), vector3f.z());
     }
