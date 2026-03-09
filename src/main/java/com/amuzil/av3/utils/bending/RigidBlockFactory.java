@@ -102,6 +102,7 @@ public final class RigidBlockFactory {
         wallBlock.setHeight((float) box.getYsize());
         wallBlock.setDepth((float) box.getZsize());
         wallBlock.setDamageable(false);
+        wallBlock.setRigidBodyDirty(true);
         return wallBlock;
     }
 

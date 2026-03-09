@@ -11,6 +11,7 @@ import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
 import com.amuzil.caliber.physics.bullet.collision.body.shape.MinecraftShape;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.caliber.physics.bullet.math.Convert;
+import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.joints.New6Dof;
 import com.jme3.math.Vector3f;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -36,6 +37,7 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
     protected final EntityRigidBody rigidBody;
     protected float defaultMass;
     private final List<New6Dof> glueJoints = new ArrayList<>();
+    private MinecraftShape customShape = null;
 
     protected static final EntityDataAccessor<Boolean> RIGID_BODY_DIRTY = SynchedEntityData.defineId(AvatarRigidBlock.class, EntityDataSerializers.BOOLEAN);
 
@@ -51,6 +53,7 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
     public AvatarRigidBlock(Level level, MinecraftShape shape) {
         super(AvatarEntities.RIGID_BLOCK_ENTITY_TYPE.get(), level);
         this.rigidBody = new EntityRigidBody(this, shape);
+        this.customShape = shape;
         addForceModule((IForceModule) ModuleRegistry.create(ControlModule.id));
         defaultMass = rigidBody.getMass();
     }
@@ -126,7 +129,8 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
         }
 
         if (isRigidBodyDirty()) {
-            rigidBody.setCollisionShape(this.createShape());
+            MinecraftShape shape = customShape != null ? customShape : this.createShape();
+            rigidBody.setCollisionShape((CollisionShape) shape);
             float actualMass = 10 * (this.width() * this.height() * this.depth());
             rigidBody.setMass(actualMass);
             defaultMass = rigidBody.getMass();

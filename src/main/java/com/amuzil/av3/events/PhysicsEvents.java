@@ -74,6 +74,8 @@ public class PhysicsEvents {
     }
 
     public static void shatterWall(AvatarRigidBlock wall, Vector3f impactVelocity) {
+        if (!wall.isAlive()) return;
+        wall.discard(); // discard FIRST before spawning fragments
         Level level = wall.level();
 
         Vector3f wallPos = wall.getRigidBody().getPhysicsLocation(new Vector3f());
