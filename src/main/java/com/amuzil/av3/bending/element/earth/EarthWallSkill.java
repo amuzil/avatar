@@ -54,8 +54,9 @@ public class EarthWallSkill extends EarthSkill {
         // --- Spawn 3x3 grid ---
         int rows = 3; int cols = 3;
         AvatarRigidBlock rigidBlock = RigidBlockFactory.createWall(level, blockState, entity, lifetime, (float) size, rows, cols);
-
-
+        rigidBlock.setElement(element());
+        rigidBlock.setFX(this.skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
+        rigidBlock.init();
 
 //        AvatarRigidBlock[][] grid = new AvatarRigidBlock[rows][cols];
 //        MinecraftSpace space = MinecraftSpace.get(level);
