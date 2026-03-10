@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
@@ -31,6 +32,17 @@ public class PhysicsBlockRenderer extends EntityRenderer<AvatarRigidBlock> {
     private final BlockRenderDispatcher blockRenderer;
     private final BlockColors blockColors;
 
+    // Gentler directional shading than vanilla (which uses 0.5 for DOWN).
+    // Gives visual depth without making any face look too dark.
+    private static float shade(Direction dir) {
+        return switch (dir) {
+            case DOWN  -> 0.75F;
+            case UP    -> 1.00F;
+            case NORTH, SOUTH -> 0.90F;
+            case EAST,  WEST  -> 0.85F;
+        };
+    }
+
     public PhysicsBlockRenderer(EntityRendererProvider.Context context) {
         super(context);
         this.blockRenderer = context.getBlockRenderDispatcher();
@@ -43,10 +55,15 @@ public class PhysicsBlockRenderer extends EntityRenderer<AvatarRigidBlock> {
         if (state.getRenderShape() != RenderShape.MODEL) return;
 
         BlockPos blockPos = block.blockPosition();
+        BlockAndTintGetter level = (BlockAndTintGetter) block.level();
 
-        // Sample the biome tint once for this entity's position.
-        // Only applied to quads where tintIndex >= 0 — untinted faces use white (1,1,1).
-        int tintColor = blockColors.getColor(state, (BlockAndTintGetter) block.level(), blockPos, 0);
+        // Sample world light at the block's current position
+        int blockLight = block.level().getBrightness(net.minecraft.world.level.LightLayer.BLOCK, blockPos);
+        int skyLight   = block.level().getBrightness(net.minecraft.world.level.LightLayer.SKY,   blockPos);
+        int worldLight = LightTexture.pack(blockLight, skyLight);
+
+        // Sample biome tint for this position
+        int tintColor = blockColors.getColor(state, level, blockPos, 0);
         float tr = (float)(tintColor >> 16 & 255) / 255.0F;
         float tg = (float)(tintColor >> 8  & 255) / 255.0F;
         float tb = (float)(tintColor        & 255) / 255.0F;
@@ -80,11 +97,7 @@ public class PhysicsBlockRenderer extends EntityRenderer<AvatarRigidBlock> {
 
                     PoseStack.Pose pose = stack.last();
 
-                    // Render each render type the model uses
                     for (RenderType rt : bakedModel.getRenderTypes(state, random, ModelData.EMPTY)) {
-                        // Map block render types to their entity-compatible equivalents.
-                        // cutoutMipped covers most solid/cutout blocks (grass, dirt, stone, leaves).
-                        // Fall back to cutoutMipped for any unrecognised type.
                         RenderType entityRt;
                         if (rt.equals(RenderType.translucent())) {
                             entityRt = RenderType.translucent();
@@ -95,15 +108,17 @@ public class PhysicsBlockRenderer extends EntityRenderer<AvatarRigidBlock> {
                         }
                         VertexConsumer consumer = bufferSource.getBuffer(entityRt);
 
-                        // Render all face directions + general (null) quads
                         for (Direction dir : Direction.values()) {
-                            renderQuads(pose, consumer,
-                                    bakedModel.getQuads(state, dir, random, ModelData.EMPTY, rt),
-                                    packedLight, tr, tg, tb);
+                            List<BakedQuad> quads = bakedModel.getQuads(state, dir, random, ModelData.EMPTY, rt);
+                            if (!quads.isEmpty()) {
+                                renderQuads(pose, consumer, quads, worldLight, tr, tg, tb, shade(dir));
+                            }
                         }
-                        renderQuads(pose, consumer,
-                                bakedModel.getQuads(state, null, random, ModelData.EMPTY, rt),
-                                packedLight, tr, tg, tb);
+                        // Unculled quads (no associated face direction) — use top brightness
+                        List<BakedQuad> unculled = bakedModel.getQuads(state, null, random, ModelData.EMPTY, rt);
+                        if (!unculled.isEmpty()) {
+                            renderQuads(pose, consumer, unculled, worldLight, tr, tg, tb, 1.0F);
+                        }
                     }
 
                     stack.popPose();
@@ -115,26 +130,25 @@ public class PhysicsBlockRenderer extends EntityRenderer<AvatarRigidBlock> {
     }
 
     /**
-     * Renders a list of quads, applying the biome tint only to quads that have
-     * a tintIndex >= 0. Untinted quads (dirt, stone faces, etc.) use white (1,1,1)
-     * so their baked colors are preserved exactly.
+     * Renders quads with:
+     * - Biome tint applied only to tinted quads (tintIndex >= 0)
+     * - Gentle directional shade multiplier per face — no AO, no vanilla 0.5 bottom darkening
+     * - World-sampled light level
      */
     private void renderQuads(PoseStack.Pose pose, VertexConsumer consumer, List<BakedQuad> quads,
-                             int packedLight, float tr, float tg, float tb) {
+                             int worldLight, float tr, float tg, float tb, float shade) {
         for (BakedQuad quad : quads) {
             float r, g, b;
-            if (quad.getTintIndex() >= 0) {
-                // Tinted quad (e.g. grass top overlay, foliage) — apply biome color
-                r = tr;
-                g = tg;
-                b = tb;
+            if (quad.isTinted()) {
+                r = tr * shade;
+                g = tg * shade;
+                b = tb * shade;
             } else {
-                // Untinted quad (e.g. dirt sides, stone) — white preserves baked colors
-                r = 1.0F;
-                g = 1.0F;
-                b = 1.0F;
+                r = shade;
+                g = shade;
+                b = shade;
             }
-            consumer.putBulkData(pose, quad, r, g, b, 1.0F, packedLight, OverlayTexture.NO_OVERLAY);
+            consumer.putBulkData(pose, quad, r, g, b, 1.0F, worldLight, OverlayTexture.NO_OVERLAY);
         }
     }
 

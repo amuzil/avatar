@@ -69,8 +69,8 @@ public class EntityCollisionGenerator {
 
                         // Blend velocity for smooth walking
                         Vec3 vel2 = entity.getDeltaMovement().add(horizontalDelta).add(verticalDelta);
-                        if (vel2.length() > 20)
-                            vel2 = vel2.scale(0.03);
+                        if (vel2.length() > 3)
+                            vel2 = vel2.scale(0.005);
                         entity.setDeltaMovement(vel2);
 
 

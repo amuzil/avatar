@@ -4,6 +4,7 @@ import com.amuzil.av3.Avatar;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.ICollisionModule;
 import com.amuzil.av3.entity.construct.AvatarConstruct;
+import com.amuzil.av3.entity.construct.AvatarRigidBlock;
 import com.amuzil.av3.entity.projectile.AvatarProjectile;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.av3.utils.entity.HitDetection;
@@ -11,6 +12,7 @@ import com.amuzil.av3.utils.entity.damagesource.BendingDamageSources;
 import com.amuzil.magus.skill.traits.skilltraits.CollisionTrait;
 import com.amuzil.magus.skill.traits.skilltraits.DamageTrait;
 import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
+import com.jme3.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
@@ -111,7 +113,10 @@ public class EarthCollisionModule implements ICollisionModule {
                     return;
                 }
             }
-            target.hurt(BendingDamageSources.earthBending(entity.level(), entity.owner()), damage);
+            if (entity instanceof AvatarRigidBlock rigidBlock
+                    && rigidBlock.getRigidBody().getLinearVelocity(new Vector3f()).length() > 0.03f) {
+                target.hurt(BendingDamageSources.earthBending(entity.level(), entity.owner()), damage);
+            }
         }
     }
 
