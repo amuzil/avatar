@@ -32,13 +32,14 @@ import static com.amuzil.av3.utils.bending.SkillHelper.canEarthBend;
 
 public class EarthSmashSkill extends EarthSkill {
     OriginalBlocks originalBlocks = new OriginalBlocks();
+    private final float  minRadius       = 2.0f;      // inner dead zone — player block + first ring excluded
     private final float  maxRadius       = 6.0f;      // how far the wave expands (blocks)
     private final float  rippleSpeed     = 0.6f;      // blocks per tick the wave-front advances
     private final int    ringCount       = 8;         // rigid blocks spawned per ring
-    private final int    blockLifetime   = 800;       // ms each rigid block lives
+    private final int    blockLifetime   = 800;       // ticks each rigid block lives
     private final float  blockSize       = 1.0f;      // must match renderer's natural 1x1x1 block scale
-    private final float  impulseStrength = 6.0f;     // outward physics impulse magnitude
-    private final int    fxInterval      = 3;         // fire TriggerFXPacket once every N blocks spawned
+    private final float  impulseStrength = 3.0f;      // outward physics impulse magnitude
+    private final int    fxInterval      = 5;         // fire TriggerFXPacket once every N blocks spawned
     private final String fxKey           = "earth_block";
 
     // --- Runtime state (reset each activation) ---
@@ -139,6 +140,14 @@ public class EarthSmashSkill extends EarthSkill {
             BlockState groundState = level.getBlockState(groundPos);
             if (!BendingMaterial.isBendable(groundState, element())) continue;
 
+            // Skip blocks within minRadius — preserves the block under the player's feet
+            // and the immediate ring around them so they don't fall into a hole.
+            double blockDist = Math.sqrt(
+                    Math.pow(groundPos.getX() + 0.5 - smashOrigin.x, 2) +
+                            Math.pow(groundPos.getZ() + 0.5 - smashOrigin.z, 2)
+            );
+            if (blockDist < minRadius) continue;
+
             // Remove the vanilla block — the rigid block replaces it visually
             level.removeBlock(groundPos, false);
 
@@ -154,10 +163,10 @@ public class EarthSmashSkill extends EarthSkill {
             rippleBlock.setFX(fxKey);
             rippleBlock.setPos(blockSpawnPos.x, blockSpawnPos.y, blockSpawnPos.z);
             rippleBlock.init();
-             rippleBlock.addTraits(skillData.getTrait(Constants.DAMAGE, DamageTrait.class));
-             rippleBlock.addTraits(new SizeTrait(Constants.SIZE, (float)  rippleBlock.getSize().getSize()));
-             rippleBlock.addTraits(new CollisionTrait(Constants.COLLISION_TYPE, "Blaze", "Fireball", "AbstractArrow", "FireProjectile"));
-             rippleBlock.addCollisionModule((ICollisionModule) ModuleRegistry.create(EarthCollisionModule.id));
+            rippleBlock.addTraits(skillData.getTrait(Constants.DAMAGE, DamageTrait.class));
+            rippleBlock.addTraits(new SizeTrait(Constants.SIZE, (float)  rippleBlock.getSize().getSize()));
+            rippleBlock.addTraits(new CollisionTrait(Constants.COLLISION_TYPE, "Blaze", "Fireball", "AbstractArrow", "FireProjectile"));
+            rippleBlock.addCollisionModule((ICollisionModule) ModuleRegistry.create(EarthCollisionModule.id));
 
             level.addFreshEntity(rippleBlock);
             activeRippleBlocks.add(rippleBlock);
