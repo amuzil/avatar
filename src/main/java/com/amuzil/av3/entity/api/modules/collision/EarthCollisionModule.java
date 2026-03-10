@@ -112,7 +112,6 @@ public class EarthCollisionModule implements ICollisionModule {
                 }
             }
             target.hurt(BendingDamageSources.earthBending(entity.level(), entity.owner()), damage);
-
         }
     }
 
