@@ -67,7 +67,7 @@ public final class ServerEventHandler {
             space.step();
             EntityCollisionGenerator.step(space); // TODO: Move this into av3 package
 
-            for (var rigidBody : space.getRigidBodiesByClass(EntityRigidBody.class)) {
+            for (var rigidBody: space.getRigidBodiesByClass(EntityRigidBody.class)) {
                 if (rigidBody.isActive()) {
 
                     // Movement sync
