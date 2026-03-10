@@ -38,7 +38,7 @@ public class EarthStepSkill extends EarthSkill {
     public void start(Bender bender) {
         super.startRun();
         LivingEntity entity = bender.getEntity();
-        Level level = bender.getEntity().level();
+        Level level = entity.level();
 
         if (!canEarthBend(entity)) return; // Can't earth bend if too far from ground
 

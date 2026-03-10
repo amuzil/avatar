@@ -44,7 +44,7 @@ public class EarthTossSkill extends EarthSkill {
     public void start(Bender bender) {
         super.start(bender);
         LivingEntity entity = bender.getEntity();
-        ServerLevel level = (ServerLevel) bender.getEntity().level();
+        ServerLevel level = (ServerLevel) entity.level();
 
         int lifetime = skillData.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
         double speed = skillData.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
@@ -79,7 +79,7 @@ public class EarthTossSkill extends EarthSkill {
 
                 rigidBlock.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
 
-                AvatarNetwork.sendToClient(new TriggerFXPacket(id, rigidBlock.getId()), (ServerPlayer) bender.getEntity());
+                AvatarNetwork.sendToClient(new TriggerFXPacket(id, rigidBlock.getId()), (ServerPlayer) entity);
             }
         }
 

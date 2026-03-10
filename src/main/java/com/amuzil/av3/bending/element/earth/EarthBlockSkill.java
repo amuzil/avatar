@@ -43,8 +43,8 @@ public class EarthBlockSkill extends EarthSkill {
         int maxBlockCount = skillData.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime();
         if (!canEarthBend(entity)) return; // Can't earth bend if too far from ground
         if (blockCount >= maxBlockCount) return; // Don't go past maxBlockCount
-        Level level = bender.getEntity().level();
-        BlockPos blockPos = bender.getEntity().blockPosition().below();
+        Level level = entity.level();
+        BlockPos blockPos = entity.blockPosition().below();
         BlockState blockState = level.getBlockState(blockPos);
         if (!BendingMaterial.isBendable(blockState, element())) return;
 
