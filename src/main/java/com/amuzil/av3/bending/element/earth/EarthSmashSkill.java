@@ -36,7 +36,7 @@ public class EarthSmashSkill extends EarthSkill {
     private final float  maxRadius       = 6.0f;      // how far the wave expands (blocks)
     private final float  rippleSpeed     = 0.6f;      // blocks per tick the wave-front advances
     private final int    ringCount       = 8;         // rigid blocks spawned per ring
-    private final int    blockLifetime   = 800;       // ticks each rigid block lives
+    private final int    blockLifetime   = 500;       // ticks each rigid block lives
     private final float  blockSize       = 1.0f;      // must match renderer's natural 1x1x1 block scale
     private final float  impulseStrength = 3.0f;      // outward physics impulse magnitude
     private final int    fxInterval      = 5;         // fire TriggerFXPacket once every N blocks spawned
@@ -53,7 +53,7 @@ public class EarthSmashSkill extends EarthSkill {
         addTrait(new StringTrait(Constants.FX, "earth_block"));
         addTrait(new KnockbackTrait(Constants.KNOCKBACK, 1.5f));
         addTrait(new SizeTrait(Constants.SIZE, 1.0f));
-        addTrait(new DamageTrait(Constants.DAMAGE, 6.5f));
+        addTrait(new DamageTrait(Constants.DAMAGE, 6.0f));
         addTrait(new SpeedTrait(Constants.SPEED, 2.5d));
         addTrait(new KnockbackTrait(Constants.KNOCKBACK, 1.5f));
 

@@ -75,7 +75,7 @@ public class AvatarRigidBlock extends AvatarConstruct implements EntityPhysicsEl
     @Override
     public void shoot(Vec3 location, Vec3 direction, double speed, double inAccuracy) {
         setPos(location);
-        float scale = 0.5f;
+        float scale = 0.8f;
         double scaleWithMass = (100.0 * Math.pow(rigidBody.getMass() / 10.0, scale));
         Vec3 force = direction.normalize().scale(speed * scaleWithMass);
         rigidBody.applyCentralImpulse(Convert.toBullet(force));

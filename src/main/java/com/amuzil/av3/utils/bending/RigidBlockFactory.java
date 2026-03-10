@@ -102,6 +102,9 @@ public final class RigidBlockFactory {
         wallBlock.setHeight((float) box.getYsize());
         wallBlock.setDepth((float) box.getZsize());
         wallBlock.setDamageable(false);
+        wallBlock.getRigidBody().setFriction(0.1f);
+        wallBlock.getRigidBody().setAngularFactor(0f);
+        wallBlock.getRigidBody().setAngularVelocity(new Vector3f(0f, 0f, 0f));
         wallBlock.setRigidBodyDirty(true);
         return wallBlock;
     }
