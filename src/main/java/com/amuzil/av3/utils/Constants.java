@@ -19,6 +19,17 @@ public final class Constants {
             // Movement
             DASH_SPEED = "dash_speed",
 
+            // Material Resources
+            SOURCE_LEVEL = "source_level",
+            SOURCE_CONSUMPTION = "source_consumption",
+
+            // Defensive
+            // Multiplier
+            RESISTANCE = "resistance",
+            THORNS_DAMAGE = "thorns_damage",
+            // Flat reduction
+            DAMAGE_REDUCTION = "damage_reduction",
+
             // Time
             LIFETIME = "lifetime",
             COMPONENT_LIFE = "component_life",

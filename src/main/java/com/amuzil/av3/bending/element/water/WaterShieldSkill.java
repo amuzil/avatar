@@ -31,6 +31,13 @@ public class WaterShieldSkill extends WaterSkill {
         addTrait(new TimedTrait(Constants.LIFETIME,  120));
         addTrait(new TimedTrait(Constants.COOLDOWN, 200));
         addTrait(new StringTrait(Constants.FX, "water_shield"));
+        addTrait(new FloatTrait(Constants.SOURCE_LEVEL, 5.0f));
+        // This is how much source to lose per point of damage taken
+        addTrait(new FloatTrait(Constants.SOURCE_CONSUMPTION, 0.5f));
+        // Multiplier for damage vs source level loss.
+        addTrait(new FloatTrait(Constants.RESISTANCE, 1.0f));
+        // Blocks this amount of damage before hurting itself.
+        addTrait(new FloatTrait(Constants.DAMAGE_REDUCTION, 0.5f));
 
         startPaths = SkillPathBuilder.getInstance().add(BLOCK).build();
     }
@@ -39,6 +46,9 @@ public class WaterShieldSkill extends WaterSkill {
     public void start(Bender bender) {
         super.start(bender);
         Level level = bender.getEntity().level();
+
+        int sourceLevel;
+
         AvatarWaterShield shield = new AvatarWaterShield(level);
 
         shield.maxHealth(skillData.getTrait(Constants.HEALTH, FloatTrait.class).getValue());

@@ -48,6 +48,7 @@ public class WaterBallSkill extends WaterSkill {
         addTrait(new StringTrait(Constants.FX, "water1"));
         addTrait(new AngleTrait(Constants.ANGLE, 0));
         addTrait(new RangeTrait(Constants.RANGE, 2.0d));
+        addTrait(new FloatTrait(Constants.SOURCE_CONSUMPTION, 1.0f));
 
         startPaths = SkillPathBuilder.getInstance().add(STRIKE).build();
     }
