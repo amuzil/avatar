@@ -27,6 +27,7 @@ public class ClientRegistrationEvents {
         event.registerEntityRenderer(AvatarEntities.AVATAR_ELEMENT_COLLIDER_ENTITY_TYPE.get(), ThrownItemRenderer::new);
 
         event.registerEntityRenderer(AvatarEntities.AVATAR_WATER_PROJECTILE_ENTITY_TYPE.get(), MarchingCubesEntityRenderer::new);
+        event.registerEntityRenderer(AvatarEntities.AVATAR_WATER_RING_TYPE.get(), MarchingCubesEntityRenderer::new);
         event.registerEntityRenderer(AvatarEntities.AVATAR_WATER_SHIELD_TYPE.get(), MarchingCubesEntityRenderer::new);
 
         event.registerEntityRenderer(AvatarEntities.AVATAR_RIGID_BLOCK_ENTITY_TYPE.get(), PhysicsBlockRenderer::new);

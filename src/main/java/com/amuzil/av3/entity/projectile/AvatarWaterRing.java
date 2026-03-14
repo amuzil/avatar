@@ -7,19 +7,18 @@ import com.amuzil.av3.renderer.sdf.SDFScene;
 import com.amuzil.av3.renderer.sdf.SignedDistanceFunction;
 import com.amuzil.av3.renderer.sdf.channels.Channels;
 import com.amuzil.av3.renderer.sdf.channels.IVec3Channel;
-import com.amuzil.av3.renderer.sdf.shapes.SDFDisk;
+import com.amuzil.av3.renderer.sdf.shapes.SDFTorus;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
 
 public class AvatarWaterRing extends AvatarConstruct implements IHasSDF {
 
 
     private SDFScene root;
-    private SDFDisk shield;
+    private SDFTorus ring;
 
     public AvatarWaterRing(EntityType<AvatarWaterRing> entityType, Level pLevel) {
         super(entityType, pLevel);
@@ -37,17 +36,14 @@ public class AvatarWaterRing extends AvatarConstruct implements IHasSDF {
         IVec3Channel look = Channels.constantVec3(lookDirection().x, lookDirection().y, lookDirection().z);
         IVec3Channel scale = Channels.constantVec3(lookDirection().x * size / 4, lookDirection().y * size / 4, lookDirection().z * size / 4);
 
-        if (shield == null)
-            shield = new SDFDisk();
+        if (ring == null)
+            ring = new SDFTorus();
 
-        shield.a.rot = Channels.alignAxisToDir(
-                new Vector3f(0, 1, 0),                  // capsule axis in *local* space
-                look  // world-space direction
-        );
-        shield.radius = Channels.constant((width() + height()));
-        shield.thickness = Channels.constant(depth());
-        shield.a.pos = scale;
-        root = new SDFScene().add(shield);
+
+        ring.majorRadius = Channels.constant((depth() + height()) / 2);
+        ring.minorRadius = Channels.constant((depth() + height()) / 3);
+        ring.a.pos = scale;
+        root = new SDFScene().add(ring);
         root.unionK = 0.9f;
         return root;
     }

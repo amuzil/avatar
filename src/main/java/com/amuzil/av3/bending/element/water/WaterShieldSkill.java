@@ -86,6 +86,9 @@ public class WaterShieldSkill extends WaterSkill {
         shield.setPhysics(false);
         shield.setNoGravity(true);
         shield.addModule(ModuleRegistry.create(ControlModule.id));
+
+        bender.getSelection().addEntityId(shield.getUUID());
+
         level.addFreshEntity(shield);
     }
 

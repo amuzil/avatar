@@ -66,6 +66,8 @@ public class WaterRingSkill extends WaterSkill {
         ring.setControlled(true);
         ring.setNoGravity(true);
         ring.addModule(ModuleRegistry.create(ControlModule.id));
+
+        bender.getSelection().addEntityId(ring.getUUID());
         level.addFreshEntity(ring);
     }
 

@@ -70,7 +70,7 @@ public class WaterBallSkill extends WaterSkill {
         Set<UUID> entityIds = bender.getSelection().entityIds();
         //  Check for water source - if no resource, return
         BlockPos pos = bender.getSelection().blockPos();
-        BlockState state = level.getBlockState(pos);
+
 
 
         if (!entityIds.isEmpty()) {
@@ -92,7 +92,7 @@ public class WaterBallSkill extends WaterSkill {
             }
         }
         // TODO: CHange this to a general water block config, and then alter block consumption/fluid level based on block
-        else if (state.getFluidState().isSource() && state.getBlock() == Blocks.WATER) {
+        else if (pos != null && level.getBlockState(pos).getFluidState().isSource() && level.getBlockState(pos).getBlock() == Blocks.WATER) {
             // Consume the water source block and create the projectile.
             // However, because this abiltiy is so weak, we want to let players consume it
 //            level.setBlock(pos, Blocks.AIR.defaultBlockState(), 0);
