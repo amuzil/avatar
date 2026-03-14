@@ -26,7 +26,7 @@ public class WaterRingSkill extends WaterSkill {
     public WaterRingSkill() {
         super(Avatar.MOD_ID, "water_ring");
         addTrait(new FloatTrait(Constants.SOURCE_LEVEL, 5.0f));
-        addTrait(new SizeTrait(Constants.SIZE, 3f));
+        addTrait(new SizeTrait(Constants.SIZE, 2.5f));
 
         // Shape
         startPaths = SkillPathBuilder.getInstance().add(BendingForms.COMPRESS).build();
@@ -60,7 +60,7 @@ public class WaterRingSkill extends WaterSkill {
 
         // Need to figure out depth, width, and height
         ring.setWidth((float) skillData.getTrait(Constants.SIZE, SizeTrait.class).getSize());
-        ring.setHeight((float) skillData.getTrait(Constants.SIZE, SizeTrait.class).getSize() / 4);
+        ring.setHeight((float) skillData.getTrait(Constants.SIZE, SizeTrait.class).getSize() / 8);
         ring.setDepth((float) skillData.getTrait(Constants.SIZE, SizeTrait.class).getSize());
 
         ring.setPos(bender.getEntity().getX(), bender.getEntity().getY() + bender.getEntity().getBbHeight() / 2, bender.getEntity().getZ());

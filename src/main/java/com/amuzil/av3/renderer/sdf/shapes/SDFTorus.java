@@ -30,7 +30,7 @@ public class SDFTorus implements SignedDistanceFunction {
         float th = Math.max(0.0001f, thickness.eval(t));
 
         float qx = (float)Math.sqrt(local.x * local.x + local.z * local.z) - R;
-        float qy = local.y * th;
+        float qy = local.y / th;
         return (float)Math.sqrt(qx * qx + qy * qy) - r;
     }
 }
