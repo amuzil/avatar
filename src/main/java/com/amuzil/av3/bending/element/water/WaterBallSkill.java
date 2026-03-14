@@ -14,6 +14,7 @@ import com.amuzil.av3.entity.api.modules.force.GravityModule;
 import com.amuzil.av3.entity.api.modules.force.LookModule;
 import com.amuzil.av3.entity.api.modules.force.MoveModule;
 import com.amuzil.av3.entity.projectile.AvatarWaterProjectile;
+import com.amuzil.av3.entity.projectile.AvatarWaterRing;
 import com.amuzil.av3.entity.projectile.AvatarWaterShield;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.magus.skill.data.SkillData;

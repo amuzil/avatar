@@ -6,6 +6,7 @@ import com.amuzil.av3.bending.skill.WaterSkill;
 import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
 import com.amuzil.av3.entity.api.modules.force.ControlModule;
+import com.amuzil.av3.entity.projectile.AvatarWaterRing;
 import com.amuzil.av3.entity.projectile.AvatarWaterShield;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
@@ -13,9 +14,13 @@ import com.amuzil.magus.skill.traits.skilltraits.FloatTrait;
 import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
 import com.amuzil.magus.skill.traits.skilltraits.StringTrait;
 import com.amuzil.magus.skill.traits.skilltraits.TimedTrait;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.level.Level;
+
+import java.util.Set;
+import java.util.UUID;
 
 import static com.amuzil.av3.bending.form.BendingForms.BLOCK;
 
@@ -45,14 +50,26 @@ public class WaterShieldSkill extends WaterSkill {
     @Override
     public void start(Bender bender) {
         super.start(bender);
-        Level level = bender.getEntity().level();
+        ServerLevel level = (ServerLevel) bender.getEntity().level();
 
-        int sourceLevel;
+        float sourceLevel =  skillData.getTrait(Constants.SOURCE_LEVEL, FloatTrait.class).getValue();
+        // Check for existing source level based on water ring
+        Set<UUID> entityIds = bender.getSelection().entityIds();
 
+        if (!entityIds.isEmpty()) {
+            for (UUID uuid : entityIds) {
+                if (level.getEntity(uuid) instanceof AvatarWaterRing ring) {
+                    sourceLevel = ring.sourceLevel();
+                    ring.kill();
+                    break;
+                }
+            }
+        }
         AvatarWaterShield shield = new AvatarWaterShield(level);
 
         shield.maxHealth(skillData.getTrait(Constants.HEALTH, FloatTrait.class).getValue());
         shield.health(skillData.getTrait(Constants.HEALTH, FloatTrait.class).getValue());
+        shield.sourceLevel(sourceLevel);
 
         shield.setOwner(bender.getEntity());
         shield.setElement(Elements.WATER);
