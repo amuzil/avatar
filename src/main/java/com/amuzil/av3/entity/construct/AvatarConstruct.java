@@ -443,6 +443,11 @@ public class AvatarConstruct extends AvatarEntity implements IAvatarConstruct {
         pose[1] = pose[1].scale((scale)).add((0), (owner.getEyeHeight()), (0));
         Vec3 newPos = pose[1].add(pose[0]);
         this.setPos(newPos);
+
+
+        lookDirection(owner.getLookAngle().toVector3f());
+        this.setXRot(owner().getXRot());
+        this.setYRot(owner().getYRot());
     }
 
     public void control(Vec3 pos, float motion) {

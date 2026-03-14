@@ -3,6 +3,7 @@ package com.amuzil.av3.bending.element.water;
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.skill.WaterSkill;
 import com.amuzil.av3.data.capability.Bender;
+import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.IClientModule;
 import com.amuzil.av3.entity.api.ICollisionModule;
 import com.amuzil.av3.entity.api.IForceModule;
@@ -13,14 +14,22 @@ import com.amuzil.av3.entity.api.modules.force.GravityModule;
 import com.amuzil.av3.entity.api.modules.force.LookModule;
 import com.amuzil.av3.entity.api.modules.force.MoveModule;
 import com.amuzil.av3.entity.projectile.AvatarWaterProjectile;
+import com.amuzil.av3.entity.projectile.AvatarWaterShield;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.magus.skill.data.SkillData;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.traits.skilltraits.*;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
+
+import java.util.Set;
+import java.util.UUID;
 
 import static com.amuzil.av3.bending.form.BendingForms.STRIKE;
 
@@ -48,12 +57,51 @@ public class WaterBallSkill extends WaterSkill {
         super.start(bender);
 
         LivingEntity entity = bender.getEntity();
-        Level level = bender.getEntity().level();
+        ServerLevel level = (ServerLevel) bender.getEntity().level();
         SkillData data = bender.getSkillData(this);
 
         int lifetime = data.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
         double speed = data.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
         double size = data.getTrait(Constants.SIZE, SizeTrait.class).getSize();
+
+        //  If no available entities for selection, check for water source
+        Set<UUID> entityIds = bender.getSelection().entityIds();
+        //  Check for water source - if no resource, return
+        BlockPos pos = bender.getSelection().blockPos();
+        BlockState state = level.getBlockState(pos);
+
+
+        if (!entityIds.isEmpty()) {
+            for (UUID id : entityIds) {
+                    if (level.getEntity(id) instanceof AvatarWaterShield || level.getEntity(id) instanceof AvatarWaterRing) {
+                        AvatarEntity source = (AvatarEntity) level.getEntity(id);
+                        if (source.sourceLevel() <= 0) {
+                            source.kill();
+                        }
+                        else {
+                            source.sourceLevel(source.sourceLevel() - 1);
+                            if (source.sourceLevel() <= 0) {
+                                source.kill();
+                            }
+                        }
+                    // Iterate down
+                    break;
+                }
+            }
+        }
+        // TODO: CHange this to a general water block config, and then alter block consumption/fluid level based on block
+        else if (state.getFluidState().isSource() && state.getBlock() == Blocks.WATER) {
+            // Consume the water source block and create the projectile.
+            // However, because this abiltiy is so weak, we want to let players consume it
+//            level.setBlock(pos, Blocks.AIR.defaultBlockState(), 0);
+
+        }
+        else {
+            bender.formPath.clear();
+            bender.resetSelection();
+            data.setSkillState(SkillState.IDLE);
+            return;
+        }
 
         AvatarWaterProjectile projectile = new AvatarWaterProjectile(level);
         projectile.setElement(element());

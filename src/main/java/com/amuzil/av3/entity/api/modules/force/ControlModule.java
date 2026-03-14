@@ -3,6 +3,7 @@ package com.amuzil.av3.entity.api.modules.force;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.IAvatarConstruct;
 import com.amuzil.av3.entity.api.IForceModule;
+import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.nbt.CompoundTag;
 
 
@@ -27,6 +28,7 @@ public class ControlModule implements IForceModule {
                 construct.control(1.5f);
             }
         }
+
     }
 
     @Override

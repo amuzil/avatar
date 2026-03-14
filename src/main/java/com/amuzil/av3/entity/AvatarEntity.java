@@ -24,7 +24,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.EventHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,6 +51,7 @@ public abstract class AvatarEntity extends Entity {
     private static final EntityDataAccessor<Integer> TIER = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> MAX_LIFETIME = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> SURFACE = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Float> SOURCE_LEVEL = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.FLOAT);
 
     private final List<IEntityModule> modules = new ArrayList<>();
     private final List<IForceModule> forceModules = new ArrayList<>();
@@ -314,6 +314,16 @@ public abstract class AvatarEntity extends Entity {
         builder.define(MAX_LIFETIME, 10000);
         builder.define(SURFACE, false);
         builder.define(LOOK_DIRECTION, new Vector3f(0, 1, 0));
+        builder.define(SOURCE_LEVEL, -1f);
+    }
+
+    // Used for effects to store how much bending material they have. Primarily used for earth and water.
+    public float sourceLevel() {
+        return entityData.get(SOURCE_LEVEL);
+    }
+
+    public void sourceLevel(float sourceLevel) {
+        entityData.set(SOURCE_LEVEL, sourceLevel);
     }
 
     public void surface(boolean surface) {
