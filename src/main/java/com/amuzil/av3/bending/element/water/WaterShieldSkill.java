@@ -67,8 +67,7 @@ public class WaterShieldSkill extends WaterSkill {
         }
         AvatarWaterShield shield = new AvatarWaterShield(level);
 
-        shield.maxHealth(skillData.getTrait(Constants.HEALTH, FloatTrait.class).getValue());
-        shield.health(skillData.getTrait(Constants.HEALTH, FloatTrait.class).getValue());
+        shield.maxSource(skillData.getTrait(Constants.SOURCE_LEVEL, FloatTrait.class).getValue());
         shield.sourceLevel(sourceLevel);
 
         shield.setOwner(bender.getEntity());

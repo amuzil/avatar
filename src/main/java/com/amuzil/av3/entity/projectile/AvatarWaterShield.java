@@ -9,8 +9,6 @@ import com.amuzil.av3.renderer.sdf.SignedDistanceFunction;
 import com.amuzil.av3.renderer.sdf.channels.Channels;
 import com.amuzil.av3.renderer.sdf.channels.IVec3Channel;
 import com.amuzil.av3.renderer.sdf.shapes.SDFDisk;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -21,8 +19,6 @@ import org.joml.Vector3f;
 
 public class AvatarWaterShield extends AvatarConstruct implements IHasSDF, IHasHealth {
 
-    private static final EntityDataAccessor<Float> HEALTH = SynchedEntityData.defineId(AvatarWaterShield.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> MAX_HEALTH = SynchedEntityData.defineId(AvatarWaterShield.class, EntityDataSerializers.FLOAT);
     private SDFScene root;
     private SDFDisk shield;
 
@@ -40,8 +36,6 @@ public class AvatarWaterShield extends AvatarConstruct implements IHasSDF, IHasH
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(HEALTH, 0f);
-        builder.define(MAX_HEALTH, -1f);
     }
 
     /**
@@ -49,7 +43,7 @@ public class AvatarWaterShield extends AvatarConstruct implements IHasSDF, IHasH
      */
     @Override
     public float health() {
-        return entityData.get(HEALTH);
+        return sourceLevel();
     }
 
     /**
@@ -59,7 +53,7 @@ public class AvatarWaterShield extends AvatarConstruct implements IHasSDF, IHasH
      */
     @Override
     public void health(float health) {
-        entityData.set(HEALTH, health);
+        sourceLevel(health);
     }
 
     /**
@@ -67,7 +61,7 @@ public class AvatarWaterShield extends AvatarConstruct implements IHasSDF, IHasH
      */
     @Override
     public float maxHealth() {
-        return entityData.get(MAX_HEALTH);
+        return maxSource();
     }
 
     /**
@@ -77,7 +71,7 @@ public class AvatarWaterShield extends AvatarConstruct implements IHasSDF, IHasH
      */
     @Override
     public void maxHealth(float maxHealth) {
-        entityData.set(MAX_HEALTH, maxHealth);
+        maxSource(maxHealth);
     }
 
     @Override
@@ -118,8 +112,9 @@ public class AvatarWaterShield extends AvatarConstruct implements IHasSDF, IHasH
                 new Vector3f(0, 1, 0),                  // capsule axis in *local* space
                 look  // world-space direction
         );
-        shield.radius = Channels.constant((width() + height()));
-        shield.thickness = Channels.constant(depth());
+        float mult = sourceLevel() / maxSource();
+        shield.radius = Channels.constant((width() + height()) * mult);
+        shield.thickness = Channels.constant(depth() * mult);
         shield.a.pos = scale;
         root = new SDFScene().add(shield);
         root.unionK = 0.9f;

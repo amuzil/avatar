@@ -52,6 +52,7 @@ public abstract class AvatarEntity extends Entity {
     private static final EntityDataAccessor<Integer> MAX_LIFETIME = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> SURFACE = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Float> SOURCE_LEVEL = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> MAX_SOURCE_LEVEL = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.FLOAT);
 
     private final List<IEntityModule> modules = new ArrayList<>();
     private final List<IForceModule> forceModules = new ArrayList<>();
@@ -315,9 +316,18 @@ public abstract class AvatarEntity extends Entity {
         builder.define(SURFACE, false);
         builder.define(LOOK_DIRECTION, new Vector3f(0, 1, 0));
         builder.define(SOURCE_LEVEL, -1f);
+        builder.define(MAX_SOURCE_LEVEL, -1f);
     }
 
     // Used for effects to store how much bending material they have. Primarily used for earth and water.
+    public float maxSource() {
+        return entityData.get(MAX_SOURCE_LEVEL);
+    }
+
+    public void maxSource(float maxSource) {
+        entityData.set(MAX_SOURCE_LEVEL, maxSource);
+    }
+
     public float sourceLevel() {
         return entityData.get(SOURCE_LEVEL);
     }

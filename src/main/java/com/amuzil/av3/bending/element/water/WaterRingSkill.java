@@ -8,6 +8,7 @@ import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
 import com.amuzil.av3.entity.api.modules.force.ControlModule;
 import com.amuzil.av3.entity.projectile.AvatarWaterRing;
+import com.amuzil.av3.entity.projectile.AvatarWaterShield;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.traits.skilltraits.FloatTrait;
@@ -25,10 +26,10 @@ public class WaterRingSkill extends WaterSkill {
     public WaterRingSkill() {
         super(Avatar.MOD_ID, "water_ring");
         addTrait(new FloatTrait(Constants.SOURCE_LEVEL, 5.0f));
-        addTrait(new SizeTrait(Constants.SIZE, 1.5f));
+        addTrait(new SizeTrait(Constants.SIZE, 3f));
 
         // Shape
-        startPaths = SkillPathBuilder.getInstance().add(BendingForms.SHAPE).build();
+        startPaths = SkillPathBuilder.getInstance().add(BendingForms.COMPRESS).build();
     }
 
     @Override
@@ -42,15 +43,16 @@ public class WaterRingSkill extends WaterSkill {
 
         if (!entityIds.isEmpty()) {
             for (UUID uuid : entityIds) {
-                if (level.getEntity(uuid) instanceof AvatarWaterRing ring) {
-                    sourceLevel = ring.sourceLevel();
-                    ring.kill();
+                if (level.getEntity(uuid) instanceof AvatarWaterShield shield) {
+                    sourceLevel = shield.sourceLevel();
+                    shield.kill();
                     break;
                 }
             }
         }
         AvatarWaterRing ring = new AvatarWaterRing(level);
 
+        ring.maxSource(skillData.getTrait(Constants.SOURCE_LEVEL, FloatTrait.class).getValue());
         ring.sourceLevel(sourceLevel);
 
         ring.setOwner(bender.getEntity());

@@ -11,6 +11,12 @@ public class SDFTorus implements SignedDistanceFunction {
     public IFloatChannel majorRadius = Channels.constant(1.0f);
     public IFloatChannel minorRadius = Channels.constant(0.25f);
 
+    // Scales torus thickness on Y by default.
+    // 1.0 = normal torus
+    // >1.0 = taller/thicker vertically
+    // <1.0 = flatter vertically
+    public IFloatChannel thickness = Channels.constant(1.0f);
+
     private final Vector3f local = new Vector3f();
 
     @Override
@@ -21,8 +27,10 @@ public class SDFTorus implements SignedDistanceFunction {
         float R = majorRadius.eval(t);
         float r = minorRadius.eval(t);
 
+        float th = Math.max(0.0001f, thickness.eval(t));
+
         float qx = (float)Math.sqrt(local.x * local.x + local.z * local.z) - R;
-        float qy = local.y;
+        float qy = local.y * th;
         return (float)Math.sqrt(qx * qx + qy * qy) - r;
     }
 }
