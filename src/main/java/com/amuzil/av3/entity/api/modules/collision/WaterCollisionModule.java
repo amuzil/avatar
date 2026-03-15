@@ -4,6 +4,7 @@ import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.ICollisionModule;
+import com.amuzil.av3.entity.api.IHasHealth;
 import com.amuzil.av3.entity.api.modules.client.PhotonModule;
 import com.amuzil.av3.entity.projectile.AvatarProjectile;
 import com.amuzil.av3.utils.Constants;
@@ -40,6 +41,26 @@ public class WaterCollisionModule implements ICollisionModule {
         WATER_PROJECTILE_HANDLERS.put(Fireball.class, (proj, entity, damage, size) -> {
             if (!proj.getOwner().equals(((Fireball) entity).getOwner())) {
                 entity.kill();
+            }
+        });
+
+        WATER_PROJECTILE_HANDLERS.put(AvatarEntity.class,  (proj, entity, damage, size) -> {
+            if (!proj.getOwner().equals(((AvatarEntity) entity).owner()) && entity.canBeHitByProjectile()) {
+                Element element = ((AvatarEntity) entity).element();
+                float mult = 1;
+                switch (element.type()) {
+                    case AIR, EARTH, WATER ->  mult = 1;
+                    case FIRE ->   mult = 1.5f;
+                }
+
+                if (entity instanceof IHasHealth) {
+                    if (((IHasHealth) entity).health() > damage * mult) {
+                        proj.discard();
+                    }
+                    ((IHasHealth) entity).hurt(damage * mult);
+
+                }
+
             }
         });
 

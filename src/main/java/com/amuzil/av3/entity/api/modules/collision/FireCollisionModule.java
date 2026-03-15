@@ -4,6 +4,7 @@ import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.ICollisionModule;
+import com.amuzil.av3.entity.api.IHasHealth;
 import com.amuzil.av3.entity.projectile.AvatarProjectile;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.av3.utils.modules.HitDetection;
@@ -55,6 +56,26 @@ public class FireCollisionModule implements ICollisionModule {
             }
         });
 
+        FIRE_PROJECTILE_HANDLERS.put(AvatarEntity.class,  (proj, entity, damage, size) -> {
+            if (!proj.getOwner().equals(((AvatarEntity) entity).owner()) && entity.canBeHitByProjectile()) {
+                Element element = ((AvatarEntity) entity).element();
+                float mult = 1;
+                switch (element.type()) {
+                    case AIR, EARTH, FIRE ->  mult = 1;
+                    case WATER ->   mult = 0.5f;
+                }
+
+                if (entity instanceof IHasHealth) {
+                    if (((IHasHealth) entity).health() > damage * mult) {
+                        proj.discard();
+                    }
+                    ((IHasHealth) entity).hurt(damage * mult);
+
+                }
+
+            }
+        });
+
         FIRE_PROJECTILE_HANDLERS.put(AvatarProjectile.class, (proj, entity, damage, size) -> {
             if (!proj.getOwner().equals(((AvatarProjectile) entity).getOwner()) && entity.canBeHitByProjectile()) {
                 Element element = ((AvatarProjectile) entity).element();
@@ -64,6 +85,8 @@ public class FireCollisionModule implements ICollisionModule {
                 }
             }
         });
+
+
 
     }
 

@@ -42,7 +42,7 @@ public class AvatarWaterRing extends AvatarConstruct implements IHasSDF {
 
         float mult = 0.5f + 0.5f * sourceLevel() / maxSource();
         ring.majorRadius = Channels.constant((depth() + width()) / 2 * mult);
-        ring.minorRadius = Channels.constant((depth() + width()) / 2 * mult * 0.9f);
+        ring.minorRadius = Channels.constant((depth() + width()) / 2 * mult * 0.25f);
         ring.thickness = Channels.constant(height() * mult);
         root = new SDFScene().add(ring);
         root.unionK = 0.9f;

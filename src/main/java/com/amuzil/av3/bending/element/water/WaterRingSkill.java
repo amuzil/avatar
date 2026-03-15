@@ -26,7 +26,7 @@ public class WaterRingSkill extends WaterSkill {
     public WaterRingSkill() {
         super(Avatar.MOD_ID, "water_ring");
         addTrait(new FloatTrait(Constants.SOURCE_LEVEL, 5.0f));
-        addTrait(new SizeTrait(Constants.SIZE, 2.5f));
+        addTrait(new SizeTrait(Constants.SIZE, 3f));
 
         // Shape
         startPaths = SkillPathBuilder.getInstance().add(BendingForms.COMPRESS).build();
