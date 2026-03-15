@@ -5,9 +5,6 @@ import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.IAvatarProjectile;
 import com.amuzil.av3.entity.api.IFXModule;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
-
-import com.amuzil.magus.physics.core.ForceCloud;
-import com.amuzil.magus.physics.core.ForcePoint;
 import com.amuzil.av3.entity.api.modules.client.PhotonModule;
 import com.amuzil.av3.entity.api.modules.client.SoundModule;
 import com.amuzil.av3.entity.api.modules.entity.TimeoutModule;
@@ -38,7 +35,6 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
     private static final EntityDataAccessor<Float> WIDTH = SynchedEntityData.defineId(AvatarProjectile.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> HEIGHT = SynchedEntityData.defineId(AvatarProjectile.class, EntityDataSerializers.FLOAT);
     public boolean leftOwner;
-    public ForceCloud cloud;
     @Nullable
     private UUID ownerUUID;
     @Nullable
@@ -230,72 +226,7 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
         if (!this.hasBeenShot) {
             this.gameEvent(GameEvent.PROJECTILE_SHOOT, this.getOwner());
             this.hasBeenShot = true;
-
-
-//            MinecraftSpace space = MinecraftSpace.get(level());
-            // 4-5 clouds doing flamethrower shit
-            // 20 clouds doing flamethrower shit
-            // 20 * 200 * 20 = 800,000
-            // 20 * 50 * 20  = 200,000
-
-            Vec3 motion = getDeltaMovement().scale(2);
-
-//            if (space != null) {
-//                ForceSystem fs = space.forceSystem();
-//
-//                // type is whatever you use for element (e.g. FIRE = 1, WATER = 2, etc.)
-//                int type = 1; // example
-//                int maxPoints = 64;
-//
-//                // create some points
-//                int count = 64;
-//                Vec3 origin = position();
-//
-//                Random rand = new Random();
-//                Vector3f vel = this.getMotionDirection().step().normalize();
-//
-//                for (int j = 0; j < 1; j++) {
-//                    ForceCloud cloud = fs.createCloud(type, maxPoints, "test", owner() == null ? this : owner(), position(), Vec3.ZERO, Vec3.ZERO);
-//                    cloud.setLifetimeSeconds(6.0f);
-////
-//                    for (int i = 0; i < count; i++) {
-//                        // scatter a bit around origin
-//                        double rx = (level().random.nextDouble() - 0.5) * 0.75;
-//                        double ry = (level().random.nextDouble() - 0.5) * 0.75;
-//                        double rz = (level().random.nextDouble() - 0.5) * 0.75;
-//
-//                        Vec3 pos = origin.add(rx * 2, ry, rz);
-//
-//                        // initial velocity roughly in 'direction'
-////                                  .add((float) ((level().random.nextDouble() - 0.5) * 0.1),
-////                                        (float) ((level().random.nextDouble() - 0.5) * 0.1),
-////                                        (float) ((level().random.nextDouble() - 0.5) * 0.1));
-//
-//                        Vec3 force = Vec3.ZERO; // start with no force, just velocity
-//
-//                        ForcePoint p = new ForcePoint(type, pos, Vec3.ZERO, force);
-//                        p.mass(1.0);    // if you have mass setters
-//                        p.damping(0.1); // mild drag
-////                if (level instanceof ServerLevel server && entity instanceof ServerPlayer)
-////                   server.sendParticles((ServerPlayer) entity, ParticleTypes.SMOKE, false, pos.x, pos.y, pos.z, 1, 0, 0, 0, 0.1f);
-//
-//                        cloud.addPoints(p);
-//                    }
-//
-//                    if (!level().isClientSide) {
-//                        space.forceSystem().spawnCloud(cloud, owner() == null ? this : owner());
-//                    }
-//                }
-//            }
         }
-
-//        if (cloud != null) {
-//            cloud.tick(1 / 20f);
-//            cloud.rebuildSpatialGrid();
-//
-//            if (cloud.isDead())
-//                cloud = null;
-//        }
 
         if (!this.leftOwner) {
             this.leftOwner = this.checkLeftOwner();
@@ -370,10 +301,7 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
     @Override
     public void kill() {
         super.kill();
-        cloud = null;
     }
-
-
 
 
     /**
@@ -411,7 +339,6 @@ public class AvatarProjectile extends AvatarEntity implements IAvatarProjectile 
             return entity == null || this.leftOwner || !entity.isPassengerOfSameVehicle(pTarget);
         }
     }
-
 
 
     protected void updateRotation() {

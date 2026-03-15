@@ -4,7 +4,6 @@ import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
 import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.lowdragmc.photon.client.fx.EntityEffectExecutor;
-import com.lowdragmc.photon.client.fx.FX;
 import com.lowdragmc.photon.client.fx.FXHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -32,11 +31,11 @@ public class AvatarElementCollider extends AvatarRigidBlock {
     private Entity spawner;
 
     public AvatarElementCollider(EntityType<? extends AvatarRigidBlock> type, Level level) {
-        super(AvatarEntities.AVATAR_ELEMENT_COLLIDER_ENTITY_TYPE.get(), level);
+        super(AvatarEntities.ELEMENT_COLLIDER_ENTITY_TYPE.get(), level);
     }
 
     public AvatarElementCollider(Level level) {
-        super(AvatarEntities.AVATAR_ELEMENT_COLLIDER_ENTITY_TYPE.get(), level);
+        super(AvatarEntities.ELEMENT_COLLIDER_ENTITY_TYPE.get(), level);
     }
 
 

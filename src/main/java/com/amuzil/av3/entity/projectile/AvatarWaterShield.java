@@ -27,7 +27,7 @@ public class AvatarWaterShield extends AvatarConstruct implements IHasSDF, IHasH
     }
 
     public AvatarWaterShield(Level pLevel) {
-        this(AvatarEntities.AVATAR_WATER_SHIELD_TYPE.get(), pLevel);
+        this(AvatarEntities.WATER_SHIELD_TYPE.get(), pLevel);
         this.setBlockState(Blocks.WATER.defaultBlockState());
     }
 

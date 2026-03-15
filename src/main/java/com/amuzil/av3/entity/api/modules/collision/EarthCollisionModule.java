@@ -1,6 +1,7 @@
 package com.amuzil.av3.entity.api.modules.collision;
 
 import com.amuzil.av3.Avatar;
+import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.ICollisionModule;
 import com.amuzil.av3.entity.api.IHasHealth;

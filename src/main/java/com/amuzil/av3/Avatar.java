@@ -7,8 +7,6 @@ import com.amuzil.av3.entity.api.modules.ModuleRegistry;
 import com.amuzil.av3.entity.api.modules.client.PhotonModule;
 import com.amuzil.av3.entity.api.modules.client.SoundModule;
 import com.amuzil.av3.entity.api.modules.collision.*;
-import com.amuzil.av3.entity.api.modules.controller.StreamSpawnModule;
-import com.amuzil.av3.entity.api.modules.entity.DeathTimeModule;
 import com.amuzil.av3.entity.api.modules.entity.GrowModule;
 import com.amuzil.av3.entity.api.modules.entity.TimeResetModule;
 import com.amuzil.av3.entity.api.modules.entity.TimeoutModule;
@@ -74,14 +72,13 @@ public class Avatar {
 
         // Time
         ModuleRegistry.register(TimeoutModule::new);
-        ModuleRegistry.register(DeathTimeModule::new);
         ModuleRegistry.register(TimeResetModule::new);
 
         // Entity 
         ModuleRegistry.register(GrowModule::new);
 
         // Miscellaneous
-        ModuleRegistry.register(StreamSpawnModule::new);
+
 
         // Collision
         ModuleRegistry.register(FireModule::new);

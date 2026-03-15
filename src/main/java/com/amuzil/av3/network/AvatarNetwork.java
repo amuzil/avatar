@@ -9,8 +9,6 @@ import com.amuzil.av3.network.packets.form.ExecuteFormPacket;
 import com.amuzil.av3.network.packets.form.ReleaseFormPacket;
 import com.amuzil.av3.network.packets.sync.SyncMovementPacket;
 import com.amuzil.av3.network.packets.sync.SyncSelectionPacket;
-import com.amuzil.caliber.physics.network.impl.ForceCloudCollisionPacket;
-import com.amuzil.caliber.physics.network.impl.ForceCloudSpawnPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -60,17 +58,12 @@ public class AvatarNetwork {
 
         /** Client **/
         registrar.playToClient(
-                ForceCloudCollisionPacket.TYPE,
-                ForceCloudCollisionPacket.CODEC,
-                ForceCloudCollisionPacket::handle
+                TriggerFXPacket.TYPE,
+                TriggerFXPacket.STREAM_CODEC,
+                TriggerFXPacket::handle
         );
 
-        registrar.playToClient(
-                ForceCloudSpawnPacket.TYPE,
-                ForceCloudSpawnPacket.CODEC,
-                ForceCloudSpawnPacket::handle
-        );
-
+        
 
         registrar.playBidirectional(
                 ToggleBendingPacket.TYPE,
@@ -78,11 +71,7 @@ public class AvatarNetwork {
                 ToggleBendingPacket::handle
         );
 
-        registrar.playToClient(
-                TriggerFXPacket.TYPE,
-                TriggerFXPacket.STREAM_CODEC,
-                TriggerFXPacket::handle
-        );
+
     }
 
     public static void sendToClient(AvatarPacket payload, ServerPlayer player) {

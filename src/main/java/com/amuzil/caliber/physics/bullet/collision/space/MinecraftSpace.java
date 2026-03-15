@@ -10,13 +10,6 @@ import com.amuzil.caliber.physics.bullet.collision.space.generator.TerrainGenera
 import com.amuzil.caliber.physics.bullet.collision.space.storage.SpaceStorage;
 import com.amuzil.caliber.physics.bullet.thread.PhysicsThread;
 import com.amuzil.caliber.physics.network.CaliberNetwork;
-
-import com.amuzil.caliber.physics.network.impl.ForceCloudSpawnPacket;
-
-import com.amuzil.magus.physics.core.ForceCloud;
-import com.amuzil.magus.physics.core.ForcePoint;
-import com.amuzil.magus.physics.core.ForceSystem;
-
 import com.amuzil.caliber.physics.network.impl.SyncMovementPacket;
 import com.amuzil.caliber.physics.network.impl.SyncPropertiesPacket;
 import com.jme3.bullet.PhysicsSpace;
@@ -29,11 +22,8 @@ import com.jme3.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -59,7 +49,6 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
     private final Level level;
     private final ChunkCache chunkCache;
     private final Set<SectionPos> previousBlockUpdates;
-    private final ForceSystem system;
     private volatile boolean stepping;
 
     public MinecraftSpace(PhysicsThread thread, Level level) {
@@ -72,7 +61,6 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
         this.setGravity(new Vector3f(0, -9.807f, 0)); // Global physics space gravity
         this.getSolverInfo().setJointErp(0.4f);
         this.setAccuracy(1f / 60f);
-        this.system = new ForceSystem(this);
     }
 
     /**
@@ -135,11 +123,6 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
                     /* World Step Event */
                     NeoForge.EVENT_BUS.post(new PhysicsSpaceEvent.Step(this));
 
-                    /* Step the Simulation */
-//                    this.update(1 / 60f);
-//
-//                    if (getForceSystem() != null)
-//                        getForceSystem().tick(1 / 60f);
                     this.update(1 / 60f, 4, false, false, true);
 
                 }, this.getWorkerThread());
@@ -222,30 +205,6 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
         }
     }
 
-    public void addCloud(ForceCloud forceCloud) {
-        if (!this.system.clouds().contains(forceCloud)) {
-            addCollisionObject(forceCloud.getRigidBody());
-            for (ForcePoint point : forceCloud.points())
-                addCollisionObject(point.getRigidBody());
-            this.system.addCloud(forceCloud);
-        }
-    }
-
-    // Used to actually spawn clouods
-    public void addCloud(ForceCloud cloud, Level level, Entity spawner) {
-        if (!this.system.clouds().contains(cloud)) {
-            if (!level.isClientSide) {
-                addCloud(cloud);
-                PacketDistributor.sendToPlayersTrackingEntity(spawner, new ForceCloudSpawnPacket(cloud));
-                if (spawner instanceof ServerPlayer)
-                    PacketDistributor.sendToPlayer((ServerPlayer) spawner, new ForceCloudSpawnPacket(cloud));
-            }
-        }
-    }
-
-    public ForceSystem getForceSystem() {
-        return this.system;
-    }
 
     public Map<BlockPos, TerrainRigidBody> getTerrainMap() {
         return new HashMap<>(this.terrainMap);

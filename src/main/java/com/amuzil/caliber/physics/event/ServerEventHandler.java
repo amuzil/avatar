@@ -5,7 +5,6 @@ import com.amuzil.av3.utils.physics.generator.EntityCollisionGenerator;
 import com.amuzil.caliber.api.EntityPhysicsElement;
 import com.amuzil.caliber.api.event.space.PhysicsSpaceEvent;
 import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
-import com.amuzil.caliber.physics.bullet.collision.body.ForceRigidBody;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
 import com.amuzil.caliber.physics.bullet.collision.space.storage.SpaceStorage;
 import com.amuzil.caliber.physics.bullet.collision.space.supplier.entity.ServerEntitySupplier;
@@ -16,7 +15,6 @@ import com.amuzil.caliber.physics.network.CaliberNetwork;
 import com.amuzil.caliber.physics.network.impl.SyncMovementPacket;
 import com.amuzil.caliber.physics.network.impl.SyncPropertiesPacket;
 import com.amuzil.caliber.physics.utils.maths.Utilities;
-import com.amuzil.magus.physics.core.ForcePoint;
 import com.jme3.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -82,7 +80,7 @@ public final class ServerEventHandler {
             space.step();
             EntityCollisionGenerator.step(space); // TODO: Move this into av3 package
 
-            for (var rigidBody: space.getRigidBodiesByClass(EntityRigidBody.class)) {
+            for (var rigidBody : space.getRigidBodiesByClass(EntityRigidBody.class)) {
                 if (rigidBody.isActive()) {
 
                     // Movement sync
@@ -144,11 +142,6 @@ public final class ServerEventHandler {
 //                    );
 //                }
 //            }
-        }
-        // Works for force elements too
-        if (event.getRigidBody() instanceof ForceRigidBody forceRigidBody) {
-            Vec3 pos = forceRigidBody.getElement().cast().pos();
-            forceRigidBody.setPhysicsLocation(Convert.toBullet(pos));
         }
     }
 

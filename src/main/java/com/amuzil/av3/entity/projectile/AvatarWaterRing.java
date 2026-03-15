@@ -25,7 +25,7 @@ public class AvatarWaterRing extends AvatarConstruct implements IHasSDF {
     }
 
     public AvatarWaterRing(Level pLevel) {
-        this(AvatarEntities.AVATAR_WATER_RING_TYPE.get(), pLevel);
+        this(AvatarEntities.WATER_RING_TYPE.get(), pLevel);
         this.setBlockState(Blocks.WATER.defaultBlockState());
     }
 

@@ -23,7 +23,7 @@ public class ClientRegistrationEvents {
         event.registerEntityRenderer(AvatarEntities.CURVE_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(AvatarEntities.BOUND_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(AvatarEntities.ORBIT_PROJECTILE_ENTITY_TYPE.get(), ThrownItemRenderer::new);
-        event.registerEntityRenderer(AvatarEntities.PHYSICS_CONTROLLER_ENTITY_TYPE.get(), NoopRenderer::new);
+
         //  Placeholder for now
         event.registerEntityRenderer(AvatarEntities.ELEMENT_COLLIDER_ENTITY_TYPE.get(), ThrownItemRenderer::new);
 
