@@ -50,7 +50,7 @@ public class WaterCollisionModule implements ICollisionModule {
                 float mult = 1;
                 switch (element.type()) {
                     case AIR, EARTH, WATER ->  mult = 1;
-                    case FIRE ->   mult = 1.5f;
+                    case FIRE -> mult = 1.5f;
                 }
 
                 if (entity instanceof IHasHealth) {
