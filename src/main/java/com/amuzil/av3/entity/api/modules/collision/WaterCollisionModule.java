@@ -4,6 +4,8 @@ import com.amuzil.av3.Avatar;
 import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.ICollisionModule;
+import com.amuzil.av3.entity.api.IHasHealth;
+import com.amuzil.av3.entity.api.modules.client.PhotonModule;
 import com.amuzil.av3.entity.projectile.AvatarProjectile;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.av3.utils.entity.HitDetection;
@@ -12,6 +14,7 @@ import com.amuzil.magus.skill.traits.skilltraits.CollisionTrait;
 import com.amuzil.magus.skill.traits.skilltraits.DamageTrait;
 import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
 import com.lowdragmc.photon.client.fx.EntityEffectExecutor;
+import com.lowdragmc.photon.client.fx.FXHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Blaze;
@@ -38,7 +41,27 @@ public class WaterCollisionModule implements ICollisionModule {
 
         WATER_PROJECTILE_HANDLERS.put(Fireball.class, (proj, entity, damage, size) -> {
             if (!proj.getOwner().equals(((Fireball) entity).getOwner())) {
-                entity.discard();
+                entity.kill();
+            }
+        });
+
+        WATER_PROJECTILE_HANDLERS.put(AvatarEntity.class,  (proj, entity, damage, size) -> {
+            if (!proj.getOwner().equals(((AvatarEntity) entity).owner()) && entity.canBeHitByProjectile()) {
+                Element element = ((AvatarEntity) entity).element();
+                float mult = 1;
+                switch (element.type()) {
+                    case AIR, EARTH, WATER ->  mult = 1;
+                    case FIRE -> mult = 1.5f;
+                }
+
+                if (entity instanceof IHasHealth) {
+                    if (((IHasHealth) entity).health() > damage * mult) {
+                        proj.discard();
+                    }
+                    ((IHasHealth) entity).hurt(damage * mult);
+
+                }
+
             }
         });
 
@@ -90,6 +113,7 @@ public class WaterCollisionModule implements ICollisionModule {
             }
             target.hurt(BendingDamageSources.waterBending(entity.level(), entity.owner()), damage);
         }
+
     }
 
     @Override

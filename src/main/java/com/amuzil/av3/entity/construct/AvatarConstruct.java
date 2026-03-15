@@ -54,6 +54,9 @@ import javax.annotation.Nullable;
 import java.util.function.Predicate;
 
 
+/**
+ * Used for entities like Earth Walls or Rigid Block Constructs
+ */
 public class AvatarConstruct extends AvatarEntity implements IAvatarConstruct {
 
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -76,7 +79,6 @@ public class AvatarConstruct extends AvatarEntity implements IAvatarConstruct {
         super(entityType, level);
         // NOTE: Modules are not synced between client and server unless added to the entity's constructor!
         addClientModule((IFXModule) ModuleRegistry.create(SoundModule.id));
-        addModule(ModuleRegistry.create(TimeoutModule.id));
         this.blockState = Blocks.STONE.defaultBlockState();
         this.dropItem = true;
         this.fallDamageMax = 40;
@@ -199,7 +201,8 @@ public class AvatarConstruct extends AvatarEntity implements IAvatarConstruct {
         } else {
             Block block = this.blockState.getBlock();
             ++this.time;
-            this.applyGravity();
+            if (!isNoGravity())
+                this.applyGravity();
             this.move(MoverType.SELF, this.getDeltaMovement());
             this.handlePortal();
             if (!this.level().isClientSide && (this.isAlive() || this.forceTickAfterTeleportToDuplicate)) {
@@ -447,6 +450,16 @@ public class AvatarConstruct extends AvatarEntity implements IAvatarConstruct {
         pose[1] = pose[1].scale((scale)).add((0), (owner.getEyeHeight()), (0));
         Vec3 newPos = pose[1].add(pose[0]);
         this.setPos(newPos);
+
+
+        lookDirection(owner.getLookAngle().toVector3f());
+        this.setXRot(owner().getXRot());
+        this.setYRot(owner().getYRot());
+    }
+
+    public void control(Vec3 pos, float motion) {
+        Vec3 dir = pos.subtract(position()).scale(motion);
+        this.setDeltaMovement(dir);
     }
 
     @Override

@@ -1,8 +1,10 @@
 package com.amuzil.av3.entity.api.modules.collision;
 
 import com.amuzil.av3.Avatar;
+import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.ICollisionModule;
+import com.amuzil.av3.entity.api.IHasHealth;
 import com.amuzil.av3.entity.construct.AvatarConstruct;
 import com.amuzil.av3.entity.construct.AvatarRigidBlock;
 import com.amuzil.av3.entity.projectile.AvatarProjectile;
@@ -64,6 +66,26 @@ public class EarthCollisionModule implements ICollisionModule {
 //                    case AIR, EARTH, FIRE, WATER -> entity.discard();
 //                    default -> entity.hurt(construct.damageSources().cramming(), damage);
 //                }
+            }
+        });
+
+        EARTH_CONSTRUCT_HANDLERS.put(AvatarEntity.class,  (proj, entity, damage, size) -> {
+            if (!proj.getOwner().equals(((AvatarEntity) entity).owner()) && entity.canBeHitByProjectile()) {
+                Element element = ((AvatarEntity) entity).element();
+                float mult = 1;
+                switch (element.type()) {
+                    case AIR, EARTH, FIRE, WATER ->  mult = 1;
+                    default ->   mult = 1f;
+                }
+
+                if (entity instanceof IHasHealth) {
+                    if (((IHasHealth) entity).health() > damage * mult) {
+                        proj.discard();
+                    }
+                    ((IHasHealth) entity).hurt(damage * mult);
+
+                }
+
             }
         });
 

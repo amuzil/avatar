@@ -1,6 +1,7 @@
 package com.amuzil.av3.utils;
 
 import com.amuzil.av3.Avatar;
+import com.lowdragmc.photon.client.fx.FX;
 
 
 public final class Constants {
@@ -8,28 +9,65 @@ public final class Constants {
 
     public static final String MOD_ID = Avatar.MOD_ID;
 
-    public static final String DAMAGE = "damage";
-    public static final String SIZE = "size";
-    public static final String MAX_SIZE = "max_size";
-    public static final String KNOCKBACK = "knockback";
-    public static final String FIRE_COLOUR = "fire_colour";
-    public static final String SPEED = "speed";
-    public static final String DASH_SPEED = "dash_speed";
-    public static final String LIFETIME = "lifetime";
-    public static final String FIRE_TIME = "fire_time";
-    public static final String SPEED_FACTOR = "speed_factor";
-    public static final String HEIGHT_CURVE = "height_curve";
-    public static final String WIDTH_CURVE = "width_curve";
-    public static final String KNOCKBACK_DIRECTION = "knockback_direction";
-    public static final String RUNTIME = "runtime";
-    public static final String MAX_RUNTIME = "max_runtime";
-    public static final String FX = "fx";
-    public static final String ONE_SHOT = "one_shot";
-    public static final String ENTITY_ID = "entity_id";
-    public static final String COLLISION_TYPE = "collision_type";
-    public static final String ANGLE = "angle";
-    public static final String RANGE = "range";
-    public static final String BENDING_FORM = "bending_form";
+    public static final String
+            // Size
+            SIZE = "size",
+            MAX_SIZE = "max_size",
+            HEIGHT_CURVE = "height_curve",
+            WIDTH_CURVE = "width_curve",
+
+            // Movement
+            DASH_SPEED = "dash_speed",
+
+            // Material Resources
+            SOURCE_LEVEL = "source_level",
+            SOURCE_CONSUMPTION = "source_consumption",
+
+            // Defensive
+            // Multiplier
+            RESISTANCE = "resistance",
+            THORNS_DAMAGE = "thorns_damage",
+            // Flat reduction
+            DAMAGE_REDUCTION = "damage_reduction",
+
+            // Time
+            LIFETIME = "lifetime",
+            COMPONENT_LIFE = "component_life",
+            FIRE_TIME = "fire_time",
+
+            // Construct/shield properties/mobs
+            HEALTH = "health",
+            MAX_HEALTH = "max_health",
+
+            // VFX
+            RUNTIME = "runtime",
+            MAX_RUNTIME = "max_runtime",
+            FX = "fx",
+            ONE_SHOT = "one_shot",
+            ENTITY_ID = "entity_id",
+            FIRE_COLOUR = "fire_colour",
+
+            // Collision
+            COLLISION_TYPE = "collision_type",
+            KNOCKBACK_DIRECTION = "knockback_direction",
+            KNOCKBACK = "knockback",
+            DAMAGE = "damage",
+
+            // Shoot properties
+            ANGLE = "angle",
+            RANDOMNESS = "randomness",
+            RANGE = "range",
+            SPEED_FACTOR = "speed_factor",
+            SPEED = "speed",
+
+            // Meta information
+            BENDING_FORM = "bending_form",
+            ELEMENT = "element",
+
+            //  Move balancing/cost/resource management
+            CHI_COST = "chi_cost",
+            COOLDOWN = "cooldown",
+            EXHAUSTION = "exhaustion";
 
     private Constants() {
         // Private constructor to prevent instantiation

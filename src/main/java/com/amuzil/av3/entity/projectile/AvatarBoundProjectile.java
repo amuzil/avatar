@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level;
 
 public class AvatarBoundProjectile extends AvatarProjectile {
 
-    public AvatarBoundProjectile(EntityType<AvatarBoundProjectile> entityType, Level pLevel) {
+    public AvatarBoundProjectile(EntityType<? extends AvatarBoundProjectile> entityType, Level pLevel) {
         super(entityType, pLevel);
         addForceModule((IForceModule) ModuleRegistry.create(BindModule.id));
     }

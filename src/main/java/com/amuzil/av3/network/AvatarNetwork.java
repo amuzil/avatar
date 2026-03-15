@@ -24,12 +24,14 @@ public class AvatarNetwork {
     public static void register(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar(Avatar.MOD_ID).versioned(VERSION);
 
+
         registrar.playToServer(
                 SyncSelectionPacket.TYPE,
                 SyncSelectionPacket.CODEC,
                 SyncSelectionPacket::handle
         );
 
+        /** Server **/
         registrar.playToServer(
                 SyncMovementPacket.TYPE,
                 SyncMovementPacket.CODEC,
@@ -51,7 +53,17 @@ public class AvatarNetwork {
                 ChooseElementPacket.TYPE,
                 ChooseElementPacket.CODEC,
                 ChooseElementPacket::handle
+
         );
+
+        /** Client **/
+        registrar.playToClient(
+                TriggerFXPacket.TYPE,
+                TriggerFXPacket.STREAM_CODEC,
+                TriggerFXPacket::handle
+        );
+
+        
 
         registrar.playBidirectional(
                 ToggleBendingPacket.TYPE,
@@ -59,11 +71,7 @@ public class AvatarNetwork {
                 ToggleBendingPacket::handle
         );
 
-        registrar.playToClient(
-                TriggerFXPacket.TYPE,
-                TriggerFXPacket.STREAM_CODEC,
-                TriggerFXPacket::handle
-        );
+
     }
 
     public static void sendToClient(AvatarPacket payload, ServerPlayer player) {

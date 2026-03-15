@@ -1,5 +1,6 @@
 package com.amuzil.caliber.physics.event;
 
+
 import com.amuzil.av3.utils.physics.generator.EntityCollisionGenerator;
 import com.amuzil.caliber.api.EntityPhysicsElement;
 import com.amuzil.caliber.api.event.space.PhysicsSpaceEvent;
@@ -19,6 +20,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -30,12 +32,16 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 public final class ServerEventHandler {
 
-    /** Called when a block updates — physics should rebuild around it. */
+    /**
+     * Called when a block updates — physics should rebuild around it.
+     */
     public static void onBlockUpdate(Level level, BlockState blockState, BlockPos blockPos) {
         MinecraftSpace.getOptional(level).ifPresent(space -> space.doBlockUpdate(blockPos));
     }
 
-    /** Fired when the server is starting — create the physics thread. */
+    /**
+     * Fired when the server is starting — create the physics thread.
+     */
     @SubscribeEvent
     public static void onServerStart(ServerAboutToStartEvent event) {
         PhysicsThreadStore.INSTANCE.createServerThread(
@@ -46,19 +52,26 @@ public final class ServerEventHandler {
         );
     }
 
-    /** Fired when the server stops — cleanup physics threads. */
+    /**
+     * Fired when the server stops — cleanup physics threads.
+     */
     @SubscribeEvent
     public static void onServerStopped(ServerStoppedEvent event) {
         PhysicsThreadStore.INSTANCE.destroyServerThread();
     }
 
-    /** Server tick — check if physics thread threw an exception. */
+    /**
+     * Server tick — check if physics thread threw an exception.
+     */
     @SubscribeEvent
     public static void onServerTick(ServerTickEvent.Post event) {
         PhysicsThreadStore.checkThrowable(PhysicsThreadStore.INSTANCE.getServerThread());
     }
 
-    /** Level tick — run physics simulation each tick for that level. */
+    /**
+     * Level tick — run physics simulation each tick for that level.
+     */
+    // TODO: Update this for force clouds and other non-entity physics elements
     @SubscribeEvent
     public static void onLevelTick(LevelTickEvent.Pre event) {
         Level level = event.getLevel();
@@ -67,7 +80,7 @@ public final class ServerEventHandler {
             space.step();
             EntityCollisionGenerator.step(space); // TODO: Move this into av3 package
 
-            for (var rigidBody: space.getRigidBodiesByClass(EntityRigidBody.class)) {
+            for (var rigidBody : space.getRigidBodiesByClass(EntityRigidBody.class)) {
                 if (rigidBody.isActive()) {
 
                     // Movement sync
@@ -94,7 +107,9 @@ public final class ServerEventHandler {
         }
     }
 
-    /** When a level loads — create its MinecraftSpace for physics. */
+    /**
+     * When a level loads — create its MinecraftSpace for physics.
+     */
     @SubscribeEvent
     public static void onLevelLoad(LevelEvent.Load event) {
         if (event.getLevel() instanceof Level level) {
@@ -104,7 +119,9 @@ public final class ServerEventHandler {
         }
     }
 
-    /** When a rigid body element is added to a physics space. */
+    /**
+     * When a rigid body element is added to a physics space.
+     */
     @SubscribeEvent
     public static void onElementAddedToSpace(PhysicsSpaceEvent.ElementAdded event) {
         if (event.getRigidBody() instanceof EntityRigidBody entityBody) {
@@ -128,7 +145,9 @@ public final class ServerEventHandler {
         }
     }
 
-    /** When a player starts tracking an entity, add it to their physics updates. */
+    /**
+     * When a player starts tracking an entity, add it to their physics updates.
+     */
     @SubscribeEvent
     public static void onStartTrackingEntity(PlayerEvent.StartTracking event) {
         Entity entity = event.getTarget();
@@ -137,9 +156,21 @@ public final class ServerEventHandler {
             space.getWorkerThread().execute(() ->
                     space.addCollisionObject(EntityPhysicsElement.get(entity).getRigidBody()));
         }
+        // Need to make this happen for every ForceElement in the ForceCloud too
+//        if (entity instanceof AvatarPhysicsController) {
+//            MinecraftSpace space = MinecraftSpace.get(entity.level());
+//            space.getWorkerThread().execute(() -> {
+////                space.addCollisionObject(((AvatarPhysicsController) entity).forceCloud().getRigidBody());
+////                for (ForcePoint point : ((AvatarPhysicsController) entity).forceCloud().points()) {
+////                    space.addCollisionObject(point.getRigidBody());
+////                }
+//            });
+//        }
     }
 
-    /** When a player stops tracking an entity, remove physics sync if no one else is tracking. */
+    /**
+     * When a player stops tracking an entity, remove physics sync if no one else is tracking.
+     */
     @SubscribeEvent
     public static void onStopTrackingEntity(PlayerEvent.StopTracking event) {
         Entity entity = event.getTarget();
@@ -148,5 +179,16 @@ public final class ServerEventHandler {
             space.getWorkerThread().execute(() ->
                     space.removeCollisionObject(EntityPhysicsElement.get(entity).getRigidBody()));
         }
+//        if (entity instanceof AvatarPhysicsController && Utilities.getTracking(entity).isEmpty()) {
+//            MinecraftSpace space = MinecraftSpace.get(entity.level());
+//            space.getWorkerThread().execute(() -> {
+//                ((AvatarPhysicsController) entity).forceCloud().kill();
+//                space.removeCollisionObject(((AvatarPhysicsController) entity).forceCloud().getRigidBody());
+//                for (ForcePoint point : ((AvatarPhysicsController) entity).forceCloud().points()) {
+//                    space.removeCollisionObject(point.getRigidBody());
+//                }
+//            });
+
+//        }
     }
 }

@@ -22,18 +22,16 @@ public class SDFCapsule implements SignedDistanceFunction {
         float h = halfHeight.eval(t);
         float r = radius.eval(t);
 
-        // Capsule aligned to Y axis: two sphere caps joined by a cylinder
-        // Adapted from Inigo Quilez's SDF formulation
-        q.set(local.x, Math.abs(local.y) - h, local.z);
+        // radial distance in XZ plane
+        float qx = (float) Math.sqrt(local.x * local.x + local.z * local.z);
+        // axial distance past the "cylinder" core
+        float qy = Math.abs(local.y) - h;
 
-        // Outside part: distance from surface when beyond the cylindrical core
-        float dx = Math.max(q.x, 0f);
-        float dy = Math.max(q.y, 0f);
-        float dz = Math.max(q.z, 0f);
-        float outside = (float)Math.sqrt(dx * dx + dy * dy + dz * dz);
+        float ox = Math.max(qx, 0f);
+        float oy = Math.max(qy, 0f);
 
-        // Inside part: signed distance inside the capsule volume
-        float inside = Math.min(Math.max(q.x, Math.max(q.y, q.z)), 0f);
+        float outside = (float) Math.sqrt(ox * ox + oy * oy);
+        float inside = Math.min(Math.max(qx, qy), 0f);
 
         return outside + inside - r;
     }

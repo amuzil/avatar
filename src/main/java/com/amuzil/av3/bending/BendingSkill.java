@@ -17,7 +17,7 @@ public abstract class BendingSkill extends SkillActive {
     }
 
     // Ensure SkillState gets set to RUN before super.start() is called so run() executes on 1st try
-    public void startRun() {
+    public void  startRun() {
         skillData.setSkillState(SkillState.RUN);
         super.start(bender);
     }

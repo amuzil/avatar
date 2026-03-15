@@ -68,6 +68,7 @@ public class CollisionTrait extends SkillTrait {
         for (String p : collisionTypes) {
 
         }
+        // Lmao what
         return Easings.bezier(xs, ys, t);
     }
 

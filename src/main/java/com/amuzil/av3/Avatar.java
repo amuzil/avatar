@@ -8,6 +8,7 @@ import com.amuzil.av3.entity.api.modules.client.PhotonModule;
 import com.amuzil.av3.entity.api.modules.client.SoundModule;
 import com.amuzil.av3.entity.api.modules.collision.*;
 import com.amuzil.av3.entity.api.modules.entity.GrowModule;
+import com.amuzil.av3.entity.api.modules.entity.TimeResetModule;
 import com.amuzil.av3.entity.api.modules.entity.TimeoutModule;
 import com.amuzil.av3.entity.api.modules.force.*;
 import com.amuzil.av3.input.InputModule;
@@ -57,14 +58,29 @@ public class Avatar {
 
     private void setup(final FMLCommonSetupEvent event) {
 
+        // Movement
         ModuleRegistry.register(MoveModule::new);
+        ModuleRegistry.register(ChangeSpeedModule::new);
+        ModuleRegistry.register(GravityModule::new);
+
+        // Control
         ModuleRegistry.register(CurveModule::new);
         ModuleRegistry.register(ControlModule::new);
         ModuleRegistry.register(BindModule::new);
         ModuleRegistry.register(OrbitModule::new);
-        ModuleRegistry.register(ChangeSpeedModule::new);
+        ModuleRegistry.register(LookModule::new);
+
+        // Time
         ModuleRegistry.register(TimeoutModule::new);
+        ModuleRegistry.register(TimeResetModule::new);
+
+        // Entity 
         ModuleRegistry.register(GrowModule::new);
+
+        // Miscellaneous
+
+
+        // Collision
         ModuleRegistry.register(FireModule::new);
         ModuleRegistry.register(SimpleDamageModule::new);
         ModuleRegistry.register(SimpleKnockbackModule::new);
@@ -72,6 +88,8 @@ public class Avatar {
         ModuleRegistry.register(WaterCollisionModule::new);
         ModuleRegistry.register(EarthCollisionModule::new);
         ModuleRegistry.register(FireCollisionModule::new);
+
+        // FX
         ModuleRegistry.register(SoundModule::new);
         ModuleRegistry.register(PhotonModule::new);
     }

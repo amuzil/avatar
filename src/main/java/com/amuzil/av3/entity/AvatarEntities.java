@@ -1,6 +1,7 @@
 package com.amuzil.av3.entity;
 
 import com.amuzil.av3.Avatar;
+import com.amuzil.av3.entity.construct.AvatarElementCollider;
 import com.amuzil.av3.entity.construct.AvatarRigidBlock;
 import com.amuzil.av3.entity.mobs.SkyBisonEntity;
 import com.amuzil.av3.entity.projectile.*;
@@ -22,6 +23,12 @@ public class AvatarEntities {
     public static final Supplier<EntityType<AvatarProjectile>> PROJECTILE_ENTITY_TYPE =
             registerProjectile("projectile", AvatarProjectile::new, 0.5f, 0.5f);
 
+    public static final Supplier<EntityType<AvatarWaterShield>> WATER_SHIELD_TYPE =
+            registerProjectile("water_shield", AvatarWaterShield::new, 0.5f, 0.5f);
+
+    public static final Supplier<EntityType<AvatarWaterRing>> WATER_RING_TYPE =
+            registerProjectile("water_ring", AvatarWaterRing::new, 0.5f, 0.5f);
+
     public static final Supplier<EntityType<AvatarDirectProjectile>> DIRECT_PROJECTILE_ENTITY_TYPE =
             registerProjectile("direct_projectile", AvatarDirectProjectile::new, 0.5f, 0.5f);
 
@@ -37,6 +44,8 @@ public class AvatarEntities {
     public static final Supplier<EntityType<AvatarWaterProjectile>> WATER_PROJECTILE_ENTITY_TYPE =
             registerProjectile("water_projectile", AvatarWaterProjectile::new, 0.5f, 0.5f);
 
+    public static final Supplier<EntityType<AvatarElementCollider>> ELEMENT_COLLIDER_ENTITY_TYPE =
+            registerPhysicsBody("element_collider", AvatarElementCollider::new, 0.5f, 0.5f, 20, 1);
     public static final Supplier<EntityType<AvatarRigidBlock>> RIGID_BLOCK_ENTITY_TYPE =
             registerPhysicsBody("rigid_block", AvatarRigidBlock::new, 1.0f, 1.0f, 10, 4);
 
@@ -57,7 +66,7 @@ public class AvatarEntities {
             String id, EntityType.EntityFactory<T> factory, float width, float height) {
         return ENTITY_TYPES.register(id, () ->
                 EntityType.Builder.of(factory, MobCategory.MISC)
-                        .sized(width, height).clientTrackingRange(64).updateInterval(3)
+                        .sized(width, height).clientTrackingRange(64).updateInterval(1)
                         .build(id)
         );
     }

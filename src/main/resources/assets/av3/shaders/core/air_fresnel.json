@@ -1,0 +1,32 @@
+{
+  "vertex": "av3:air_fresnel",
+  "fragment": "av3:air_fresnel",
+  "depthtest": true,
+  "depthwrite": true,
+  "samplers": [
+  { "name": "Sampler2" },
+    { "name": "SamplerSceneDepth" }
+  ],
+  "uniforms": [
+    { "name": "ModelViewMat", "type": "matrix4x4", "count": 16,
+      "values": [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1] },
+    { "name": "ProjMat", "type": "matrix4x4", "count": 16,
+      "values": [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1] },
+    { "name": "ColorModulator", "type": "float", "count": 4,
+      "values": [1,1,1,1] },
+    { "name": "HDRFresnelColor", "type": "float", "count": 4,
+      "values": [1,1,1,1] },
+    { "name": "FresnelIntensity", "type": "float", "count": 1,
+      "values": [1.0] },
+    {"name":  "FogStart", "type": "float", "count": 1,
+      "values": [0.0] },
+    {"name":  "FogEnd", "type": "float", "count": 1,
+      "values": [1.0] },
+    {"name":  "FogColor", "type": "float", "count": 4,
+      "values": [0.0, 0.0, 0.0, 0.0] },
+    {"name":  "FogShape", "type": "int", "count": 1,
+      "values": [0] }
+
+
+  ]
+}

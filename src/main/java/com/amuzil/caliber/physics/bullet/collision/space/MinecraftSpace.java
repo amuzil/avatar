@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * the last step has taken longer than 50ms and is still executing upon the next
  * tick. This really only happens if you are dealing with an ungodly amount of
  * rigid bodies or your computer is slo.
- * 
+ *
  * @see PhysicsThread
  * @see PhysicsSpaceEvent
  */
@@ -48,24 +48,8 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
     private final PhysicsThread thread;
     private final Level level;
     private final ChunkCache chunkCache;
-
-    private volatile boolean stepping;
     private final Set<SectionPos> previousBlockUpdates;
-
-    /**
-     * Allows users to retrieve the {@link MinecraftSpace} associated with any given
-     * {@link Level} object (client or server).
-     * 
-     * @param level the level to get the physics space from
-     * @return the {@link MinecraftSpace}
-     */
-    public static MinecraftSpace get(Level level) {
-        return ((SpaceStorage) level).getSpace();
-    }
-
-    public static Optional<MinecraftSpace> getOptional(Level level) {
-        return Optional.ofNullable(get(level));
-    }
+    private volatile boolean stepping;
 
     public MinecraftSpace(PhysicsThread thread, Level level) {
         super(BroadphaseType.DBVT);
@@ -80,6 +64,21 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
     }
 
     /**
+     * Allows users to retrieve the {@link MinecraftSpace} associated with any given
+     * {@link Level} object (client or server).
+     *
+     * @param level the level to get the physics space from
+     * @return the {@link MinecraftSpace}
+     */
+    public static MinecraftSpace get(Level level) {
+        return ((SpaceStorage) level).getSpace();
+    }
+
+    public static Optional<MinecraftSpace> getOptional(Level level) {
+        return Optional.ofNullable(get(level));
+    }
+
+    /**
      * This method performs the following steps:
      * <ul>
      * <li>Fires world step events in {@link PhysicsSpaceEvent}.</li>
@@ -87,7 +86,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
      * <li>Steps the simulation asynchronously.</li>
      * <li>Triggers collision events.</li>
      * </ul>
-     *
+     * <p>
      * Additionally, none of the above steps execute when either the world is empty
      * (no {@link PhysicsRigidBody}s) or when the game is paused.
      *
@@ -124,8 +123,8 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
                     /* World Step Event */
                     NeoForge.EVENT_BUS.post(new PhysicsSpaceEvent.Step(this));
 
-                    /* Step the Simulation */
                     this.update(1 / 60f, 4, false, false, true);
+
                 }, this.getWorkerThread());
             }
 
@@ -135,6 +134,12 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
 
     @Override
     public void addCollisionObject(PhysicsCollisionObject collisionObject) {
+        // Ignores adding elements with a null rigidbody. So, if you want the sub components of something to be collidable,
+        // but not the actual holder of those sub components, make the ForceCloud have a null rigidbody, while the sub components have valid rigidbodies.
+
+        if (collisionObject == null)
+            return;
+
         if (!collisionObject.isInWorld()) {
             if (collisionObject instanceof ElementRigidBody rigidBody) {
                 NeoForge.EVENT_BUS.post(new PhysicsSpaceEvent.ElementAdded(this, rigidBody));
@@ -154,8 +159,8 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
                     CaliberNetwork.sendToPlayersTrackingEntity(entityRigidBody.getElement().cast(), new SyncMovementPacket(entityRigidBody));
                     CaliberNetwork.sendToPlayersTrackingEntity(entityRigidBody.getElement().cast(), new SyncPropertiesPacket(entityRigidBody));
                 }
-            }
-            else if (collisionObject instanceof TerrainRigidBody terrain) {
+                //TODO: SEnt packets for ForceRigidBody
+            } else if (collisionObject instanceof TerrainRigidBody terrain) {
                 this.terrainMap.put(terrain.getBlockPos(), terrain);
             }
 
@@ -165,6 +170,9 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
 
     @Override
     public void removeCollisionObject(PhysicsCollisionObject collisionObject) {
+        if (collisionObject == null)
+            return;
+
         if (collisionObject.isInWorld()) {
             super.removeCollisionObject(collisionObject);
 
@@ -196,6 +204,7 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
                 rigidBody.activate();
         }
     }
+
 
     public Map<BlockPos, TerrainRigidBody> getTerrainMap() {
         return new HashMap<>(this.terrainMap);
@@ -235,6 +244,13 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
         return this.chunkCache;
     }
 
+
+    /**
+     * Trigger all collision events (e.g. block/element or element/element).
+     *
+     * @param event the event context
+     */
+
     @Deprecated @Override
     public void collision(PhysicsCollisionEvent event) {
         float impulse = event.getAppliedImpulse();
@@ -242,10 +258,10 @@ public class MinecraftSpace extends PhysicsSpace implements PhysicsCollisionList
         /* Element on Element */
         if (event.getObjectA() instanceof ElementRigidBody rigidBodyA && event.getObjectB() instanceof ElementRigidBody rigidBodyB)
             NeoForge.EVENT_BUS.post(new CollisionEvent(CollisionEvent.Type.ELEMENT, rigidBodyA, rigidBodyB, impulse));
-        /* Block on Element */
+            /* Block on Element */
         else if (event.getObjectA() instanceof TerrainRigidBody terrain && event.getObjectB() instanceof ElementRigidBody rigidBody)
             NeoForge.EVENT_BUS.post(new CollisionEvent(CollisionEvent.Type.BLOCK, rigidBody, terrain, impulse));
-        /* Element on Block */
+            /* Element on Block */
         else if (event.getObjectA() instanceof ElementRigidBody rigidBody && event.getObjectB() instanceof TerrainRigidBody terrain)
             NeoForge.EVENT_BUS.post(new CollisionEvent(CollisionEvent.Type.BLOCK, rigidBody, terrain, impulse));
     }

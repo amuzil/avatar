@@ -1,5 +1,6 @@
 package com.amuzil.av3.utils.physics.generator;
 
+import com.amuzil.av3.entity.construct.AvatarElementCollider;
 import com.amuzil.av3.entity.construct.AvatarRigidBlock;
 import com.amuzil.caliber.physics.bullet.collision.body.EntityRigidBody;
 import com.amuzil.caliber.physics.bullet.collision.space.MinecraftSpace;
@@ -24,6 +25,7 @@ public class EntityCollisionGenerator {
             Entity rigidBodyEntity = rigidBody.getElement().cast();
             if (!(rigidBodyEntity instanceof AvatarRigidBlock rigidBlock)) continue;
             rigidBlock.syncFromPhysics();
+            if (rigidBodyEntity instanceof AvatarElementCollider collider && !collider.pushEntities()) continue;
             Vec3 current = rigidBlock.position();
             Vec3 lastPos = new Vec3(rigidBlock.xOld, rigidBlock.yOld, rigidBlock.zOld);
             Vec3 delta = current.subtract(lastPos);

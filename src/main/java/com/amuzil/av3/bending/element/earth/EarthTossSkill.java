@@ -6,7 +6,9 @@ import com.amuzil.av3.data.capability.Bender;
 import com.amuzil.av3.entity.api.ICollisionModule;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
 import com.amuzil.av3.entity.api.modules.collision.EarthCollisionModule;
+import com.amuzil.av3.entity.api.modules.collision.SimpleDamageModule;
 import com.amuzil.av3.entity.api.modules.collision.SimpleKnockbackModule;
+import com.amuzil.av3.entity.api.modules.entity.TimeoutModule;
 import com.amuzil.av3.entity.construct.AvatarRigidBlock;
 import com.amuzil.av3.network.AvatarNetwork;
 import com.amuzil.av3.network.packets.client.TriggerFXPacket;
@@ -60,6 +62,7 @@ public class EarthTossSkill extends EarthSkill {
         ResourceLocation id = Avatar.id(this.skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
 
         for (UUID entityId: entityIds) {
+
             if (level.getEntity(entityId) instanceof AvatarRigidBlock rigidBlock) {
                 rigidBlock.setKinematic(false);
 //                rigidBlock.getRigidBody().setGravity(Vector3f.ZERO);
@@ -72,7 +75,12 @@ public class EarthTossSkill extends EarthSkill {
                 rigidBlock.addTraits(skillData.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
                 rigidBlock.addTraits(new DirectionTrait(Constants.KNOCKBACK_DIRECTION, new Vec3(0, 0.45, 0)));
                 rigidBlock.addModule(ModuleRegistry.create(SimpleKnockbackModule.id));
+
+                rigidBlock.addModule(ModuleRegistry.create(SimpleDamageModule.id));
+                rigidBlock.addModule(ModuleRegistry.create(TimeoutModule.id));
+
                 rigidBlock.addTraits(skillData.getTrait(Constants.DAMAGE, DamageTrait.class));
+
                 rigidBlock.addTraits(new SizeTrait(Constants.SIZE, (float) rigidBlock.getSize().getSize()));
                 rigidBlock.addTraits(new CollisionTrait(Constants.COLLISION_TYPE, "Blaze", "Fireball", "AbstractArrow", "FireProjectile"));
                 rigidBlock.addCollisionModule((ICollisionModule) ModuleRegistry.create(EarthCollisionModule.id));

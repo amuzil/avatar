@@ -3,6 +3,7 @@ package com.amuzil.av3.entity.api.modules.entity;
 import com.amuzil.av3.Avatar;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.IEntityModule;
+import com.amuzil.av3.entity.construct.AvatarElementCollider;
 import com.amuzil.av3.entity.projectile.AvatarProjectile;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.magus.skill.traits.entitytraits.PointsTrait;

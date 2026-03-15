@@ -18,6 +18,7 @@ import com.amuzil.magus.skill.traits.skilltraits.*;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
 
 import static com.amuzil.av3.bending.form.BendingForms.STRIKE;
 import static com.amuzil.av3.utils.bending.ProjectileFactory.createCurveProjectile;
@@ -36,7 +37,9 @@ public class FireStrikeSkill extends FireSkill {
         addTrait(new TimedTrait(Constants.LIFETIME, 15));
         addTrait(new TimedTrait(Constants.FIRE_TIME, 40));
         addTrait(new SpeedTrait(Constants.SPEED_FACTOR, 0.85d));
+
         addTrait(new StringTrait(Constants.FX, "fires_bloom"));
+
 
         startPaths = SkillPathBuilder.getInstance().add(STRIKE).build();
     }
@@ -96,6 +99,9 @@ public class FireStrikeSkill extends FireSkill {
 //        projectile.addModule(ModuleRegistry.create(ChangeSpeedModule.id));
 
         // Particle FX
+        projectile.lookDirection(entity.getLookAngle().toVector3f());
+        projectile.setFXOneShot(false);
+        projectile.vfxScale(new Vector3f(5, 5, 5));
         projectile.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
         projectile.init();
 

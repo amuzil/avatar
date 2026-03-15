@@ -1,36 +1,93 @@
 package com.amuzil.magus.registry;
 
 import com.amuzil.av3.Avatar;
+import com.amuzil.magus.client.render.ShaderUniforms;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormatElement;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterShadersEvent;
+import org.joml.Vector3f;
 
 import java.io.IOException;
 
 @EventBusSubscriber(value = Dist.CLIENT, modid = Avatar.MOD_ID)
 public class ShaderRegistry {
 
-    public static ShaderInstance TRIPLANAR_SHADER;
+    public static ShaderInstance
+            TRIPLANAR_SHADER,
+            STYLISED_WATER;
+
+    public static ShaderUniforms
+            STYLISED_WATER_UNIFORMS;
+
+    public static VertexFormat
+            STYLISED_ELEMENT = VertexFormat.builder().add("Position", VertexFormatElement.POSITION)
+            .add("UV0", VertexFormatElement.UV0).add("UV2", VertexFormatElement.UV2)
+            .add("Color", VertexFormatElement.COLOR).add("Normal", VertexFormatElement.NORMAL).padding(1).build();
+
+    private static final ResourceLocation
+            WHITE_TEX = Avatar.id("textures/water.png"),
+            WATER_GRADIENT = Avatar.id("textures/vfx/water_gradient.png"),
+            WATER_WAVE_NOISE = Avatar.id("textures/vfx/wave_noise.png");
 
     @SubscribeEvent
     public static void onRegisterShaders(RegisterShadersEvent event) throws IOException {
+
         event.registerShader(
                 new ShaderInstance(
                         event.getResourceProvider(),
-                        ResourceLocation.fromNamespaceAndPath("av3", "triplanar"), // matches your .json name
+                        ResourceLocation.fromNamespaceAndPath("av3", "dynamic_mesh/triplanar"), // matches your .json name
                         DefaultVertexFormat.NEW_ENTITY
                 ),
-                shader -> TRIPLANAR_SHADER = shader
-        );
+                shader -> TRIPLANAR_SHADER = shader);
+
+        event.registerShader(
+                new ShaderInstance(
+                        event.getResourceProvider(),
+                        ResourceLocation.fromNamespaceAndPath("av3", "dynamic_mesh/stylised_water"),
+                        STYLISED_ELEMENT
+                ),
+                shader -> {
+                    STYLISED_WATER = shader;
+                    STYLISED_WATER_UNIFORMS = new ShaderUniforms.StylisedWaterUniforms(shader);
+                    // Values copied from the test effect in Photon
+                    ShaderUniforms.StylisedWaterUniforms shaderUniforms = (ShaderUniforms.StylisedWaterUniforms) STYLISED_WATER_UNIFORMS;
+                    shaderUniforms.TimeSpeed.set(-150f); // or whatever
+
+                    shaderUniforms.WaveScale.set(0.2f);
+                    shaderUniforms.WaveSpeed.set(0.5f);
+                    shaderUniforms.WaveStrength.set(0.4f);
+
+                    shaderUniforms.NoiseScale.set(2f);
+                    shaderUniforms.NoiseSpeed.set(1.45f);
+                    shaderUniforms.NoiseStrength.set(0.01f);
+
+                    shaderUniforms.Bands.set(4.0f);
+                    shaderUniforms.BandFactor.set(0.6f);
+                    shaderUniforms.BandingBias.set(0.37f);
+
+                    shaderUniforms.Alpha.set(0.6f);
+                    shaderUniforms.HDRColor.set(1.0f, 1.0f, 1.0f, 1.0f);
+                    shaderUniforms.ColorIntensity.set(1f);
+
+                    shaderUniforms.HorizontalFrequency.set(0.75f);
+                    shaderUniforms.VerticalFrequency.set(0.75f);
+                    shaderUniforms.Spin.set(3.0f);
+                    shaderUniforms.Size.set(2.1f);
+
+                });
+
     }
 
     public static RenderType getTriplanarRenderType(ResourceLocation tex) {
@@ -58,6 +115,83 @@ public class ShaderRegistry {
                     () -> {
                         RenderSystem.enableBlend();
                         RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+                    },
+                    () -> {
+                        RenderSystem.disableBlend();
+                        RenderSystem.defaultBlendFunc();
+                    }
+            );
+
+    public static final RenderStateShard.TexturingStateShard WATER_SETUP =
+            new RenderStateShard.TexturingStateShard(
+                    "water_setup",
+                    () -> {
+                        TextureManager manager = Minecraft.getInstance().getTextureManager();
+                        // These run RIGHT before the RenderType draws.
+                        RenderSystem.setShaderTexture(7, WATER_GRADIENT);
+                        RenderSystem.setShaderTexture(8, WATER_WAVE_NOISE);
+                        RenderSystem.setShaderTexture(9, WATER_WAVE_NOISE);
+
+                        ShaderInstance s = RenderSystem.getShader();
+                        if (s != null && s.getName().equals(STYLISED_WATER.getName())) {
+                            s.setSampler("SamplerGradient", manager.getTexture(WATER_GRADIENT).getId());
+                            s.setSampler("WaveTex", manager.getTexture(WATER_WAVE_NOISE).getId());
+                            s.setSampler("NoiseTex", manager.getTexture(WATER_WAVE_NOISE).getId());
+
+//                            ((ShaderUniforms.StylisedWaterUniforms) STYLISED_WATER_UNIFORMS).ColorIntensity.set(1f); // could be dynamic
+                            float t = (float)(Minecraft.getInstance().level.getGameTime());
+                            s.safeGetUniform("GameTime").set(t);
+                            s.safeGetUniform("TimeSpeed").set(-500f);
+//                            s.safeGetUniform("HDRColor").set(0.0f, 89 / 255f, 1f, 0.5f);
+                            s.safeGetUniform("WaveStrength").set(0.2f);
+                            s.safeGetUniform("WaveScale").set(0.3f);
+                            s.safeGetUniform("WaveSpeed").set(0.4f);
+
+                            s.safeGetUniform("NoiseStrength").set(0.08f);
+//                            s.safeGetUniform("HorizontalFrequency").set(0.5f);
+//                            s.safeGetUniform("Spin").set(6f);
+//                            s.safeGetUniform("VerticalFrequency").set(0.5f);
+//                            s.safeGetUniform("Bands").set(4.0f);
+//                            s.safeGetUniform("BandingBias").set(0.37f);
+//                            s.safeGetUniform("BandFactor").set(100000f);
+                            s.safeGetUniform("Alpha").set(0.65f);
+                        }
+                    },
+                    () -> {
+                        // Optional cleanup
+                    }
+            );
+
+    public static RenderType waterRenderType(ResourceLocation tex) {
+        return RenderType.create(
+                "stylised_water",
+                STYLISED_ELEMENT,
+                VertexFormat.Mode.TRIANGLES,
+                512,
+                true,
+                true,
+                RenderType.CompositeState.builder()
+                        .setShaderState(new RenderStateShard.ShaderStateShard(() -> ShaderRegistry.STYLISED_WATER))
+                        .setTransparencyState(WATER_TRANSPARENCY)
+                        .setTextureState(new RenderStateShard.TextureStateShard(tex, false, false))
+                        .setLightmapState(RenderStateShard.LIGHTMAP)
+                        .setTexturingState(WATER_SETUP)
+                        .setCullState(RenderStateShard.CULL)
+                        .createCompositeState(true)
+        );
+    }
+
+    private static final RenderStateShard.TransparencyStateShard WATER_TRANSPARENCY =
+            new RenderStateShard.TransparencyStateShard(
+                    "water_transparency",
+                    () -> {
+                        RenderSystem.enableBlend();
+                        RenderSystem.blendFuncSeparate(
+                                GlStateManager.SourceFactor.SRC_ALPHA,
+                                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+                                GlStateManager.SourceFactor.ONE,
+                                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA
+                        );
                     },
                     () -> {
                         RenderSystem.disableBlend();

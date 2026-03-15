@@ -7,6 +7,8 @@ import com.amuzil.av3.entity.api.IClientModule;
 import com.amuzil.av3.entity.api.ICollisionModule;
 import com.amuzil.av3.entity.api.IEntityModule;
 import com.amuzil.av3.entity.api.IForceModule;
+import com.amuzil.av3.entity.api.modules.client.DeathFXModule;
+import com.amuzil.av3.entity.api.modules.entity.DeathModule;
 import com.amuzil.magus.skill.traits.DataTrait;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.Packet;
@@ -25,6 +27,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.event.EventHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -37,13 +40,19 @@ public abstract class AvatarEntity extends Entity {
 
     private static final EntityDataAccessor<Optional<UUID>> OWNER_ID = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.OPTIONAL_UUID);
     private static final EntityDataAccessor<String> ELEMENT = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> SKILL_ID = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<String> FX = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<Vector3f> LOOK_DIRECTION = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.VECTOR3);
     private static final EntityDataAccessor<Boolean> ONE_SHOT_FX = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Vector3f> VFX_SCALE = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.VECTOR3);
     private static final EntityDataAccessor<Boolean> COLLIDABLE = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DAMAGEABLE = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> PHYSICS = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> TIER = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> MAX_LIFETIME = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> SURFACE = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Float> SOURCE_LEVEL = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> MAX_SOURCE_LEVEL = SynchedEntityData.defineId(AvatarEntity.class, EntityDataSerializers.FLOAT);
 
     private final List<IEntityModule> modules = new ArrayList<>();
     private final List<IForceModule> forceModules = new ArrayList<>();
@@ -56,7 +65,8 @@ public abstract class AvatarEntity extends Entity {
         super(entityType, level);
     }
 
-    /** Call this after adding it to a world.
+    /**
+     * Call this after adding it to a world.
      */
     public void init() {
         // TODO: Send Packet for client-side init
@@ -82,7 +92,7 @@ public abstract class AvatarEntity extends Entity {
 
     public void tickDespawn() {
         if (tickCount >= maxLifetime()) {
-            this.discard();
+            this.kill();
         }
     }
 
@@ -176,6 +186,27 @@ public abstract class AvatarEntity extends Entity {
         return traits.stream().filter(filter).collect(Collectors.toList());
     }
 
+
+    public String skillId() {
+        return entityData.get(SKILL_ID);
+    }
+
+    public void setSkillId(String skillId) {
+        entityData.set(SKILL_ID, skillId);
+    }
+
+
+    @Override
+    public void kill() {
+        List<DeathModule> serverDeathModules = modules.stream().filter(m -> m instanceof DeathModule).map(m -> (DeathModule) m).toList();
+        List<DeathFXModule> clientDeathModules = clientModules.stream().filter(m -> m instanceof DeathFXModule).map(m -> (DeathFXModule) m).toList();
+        for (DeathModule mod : serverDeathModules)
+            mod.die(this);
+        for (DeathFXModule mod : clientDeathModules)
+            mod.die(this);
+        super.kill();
+    }
+
     @Nullable
     public DataTrait getTrait(String name) {
         for (DataTrait trait: traits)
@@ -194,13 +225,13 @@ public abstract class AvatarEntity extends Entity {
         return null;
     }
 
+    public Entity getOwner() {
+        return owner();
+    }
+
     public void setOwner(@NotNull Entity owner) {
         this.owner = owner;
         this.entityData.set(OWNER_ID, Optional.of(owner.getUUID()));
-    }
-
-    public Entity getOwner() {
-        return owner();
     }
 
     public Entity owner() {
@@ -237,6 +268,14 @@ public abstract class AvatarEntity extends Entity {
         return Avatar.id(fxName);
     }
 
+    public Vector3f lookDirection() {
+        return this.entityData.get(LOOK_DIRECTION);
+    }
+
+    public void lookDirection(Vector3f lookDirection) {
+        this.entityData.set(LOOK_DIRECTION, lookDirection);
+    }
+
     public void setFXOneShot(boolean fxOneShot) {
         this.entityData.set(ONE_SHOT_FX, fxOneShot);
     }
@@ -253,17 +292,56 @@ public abstract class AvatarEntity extends Entity {
         return this.entityData.get(PHYSICS);
     }
 
+    public void vfxScale(Vector3f scale) {
+        this.entityData.set(VFX_SCALE, scale);
+    }
+
+    public Vector3f vfxScale() {
+        return this.entityData.get(VFX_SCALE);
+    }
+
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(OWNER_ID, Optional.empty());
         builder.define(ELEMENT, Elements.FIRE.getId().toString());
+        builder.define(SKILL_ID, "");
         builder.define(FX, "");
         builder.define(ONE_SHOT_FX, true);
+        builder.define(VFX_SCALE, new Vector3f(1, 1, 1));
         builder.define(COLLIDABLE, false);
         builder.define(DAMAGEABLE, false);
         builder.define(PHYSICS, false);
         builder.define(TIER, 0);
         builder.define(MAX_LIFETIME, 10000);
+        builder.define(SURFACE, false);
+        builder.define(LOOK_DIRECTION, new Vector3f(0, 1, 0));
+        builder.define(SOURCE_LEVEL, -1f);
+        builder.define(MAX_SOURCE_LEVEL, -1f);
+    }
+
+    // Used for effects to store how much bending material they have. Primarily used for earth and water.
+    public float maxSource() {
+        return entityData.get(MAX_SOURCE_LEVEL);
+    }
+
+    public void maxSource(float maxSource) {
+        entityData.set(MAX_SOURCE_LEVEL, maxSource);
+    }
+
+    public float sourceLevel() {
+        return entityData.get(SOURCE_LEVEL);
+    }
+
+    public void sourceLevel(float sourceLevel) {
+        entityData.set(SOURCE_LEVEL, sourceLevel);
+    }
+
+    public void surface(boolean surface) {
+        entityData.set(SURFACE, surface);
+    }
+
+    public boolean surface() {
+        return entityData.get(SURFACE);
     }
 
     public void checkBlocks() {
@@ -301,7 +379,8 @@ public abstract class AvatarEntity extends Entity {
         return entityData.get(DAMAGEABLE);
     }
 
-    /** These were copied from the projectile class. Need to update these to account for the other data
+    /**
+     * These were copied from the projectile class. Need to update these to account for the other data
      * serializers and important values that this class keeps track of.
      */
     @Override
