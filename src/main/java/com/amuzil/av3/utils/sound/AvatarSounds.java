@@ -14,7 +14,7 @@ public class AvatarSounds {
             DeferredRegister.create(Registries.SOUND_EVENT, Avatar.MOD_ID);
 
     public static final Supplier<SoundEvent> AIR_GUST = register("air_gust");
-    public static final Supplier<SoundEvent> FIRE_STRIKE = register("fires_bloom_perma5");
+    public static final Supplier<SoundEvent> FIRE_STRIKE = register("fires_bloom");
     public static final Supplier<SoundEvent> EARTH_BLOCK = register("earth_block");
     public static final Supplier<SoundEvent> EARTH_TOSS = register("earth_toss");
     public static final Supplier<SoundEvent> EARTH_WALL = register("earth_wall");

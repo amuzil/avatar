@@ -7,6 +7,7 @@ import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.jme3.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.FluidState;
@@ -34,7 +35,13 @@ public interface ChunkCache {
         final var properties = BlockProperty.getBlockProperty(block);
         boolean isNotPossible = !block.isPossibleToRespawnInThis(blockState);
 
-        return properties != null ? properties.collidable() : !blockState.isAir() && isNotPossible && (blockState.getFluidState().isEmpty() || (blockState.hasProperty(BlockStateProperties.WATERLOGGED) && blockState.getValue(BlockStateProperties.WATERLOGGED)));
+        if (block.equals(Blocks.SNOW)) // Exclude snow from terrain collision
+            return false;
+
+        return properties != null ? properties.collidable() : !blockState.isAir() && isNotPossible
+                && (blockState.getFluidState().isEmpty()
+                || (blockState.hasProperty(BlockStateProperties.WATERLOGGED)
+                && blockState.getValue(BlockStateProperties.WATERLOGGED)));
     }
 
     void refreshAll();

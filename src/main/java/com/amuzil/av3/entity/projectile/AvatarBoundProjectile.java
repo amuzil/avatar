@@ -16,6 +16,6 @@ public class AvatarBoundProjectile extends AvatarProjectile {
     }
 
     public AvatarBoundProjectile(Level pLevel) {
-        this(AvatarEntities.AVATAR_BOUND_PROJECTILE_ENTITY_TYPE.get(), pLevel);
+        this(AvatarEntities.BOUND_PROJECTILE_ENTITY_TYPE.get(), pLevel);
     }
 }

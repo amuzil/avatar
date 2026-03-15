@@ -1,17 +1,19 @@
 package com.amuzil.av3.entity.api.modules.collision;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.av3.bending.element.Element;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.ICollisionModule;
 import com.amuzil.av3.entity.api.IHasHealth;
 import com.amuzil.av3.entity.construct.AvatarConstruct;
+import com.amuzil.av3.entity.construct.AvatarRigidBlock;
 import com.amuzil.av3.entity.projectile.AvatarProjectile;
 import com.amuzil.av3.utils.Constants;
-import com.amuzil.av3.utils.modules.HitDetection;
+import com.amuzil.av3.utils.entity.HitDetection;
+import com.amuzil.av3.utils.entity.damagesource.BendingDamageSources;
 import com.amuzil.magus.skill.traits.skilltraits.CollisionTrait;
 import com.amuzil.magus.skill.traits.skilltraits.DamageTrait;
 import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
+import com.jme3.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
@@ -19,7 +21,6 @@ import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Fireball;
 import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -133,7 +134,10 @@ public class EarthCollisionModule implements ICollisionModule {
                     return;
                 }
             }
-            target.hurt(entity.damageSources().cramming(), damage);
+            if (entity instanceof AvatarRigidBlock rigidBlock
+                    && rigidBlock.getRigidBody().getLinearVelocity(new Vector3f()).length() > 0.03f) {
+                target.hurt(BendingDamageSources.earthBending(entity.level(), entity.owner()), damage);
+            }
         }
     }
 

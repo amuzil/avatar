@@ -13,7 +13,6 @@ import com.amuzil.av3.entity.construct.AvatarRigidBlock;
 import com.amuzil.av3.network.AvatarNetwork;
 import com.amuzil.av3.network.packets.client.TriggerFXPacket;
 import com.amuzil.av3.utils.Constants;
-import com.amuzil.magus.skill.data.SkillData;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.traits.skilltraits.*;
 import net.minecraft.resources.ResourceLocation;
@@ -47,21 +46,20 @@ public class EarthTossSkill extends EarthSkill {
     public void start(Bender bender) {
         super.start(bender);
         LivingEntity entity = bender.getEntity();
-        ServerLevel level = (ServerLevel) bender.getEntity().level();
-        SkillData data = bender.getSkillData(this);
+        ServerLevel level = (ServerLevel) entity.level();
 
-        int lifetime = data.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
-        double speed = data.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
+        int lifetime = skillData.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
+        double speed = skillData.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
 
         Set<UUID> entityIds = bender.getSelection().entityIds();
         if (entityIds.isEmpty()) {
             bender.formPath.clear();
             bender.resetSelection();
-            data.setSkillState(SkillState.IDLE);
+            skillData.setSkillState(SkillState.IDLE);
             return;
         }
 
-        ResourceLocation id = Avatar.id(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
+        ResourceLocation id = Avatar.id(this.skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
 
         for (UUID entityId: entityIds) {
 
@@ -74,24 +72,27 @@ public class EarthTossSkill extends EarthSkill {
                 rigidBlock.setOwner(entity);
                 rigidBlock.setControlled(false);
 
-                rigidBlock.addTraits(data.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
+                rigidBlock.addTraits(skillData.getTrait(Constants.KNOCKBACK, KnockbackTrait.class));
                 rigidBlock.addTraits(new DirectionTrait(Constants.KNOCKBACK_DIRECTION, new Vec3(0, 0.45, 0)));
                 rigidBlock.addModule(ModuleRegistry.create(SimpleKnockbackModule.id));
-                rigidBlock.addTraits(data.getTrait(Constants.DAMAGE, DamageTrait.class));
+
                 rigidBlock.addModule(ModuleRegistry.create(SimpleDamageModule.id));
                 rigidBlock.addModule(ModuleRegistry.create(TimeoutModule.id));
+
+                rigidBlock.addTraits(skillData.getTrait(Constants.DAMAGE, DamageTrait.class));
+
                 rigidBlock.addTraits(new SizeTrait(Constants.SIZE, (float) rigidBlock.getSize().getSize()));
                 rigidBlock.addTraits(new CollisionTrait(Constants.COLLISION_TYPE, "Blaze", "Fireball", "AbstractArrow", "FireProjectile"));
                 rigidBlock.addCollisionModule((ICollisionModule) ModuleRegistry.create(EarthCollisionModule.id));
 
                 rigidBlock.shoot(entity.position().add(0, entity.getEyeHeight(), 0), entity.getLookAngle(), speed, 0);
 
-                AvatarNetwork.sendToClient(new TriggerFXPacket(id, rigidBlock.getId()), (ServerPlayer) bender.getEntity());
+                AvatarNetwork.sendToClient(new TriggerFXPacket(id, rigidBlock.getId()), (ServerPlayer) entity);
             }
         }
 
         bender.formPath.clear();
         bender.resetSelection();
-        data.setSkillState(SkillState.IDLE);
+        skillData.setSkillState(SkillState.IDLE);
     }
 }

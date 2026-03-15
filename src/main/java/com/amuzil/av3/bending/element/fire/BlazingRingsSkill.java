@@ -10,7 +10,7 @@ import com.amuzil.av3.entity.api.modules.collision.FireCollisionModule;
 import com.amuzil.av3.entity.api.modules.collision.FireModule;
 import com.amuzil.av3.entity.api.modules.collision.SimpleKnockbackModule;
 import com.amuzil.av3.entity.api.modules.entity.GrowModule;
-import com.amuzil.av3.entity.projectile.AvatarOrbitProjectile;
+import com.amuzil.av3.entity.projectile.AvatarProjectile;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.av3.utils.maths.Point;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
@@ -19,6 +19,8 @@ import com.amuzil.magus.skill.traits.skilltraits.*;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+
+import static com.amuzil.av3.utils.bending.ProjectileFactory.createOrbitProjectile;
 
 
 public class BlazingRingsSkill extends FireSkill {
@@ -33,7 +35,7 @@ public class BlazingRingsSkill extends FireSkill {
         addTrait(new SpeedTrait(Constants.SPEED, 0.4d));
         addTrait(new TimedTrait(Constants.LIFETIME, 40));
         addTrait(new TimedTrait(Constants.FIRE_TIME, 40));
-        addTrait(new StringTrait(Constants.FX, "fires_bloom_perma6"));
+        addTrait(new StringTrait(Constants.FX, "fires_bloom"));
         addTrait(new AngleTrait(Constants.ANGLE, 0));
         addTrait(new RangeTrait(Constants.RANGE, 2.0d));
 
@@ -52,16 +54,9 @@ public class BlazingRingsSkill extends FireSkill {
 
         int lifetime = skillData.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
         double size = skillData.getTrait(Constants.SIZE, SizeTrait.class).getSize();
+        String fxName = skillData.getTrait(Constants.FX, StringTrait.class).getInfo();
 
-        AvatarOrbitProjectile projectile = new AvatarOrbitProjectile(level);
-        projectile.setElement(element());
-        projectile.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
-        projectile.setOwner(entity);
-        projectile.setMaxLifetime(lifetime);
-        projectile.setWidth((float) size);
-        projectile.setHeight((float) size);
-        projectile.setNoGravity(true);
-        projectile.setDamageable(false);
+        AvatarProjectile projectile = createOrbitProjectile(level, element(), entity, lifetime, (float) size, fxName);
 
         projectile.addTraits(skillData.getTrait(Constants.MAX_SIZE, SizeTrait.class));
         projectile.addTraits(skillData.getTrait(Constants.ANGLE, AngleTrait.class));

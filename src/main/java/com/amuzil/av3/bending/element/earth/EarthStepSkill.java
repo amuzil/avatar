@@ -1,21 +1,21 @@
 package com.amuzil.av3.bending.element.earth;
 
 import com.amuzil.av3.Avatar;
-import com.amuzil.av3.bending.element.Elements;
 import com.amuzil.av3.bending.form.BendingForm;
 import com.amuzil.av3.bending.skill.EarthSkill;
 import com.amuzil.av3.data.capability.Bender;
-import com.amuzil.av3.entity.AvatarEntity;
-import com.amuzil.av3.entity.projectile.AvatarBoundProjectile;
+import com.amuzil.av3.entity.projectile.AvatarProjectile;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
 import com.amuzil.magus.skill.traits.skilltraits.*;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Objects;
 
 import static com.amuzil.av3.bending.form.BendingForms.STEP;
+import static com.amuzil.av3.utils.bending.ProjectileFactory.createBoundProjectile;
 import static com.amuzil.av3.utils.bending.SkillHelper.canEarthBend;
 
 
@@ -24,7 +24,7 @@ public class EarthStepSkill extends EarthSkill {
     public EarthStepSkill() {
         super(Avatar.MOD_ID, "earth_step");
         addTrait(new SpeedTrait(Constants.DASH_SPEED, 1.5f));
-        addTrait(new SizeTrait(Constants.SIZE, 1.0f));
+        addTrait(new SizeTrait(Constants.SIZE, 0.5f));
         addTrait(new ColourTrait(139, 69, 19, "earth_colour"));
         addTrait(new TimedTrait(Constants.MAX_RUNTIME, 60));
         addTrait(new TimedTrait(Constants.RUNTIME, 0));
@@ -38,6 +38,8 @@ public class EarthStepSkill extends EarthSkill {
     public void start(Bender bender) {
         super.startRun();
         LivingEntity entity = bender.getEntity();
+        Level level = entity.level();
+
         if (!canEarthBend(entity)) return; // Can't earth bend if too far from ground
 
         BendingForm.Type.Motion motion = bender.getStepDirection();
@@ -46,16 +48,12 @@ public class EarthStepSkill extends EarthSkill {
         }
 
         int lifetime = skillData.getTrait(Constants.MAX_RUNTIME, TimedTrait.class).getTime();
+        double size = skillData.getTrait(Constants.SIZE, SizeTrait.class).getSize();
         TimedTrait time = skillData.getTrait(Constants.RUNTIME, TimedTrait.class);
-        time.setTime(0);
+        String fxName = skillData.getTrait(Constants.FX, StringTrait.class).getInfo();
+        time.setTime(0); // Reset fall damage nullification timer
 
-        AvatarEntity bound = new AvatarBoundProjectile(entity.level());
-        bound.setElement(Elements.EARTH);
-        bound.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
-        bound.setOwner(entity);
-        bound.setMaxLifetime(lifetime / 3);
-        bound.setNoGravity(true);
-        bound.setPos(entity.position());
+        AvatarProjectile bound = createBoundProjectile(level, element(), entity, lifetime, (float) size, fxName);
         bound.init();
         entity.level().addFreshEntity(bound);
 

@@ -67,7 +67,7 @@ public class AvatarWaterProjectile extends AvatarProjectile implements IHasSDF {
     }
 
     public AvatarWaterProjectile(Level pLevel) {
-        this(AvatarEntities.AVATAR_WATER_PROJECTILE_ENTITY_TYPE.get(), pLevel);
+        this(AvatarEntities.WATER_PROJECTILE_ENTITY_TYPE.get(), pLevel);
     }
 
     @Override

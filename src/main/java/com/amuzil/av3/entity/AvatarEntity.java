@@ -82,11 +82,11 @@ public abstract class AvatarEntity extends Entity {
 
         // Tick appropriate modules in each order
         if (this.level().isClientSide()) {
-            clientModules.forEach(mod -> mod.tick(this));
+            List.copyOf(clientModules).forEach(mod -> mod.tick(this));
         } else {
-            modules.forEach(mod -> mod.tick(this));
-            forceModules.forEach(mod -> mod.tick(this));
-            collisionModules.forEach(mod -> mod.tick(this));
+            List.copyOf(modules).forEach(mod -> mod.tick(this));
+            List.copyOf(forceModules).forEach(mod -> mod.tick(this));
+            List.copyOf(collisionModules).forEach(mod -> mod.tick(this));
         }
     }
 
@@ -209,7 +209,7 @@ public abstract class AvatarEntity extends Entity {
 
     @Nullable
     public DataTrait getTrait(String name) {
-        for (DataTrait trait : traits)
+        for (DataTrait trait: traits)
             if (trait.name().equals(name)) return trait;
 
         return null;

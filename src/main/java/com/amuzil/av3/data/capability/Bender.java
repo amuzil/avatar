@@ -42,7 +42,6 @@ public class Bender implements IBender {
 
     LivingEntity entity;
     private BenderData benderData;
-    private BendingSelection selection;
     private final Consumer<FormActivatedEvent> formListener;
 
     private boolean isDirty = true; // Indicates if data was changed
@@ -60,7 +59,7 @@ public class Bender implements IBender {
     public Bender(LivingEntity entity) {
         this.entity = entity;
         this.benderData = entity.getData(BENDER_DATA);
-        this.selection = entity.getData(BENDING_SELECTION);
+        entity.getData(BENDING_SELECTION);
         this.formListener = this::onFormActivatedEvent;
 
         // Allow use of all Elements & Skills for testing!
@@ -76,7 +75,20 @@ public class Bender implements IBender {
     }
 
     public void tick() {
-        serverTick();
+        if (skillToActivate != null) {
+            skillActivationTimer--;
+            if (skillActivationTimer <= 0) {
+                startSkill();
+            }
+        }
+        if (!active) {
+            if (tick == 0) {
+                formPath.clear(); // Only clear when Forms are inactive for `timeout` # of ticks
+                tick = timeout;
+                active = true;
+            }
+            tick--;
+        }
     }
 
     private boolean canUseSkill(Skill skill) {
@@ -142,23 +154,6 @@ public class Bender implements IBender {
             case SKILL_NOT_FOUND -> {
 //                LOGGER.info("Skill not found");
             } // do nothing. there may still be a combo on the next form.
-        }
-    }
-
-    private void serverTick() {
-        if (skillToActivate != null) {
-            skillActivationTimer--;
-            if (skillActivationTimer <= 0) {
-                startSkill();
-            }
-        }
-        if (!active) {
-            if (tick == 0) {
-                formPath.clear(); // Only clear when Forms are inactive for `timeout` # of ticks
-                tick = timeout;
-                active = true;
-            }
-            tick--;
         }
     }
 
@@ -327,7 +322,6 @@ public class Bender implements IBender {
 
     @Override
     public void setSelection(BendingSelection selection) {
-        this.selection = selection;
         entity.setData(BENDING_SELECTION, selection);
         markDirty();
     }
@@ -367,7 +361,7 @@ public class Bender implements IBender {
     @Override
     public void syncSelectionToServer() {
         if (entity.level().isClientSide())
-            AvatarNetwork.sendToServer(new SyncSelectionPacket(selection.serializeNBT(entity.registryAccess()), entity.getUUID()));
+            AvatarNetwork.sendToServer(new SyncSelectionPacket(getSelection().serializeNBT(entity.registryAccess()), entity.getUUID()));
     }
 
     @Override

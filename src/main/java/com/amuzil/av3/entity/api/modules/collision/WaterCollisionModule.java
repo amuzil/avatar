@@ -8,7 +8,8 @@ import com.amuzil.av3.entity.api.IHasHealth;
 import com.amuzil.av3.entity.api.modules.client.PhotonModule;
 import com.amuzil.av3.entity.projectile.AvatarProjectile;
 import com.amuzil.av3.utils.Constants;
-import com.amuzil.av3.utils.modules.HitDetection;
+import com.amuzil.av3.utils.entity.HitDetection;
+import com.amuzil.av3.utils.entity.damagesource.BendingDamageSources;
 import com.amuzil.magus.skill.traits.skilltraits.CollisionTrait;
 import com.amuzil.magus.skill.traits.skilltraits.DamageTrait;
 import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
@@ -110,7 +111,7 @@ public class WaterCollisionModule implements ICollisionModule {
                     return;
                 }
             }
-            target.hurt(entity.damageSources().drown(), damage);
+            target.hurt(BendingDamageSources.waterBending(entity.level(), entity.owner()), damage);
         }
 
     }

@@ -9,7 +9,7 @@ import com.amuzil.av3.entity.api.modules.collision.FireCollisionModule;
 import com.amuzil.av3.entity.api.modules.collision.FireModule;
 import com.amuzil.av3.entity.api.modules.collision.SimpleKnockbackModule;
 import com.amuzil.av3.entity.api.modules.entity.GrowModule;
-import com.amuzil.av3.entity.projectile.AvatarDirectProjectile;
+import com.amuzil.av3.entity.projectile.AvatarProjectile;
 import com.amuzil.av3.utils.Constants;
 import com.amuzil.av3.utils.maths.Point;
 import com.amuzil.magus.skill.data.SkillPathBuilder;
@@ -21,6 +21,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 import static com.amuzil.av3.bending.form.BendingForms.STRIKE;
+import static com.amuzil.av3.utils.bending.ProjectileFactory.createCurveProjectile;
 
 
 public class FireStrikeSkill extends FireSkill {
@@ -36,7 +37,9 @@ public class FireStrikeSkill extends FireSkill {
         addTrait(new TimedTrait(Constants.LIFETIME, 15));
         addTrait(new TimedTrait(Constants.FIRE_TIME, 40));
         addTrait(new SpeedTrait(Constants.SPEED_FACTOR, 0.85d));
-        addTrait(new StringTrait(Constants.FX, "fire_strike"));
+
+        addTrait(new StringTrait(Constants.FX, "fires_bloom"));
+
 
         startPaths = SkillPathBuilder.getInstance().add(STRIKE).build();
     }
@@ -51,16 +54,9 @@ public class FireStrikeSkill extends FireSkill {
         int lifetime = skillData.getTrait(Constants.LIFETIME, TimedTrait.class).getTime();
         double speed = skillData.getTrait(Constants.SPEED, SpeedTrait.class).getSpeed();
         double size = skillData.getTrait(Constants.SIZE, SizeTrait.class).getSize();
+        String fxName = skillData.getTrait(Constants.FX, StringTrait.class).getInfo();
 
-        AvatarDirectProjectile projectile = new AvatarDirectProjectile(level);
-        projectile.setElement(element());
-        projectile.setFX(skillData.getTrait(Constants.FX, StringTrait.class).getInfo());
-        projectile.setOwner(entity);
-        projectile.setMaxLifetime(lifetime);
-        projectile.setWidth((float) size);
-        projectile.setHeight((float) size);
-        projectile.setNoGravity(true);
-        projectile.setDamageable(false);
+        AvatarProjectile projectile = createCurveProjectile(level, element(), entity, lifetime, (float) size, fxName);
 
         projectile.addTraits(skillData.getTrait(Constants.MAX_SIZE, SizeTrait.class));
 

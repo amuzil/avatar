@@ -2,11 +2,10 @@ package com.amuzil.caliber.physics.bullet.collision.body.shape;
 
 import com.amuzil.caliber.physics.bullet.math.Convert;
 import com.jme3.bounding.BoundingBox;
-import com.jme3.bullet.collision.shapes.BoxCollisionShape;
-import com.jme3.bullet.collision.shapes.HullCollisionShape;
-import com.jme3.bullet.collision.shapes.MeshCollisionShape;
+import com.jme3.bullet.collision.shapes.*;
 import com.jme3.bullet.collision.shapes.infos.IndexedMesh;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -17,6 +16,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public interface MinecraftShape {
+
     List<Triangle> getTriangles(Quaternion quaternion);
 
     float getVolume();
@@ -47,6 +47,16 @@ public interface MinecraftShape {
 
     static Concave concave(BoundingBox box) {
         return new Concave(Triangle.getMeshOf(box));
+    }
+
+    static Compound compound(List<MinecraftShape> shapes, List<Vector3f> positions) {
+        return new Compound(shapes, positions);
+    }
+
+    static Compound compound(List<MinecraftShape> shapes) {
+        if (shapes == null)
+            return new Compound();
+        return new Compound(shapes);
     }
 
     /* Mostly stable */
@@ -116,6 +126,48 @@ public interface MinecraftShape {
         public float getVolume() {
             final var box = boundingBox(new Vector3f(), new Quaternion(), new BoundingBox());
             return box.getXExtent() * box.getYExtent() * box.getZExtent();
+        }
+    }
+
+    final class Compound extends CompoundCollisionShape implements MinecraftShape {
+
+        public Compound() {
+            super();
+            this.recalculateAabb();
+        }
+
+        public Compound(List<MinecraftShape> shapes) {
+            super();
+
+            for (MinecraftShape shape: shapes) {
+                this.addChildShape((CollisionShape) shape);
+            }
+
+            this.recalculateAabb();
+        }
+
+        public Compound(List<MinecraftShape> shapes, List<Vector3f> positions) {
+            super();
+            if (shapes.size() != positions.size())
+                throw new IllegalArgumentException("Shapes and positions must have same size");
+
+            for (int i = 0; i < shapes.size(); i++) {
+                Transform childTransform = new Transform();
+                childTransform.setTranslation(positions.get(i));
+                this.addChildShape((CollisionShape) shapes.get(i), childTransform);
+            }
+
+            this.recalculateAabb();
+        }
+
+        @Override
+        public List<Triangle> getTriangles(Quaternion quaternion) {
+            return List.of();
+        }
+
+        @Override
+        public float getVolume() {
+            return this.countChildren();
         }
     }
 }

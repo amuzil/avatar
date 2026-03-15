@@ -7,7 +7,8 @@ import com.amuzil.av3.entity.api.ICollisionModule;
 import com.amuzil.av3.entity.api.IHasHealth;
 import com.amuzil.av3.entity.projectile.AvatarProjectile;
 import com.amuzil.av3.utils.Constants;
-import com.amuzil.av3.utils.modules.HitDetection;
+import com.amuzil.av3.utils.entity.HitDetection;
+import com.amuzil.av3.utils.entity.damagesource.BendingDamageSources;
 import com.amuzil.magus.skill.traits.skilltraits.CollisionTrait;
 import com.amuzil.magus.skill.traits.skilltraits.DamageTrait;
 import com.amuzil.magus.skill.traits.skilltraits.SizeTrait;
@@ -105,7 +106,7 @@ public class AirCollisionModule implements ICollisionModule {
                     return;
                 }
             }
-            target.hurt(entity.damageSources().flyIntoWall(), damage);
+            target.hurt(BendingDamageSources.airBending(entity.level(), entity.owner()), damage);
         }
     }
 

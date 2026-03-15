@@ -4,11 +4,9 @@ import com.amuzil.av3.entity.AvatarEntities;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.IAvatarConstruct;
 import com.amuzil.av3.entity.api.IFXModule;
-import com.amuzil.av3.entity.api.IForceModule;
 import com.amuzil.av3.entity.api.modules.ModuleRegistry;
 import com.amuzil.av3.entity.api.modules.client.SoundModule;
 import com.amuzil.av3.entity.api.modules.entity.TimeoutModule;
-import com.amuzil.av3.entity.api.modules.force.ControlModule;
 import com.mojang.logging.LogUtils;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.core.BlockPos;
@@ -30,7 +28,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.level.ClipContext;
@@ -93,7 +94,7 @@ public class AvatarConstruct extends AvatarEntity implements IAvatarConstruct {
     }
 
     private AvatarConstruct(Level level, double x, double y, double z, BlockState state) {
-        this(AvatarEntities.AVATAR_RIGID_BLOCK_ENTITY_TYPE.get(), level);
+        this(AvatarEntities.RIGID_BLOCK_ENTITY_TYPE.get(), level);
         this.blockState = state;
         this.blocksBuilding = true;
         this.setPos(x, y, z);
@@ -106,6 +107,12 @@ public class AvatarConstruct extends AvatarEntity implements IAvatarConstruct {
 
     public void setBlockState(BlockState state) {
         this.blockState = state;
+    }
+
+    public void setSize(float width, float height, float depth) {
+        setWidth(width);
+        setHeight(height);
+        setDepth(depth);
     }
 
     public void setWidth(float width) {

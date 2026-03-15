@@ -3,7 +3,7 @@ package com.amuzil.av3.entity.api.modules.collision;
 import com.amuzil.av3.entity.AvatarEntity;
 import com.amuzil.av3.entity.api.ICollisionModule;
 import com.amuzil.av3.utils.Constants;
-import com.amuzil.av3.utils.modules.HitDetection;
+import com.amuzil.av3.utils.entity.HitDetection;
 import com.amuzil.magus.skill.traits.skilltraits.DirectionTrait;
 import com.amuzil.magus.skill.traits.skilltraits.KnockbackTrait;
 import net.minecraft.nbt.CompoundTag;
